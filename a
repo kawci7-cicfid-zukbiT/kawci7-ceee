@@ -1,1 +1,60 @@
-google.com, pub-8643763701588437, DIRECT, f08c47fec0942fa0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Firebase</title>
+</head>
+<body>
+  <h1>Test Firebase Connection</h1>
+  <div id="output">Loading...</div>
+
+  <!-- 🔥 Firebase SDK (module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6qFSRGcknbBbjVzV4F3CoLkdBA_fqkvk",
+      authDomain: "wvtr-community.firebaseapp.com",
+      projectId: "wvtr-community",
+      storageBucket: "wvtr-community.firebasestorage.app",
+      messagingSenderId: "317445771576",
+      appId: "1:317445771576:web:62908e2b54fbbcb08ab1cd"
+    };
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      
+      window.communityDB = db;
+      document.getElementById('output').innerHTML = '✅ Firebase connesso!';
+      console.log('🔥 Firebase connected:', app.name);
+    } catch(e) {
+      document.getElementById('output').innerHTML = '❌ Errore: ' + e.message;
+      console.error('Firebase error:', e);
+    }
+  </script>
+
+  <!-- ✅ Script normale per testare sintassi -->
+  <script>
+    console.log('✅ Script normale caricato');
+    
+    // Test funzione semplice
+    function testSubmit(mat) {
+      if(!window.communityDB) {
+        alert("Database non connesso");
+        return;
+      }
+      alert("✅ Test ok: " + mat.name);
+    }
+    
+    // Esegui test
+    setTimeout(() => {
+      if(window.communityDB) {
+        testSubmit({name: "Test Material"});
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
