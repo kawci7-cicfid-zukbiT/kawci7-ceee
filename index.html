@@ -1261,17 +1261,31 @@ window.getOrCreateUserId = function() {
     return uid;
 };
 
+// Rimuove campi undefined che Firestore non accetta
+function _cleanForFirestore(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 window.saveLaminateToCloud = async function(lam) {
     if (!window.communityDB) return;
     try {
         const uid = window.getOrCreateUserId();
-        const col = window.fbCollection(window.communityDB, 'users', uid, 'laminates');
+        const payload = _cleanForFirestore(lam);
         if (lam._cloudId) {
-            await window.fbUpdateDoc(window.fbDoc(window.communityDB, 'users', uid, 'laminates', lam._cloudId), lam);
+            // Aggiorna documento esistente
+            await window.fbUpdateDoc(
+                window.fbDoc(window.communityDB, 'users', uid, 'laminates', lam._cloudId),
+                payload
+            );
         } else {
-            const ref = await window.fbAddDoc(col, lam);
+            // Crea nuovo documento
+            const col = window.fbCollection(window.communityDB, 'users', uid, 'laminates');
+            const ref = await window.fbAddDoc(col, payload);
+            // Salva _cloudId sull'oggetto E persiste in localStorage
             lam._cloudId = ref.id;
+            if (window.DB && window.DB.save) window.DB.save();
         }
+        console.log('☁️ Laminato salvato:', lam._cloudId);
     } catch(e) { console.warn('saveLaminateToCloud error:', e); }
 };
 
@@ -1281,11 +1295,12 @@ window.deleteLaminateFromCloud = async function(cloudId) {
         const uid = window.getOrCreateUserId();
         const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
         await deleteDoc(window.fbDoc(window.communityDB, 'users', uid, 'laminates', cloudId));
+        console.log('☁️ Laminato eliminato:', cloudId);
     } catch(e) { console.warn('deleteLaminateFromCloud error:', e); }
 };
 
 window.loadLaminatesFromCloud = async function() {
-    if (!window.communityDB) return [];
+    if (!window.communityDB) { console.log('☁️ Firebase non pronto, skip cloud laminates'); return []; }
     try {
         const uid = window.getOrCreateUserId();
         const col = window.fbCollection(window.communityDB, 'users', uid, 'laminates');
@@ -1917,7 +1932,8 @@ var DB = {
         }
     }  // ← Ultima funzione: NESSUNA virgola
 };  // ← ✅ UNA SOLA chiusura per tutto l'oggetto DB
-  
+window.DB = DB;
+
 var State = {
   tab: 'home', layers: [{ mid: null, thick: 0 }], selCond: null, laminateName: '', autoCalc: false,
   calcResult: null, calcError: null, searchQuery: '', mode: 'wvtr',
@@ -8133,5 +8149,4 @@ for(const fm of fbMats) {
 })();
 </script>
 </body>
-</html>
 </html>
