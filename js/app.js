@@ -135,6 +135,7 @@ function renderContent() {
       case 'shelflife':   c.innerHTML = renderShelfLife();   break;
       case 'materials':   c.innerHTML = renderMaterials();   break;
       case 'laminates':   c.innerHTML = renderLaminates();   break;
+        case 'company':     showCompanyDB();                    break;
       default:            c.innerHTML = renderHome();
     }
   } catch (e) {
