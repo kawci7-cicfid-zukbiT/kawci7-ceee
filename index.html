@@ -7400,15 +7400,327 @@ function postCompareRender(){
     chartInstances.compare=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:modeLabel2,data:vals,backgroundColor:colors,borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,title:{display:true,text:unit}},x:{title:{display:true,text:'Laminates'}}}}});
   }
 }
-
 function renderMaterials() {
-  
-  // ✅ ✅ ✅ QUESTE RIGHE MANCAVANO ✅ ✅ ✅
-  html += '</div></div>';  // ← Chiude grid + card (aperti all'inizio)
-  return html;             // ← Restituisce il risultato
-}  // ← ✅ Chiude renderMaterials()
+  Engine.mode = State.mode;
+  var currentLabel = State.mode === 'wvtr' ? 'WVTR' : 'OTR';
+  var currentUnit  = State.mode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
 
-    
+  // ── 1. Raccogli valori unici per i dropdown ──────────────────────────
+  var companies = {}, methods = {}, families = {};
+  DB.materials.forEach(function(m) {
+    if (m.company && m.company.trim()) companies[m.company.trim()] = true;
+    var tm = State.mode === 'wvtr' ? (m.testMethodWVTR || '') : (m.testMethodOTR || '');
+    if (tm) methods[tm.trim()] = true;
+    if (m.family) families[m.family] = true;
+  });
+  var compOpts = Object.keys(companies).sort().map(function(c) {
+    return '<option value="' + c + '">' + c + '</option>';
+  }).join('');
+  var methOpts = Object.keys(methods).sort().map(function(m) {
+    return '<option value="' + m + '">' + m + '</option>';
+  }).join('');
+  var famOpts = Object.keys(families).sort().map(function(f) {
+    return '<option value="' + f + '">' + f + '</option>';
+  }).join('');
+
+  return `
+<div style="padding:0.25rem 0">
+
+  <!-- ── HEADER ── -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div style="font-size:1rem;font-weight:600">
+      Materials
+      <span class="badge badge-blue" style="margin-left:6px">${DB.materials.length}</span>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-primary" onclick="showMatModal()">+ Add material</button>
+      <button class="btn btn-sm btn-outline" onclick="showBulkImport()">Import</button>
+    </div>
+  </div>
+
+  <!-- ── FILTER BAR ── -->
+  <div class="card" id="mat-filter-bar" style="margin-bottom:0.75rem">
+    <div style="font-size:0.75rem;font-weight:600;color:var(--text-light);margin-bottom:0.6rem;display:flex;align-items:center;gap:5px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filters
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:0.6rem">
+
+      <div class="form-group" style="margin:0">
+        <label>Supplier / brand</label>
+        <select class="form-input" id="mf-company" onchange="matApplyFilters()" style="font-size:0.78rem">
+          <option value="">All suppliers</option>
+          ${compOpts}
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label>${currentLabel} level</label>
+        <select class="form-input" id="mf-perf" onchange="matApplyFilters()" style="font-size:0.78rem">
+          <option value="">Any</option>
+          <option value="ultra">< 0.1 ${currentUnit}</option>
+          <option value="high">< 1 ${currentUnit}</option>
+          <option value="med">< 10 ${currentUnit}</option>
+          <option value="low">> 10 ${currentUnit}</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label>Test method</label>
+        <select class="form-input" id="mf-method" onchange="matApplyFilters()" style="font-size:0.78rem">
+          <option value="">All methods</option>
+          ${methOpts}
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label>Family</label>
+        <select class="form-input" id="mf-family" onchange="matApplyFilters()" style="font-size:0.78rem">
+          <option value="">All families</option>
+          ${famOpts}
+        </select>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label>Type</label>
+        <select class="form-input" id="mf-type" onchange="matApplyFilters()" style="font-size:0.78rem">
+          <option value="">All types</option>
+          <option value="community">Community only</option>
+          <option value="verified">Verified only</option>
+          <option value="metallized">Metallized only</option>
+          <option value="arrhenius">Arrhenius ready</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- active filter chips -->
+    <div id="mf-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+  </div>
+
+  <!-- ── SMART SEARCH ── -->
+  <div class="search-input" style="position:relative;margin-bottom:0.75rem">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-light);pointer-events:none">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" class="form-input" id="mat-search"
+      style="padding-left:32px;font-size:0.82rem"
+      placeholder="Search by name, supplier, brand, value (e.g. wvtr &lt; 2, otr &gt; 500)…"
+      value="${State.searchQuery}"
+      oninput="onMatSearch(this.value)">
+  </div>
+
+  <!-- ── BADGE LEGEND ── -->
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.75rem;font-size:0.72rem">
+    <div style="font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;font-size:0.65rem;margin-bottom:0.45rem">Badge guide</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px 20px">
+      <div style="display:flex;align-items:flex-start;gap:7px">
+        <span class="badge badge-purple" style="flex-shrink:0;margin-top:1px">🌍 Community</span>
+        <span style="color:var(--text-light);line-height:1.4">Shared by a community user. Data is user-submitted — verify before using in production.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:7px">
+        <span class="badge badge-green" style="flex-shrink:0;margin-top:1px">✅ Verified</span>
+        <span style="color:var(--text-light);line-height:1.4">Cross-checked against an official TDS or laboratory report by a trusted editor.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:7px">
+        <span class="badge badge-yellow" style="flex-shrink:0;margin-top:1px">⚙️ Metallized</span>
+        <span style="color:var(--text-light);line-height:1.4">Barrier comes from a surface coating (Al, AlOx, SiOx). Resistance does <em>not</em> scale with substrate thickness.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:7px">
+        <span class="badge badge-green" style="flex-shrink:0;margin-top:1px">✓ Arrhenius</span>
+        <span style="color:var(--text-light);line-height:1.4">Has ≥ 2 temperature points at constant humidity — ready for Arrhenius curve fitting.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULT COUNT + LIST ── -->
+  <div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center">
+    <span id="mat-result-label">Showing <strong>${DB.materials.length}</strong> materials</span>
+    <span>${currentLabel} mode · ${currentUnit}</span>
+  </div>
+
+  <div id="mat-list" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>`;
+}
+// ── Applica tutti i filtri e ridisegna la lista ──────────────────────
+function matApplyFilters() {
+  var q       = (document.getElementById('mat-search')      ? document.getElementById('mat-search').value      : State.searchQuery || '').trim().toLowerCase();
+  var fc      = (document.getElementById('mf-company')      ? document.getElementById('mf-company').value      : '');
+  var fperf   = (document.getElementById('mf-perf')         ? document.getElementById('mf-perf').value         : '');
+  var fmethod = (document.getElementById('mf-method')       ? document.getElementById('mf-method').value       : '');
+  var ffamily = (document.getElementById('mf-family')       ? document.getElementById('mf-family').value       : '');
+  var ftype   = (document.getElementById('mf-type')         ? document.getElementById('mf-type').value         : '');
+
+  // ── active chips ─────────────────────────────────────────────────────
+  var chipsEl = document.getElementById('mf-chips');
+  if (chipsEl) {
+    var chips = [];
+    if (fc)      chips.push({ label: 'Supplier: ' + fc,  clear: "document.getElementById('mf-company').value='';matApplyFilters()" });
+    if (fperf)   chips.push({ label: State.mode.toUpperCase() + ': ' + fperf, clear: "document.getElementById('mf-perf').value='';matApplyFilters()" });
+    if (fmethod) chips.push({ label: 'Method: ' + fmethod, clear: "document.getElementById('mf-method').value='';matApplyFilters()" });
+    if (ffamily) chips.push({ label: 'Family: ' + ffamily, clear: "document.getElementById('mf-family').value='';matApplyFilters()" });
+    if (ftype)   chips.push({ label: 'Type: ' + ftype,   clear: "document.getElementById('mf-type').value='';matApplyFilters()" });
+    chipsEl.innerHTML = chips.map(function(c) {
+      return '<span onclick="' + c.clear + '" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:0.72rem;font-weight:600;cursor:pointer">✕ ' + c.label + '</span>';
+    }).join('');
+  }
+
+  // ── filter logic ──────────────────────────────────────────────────────
+  var filtered = DB.materials.filter(function(m) {
+    // supplier / brand
+    if (fc) {
+      var haystack = ((m.company || '') + ' ' + (m.name || '')).toLowerCase();
+      if (haystack.indexOf(fc.toLowerCase()) < 0) return false;
+    }
+    // performance level
+    if (fperf) {
+      var val = State.mode === 'wvtr'
+        ? ((m.wvtrValues && m.wvtrValues[0]) ? m.wvtrValues[0].value : null)
+        : ((m.otrValues  && m.otrValues[0])  ? m.otrValues[0].value  : null);
+      if (val === null) return false;
+      if (fperf === 'ultra' && !(val < 0.1))  return false;
+      if (fperf === 'high'  && !(val < 1))    return false;
+      if (fperf === 'med'   && !(val < 10))   return false;
+      if (fperf === 'low'   && !(val >= 10))  return false;
+    }
+    // test method
+    if (fmethod) {
+      var tm = State.mode === 'wvtr' ? (m.testMethodWVTR || '') : (m.testMethodOTR || '');
+      if (tm.trim() !== fmethod) return false;
+    }
+    // family
+    if (ffamily && m.family !== ffamily) return false;
+    // type
+    if (ftype === 'community' && !m.isCommunity) return false;
+    if (ftype === 'verified'  && !isVerifiedMaterial(m)) return false;
+    if (ftype === 'metallized' && !m.isMetallized) return false;
+    if (ftype === 'arrhenius' && !Engine.validateArrhenius(m).valid) return false;
+    // smart search
+    if (q) {
+      var numRe = /^\s*(wvtr|otr)\s*(<=|>=|<|>|=)\s*([\d.]+)\s*$/i;
+      var nm = q.match(numRe);
+      if (nm) {
+        var type2   = nm[1].toLowerCase();
+        var op      = nm[2];
+        var thresh  = parseFloat(nm[3]);
+        var vals2   = type2 === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
+        var found2  = vals2.some(function(v) {
+          if (op === '<')  return v.value < thresh;
+          if (op === '>')  return v.value > thresh;
+          if (op === '<=') return v.value <= thresh;
+          if (op === '>=') return v.value >= thresh;
+          if (op === '=')  return v.value == thresh;
+          return false;
+        });
+        if (!found2) return false;
+      } else {
+        var hay = (m.name + ' ' + (m.family || '') + ' ' + (m.company || '') + ' ' + (m.testMethodWVTR || '') + ' ' + (m.testMethodOTR || '')).toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+    }
+    return true;
+  });
+
+  filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+  // ── render cards ──────────────────────────────────────────────────────
+  var listEl   = document.getElementById('mat-list');
+  var labelEl  = document.getElementById('mat-result-label');
+  if (labelEl) labelEl.innerHTML = 'Showing <strong>' + filtered.length + '</strong> of ' + DB.materials.length + ' materials';
+  if (!listEl) return;
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:36px;height:36px;margin-bottom:0.5rem;opacity:0.3"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg><p>No materials match these filters</p></div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(function(m) {
+    return matCardHTML(m, q);
+  }).join('');
+}
+
+// ── Genera HTML di una singola card ──────────────────────────────────
+function matCardHTML(m, q) {
+  var isUserMat = !DEFAULT_MATERIALS.some(function(d) { return d.id === m.id; });
+  var isComm    = !!(m.isCommunity || (m.id && String(m.id).startsWith('fb_')));
+  var verified  = isVerifiedMaterial(m);
+  var relScore  = getReliabilityScore(m);
+  var userVote  = hasUserVoted(m.id);
+  var vals      = Engine.getValues(m);
+  var arrOk     = Engine.validateArrhenius(m).valid;
+  var escName   = m.name.replace(/'/g, "\\'");
+  var idExpr    = (typeof m.id === 'string') ? "'" + String(m.id).replace(/'/g,"\\'") + "'" : m.id;
+  var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR || '') : (m.testMethodOTR || '');
+  var currentUnit = State.mode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
+
+  // highlight helper
+  function hl(str) {
+    if (!q || !str) return str || '';
+    var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return String(str).replace(re, '<mark style="background:#fef08a;color:#713f12;padding:0 2px;border-radius:2px">$1</mark>');
+  }
+
+  // data tags
+  var tags = '';
+  if (m.isMetallized) tags += '<span class="badge badge-yellow" style="font-size:0.65rem">⚙️ Metallized</span>';
+  for (var t = 0; t < vals.length; t++) {
+    var cond = m.validConditions && m.validConditions[t] ? m.validConditions[t] : { temperature: '?', humidity: '?' };
+    var v = vals[t] || { value: '?', thickness: '?' };
+    tags += '<span class="mat-tag">' + Engine.getUnits().label + ': <strong>' + v.value + '</strong> ' + currentUnit + ' · ' + v.thickness + 'µm · ' + cond.temperature + '°C/' + cond.humidity + '%</span>';
+  }
+
+  // action buttons
+  var btns = '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showMatModal(' + idExpr + ')">✏️ Edit</button>';
+  if (isUserMat) btns += '<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();DB.deleteMat(' + idExpr + ');render()">🗑️ Delete</button>';
+  btns += '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();searchMaterialWeb(\'' + escName + '\')">🔍 Datasheet</button>';
+  if (isUserMat || isComm) {
+    var btnText = m.firebaseDocId ? '🔄 Update' : '🌍 Publish';
+    btns += '<button class="btn btn-sm ' + (m.firebaseDocId ? 'btn-success' : 'btn-primary') + '" onclick="event.stopPropagation();submitToFirebaseById(' + idExpr + ')">' + btnText + '</button>';
+  }
+
+  // reliability vote buttons style
+  var upStyle   = userVote === 'up'   ? 'background:var(--success-light);border-color:var(--success);color:var(--success)' : '';
+  var downStyle = userVote === 'down' ? 'background:var(--danger-light);border-color:var(--danger);color:var(--danger)' : '';
+  var relColor  = relScore >= 70 ? 'var(--success)' : relScore >= 40 ? 'var(--warning)' : 'var(--danger)';
+
+  return `
+<div class="material-item${verified ? ' verified-item' : ''}" onclick="this.classList.toggle('expanded')">
+  <div class="mat-header">
+    <h3>
+      <span>${hl(m.name)}</span>
+      ${isComm ? '<span class="mat-comm-badge">🌍 Community</span>' : ''}
+      ${verified ? '<span class="badge-verified" title="Verified by ' + verified.by + ' · ' + verified.date + '">✅ Verified</span>' : ''}
+      <span style="font-weight:400;color:var(--text-light);font-size:0.72rem">[${m.family || '?'}]</span>
+      ${arrOk ? '<span class="badge badge-green">✓ Arrhenius</span>' : ''}
+    </h3>
+    <svg class="chevron" style="margin-left:auto;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+
+  <div class="mat-body">
+    <div class="mat-body-content">
+      <div class="mat-tags">${tags}</div>
+
+      <div class="mat-info">
+        ${currentTM ? '<div class="mat-info-item"><strong>Test standard</strong><span class="mat-testmethod">' + currentTM + '</span></div>' : ''}
+        ${m.company ? '<div class="mat-info-item"><strong>Supplier</strong><span>' + hl(m.company) + '</span></div>' : ''}
+        ${m.tdsLink ? '<div class="mat-info-item"><strong>Documentation</strong><a href="' + m.tdsLink + '" target="_blank" onclick="event.stopPropagation()">View TDS →</a></div>' : ''}
+      </div>
+
+      <div class="mat-actions">${btns}</div>
+
+      <div class="mat-voting">
+        <div class="mat-voting-label">
+          <span>Community reliability</span>
+          <span class="reliability-badge ${relScore >= 70 ? 'high' : relScore >= 40 ? 'medium' : 'low'}">${relScore}%</span>
+        </div>
+        <div class="mat-voting-buttons">
+          <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability('${String(m.id)}','up')" title="${userVote === 'up' ? 'Remove vote' : 'Mark as reliable'}" style="${upStyle}">👍</button>
+          <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability('${String(m.id)}','down')" title="${userVote === 'down' ? 'Remove vote' : 'Mark as unreliable'}" style="${downStyle}">👎</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}    
   
 function onMatSearch(val) {
   State.searchQuery = val || '';
