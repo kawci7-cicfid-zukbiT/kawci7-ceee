@@ -836,4 +836,4 @@ async function loadExternalMaterialsDB() {
     DB.laminates = DEFAULT_LAMINATES.slice();
     render();
   }
-})();
+}
