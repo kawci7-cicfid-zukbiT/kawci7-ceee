@@ -1,5 +1,5 @@
 // ====================================================================
-// 🏢 COMPANY.JS - Private Company Database
+//  COMPANY.JS - Private Company Database
 // Codice accesso · Materiali & Laminati aziendali · Firestore isolato
 // ====================================================================
 
@@ -303,7 +303,7 @@ function showCompanyModal() {
         body +=
             '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1rem;margin-bottom:1rem">' +
                 '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">' +
-                    '<span style="font-size:1.1rem">🏢</span>' +
+                    '<span style="font-size:1.1rem"></span>' +
                     '<strong style="font-size:0.92rem;color:#0f172a">' + CompanyState.companyName + '</strong>' +
                     '<span class="badge badge-green" style="margin-left:auto">' + CompanyState.role + '</span>' +
                 '</div>' +
@@ -366,7 +366,7 @@ function showCompanyModal() {
             '</div>';
     }
 
-    Modal.open('🏢 Company Database', body, function() { return true; });
+    Modal.open(' Company Database', body, function() { return true; });
     // Nascondi il pulsante Save del modal (non serve qui)
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
@@ -390,7 +390,7 @@ function showCompanyCreatedModal(name, code, expiresAt) {
 
     var body =
         '<div style="text-align:center;margin-bottom:1.25rem">' +
-            '<div style="font-size:2rem;margin-bottom:0.5rem">🎉</div>' +
+            '<div style="font-size:2rem;margin-bottom:0.5rem"></div>' +
             '<div style="font-size:1rem;font-weight:700;color:#0f172a">Company created!</div>' +
             '<div style="font-size:0.78rem;color:#64748b;margin-top:0.25rem">' + name + '</div>' +
         '</div>' +
@@ -414,7 +414,7 @@ function showCompanyCreatedModal(name, code, expiresAt) {
             'Never enter confidential business information, personal data, or trade secrets.' +
         '</div>';
 
-    Modal.open('🏢 Company Created', body, function() { return true; });
+    Modal.open(' Company Created', body, function() { return true; });
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
 }
@@ -524,7 +524,7 @@ function renderCompanyDB() {
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem">
         <div>
             <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#64748b">Private</div>
-            <h2 style="font-size:1.4rem;font-weight:800;color:#0f172a;margin:0.1rem 0">🏢 ${CompanyState.companyName}</h2>
+            <h2 style="font-size:1.4rem;font-weight:800;color:#0f172a;margin:0.1rem 0"> ${CompanyState.companyName}</h2>
             <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">
                 <span class="badge badge-blue">${CompanyState.role}</span>
                 ${expiryBadge}
