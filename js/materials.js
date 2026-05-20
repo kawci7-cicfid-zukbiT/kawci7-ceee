@@ -516,8 +516,8 @@ function renderMaterials() {
                 'placeholder="Search by name, supplier, value (e.g. wvtr &lt; 2, otr &gt; 500)…" ' +
                 'value="' + State.searchQuery + '" oninput="onMatSearch(this.value)">' +
         '</div>' +
-'<div style="background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;font-size:0.72rem;box-shadow:0 2px 8px rgba(0,0,0,0.06)">' +
-    '<div style="font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;font-size:0.68rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.4rem">' +
+'<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.75rem;font-size:0.72rem">' +
+        '<div style="font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;font-size:0.68rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.4rem">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#2563eb"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
         'Badge Guide' +
     '</div>' +
