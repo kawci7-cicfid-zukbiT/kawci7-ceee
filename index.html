@@ -2016,15 +2016,13 @@ function setMode(mode) {
 
 function postNavRender() {
   setTimeout(function() {
-    // ✅ AGGIUNTO: gestisci anche il tab home
-    if(State.tab === 'home') {
-      initHomeAnimations();
-    }
+    if(State.tab === 'home') initHomeAnimations();
     if(State.tab === 'calc' && State.calcResult) postCalcRender();
     if(State.tab === 'arrhenius') postArrheniusRender();
     if(State.tab === 'sensitivity') postSensitivityRender();
     if(State.tab === 'compare') postCompareRender();
     if(State.tab === 'laminates' && DB.laminates.length >= 2) drawLamChart();
+    if(State.tab === 'materials') matApplyFilters();
   }, 150);
 }
 
@@ -7403,280 +7401,7 @@ function postCompareRender(){
   }
 }
 
-function renderMaterials(){
-  // ✅ FORZA Engine a usare la modalità corrente
-  Engine.mode = State.mode;
-  
-  var q = State.searchQuery.toLowerCase().trim();
-  var filtered = [];
-  
-  // ✅ FILTRO SEMPLICE: mostra tutti i materiali
-// ✅ ✅ ✅ RICERCA SMART AVANZATA ✅ ✅ ✅
-// Dentro renderMaterials():
-  // ✅ ✅ ✅ RICERCA SMART AVANZATA + FILTRI MATEMATICI ✅ ✅ ✅
-  for(var i = 0; i < DB.materials.length; i++){
-    var m = DB.materials[i];
-    if(!q) {
-      filtered.push(m);
-      continue;
-    }
-    
-    var qLower = q.toLowerCase();
-    var found = false;
-    var matchType = [];
-
-    // 🆕 1. CONTROLLO FILTRO NUMERICO (es. "wvtr < 2", "otr > 100")
-    // Riconosce: wvtr o otr, seguito da < > <= >=, seguito da un numero
-    var numRegex = /^\s*(wvtr|otr|thickness)\s*(<=|>=|<|>|==|=)\s*([\d.]+)\s*$/i;
-    var numMatch = q.match(numRegex);
-    
-    if(numMatch) {
-      var type = numMatch[1].toLowerCase();
-      var op = numMatch[2];
-      var threshold = parseFloat(numMatch[3]);
-      
-      // Prendi i dati corretti in base a cosa ha scritto l'utente
-      var targets = (type === 'wvtr' || type === 'otr') 
-        ? (type === 'wvtr' ? (m.wvtrValues||[]) : (m.otrValues||[]))
-        : (m.wvtrValues||[]).concat(m.otrValues||[]); // Fallback
-      
-      for(var v = 0; v < targets.length; v++) {
-        var val = targets[v].value; // Il valore di permeabilità
-        var pass = false;
-        
-        // Confronto matematico
-        if(op === '<') pass = val < threshold;
-        else if(op === '>') pass = val > threshold;
-        else if(op === '<=') pass = val <= threshold;
-        else if(op === '>=') pass = val >= threshold;
-        else if(op === '==' || op === '=') pass = val == threshold;
-        
-        if(pass) { 
-          found = true; 
-          matchType.push('numeric-filter'); 
-          break; 
-        }
-      }
-    }
-    // 🆕 2. SE NON È UN FILTRO, USA LA RICERCA TESTUALE NORMALE
-    else {
-      // Cerca nel NOME
-      if(m.name.toLowerCase().indexOf(qLower) >= 0) { found = true; matchType.push('name'); }
-      // Cerca nella FAMIGLIA
-      if(m.family && m.family.toLowerCase().indexOf(qLower) >= 0) { found = true; matchType.push('family'); }
-      // Cerca nell'AZIENDA
-      if(m.company && m.company.toLowerCase().indexOf(qLower) >= 0) { found = true; matchType.push('company'); }
-      
-      // Cerca nei VALORI (testo semplice, es. cerca "0.5")
-      var vals = State.mode === 'wvtr' ? m.wvtrValues : m.otrValues;
-      if(vals) {
-        for(var v = 0; v < vals.length; v++) {
-          if(String(vals[v].value).indexOf(q) >= 0) { found = true; matchType.push('value'); break; }
-        }
-      }
-    }
-
-    // Se trovato, aggiungi alla lista
-    if(found) {
-      filtered.push({
-        mat: m,
-        matchType: matchType,
-        highlight: q
-      });
-    }
-  }
-    
- // ✅ ✅ ✅ ORDINAMENTO ALFABETICO (CORRETTO PER SMART SEARCH) ✅ ✅ ✅
-filtered.sort(function(a, b){
-  // Se a/b sono oggetti {mat: ...}, usa a.mat.name, altrimenti usa a.name
-  var nameA = a.mat ? a.mat.name : a.name;
-  var nameB = b.mat ? b.mat.name : b.name;
-  return nameA.localeCompare(nameB);
-});
-
-  var currentUnit = getUnit();
-  var currentLabel = getLabel();
-  
-  var html = '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.4rem">'+
-    '<h2 style="margin:0">Materials <span class="badge badge-blue">'+DB.materials.length+'</span></h2>'+
-    '<div style="display:flex;gap:.35rem;flex-wrap:wrap">'+
-    '<span class="badge badge-purple" style="font-size:0.7rem">'+currentLabel+' mode • Unit: '+currentUnit+'</span>'+
-    '<button class="btn btn-sm btn-primary" onclick="showMatModal()">+ Add</button>'+
-    '<button class="btn btn-sm btn-outline" onclick="showBulkImport()">Import</button>'+
-    '</div></div>'+
-    '<div class="form-group search-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'+
-    '<input type="text" class="form-input" id="material-search" placeholder="Cerca (es. EVOH, wvtr < 2, otr > 500...)" value="'+State.searchQuery+'" oninput="onMatSearch(this.value)" autocomplete="off">'
-  if(q) html+='<p style="font-size:.75rem;color:var(--text-light);margin-bottom:.5rem">Showing '+filtered.length+' of '+DB.materials.length+' for "'+State.searchQuery+'"</p>';
-  
-  html+='<div class="grid" style="grid-template-columns:1fr">';
-  
-  if(filtered.length===0) {
-    html+='<div class="empty-state"><p>No materials found'+(q?' for "'+State.searchQuery+'"':'')+'</p></div>';
-    } else {
-    for(var i=0; i<filtered.length; i++){
-      // ✅ Gestisci sia oggetti vecchi che nuovi (smart search)
-      var item = filtered[i];
-      var m = item.mat || item;
-      var matchType = item.matchType || [];
-      var highlight = item.highlight || '';
-      
-      // ✅ ✅ ✅ AGGIUNGI QUESTE RIGHE QUI ✅ ✅ ✅
-      var v = Engine.validateArrhenius(m);
-      var vals = Engine.getValues(m);
-      var currentUnit = getUnit();
-      // ✅ ✅ ✅ FINE AGGIUNTA ✅ ✅ ✅
-
-      // ✅ TAGS CON VALORI E CONDIZIONI
-      var tags = '';
-      if(m.isMetallized) {
-        tags += '<span class="mat-tag" style="background:var(--warning-light);color:var(--warning)">⚙️ Metallized</span> ';
-      }
-      // Ora 'vals' è definita, quindi questo ciclo funziona:
-      for(var t=0; t<vals.length; t++){
-        var cond = m.validConditions && m.validConditions[t] ? m.validConditions[t] : {temperature: '?', humidity: '?'};
-        var val = vals[t] ? vals[t].value : '?';
-        var thick = vals[t] ? vals[t].thickness : '?';
-        tags += '<span class="mat-tag">'+getLabel()+': <strong>'+val+'</strong> '+currentUnit+' • '+thick+'µm • '+cond.temperature+'°C/'+cond.humidity+'%</span>';
-      }
-  
-  var escName = m.name.replace(/'/g, "\\'");
-  
-  // ✅ Controlla se è materiale utente (non default)
-  var isUserMat = true;
-  for(var di=0; di<DEFAULT_MATERIALS.length; di++) {
-    if(DEFAULT_MATERIALS[di].id === m.id) { isUserMat = false; break; }
-  }
-  
-  // ✅ Badge per materiali community
-  var isComm = m.isCommunity || (m.id && String(m.id).startsWith('fb_'));
-  var commBadge = '';
-  if(isComm) {
-    var author = (m.author && m.author.toLowerCase() !== 'anonymous' && m.author.trim() !== '') ? m.author : 'Community';
-    commBadge = '<span class="badge badge-purple" style="margin-left:0.5rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="Shared by: '+author+'">🌍 Community</span>';
-  }
-  
-  // ✅ SISTEMA AFFIDABILITÀ
-  // ✅ ✅ ✅ SISTEMA VOTAZIONE FLESSIBILE (SOSTITUISCI TUTTO QUESTO BLOCCO) ✅ ✅ ✅
-var relScore = getReliabilityScore(m);
-var relBadge = getReliabilityBadge(relScore);
-var userVote = hasUserVoted(m.id);
-
-// ✅ Nessuna variabile 'voteDisabled': i pulsanti restano SEMPRE cliccabili
-var upActive = userVote === 'up' ? 'style="background:var(--success-light);border-color:var(--success);color:var(--success)"' : '';
-var downActive = userVote === 'down' ? 'style="background:var(--danger-light);border-color:var(--danger);color:var(--danger)"' : '';
-var upTitle = userVote === 'up' ? 'Click to unvote' : 'Mark as reliable';
-var downTitle = userVote === 'down' ? 'Click to unvote' : 'Mark as unreliable';
-  // ✅ ✅ ✅ SMART SEARCH: BADGE E HIGHLIGHT ✅ ✅ ✅
-  
-  // 1. Genera badge che mostrano DOVE è stato trovato il match
-  var searchBadges = '';
-  if(State.searchQuery && matchType.length > 0) {
-    var badgeColors = {
-      'name': 'badge-blue', 'company': 'badge-purple', 'testmethod': 'badge-green',
-      'value': 'badge-yellow', 'family': 'badge-blue', 'condition': 'badge-purple'
-    };
-    var badgeLabels = {
-      'name': ' Name', 'company': ' Supplier', 'testmethod': ' Method',
-      'value': ' Value', 'family': ' Family', 'condition': ' Cond.'
-    };
-    searchBadges = '<div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.4rem">';
-    for(var bt=0; bt<matchType.length; bt++) {
-      var type = matchType[bt];
-      searchBadges += '<span class="badge '+(badgeColors[type]||'badge-blue')+'" style="font-size:0.65rem">'+badgeLabels[type]+'</span>';
-    }
-    searchBadges += '</div>';
-  }
-  
-  // 2. Evidenzia il testo cercato nel nome
-  var displayName = m.name;
-  if(highlight && m.name.toLowerCase().indexOf(highlight.toLowerCase()) >= 0) {
-    var regex = new RegExp('('+highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+')', 'gi');
-    displayName = m.name.replace(regex, '<mark style="background:var(--warning-light);color:var(--warning);padding:0 0.2rem;border-radius:3px;font-weight:600">$1</mark>');
-  }
-
-  // ✅ CORRETTO
-var verified = isVerifiedMaterial(m);
-var verifiedClass = verified ? ' verified-item' : '';
-
-html += '<div class="material-item' + verifiedClass + '" onclick="this.classList.toggle(\'expanded\')">' +
-    '<div class="mat-header">' +
-      '<h3>' +
-        '<span style="color:var(--text)">' + displayName + '</span>' +
-        (isComm ? '<span class="mat-comm-badge">🌍 Community</span>' : '') +
-        (verified ? '<span class="badge-verified" title="Verified by ' + verified.by + ' · ' + verified.date + (verified.note ? ' · ' + verified.note : '') + '">✅ Verified</span>' : '') +
-        '<span style="font-weight:400;color:var(--text-light);font-size:0.75rem">[' + (m.family || '?') + ']</span>' +
-        (v.valid ? '<span class="badge badge-green">✓ Arrhenius</span>' : '') +
-      '</h3>' +
-      '<svg class="chevron" style="margin-left:auto; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
-    '</div>' +
-    
-    // === EXPANDABLE BODY ===
-    '<div class="mat-body">'+
-      '<div class="mat-body-content">'+
-        
-        // 0. SEARCH BADGES (solo se c'è una ricerca attiva)
-        (searchBadges ? searchBadges : '')+
-        
-        // 1. DATA TAGS
-        '<div class="mat-tags">'+tags+'</div>'+
-        
-        // 2. META INFO
-        '<div class="mat-info">'+
-          (function(){
-            var tm = State.mode === 'wvtr' ? (m.testMethodWVTR || m.testMethod || '') : (m.testMethodOTR || m.testMethod || '');
-            return tm ? '<div class="mat-info-item"><strong>Test Standard</strong><span class="mat-testmethod">'+tm+'</span></div>' : '';
-          })()+
-          (m.company ? '<div class="mat-info-item"><strong>Supplier</strong><span>'+m.company+'</span></div>' : '')+
-          (m.tdsLink ? '<div class="mat-info-item"><strong>Documentation</strong><a href="'+m.tdsLink+'" target="_blank" onclick="event.stopPropagation()">View TDS →</a></div>' : '')+
-        '</div>'+
-        
-        // 3. ACTION BUTTONS
-'<div class="mat-actions">'+
-  (function(){
-    // ✅ FIX: Safe ID handling per ID stringa (Community) o numero (locale)
-    var safeId = function(id) {
-      return (typeof id === 'string') ? "'" + id.replace(/'/g, "\\'") + "'" : id;
-    };
-    var idSafe = safeId(m.id);
-    
-    // Pulsante Edit
-    var html = '<button class="btn btn-outline" onclick="event.stopPropagation();showMatModal('+idSafe+')">✏️ Edit</button>';
-    
-    // Pulsante Delete (solo per materiali utente)
-    if(isUserMat) {
-      html += '<button class="btn btn-danger" onclick="event.stopPropagation();DB.deleteMat('+idSafe+');render()">🗑️ Delete</button>';
-    }
-    
-    // Pulsante Search Datasheet
-    html += '<button class="online-search-btn" onclick="event.stopPropagation();searchMaterialWeb(\''+escName+'\')">🔍 Search Datasheet</button>';
-    
-    // Pulsante Publish/Update (per materiali utente o community)
-    if(isUserMat || isComm) {
-      var btnClass = m.firebaseDocId ? 'btn-success' : 'btn-primary';
-      var btnText = m.firebaseDocId ? '🔄 Update' : '🌍 Publish';
-      html += '<button class="btn '+btnClass+'" onclick="event.stopPropagation();submitToFirebaseById('+idSafe+')">'+btnText+'</button>';
-    }
-    
-    return html;
-  })()+
-'</div>'+
-        // 4. RELIABILITY VOTING
-        '<div class="mat-voting">'+
-          '<div class="mat-voting-label">'+
-            '<span>Community Reliability</span>'+
-            '<span class="reliability-badge '+(relScore>=70?'high':relScore>=40?'medium':'low')+'">'+relScore+'%</span>'+
-          '</div>'+
-         '<div class="mat-voting-buttons">'+
-'<button class="btn btn-outline" onclick="event.stopPropagation();voteReliability(\''+String(m.id)+'\',\'up\')" title="'+upTitle+'" '+upActive+'>👍</button>'+
-'<button class="btn btn-outline" onclick="event.stopPropagation();voteReliability(\''+String(m.id)+'\',\'down\')" title="'+downTitle+'" '+downActive+'>👎</button>'+
-'</div>'+
-        '</div>'+
-        
-      '</div>'+
-    '</div>'+
-  '</div>'; // ← ✅ FINE CARD
-}  // ← ✅ Chiude il FOR
-  }  // ← ✅ Chiude l'if/else
+function renderMaterials() {
   
   // ✅ ✅ ✅ QUESTE RIGHE MANCAVANO ✅ ✅ ✅
   html += '</div></div>';  // ← Chiude grid + card (aperti all'inizio)
@@ -7685,13 +7410,13 @@ html += '<div class="material-item' + verifiedClass + '" onclick="this.classList
 
     
   
-function onMatSearch(val){
-  State.searchQuery=val||'';
-  renderContent();
-  setTimeout(function(){
-    var input=document.getElementById('material-search');
-    if(input){input.focus();var len=val?val.length:0;input.setSelectionRange(len,len);}
-  },10);
+function onMatSearch(val) {
+  State.searchQuery = val || '';
+  matApplyFilters();   // usa la nuova funzione unificata
+  setTimeout(function() {
+    var input = document.getElementById('mat-search');
+    if (input) { input.focus(); input.setSelectionRange(val.length, val.length); }
+  }, 10);
 }
 
 function renderLaminates(){
