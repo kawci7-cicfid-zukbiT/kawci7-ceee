@@ -896,4 +896,3 @@ async function loadExternalMaterialsDB() {
 // 🚀 APP INIT
 // ====================================================================
 
-})();
