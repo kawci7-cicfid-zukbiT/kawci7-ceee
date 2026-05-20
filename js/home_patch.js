@@ -2,7 +2,10 @@
 // 🏠 HOME PATCH — sostituisce renderHome() e initHomeAnimations()
 // Widget: Most Used (top 10) + New in Community + Recently Updated
 // ====================================================================
-
+// Override vecchia funzione che sovrascriveva il widget
+window.updateTop3UI = async function() {
+    renderMostUsedMaterials();
+};
 // ── Naviga al materiale nel DB ────────────────────────────────────────
 function goToMaterial(matName) {
     State.tab = 'materials';
