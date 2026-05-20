@@ -2,7 +2,6 @@
 // 🏠 HOME PATCH — sostituisce renderHome() in render.js
 // Aggiunge: New in Community + Recently Updated accanto a Most Used
 // ====================================================================
-
 // ── Helper: vai al materiale nel DB ──────────────────────────────────
 function goToMaterial(matName) {
     State.tab = 'materials';
