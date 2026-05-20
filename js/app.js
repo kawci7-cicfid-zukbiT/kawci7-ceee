@@ -777,7 +777,7 @@ async function loadExternalMaterialsDB() {
 // ====================================================================
 // 🚀 INIT APP
 // ====================================================================
-(async function initApp() {
+async function initApp() {
   console.log('🚀 App starting...');
 
   var retries = 0;
