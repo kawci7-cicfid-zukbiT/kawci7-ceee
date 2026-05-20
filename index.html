@@ -7710,37 +7710,54 @@ function showEditMatModal(matId) {
   var currentUnit = currentMode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
   var currentVals = currentMode === 'wvtr' ? (mat.wvtrValues || []) : (mat.otrValues || []);
   var conds = mat.validConditions || [];
-
-  // Determina il test method esistente (NON modificabile su materiali community)
   var existingTM = currentMode === 'wvtr' ? (mat.testMethodWVTR || '') : (mat.testMethodOTR || '');
 
-  // ── BANNER INFO ──────────────────────────────────────────────────
+  // ── BANNER ─────────────────────────────────────────────────────────
   var banner = '';
   if(isCommunity) {
     banner = '<div class="alert alert-info" style="margin-bottom:1rem;font-size:0.78rem">' +
       '<svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
       '<div><strong>Community material</strong><br>' +
-      'You can only <strong>add new measurements</strong> to this material. ' +
-      'All new data must use the same test method as the original: ' +
-      '<strong>' + (existingTM || 'not specified') + '</strong>. ' +
-      'After saving, the community database will be updated immediately.</div></div>';
+      'You can only <strong>add new measurements</strong>. ' +
+      (existingTM ? 'All new data must use the same test method: <strong>' + existingTM + '</strong>.' : 'No test method specified.') +
+      ' After saving, the community database will be updated immediately.</div></div>';
   } else if(isDefault) {
     banner = '<div class="alert alert-warning" style="margin-bottom:1rem;font-size:0.78rem">' +
       '<svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
       '<div><strong>Built-in material</strong> — existing data is read-only. You can add new test conditions.</div></div>';
   }
 
-  // ── CAMPI BASE (modificabili solo se NON community e NON default) ──
   var RO = (isCommunity || isDefault) ? ' disabled readonly style="opacity:0.6;background:#f1f5f9"' : '';
-  var ROcheck = (isCommunity || isDefault) ? ' disabled style="opacity:0.6"' : '';
 
+  // ── METALLIZED (sempre visibile, read-only per community) ───────────
+  var metallizedHTML = '';
+  if(isCommunity || isDefault) {
+    metallizedHTML = '<div style="margin:0.5rem 0 0.75rem;padding:0.5rem 0.75rem;border-radius:8px;background:' +
+      (mat.isMetallized ? 'var(--warning-light)' : 'var(--bg)') +
+      ';border:1.5px solid ' + (mat.isMetallized ? 'var(--warning)' : 'var(--border)') + ';display:flex;align-items:center;gap:0.5rem">' +
+      '<span style="font-size:1rem">' + (mat.isMetallized ? '⚙️' : '📄') + '</span>' +
+      '<div><div style="font-size:0.78rem;font-weight:700;color:' + (mat.isMetallized ? 'var(--warning)' : 'var(--text-light)') + '">' +
+      (mat.isMetallized ? 'Metallized / Coated film' : 'Standard polymer film') + '</div>' +
+      '<div style="font-size:0.68rem;color:var(--text-light)">' +
+      (mat.isMetallized ? 'Barrier independent of substrate thickness' : 'Barrier scales linearly with thickness') +
+      '</div></div>' +
+      (mat.isMetallized ? '<span class="badge badge-yellow" style="margin-left:auto">⚙️ Metallized</span>' : '') +
+      '</div>';
+  } else {
+    metallizedHTML = '<div style="margin:0.5rem 0 0.75rem;padding:0.4rem 0.6rem;background:var(--warning-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem">' +
+      '<input type="checkbox" id="edit-metallized"' + (mat.isMetallized ? ' checked' : '') + '>' +
+      '<label for="edit-metallized" style="font-size:0.75rem;cursor:pointer"><strong>Metallized/Coated film</strong> — barrier independent of thickness</label>' +
+      '</div>';
+  }
+
+  // ── FAMILY DROPDOWN ─────────────────────────────────────────────────
   var familyOpts = '<option value="">Select...</option>';
   for(var fam in POLYMER_FAMILIES) {
     familyOpts += '<option value="' + fam + '"' + (mat.family === fam ? ' selected' : '') + '>' + fam + '</option>';
   }
 
-  // ── RIGHE ESISTENTI (sempre read-only) ───────────────────────────
-  var existingRowsHTML = '';
+  // ── EXISTING ROWS (read-only) ────────────────────────────────────────
+  var existingRowsHTML = '<div style="font-size:0.72rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.4rem">Existing measurements (read-only)</div>';
   for(var r = 0; r < currentVals.length; r++) {
     var v = currentVals[r] || { value: '', thickness: '' };
     var c = conds[r] || { temperature: '', humidity: '' };
@@ -7753,29 +7770,35 @@ function showEditMatModal(matId) {
       '</div>';
   }
 
-  // ── TEST METHOD PER NUOVE RIGHE (community: fisso, locale: dropdown) ──
+  // ── TEST METHOD PER NUOVE RIGHE ──────────────────────────────────────
   var newRowTMHTML = '';
   if(isCommunity || isDefault) {
-    // Mostra solo il metodo esistente come testo, non modificabile
     newRowTMHTML = existingTM
-      ? '<div style="font-size:0.72rem;padding:0.35rem 0.6rem;background:var(--primary-light);border-radius:6px;color:var(--primary);font-weight:600;margin-bottom:0.5rem">' +
-          '📋 New measurements must use: <strong>' + existingTM + '</strong></div>'
-      : '<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.5rem">No test method specified for this material.</div>';
+      ? '<div style="font-size:0.72rem;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;color:var(--primary);font-weight:600;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.4rem">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>' +
+          'New measurements must use: <strong style="margin-left:4px">' + existingTM + '</strong></div>'
+      : '<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.5rem">⚠️ No test method specified for this material.</div>';
   } else {
     var ctm = currentMode === 'wvtr'
       ? ['', 'ASTM F1249', 'ISO 15106-3', 'ASTM E96', 'JIS K7129', 'MOCON PERMATRAN', 'DIN 53122', 'Custom/Other']
       : ['', 'ASTM D3985', 'ISO 15106-2', 'JIS K7126', 'MOCON OXTRAN', 'Custom/Other'];
+
+    // Se esiste già un TM, mostralo come avviso e pre-seleziona
+    var tmWarning = existingTM
+      ? '<div style="font-size:0.72rem;padding:0.35rem 0.6rem;background:var(--warning-light);border-radius:6px;color:var(--warning);font-weight:600;margin-bottom:0.4rem">⚠️ Previous measurements used: <strong>' + existingTM + '</strong><br><span style="font-weight:400">For consistency, new measurements should use the same method.</span></div>'
+      : '';
+
     var tmOpts = ctm.map(function(t) {
       return '<option value="' + t + '"' + (existingTM === t ? ' selected' : '') + '>' + (t || '-- Select method --') + '</option>';
     }).join('');
-    newRowTMHTML =
+    newRowTMHTML = tmWarning +
       '<div class="form-group" style="margin-bottom:0.5rem">' +
         '<label>Test Method</label>' +
         '<select class="form-input" id="edit-new-tm">' + tmOpts + '</select>' +
       '</div>';
   }
 
-  // ── HYGROSCOPIC (solo per materiali locali) ──────────────────────
+  // ── HYGROSCOPIC ──────────────────────────────────────────────────────
   var hygroHTML = '';
   if(!isCommunity && !isDefault) {
     var betaId = currentMode === 'wvtr' ? 'hygroscopicBetaWVTR' : 'hygroscopicBetaOTR';
@@ -7792,84 +7815,79 @@ function showEditMatModal(matId) {
       '</div>';
   }
 
-  // ── BODY MODALE ──────────────────────────────────────────────────
+  // ── MODAL BODY ───────────────────────────────────────────────────────
   var body =
     banner +
     // Campi base
     '<div class="form-group"><label>Name</label><input type="text" class="form-input" id="edit-name" value="' + mat.name + '"' + RO + '></div>' +
     '<div class="form-group"><label>Material Family</label><select class="form-input" id="edit-family"' + RO + '>' + familyOpts + '</select></div>' +
     '<div class="form-group"><label>Company Name</label><input type="text" class="form-input" id="edit-company" value="' + (mat.company || '') + '" placeholder="e.g. DuPont, 3M..."' + RO + '></div>' +
-    '<div class="form-group"><label>Contact Email</label><input type="email" class="form-input" id="edit-email" value="' + (mat.supplierEmail || '') + '" placeholder="supplier@company.com"' + RO + '></div>' +
+    // ← EMAIL sempre editabile
+    '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(used by Contact Supplier button)</span></label>' +
+    '<input type="email" class="form-input" id="edit-email" value="' + (mat.supplierEmail || '') + '" placeholder="supplier@company.com"></div>' +
     '<div class="form-group"><label>TDS Link</label><input type="url" class="form-input" id="edit-tdslink" value="' + (mat.tdsLink || '') + '" placeholder="https://..."' + RO + '></div>' +
-    ((!isCommunity && !isDefault) ?
-      '<div style="margin:0.5rem 0 0.75rem;padding:0.4rem 0.6rem;background:var(--warning-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem">' +
-        '<input type="checkbox" id="edit-metallized"' + (mat.isMetallized ? ' checked' : '') + '>' +
-        '<label for="edit-metallized" style="font-size:0.75rem;cursor:pointer"><strong>Metallized/Coated film</strong> — barrier independent of thickness</label>' +
-      '</div>'
-    : '') +
+    metallizedHTML +
     hygroHTML +
+    // Test method SOPRA i valori esistenti
+    '<div style="font-size:0.72rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin:0.5rem 0 0.3rem">Test Method</div>' +
+    newRowTMHTML +
     // Dati esistenti
-    '<div style="font-size:0.72rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.4rem">Existing measurements (read-only)</div>' +
     existingRowsHTML +
-    // Sezione aggiunta nuove misure
+    // Sezione nuove misure
     '<div style="margin-top:1rem;padding-top:0.75rem;border-top:2px dashed var(--primary)">' +
       '<div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">Add New Measurement</div>' +
-      newRowTMHTML +
       '<div id="edit-new-rows"></div>' +
       '<button class="btn btn-outline btn-full" onclick="addEditRow(\'' + currentLabel + '\')" style="margin-top:0.4rem">+ Add Row</button>' +
     '</div>';
 
-  // ── SAVE HANDLER ────────────────────────────────────────────────
+  // ── SAVE HANDLER ─────────────────────────────────────────────────────
   Modal.open(
     (isCommunity ? '🌍 ' : '✏️ ') + 'Edit: ' + mat.name,
     body,
     function() {
-      // 1. Aggiorna campi base (solo se non community/default)
+      // Aggiorna email sempre
+      var emailEl = document.getElementById('edit-email');
+      if(emailEl) mat.supplierEmail = emailEl.value.trim();
+
+      // Aggiorna campi base (solo locali)
       if(!isCommunity && !isDefault) {
         mat.name    = document.getElementById('edit-name').value.trim() || mat.name;
         mat.family  = document.getElementById('edit-family').value || mat.family;
         mat.company = document.getElementById('edit-company').value.trim();
         mat.tdsLink = document.getElementById('edit-tdslink').value.trim();
-        mat.isMetallized = document.getElementById('edit-metallized').checked;
-        mat.supplierEmail = document.getElementById('edit-email').value.trim();
+        var metEl = document.getElementById('edit-metallized');
+        if(metEl) mat.isMetallized = metEl.checked;
 
-        // Hygro
         var beta  = parseFloat(document.getElementById('edit-beta')?.value) || 0;
         var refRH = parseFloat(document.getElementById('edit-refRH')?.value) || 50;
         if(currentMode === 'wvtr') { mat.hygroscopicBetaWVTR = beta; mat.hygroscopicRefRHWVTR = refRH; }
         else { mat.hygroscopicBetaOTR = beta; mat.hygroscopicRefRHOTR = refRH; }
-      } else {
-        // Permetti sempre aggiornamento email anche per community/default
-        var emailEl = document.getElementById('edit-email');
-        if(emailEl) mat.supplierEmail = emailEl.value.trim();
       }
 
-      // 2. Leggi nuove righe
+      // Nuove righe
       var newValInputs   = document.querySelectorAll('.edit-new-val');
       var newThickInputs = document.querySelectorAll('.edit-new-thick');
       var newTempInputs  = document.querySelectorAll('.edit-new-temp');
       var newHumInputs   = document.querySelectorAll('.edit-new-hum');
 
-      var newVals = [];
-      var newConds = [];
-      var tmValue = isCommunity || isDefault
+      var tmValue = (isCommunity || isDefault)
         ? existingTM
         : (document.getElementById('edit-new-tm')?.value || '');
 
+      var newVals = [], newConds = [];
       for(var i = 0; i < newValInputs.length; i++) {
         var val   = parseFloat(newValInputs[i].value);
         var thick = parseFloat(newThickInputs[i].value);
         var temp  = parseFloat(newTempInputs[i].value);
         var hum   = parseFloat(newHumInputs[i].value);
         if(isNaN(val) || isNaN(thick) || thick <= 0 || isNaN(temp) || isNaN(hum)) {
-          alert('Please complete all fields in row ' + (i+1) + ' (all values required, thickness > 0)');
+          alert('Please complete all fields in row ' + (i+1));
           return false;
         }
         newVals.push({ value: val, thickness: thick });
         newConds.push({ temperature: temp, humidity: hum });
       }
 
-      // 3. Merge
       if(newVals.length > 0) {
         if(currentMode === 'wvtr') {
           mat.wvtrValues = (mat.wvtrValues || []).concat(newVals);
@@ -7884,7 +7902,7 @@ function showEditMatModal(matId) {
 
       DB.updateMat(mat.id, mat);
 
-      // 4. Se community → aggiorna Firebase immediatamente
+      // Firebase immediato per community
       if(isCommunity && newVals.length > 0 && window.communityDB) {
         window.saveToCommunity(mat).then(function(result) {
           if(result.success) {
@@ -8341,7 +8359,9 @@ Modal.open(
   '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mf-name" value="'+(mat?mat.name:'')+'"'+RO+'></div>'+
   '<div class="form-group"><label>Material Family</label><select class="form-input" id="mf-family"'+RO+'>'+familyOpts+'</select></div>'+
   '<div class="form-group"><label>Company Name</label><input type="text" class="form-input" id="mf-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>'+
-  '<div class="form-group"><label>TDS Link (optional)</label><input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."'+RO+'></div>'+
+  '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(enables Contact Supplier button)</span></label>'+
+'<input type="email" class="form-input" id="mf-email" value="'+(mat && mat.supplierEmail ? mat.supplierEmail : '')+'" placeholder="supplier@company.com"></div>'+
+    '<div class="form-group"><label>TDS Link (optional)</label><input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."'+RO+'></div>'+
   metallizedHTML+
   hygroHTML+
   testMethodBlock+
@@ -8424,6 +8444,7 @@ Modal.open(
 
     var matData = {
       name: name, family: finalFamily, company: company, tdsLink: tdsLink,
+        supplierEmail: (document.getElementById('mf-email') ? document.getElementById('mf-email').value.trim() : ''),
       isMetallized: isMetallized,
       hygroscopicBetaWVTR: currentMode === 'wvtr' ? betaVal : (mat ? mat.hygroscopicBetaWVTR : 0),
       hygroscopicRefRHWVTR: currentMode === 'wvtr' ? refRHVal : (mat ? mat.hygroscopicRefRHWVTR : 50),
