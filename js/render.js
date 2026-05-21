@@ -425,8 +425,23 @@ function renderLaminates() {
 // CALC HANDLERS
 // ====================================================================
 function updateSaveBtn() {
-    var btn = document.getElementById('save-btn');
-    if(btn) btn.disabled = State.laminateName.trim() === '';
+    var name = State.laminateName.trim();
+    var btnG = document.getElementById('save-btn-general');
+    var btnC = document.getElementById('save-btn-company');
+    if (btnG) btnG.disabled = name === '';
+    if (btnC) {
+        if (!CompanyState.isActive()) {
+            btnC.disabled = true;
+            btnC.style.opacity = '0.4';
+            btnC.style.cursor = 'not-allowed';
+            btnC.title = 'Join a company first';
+        } else {
+            btnC.disabled = name === '';
+            btnC.style.opacity = name === '' ? '0.4' : '1';
+            btnC.style.cursor = name === '' ? 'not-allowed' : 'pointer';
+            btnC.title = 'Save to ' + CompanyState.companyName;
+        }
+    }
 }
 
 function onCondSelect() {
