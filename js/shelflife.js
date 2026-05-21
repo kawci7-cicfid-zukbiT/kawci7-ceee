@@ -1566,10 +1566,10 @@ function renderShelfLife() {
           <button id="sl-src-btn-calc" class="btn btn-sm" onclick="SL.setBarrierSource('calc')" 
             style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
           <button id="sl-src-btn-db" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('db')" 
-            style="font-size:0.75rem">Laminate DB</button>
+            style="font-size:0.75rem">From Laminates DB</button>
           <button id="sl-src-btn-company" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('company')" 
             style="font-size:0.75rem;${typeof CompanyState !== 'undefined' && CompanyState.isActive?.() ? '' : 'opacity:0.5;cursor:not-allowed'}" 
-            ${typeof CompanyState !== 'undefined' && CompanyState.isActive?.() ? '' : 'disabled'}>Company DB</button>
+            ${typeof CompanyState !== 'undefined' && CompanyState.isActive?.() ? '' : 'disabled'}>From Laminates Company DB</button>
         </div>
 
         <!-- Panel: From Calculator -->
