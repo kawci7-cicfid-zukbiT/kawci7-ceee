@@ -972,8 +972,8 @@ const SL = {
     State.calcResult   = { total: lam.total, layers: [], error: null };
     State.laminateName = lam.name;
     renderContent();
-  },   ← OK con virgola
-};     ← chiude SL, OK
+  },  
+};    
 // ====================================================================
 // 📋 renderShelfLife() + renderShelfLifeMethodology()
 // Aggiungere in fondo a shelflife.js
