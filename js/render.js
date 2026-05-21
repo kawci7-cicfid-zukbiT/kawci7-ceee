@@ -178,6 +178,16 @@ function renderCalc() {
         }).length;
         tmOpts += '<option value="'+escaped+'"'+sel+'>'+tmList[t]+' ('+count+')</option>';
     }
+    var matSourceFilter =
+    '<div class="form-group" style="margin-top:0.5rem">' +
+    '<label>Materials Source</label>' +
+    '<select class="form-input" id="filter-matsource" onchange="onMatSourceChange(this.value)">' +
+    '<option value="general"' + (State.matSource !== 'company' ? ' selected' : '') + '>General Database</option>' +
+    (CompanyState.isActive() ? '<option value="company"' + (State.matSource === 'company' ? ' selected' : '') + '>Company DB (' + CompanyState.companyName + ')</option>' : '') +
+    '</select>' +
+    (CompanyState.isActive() ? '' : '<span style="font-size:0.65rem;color:var(--text-light)"><a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join a company</a> to access private materials</span>') +
+    '</div>';
+    
     var testMethodFilter =
         '<div class="form-group" style="margin-top:0.5rem">' +
             '<label style="display:flex;align-items:center;gap:0.3rem">' +
@@ -227,7 +237,10 @@ function renderCalc() {
         var res = State.calcResult && State.calcResult.layers ? State.calcResult.layers[i] : null;
 
         // Filter materials for this layer
-        var filteredMats = DB.materials.filter(function(mat){ return passesTestMethodFilter(mat); });
+        var filteredMats = DB.materials.filter(function(mat){
+    if (State.matSource === 'company') return mat.isCompany && passesTestMethodFilter(mat);
+    return !mat.isCompany && passesTestMethodFilter(mat);
+});
         filteredMats.sort(function(a, b){ return a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}); });
 
         // Compatibility filter with other layers
@@ -331,7 +344,7 @@ function renderCalc() {
     }
 
     return '<div class="grid grid-2">' +
-        '<div><div class="card">'+cardHeader+testMethodFilter+layersHTML+
+        '<div>'<div class="card">'+cardHeader+matSourceFilter+testMethodFilter+layersHTML+
         '<button class="btn btn-outline btn-full" onclick="addLayer()"'+(State.layers.length>0 && State.layers[State.layers.length-1].mid===null ? ' disabled' : '')+'>+ Add Layer</button></div>'+
         '<div class="card"><h2>Test Conditions</h2>'+condHTML+
         (selectedCond ? '<p style="font-size:.75rem;color:var(--text-light);margin-top:.5rem">Selected: <strong>'+selectedCond+'</strong></p>' : '')+
