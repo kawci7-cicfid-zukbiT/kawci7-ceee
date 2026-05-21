@@ -998,6 +998,16 @@ function renderShelfLife() {
             Enter ${modeLabel} manually
           </label>
         </div>
+        '<div style="margin-bottom:0.6rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem;">' +
+    '<label style="font-size:0.75rem;font-weight:600;margin-bottom:0.3rem;display:block">Load from saved laminate:</label>' +
+    '<select class="form-input" id="sl-laminate-pick" onchange="SL.onLaminateSourceChange(this.value)" style="font-size:0.78rem">' +
+    '<option value="">Select a laminate...</option>' +
+    '<optgroup label="General Laminates">' +
+    DB.laminates.map(function(l){ return '<option value="gen_'+l.id+'">'+l.name+' ('+l.total.toFixed(5)+')</option>'; }).join('') +
+    '</optgroup>' +
+    (CompanyState.isActive() ? '<optgroup label="Company Laminates"><option value="__load_co__">Load company laminates...</option></optgroup>' : '') +
+    '</select>' +
+'</div>' +
         <div id="sl-manual-block" style="display:none;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-top:0.4rem;">
           <div class="grid grid-2" style="gap:0.5rem;">
             <div class="form-group" style="margin:0"><label>${modeLabel} Value (${unit})</label><input type="number" id="sl-rate-manual" value="0.5" step="any" class="form-input"></div>
