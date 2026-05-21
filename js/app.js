@@ -150,7 +150,6 @@ function render() {
   requestAnimationFrame(function() {
     if (State.tab === 'home') initHomeAnimations();
     postNavRender();
-    refreshAds();
   });
 }
 
