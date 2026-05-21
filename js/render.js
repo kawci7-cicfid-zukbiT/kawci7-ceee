@@ -343,7 +343,7 @@ function renderCalc() {
     }
 
     return '<div class="grid grid-2">' +
-        '<div>'<div class="card">'+cardHeader+matSourceFilter+testMethodFilter+layersHTML+
+       '<div><div class="card">'+cardHeader+matSourceFilter+testMethodFilter+layersHTML+
         '<button class="btn btn-outline btn-full" onclick="addLayer()"'+(State.layers.length>0 && State.layers[State.layers.length-1].mid===null ? ' disabled' : '')+'>+ Add Layer</button></div>'+
         '<div class="card"><h2>Test Conditions</h2>'+condHTML+
         (selectedCond ? '<p style="font-size:.75rem;color:var(--text-light);margin-top:.5rem">Selected: <strong>'+selectedCond+'</strong></p>' : '')+
