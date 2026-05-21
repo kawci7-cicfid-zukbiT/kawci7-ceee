@@ -134,8 +134,9 @@ function renderContent() {
       case 'compare':     c.innerHTML = renderCompare();     break;
       case 'shelflife':   c.innerHTML = renderShelfLife();   break;
       case 'materials':   c.innerHTML = renderMaterials();   break;
-      case 'laminates':   c.innerHTML = renderLaminates();   break;
-        case 'company':     showCompanyDB();                    break;
+      case 'laminates':    c.innerHTML = renderLaminates(); break;
+case 'mat-company':  c.innerHTML = renderCompanyMaterialsPage(); setTimeout(initCompanyMaterialsPage, 100); break;
+case 'lam-company':  c.innerHTML = renderCompanyLaminatesPage(); setTimeout(initCompanyLaminatesPage, 100); break;
       default:            c.innerHTML = renderHome();
     }
   } catch (e) {
@@ -837,4 +838,16 @@ async function initApp() {
     DB.laminates = DEFAULT_LAMINATES.slice();
     render();
   }
+}
+function onMatSourceChange(val) {
+    State.matSource = val || 'general';
+    if (val === 'company') {
+        loadCompanyMaterials().then(function(mats) {
+            DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
+            mats.forEach(function(m){ DB.materials.push(m); });
+            renderContent();
+        });
+    } else {
+        renderContent();
+    }
 }
