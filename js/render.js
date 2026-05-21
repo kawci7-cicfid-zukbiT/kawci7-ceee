@@ -238,9 +238,16 @@ function renderCalc() {
         '<div><div class="card"><h2>Result</h2>'+(resultHTML||'<p style="color:var(--text-light);font-size:.8rem;text-align:center;padding:1.5rem">Configure layers and calculate</p>')+'</div>'+
         (hasResult ? '<div class="card" id="hygro-card" style="display:none"><h2>Time-Dependent barrier integrity</h2><div class="chart-container" style="min-height:280px"><canvas id="hygroTimeChart"></canvas></div></div>' : '')+
         (hasResult ? '<div class="card"><h2>'+getLabel()+' vs Temperature</h2><div class="chart-container"><canvas id="lamCurveChart"></canvas></div><div id="lamCurveLegend" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;justify-content:center"></div></div>'+
-        '<div class="card"><h2>Save Laminate</h2><div style="display:flex;gap:.4rem;align-items:flex-end">'+
-        '<div class="form-group" style="flex:1;margin:0"><label>Name</label><input type="text" class="form-input" id="lam-name" value="'+State.laminateName+'" placeholder="Name..." oninput="State.laminateName=this.value;updateSaveBtn()"></div>'+
-        '<button class="btn btn-primary" id="save-btn" onclick="doSaveLam()">Save</button></div><div id="save-feedback"></div></div>' : '')+
+        '<div class="card"><h2>Save Laminate</h2>' +
+        '<div class="form-group"><label>Name</label><input type="text" class="form-input" id="lam-name" value="'+State.laminateName+'" placeholder="e.g. Coffee pouch structure..." oninput="State.laminateName=this.value;updateSaveBtn()"></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">' +
+        '<button class="btn btn-primary" id="save-btn-general" onclick="saveLaminateWithChoice()" title="Save to your personal laminates library">Save to General DB</button>' +
+        '<button class="btn btn-outline" id="save-btn-company" onclick="saveLaminateToCompany()" ' +
+        (CompanyState.isActive() ? 'title="Save to '+CompanyState.companyName+' company database"' : 'disabled style="opacity:0.4;cursor:not-allowed" title="Join a company first"') +
+        '>Save to Company DB' +
+        (CompanyState.isActive() ? '' : ' <span style="font-size:0.65rem">(join first)</span>') +
+        '</button></div>' +
+        '<div id="save-feedback"></div></div>' : '')+
         '</div></div>' +
         renderCalcMethodology();
     return html;
