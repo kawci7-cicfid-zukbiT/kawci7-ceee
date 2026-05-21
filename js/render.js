@@ -242,11 +242,7 @@ function renderCalc() {
         '<div class="form-group"><label>Name</label><input type="text" class="form-input" id="lam-name" value="'+State.laminateName+'" placeholder="e.g. Coffee pouch structure..." oninput="State.laminateName=this.value;updateSaveBtn()"></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">' +
         '<button class="btn btn-primary" id="save-btn-general" onclick="saveLaminateWithChoice()" title="Save to your personal laminates library">Save to General DB</button>' +
-        '<button class="btn btn-outline" id="save-btn-company" onclick="saveLaminateToCompany()" ' +
-        (CompanyState.isActive() ? 'title="Save to '+CompanyState.companyName+' company database"' : 'disabled style="opacity:0.4;cursor:not-allowed" title="Join a company first"') +
-        '>Save to Company DB' +
-        (CompanyState.isActive() ? '' : ' <span style="font-size:0.65rem">(join first)</span>') +
-        '</button></div>' +
+        '<button class="btn btn-outline" id="save-btn-company" onclick="saveLaminateToCompany()" style="opacity:' + (CompanyState.isActive()?'1':'0.4') + ';cursor:' + (CompanyState.isActive()?'pointer':'not-allowed') + '" ' + (!CompanyState.isActive()?'disabled':'') + ' title="' + (CompanyState.isActive()?'Save to '+CompanyState.companyName:'Join a company first') + '">Save to Company DB</button></div>' +
         '<div id="save-feedback"></div></div>' : '')+
         '</div></div>' +
         renderCalcMethodology();
