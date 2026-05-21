@@ -1,8 +1,7 @@
 // ====================================================================
 // COMPANY.JS - Private Company Database
-// Due tab separati: Materials Company + Laminates Company
-// Stesso codice aziendale per entrambi
 // ====================================================================
+
 // ====================================================================
 // STATE COMPANY
 // ====================================================================
@@ -79,6 +78,7 @@ async function saveCompanyMaterial(mat) {
             wvtrValues: mat.wvtrValues || [], otrValues: mat.otrValues || [],
             validConditions: mat.validConditions || [],
             company: mat.company || '', tdsLink: mat.tdsLink || '',
+            supplierEmail: mat.supplierEmail || '',
             sharedBy: window.getOrCreateUserId(), updatedAt: new Date().toISOString()
         };
         if (mat._companyDocId) {
@@ -199,31 +199,23 @@ async function joinCompany(inputCode) {
 }
 
 // ====================================================================
-// MODAL PRINCIPALE (join/create/settings)
+// MODAL PRINCIPALE
 // ====================================================================
 function showCompanyModal() {
     var isActive = CompanyState.isActive();
     var daysLeft = CompanyState.daysLeft();
     var body = '';
 
-    // DISCLAIMER
     body += '<div style="background:#fef3c7;border:2px solid #fcd34d;border-radius:10px;padding:0.85rem 1rem;margin-bottom:1.25rem">' +
-        '<div style="display:flex;gap:0.5rem;align-items:flex-start">' +
-        '<span style="font-size:1.1rem;flex-shrink:0">⚠️</span>' +
+        '<div style="display:flex;gap:0.5rem;align-items:flex-start"><span style="font-size:1.1rem;flex-shrink:0">⚠️</span>' +
         '<div><div style="font-size:0.82rem;font-weight:700;color:#92400e;margin-bottom:0.3rem">Important Disclaimer</div>' +
-        '<div style="font-size:0.75rem;color:#78350f;line-height:1.55">' +
-        '<strong>Do not enter sensitive or confidential company data</strong> in this shared space. ' +
-        'This database is intended exclusively for <strong>packaging material technical parameters</strong> ' +
-        '(WVTR, OTR, thickness, test conditions). ' +
-        'Do not share: trade secrets, proprietary formulations, customer data, pricing, contracts, or any personally identifiable information. ' +
-        'All data is stored on shared servers and accessible to all members of your company group.' +
-        '</div></div></div></div>';
+        '<div style="font-size:0.75rem;color:#78350f;line-height:1.55">Do not enter sensitive or confidential company data. This database is for packaging material technical parameters only (WVTR, OTR, thickness, test conditions). Do not share trade secrets, customer data, pricing, or personal information.</div>' +
+        '</div></div></div>';
 
     if (isActive) {
         var expiryLabel = daysLeft === null ? '<span style="color:#16a34a;font-weight:600">Never expires</span>'
             : daysLeft > 0 ? '<span style="color:#d97706;font-weight:600">' + daysLeft + ' days left</span>'
             : '<span style="color:#dc2626;font-weight:600">Expired</span>';
-
         body += '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1rem;margin-bottom:1rem">' +
             '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">' +
             '<strong style="font-size:0.92rem;color:#0f172a">' + CompanyState.companyName + '</strong>' +
@@ -240,22 +232,15 @@ function showCompanyModal() {
             '<div style="border:1.5px solid var(--border);border-radius:10px;padding:1rem">' +
             '<div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem">Join a Company</div>' +
             '<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.75rem">Enter the access code from your admin.</div>' +
-            '<input type="text" id="co-join-code" class="form-input" placeholder="XXXX-XXXX-XXXX-XXXX" ' +
-            'style="font-family:monospace;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem" ' +
-            'oninput="this.value=this.value.toUpperCase()">' +
-            '<button class="btn btn-primary btn-full" onclick="joinCompany(document.getElementById(\'co-join-code\').value)" style="font-size:0.82rem">Join</button>' +
-            '</div>' +
+            '<input type="text" id="co-join-code" class="form-input" placeholder="XXXX-XXXX-XXXX-XXXX" style="font-family:monospace;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem" oninput="this.value=this.value.toUpperCase()">' +
+            '<button class="btn btn-primary btn-full" onclick="joinCompany(document.getElementById(\'co-join-code\').value)" style="font-size:0.82rem">Join</button></div>' +
             '<div style="border:1.5px solid var(--border);border-radius:10px;padding:1rem">' +
             '<div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem">Create Company DB</div>' +
             '<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.75rem">Create a private space for your team.</div>' +
             '<input type="text" id="co-create-name" class="form-input" placeholder="Company name" style="margin-bottom:0.5rem">' +
-            '<select id="co-create-duration" class="form-input" style="margin-bottom:0.75rem">' +
-            '<option value="30">30 days</option><option value="180">180 days</option><option value="0">Forever</option>' +
-            '</select>' +
-            '<button class="btn btn-success btn-full" onclick="createCompanyFromModal()" style="font-size:0.82rem">Create</button>' +
-            '</div></div>';
+            '<select id="co-create-duration" class="form-input" style="margin-bottom:0.75rem"><option value="30">30 days</option><option value="180">180 days</option><option value="0">Forever</option></select>' +
+            '<button class="btn btn-success btn-full" onclick="createCompanyFromModal()" style="font-size:0.82rem">Create</button></div></div>';
     }
-
     Modal.open('Company Database', body, function() { return true; });
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
@@ -270,12 +255,8 @@ function createCompanyFromModal() {
 }
 
 function showCompanyCreatedModal(name, code, expiresAt) {
-    var expiryStr = expiresAt
-        ? 'Expires: ' + new Date(expiresAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
-        : 'Never expires';
-    var body =
-        '<div style="text-align:center;margin-bottom:1.25rem">' +
-        '<div style="font-size:2rem;margin-bottom:0.5rem">🎉</div>' +
+    var expiryStr = expiresAt ? 'Expires: ' + new Date(expiresAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : 'Never expires';
+    var body = '<div style="text-align:center;margin-bottom:1.25rem"><div style="font-size:2rem;margin-bottom:0.5rem">🎉</div>' +
         '<div style="font-size:1rem;font-weight:700;color:#0f172a">Company created!</div>' +
         '<div style="font-size:0.78rem;color:#64748b;margin-top:0.25rem">' + name + '</div></div>' +
         '<div style="background:#f8fafc;border:2px dashed #cbd5e1;border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1rem">' +
@@ -283,20 +264,15 @@ function showCompanyCreatedModal(name, code, expiresAt) {
         '<div style="font-family:monospace;font-size:1.5rem;font-weight:800;letter-spacing:0.12em;color:#0f172a;margin-bottom:0.5rem">' + code + '</div>' +
         '<div style="font-size:0.72rem;color:#94a3b8">' + expiryStr + '</div>' +
         '<button onclick="copyCompanyCode(\'' + code + '\')" class="btn btn-outline" style="margin-top:0.75rem;font-size:0.78rem">Copy Code</button></div>' +
-        '<div style="background:#fef3c7;border-radius:8px;padding:0.75rem;font-size:0.75rem;color:#78350f;line-height:1.5;margin-bottom:1rem">' +
-        '<strong>Share this code with your colleagues.</strong> They will use it to join this private database. ' +
-        'Store it safely — you can regenerate it from Company settings.</div>' +
-        '<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:0.75rem;font-size:0.73rem;color:#7f1d1d;line-height:1.5">' +
-        'Only share technical packaging data (WVTR, OTR, laminates). Never enter confidential business information.</div>';
+        '<div style="background:#fef3c7;border-radius:8px;padding:0.75rem;font-size:0.75rem;color:#78350f;line-height:1.5">Share this code with your colleagues. Store it safely — you can regenerate it from settings.</div>';
     Modal.open('Company Created', body, function() { return true; });
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
 }
 
 function copyCompanyCode(code) {
-    navigator.clipboard.writeText(code).then(function() {
-        showCompanyToast('Code copied to clipboard!', '#15803d');
-    }).catch(function() { prompt('Copy this code:', code); });
+    navigator.clipboard.writeText(code).then(function() { showCompanyToast('Code copied!', '#15803d'); })
+        .catch(function() { prompt('Copy this code:', code); });
 }
 
 async function showCompanyCodeManager() {
@@ -307,8 +283,7 @@ async function showCompanyCodeManager() {
         var data = snap.data();
         var code = data.code || '—';
         var expStr = data.expiresAt ? new Date(data.expiresAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : 'Never';
-        var body =
-            '<div style="margin-bottom:1rem">' +
+        var body = '<div style="margin-bottom:1rem">' +
             '<div style="font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:0.4rem">Current Code</div>' +
             '<div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:0.75rem">' +
             '<span style="font-family:monospace;font-size:1.1rem;font-weight:700;letter-spacing:0.1em;flex:1">' + code + '</span>' +
@@ -316,10 +291,8 @@ async function showCompanyCodeManager() {
             '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.3rem">Expires: ' + expStr + '</div></div>' +
             '<div style="border-top:1px solid var(--border);padding-top:1rem">' +
             '<div style="font-size:0.82rem;font-weight:600;margin-bottom:0.5rem">Generate New Code</div>' +
-            '<select id="co-regen-duration" class="form-input" style="margin-bottom:0.5rem">' +
-            '<option value="30">30 days</option><option value="180">180 days</option><option value="0">Forever</option></select>' +
-            '<div style="background:#fee2e2;border-radius:6px;padding:0.5rem 0.7rem;font-size:0.72rem;color:#7f1d1d;margin-bottom:0.75rem">' +
-            'Generating a new code will invalidate the old one immediately.</div>' +
+            '<select id="co-regen-duration" class="form-input" style="margin-bottom:0.5rem"><option value="30">30 days</option><option value="180">180 days</option><option value="0">Forever</option></select>' +
+            '<div style="background:#fee2e2;border-radius:6px;padding:0.5rem 0.7rem;font-size:0.72rem;color:#7f1d1d;margin-bottom:0.75rem">Generating a new code will invalidate the old one immediately.</div>' +
             '<button class="btn btn-warning btn-full" onclick="regenerateCompanyCode()" style="font-size:0.82rem">Generate New Code</button></div>';
         Modal.open('Manage Access Code', body, function() { return true; });
         var footer = document.getElementById('modal-footer');
@@ -341,206 +314,400 @@ async function regenerateCompanyCode() {
 }
 
 // ====================================================================
-// PAGE: MATERIALS COMPANY
+// PAGE: MATERIALS COMPANY — stessa UI di Materials DB
 // ====================================================================
 var _companyMats = [];
+var _coMatSearch = '';
+var _coMatFilter = { company:'', perf:'', method:'', family:'', type:'' };
 
 function renderCompanyMaterialsPage() {
-    if (!CompanyState.isActive()) {
-        return _renderCompanyGate();
-    }
-    var daysLeft = CompanyState.daysLeft();
-    var expiryBadge = _expiryBadge(daysLeft);
-    return '<div style="max-width:1100px;margin:0 auto">' +
-        _companyHeader('Materials Company', expiryBadge) +
-        _companyDisclaimer() +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">' +
-        '<span id="co-mat-count" style="font-size:0.82rem;color:var(--text-light)">Loading...</span>' +
-        '<div style="display:flex;gap:0.5rem">' +
-        '<button class="btn btn-sm btn-outline" onclick="showShareMaterialToCompany()" style="font-size:0.78rem">+ Add Material</button>' +
+    if (!CompanyState.isActive()) return _renderCompanyGate();
+    var currentLabel = State.mode === 'wvtr' ? 'WVTR' : 'OTR';
+    var currentUnit  = State.mode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
+    return '<div style="padding:0.25rem 0">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">' +
+        '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#64748b">Private · ' + CompanyState.companyName + '</div>' +
+        '<div style="font-size:1rem;font-weight:700;color:#0f172a">Materials Company <span class="badge badge-blue" id="co-mat-badge">...</span></div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<button class="btn btn-sm btn-primary" onclick="showAddCompanyMaterial()">+ Add Material</button>' +
+        '<button class="btn btn-sm btn-outline" onclick="showCompanyModal()">Settings</button>' +
         '</div></div>' +
-        '<div id="co-mat-list" style="display:flex;flex-direction:column;gap:0.5rem">' +
-        '<div class="empty-state"><p>Loading company materials...</p></div></div></div>';
+        _companyDisclaimer() +
+        '<div class="card" style="margin-bottom:0.75rem">' +
+        '<div style="font-size:0.75rem;font-weight:600;color:var(--text-light);margin-bottom:0.6rem">Filters</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:0.6rem">' +
+        '<div class="form-group" style="margin:0"><label>Supplier</label><select class="form-input" id="co-mf-company" onchange="coMatApplyFilters()" style="font-size:0.78rem"><option value="">All suppliers</option></select></div>' +
+        '<div class="form-group" style="margin:0"><label>' + currentLabel + ' level</label><select class="form-input" id="co-mf-perf" onchange="coMatApplyFilters()" style="font-size:0.78rem"><option value="">Any</option><option value="ultra">&lt;0.1</option><option value="high">&lt;1</option><option value="med">&lt;10</option><option value="low">&gt;10</option></select></div>' +
+        '<div class="form-group" style="margin:0"><label>Test method</label><select class="form-input" id="co-mf-method" onchange="coMatApplyFilters()" style="font-size:0.78rem"><option value="">All methods</option></select></div>' +
+        '<div class="form-group" style="margin:0"><label>Family</label><select class="form-input" id="co-mf-family" onchange="coMatApplyFilters()" style="font-size:0.78rem"><option value="">All families</option></select></div>' +
+        '</div></div>' +
+        '<div style="position:relative;margin-bottom:0.75rem">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-light);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+        '<input type="text" class="form-input" id="co-mat-search" style="padding-left:32px;font-size:0.82rem" placeholder="Search by name, supplier, value..." value="" oninput="coMatApplyFilters()"></div>' +
+        '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.5rem;display:flex;justify-content:space-between">' +
+        '<span id="co-mat-result-label">Loading...</span><span>' + currentLabel + ' mode · ' + currentUnit + '</span></div>' +
+        '<div id="co-mat-list" style="display:flex;flex-direction:column;gap:6px"><div class="empty-state"><p>Loading...</p></div></div>' +
+        '</div>';
 }
 
 async function initCompanyMaterialsPage() {
     _companyMats = await loadCompanyMaterials();
-    _renderCompanyMatList();
-    // Sincronizza nel DB locale per uso nel Calculator
-    _syncCompanyMatsToDB();
+    // Popola filtri dinamici
+    var companies = {}, methods = {}, families = {};
+    _companyMats.forEach(function(m) {
+        if (m.company && m.company.trim()) companies[m.company.trim()] = true;
+        var tm = State.mode === 'wvtr' ? (m.testMethodWVTR||'') : (m.testMethodOTR||'');
+        if (tm) methods[tm.trim()] = true;
+        if (m.family) families[m.family] = true;
+    });
+    var compSel = document.getElementById('co-mf-company');
+    var methSel = document.getElementById('co-mf-method');
+    var famSel  = document.getElementById('co-mf-family');
+    if (compSel) Object.keys(companies).sort().forEach(function(c){ compSel.innerHTML += '<option value="'+c+'">'+c+'</option>'; });
+    if (methSel) Object.keys(methods).sort().forEach(function(m){ methSel.innerHTML += '<option value="'+m+'">'+m+'</option>'; });
+    if (famSel)  Object.keys(families).sort().forEach(function(f){ famSel.innerHTML += '<option value="'+f+'">'+f+'</option>'; });
+    var badge = document.getElementById('co-mat-badge');
+    if (badge) badge.textContent = _companyMats.length;
+    coMatApplyFilters();
+    // Sync in DB locale per Calculator
+    DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
+    _companyMats.forEach(function(m){ DB.materials.push(Object.assign({}, m)); });
 }
 
-function _syncCompanyMatsToDB() {
-    // Rimuove i vecchi materiali company dal DB locale
-    DB.materials = DB.materials.filter(function(m) { return !m.isCompany; });
-    // Aggiunge quelli nuovi
-    _companyMats.forEach(function(m) {
-        DB.materials.push(Object.assign({}, m));
+function coMatApplyFilters() {
+    var q       = (document.getElementById('co-mat-search')?.value || '').trim().toLowerCase();
+    var fc      = document.getElementById('co-mf-company')?.value || '';
+    var fperf   = document.getElementById('co-mf-perf')?.value || '';
+    var fmethod = document.getElementById('co-mf-method')?.value || '';
+    var ffamily = document.getElementById('co-mf-family')?.value || '';
+
+    var filtered = _companyMats.filter(function(m) {
+        if (fc) { var hay = ((m.company||'') + ' ' + (m.name||'')).toLowerCase(); if (hay.indexOf(fc.toLowerCase()) < 0) return false; }
+        if (fperf) {
+            var val = State.mode === 'wvtr' ? (m.wvtrValues&&m.wvtrValues[0]?m.wvtrValues[0].value:null) : (m.otrValues&&m.otrValues[0]?m.otrValues[0].value:null);
+            if (val === null) return false;
+            if (fperf==='ultra' && !(val < 0.1)) return false;
+            if (fperf==='high'  && !(val < 1))   return false;
+            if (fperf==='med'   && !(val < 10))  return false;
+            if (fperf==='low'   && !(val >= 10)) return false;
+        }
+        if (fmethod) { var tm = State.mode==='wvtr'?(m.testMethodWVTR||''):(m.testMethodOTR||''); if (tm.trim() !== fmethod) return false; }
+        if (ffamily && m.family !== ffamily) return false;
+        if (q) {
+            var hay2 = (m.name+' '+(m.family||'')+' '+(m.company||'')).toLowerCase();
+            if (hay2.indexOf(q) < 0) return false;
+        }
+        return true;
+    });
+    filtered.sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+    var listEl  = document.getElementById('co-mat-list');
+    var labelEl = document.getElementById('co-mat-result-label');
+    if (labelEl) labelEl.innerHTML = 'Showing <strong>' + filtered.length + '</strong> of ' + _companyMats.length + ' materials';
+    if (!listEl) return;
+    if (filtered.length === 0) { listEl.innerHTML = '<div class="empty-state"><p>No materials match these filters</p></div>'; return; }
+    listEl.innerHTML = filtered.map(function(m){ return _coMatCardHTML(m, q); }).join('');
+}
+
+function _coMatCardHTML(m, q) {
+    var currentUnit = State.mode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
+    var vals = Engine.getValues(m);
+    var arrOk = Engine.validateArrhenius(m).valid;
+    var idStr = String(m.id);
+
+    function hl(str) {
+        if (!q || !str) return str || '';
+        var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')','gi');
+        return String(str).replace(re,'<mark style="background:#fef08a;color:#713f12;padding:0 2px;border-radius:2px">$1</mark>');
+    }
+
+    var tags = '';
+    if (m.isMetallized) tags += '<span class="badge badge-yellow" style="font-size:0.65rem">Metallized</span> ';
+    for (var t=0; t<vals.length; t++) {
+        var cond = (m.validConditions && m.validConditions[t]) ? m.validConditions[t] : {temperature:'?',humidity:'?'};
+        var v = vals[t] || {value:'?',thickness:'?'};
+        tags += '<span class="mat-tag">'+Engine.getUnits().label+': <strong>'+v.value+'</strong> '+currentUnit+' · '+v.thickness+'µm · '+cond.temperature+'°C/'+cond.humidity+'%</span>';
+    }
+
+    var canEdit = CompanyState.role === 'admin' || m.sharedBy === window.getOrCreateUserId();
+    var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR||'') : (m.testMethodOTR||'');
+
+    return '<div class="material-item" onclick="this.classList.toggle(\'expanded\')">' +
+        '<div class="mat-header">' +
+        '<h3><span>' + hl(m.name) + '</span>' +
+        '<span class="badge badge-blue" style="font-size:0.65rem">Company</span>' +
+        '<span style="font-weight:400;color:var(--text-light);font-size:0.72rem">[' + (m.family||'?') + ']</span>' +
+        (arrOk ? '<span class="badge badge-green">Arrhenius</span>' : '') +
+        '</h3>' +
+        '<svg class="chevron" style="margin-left:auto;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
+        '<div class="mat-body"><div class="mat-body-content">' +
+        '<div class="mat-tags">' + tags + '</div>' +
+        '<div class="mat-info">' +
+        (currentTM ? '<div class="mat-info-item"><strong>Test standard</strong><span class="mat-testmethod">' + currentTM + '</span></div>' : '') +
+        (m.company ? '<div class="mat-info-item"><strong>Supplier</strong><span>' + hl(m.company) + '</span></div>' : '') +
+        (m.tdsLink ? '<div class="mat-info-item"><strong>TDS</strong><a href="' + m.tdsLink + '" target="_blank" onclick="event.stopPropagation()">View</a></div>' : '') +
+        '</div>' +
+        '<div class="mat-actions">' +
+        (canEdit ? '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showEditCompanyMaterial(\'' + m._companyDocId + '\')">Edit</button>' : '') +
+        (canEdit ? '<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();removeCompanyMaterial(\'' + m._companyDocId + '\')">Delete</button>' : '') +
+        '</div>' +
+        '</div></div></div>';
+}
+
+function showAddCompanyMaterial() {
+    _showCompanyMatModal(null);
+}
+
+function showEditCompanyMaterial(docId) {
+    var mat = _companyMats.find(function(m){ return m._companyDocId === docId; });
+    _showCompanyMatModal(mat);
+}
+
+function _showCompanyMatModal(mat) {
+    var currentMode  = State.mode;
+    var currentLabel = currentMode === 'wvtr' ? 'WVTR' : 'OTR';
+    var currentUnit  = currentMode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
+    var currentValues = currentMode === 'wvtr' ? (mat ? mat.wvtrValues : [{value:'',thickness:''}]) : (mat ? mat.otrValues : [{value:'',thickness:''}]);
+    var conds = mat ? (mat.validConditions || []) : [{temperature:'',humidity:''}];
+
+    var familyOpts = '<option value="">Select family...</option>';
+    for (var fam in POLYMER_FAMILIES) {
+        familyOpts += '<option value="'+fam+'"'+(mat&&mat.family===fam?' selected':'')+'>'+fam+'</option>';
+    }
+
+    var rowsHTML = '';
+    for (var r=0; r<currentValues.length; r++) {
+        var v = currentValues[r] || {value:'',thickness:''};
+        var c = conds[r] || {temperature:'',humidity:''};
+        rowsHTML += '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr">' +
+            '<div style="display:flex;gap:0.4rem">' +
+            '<div class="form-group" style="margin:0;flex:1"><label>'+currentLabel+' Value</label><input type="number" step="any" class="form-input co-mf-val" value="'+(v.value||'')+'" placeholder="0"></div>' +
+            '<div class="form-group" style="margin:0;flex:1"><label>Thickness (µm)</label><input type="number" step="any" class="form-input co-mf-thick" value="'+(v.thickness||'')+'" placeholder="0"></div>' +
+            '</div>' +
+            '<div style="display:flex;gap:0.4rem">' +
+            '<div class="form-group" style="margin:0;flex:1"><label>Temp (°C)</label><input type="number" step="any" class="form-input co-mf-temp" value="'+(c.temperature||'')+'" placeholder="23"></div>' +
+            '<div class="form-group" style="margin:0;flex:1"><label>Humidity (%)</label><input type="number" step="any" class="form-input co-mf-hum" value="'+(c.humidity||'')+'" placeholder="50"></div>' +
+            '</div></div>';
+    }
+
+    var body = '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f">Only share technical data. No confidential information.</div>' +
+        '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="co-mat-name" value="'+(mat?mat.name:'')+'"></div>' +
+        '<div class="form-group"><label>Material Family</label><select class="form-input" id="co-mat-family">'+familyOpts+'</select></div>' +
+        '<div class="form-group"><label>Company / Supplier</label><input type="text" class="form-input" id="co-mat-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont"></div>' +
+        '<div class="form-group"><label>TDS Link</label><input type="url" class="form-input" id="co-mat-tds" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."></div>' +
+        '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;font-size:0.75rem"><strong>'+currentLabel+'</strong> · '+currentUnit+'</div>' +
+        '<div id="co-mat-rows">'+rowsHTML+'</div>' +
+        '<button class="btn btn-outline btn-full" style="margin-top:0.4rem" onclick="coAddMatRow()">+ Add Condition</button>';
+
+    Modal.open(mat ? 'Edit Company Material' : 'Add Company Material', body, function() {
+        var name = document.getElementById('co-mat-name')?.value.trim();
+        if (!name) { alert('Enter material name'); return false; }
+        var family  = document.getElementById('co-mat-family')?.value;
+        var company = document.getElementById('co-mat-company')?.value.trim();
+        var tdsLink = document.getElementById('co-mat-tds')?.value.trim();
+
+        var allVal   = document.querySelectorAll('.co-mf-val');
+        var allThick = document.querySelectorAll('.co-mf-thick');
+        var allTemp  = document.querySelectorAll('.co-mf-temp');
+        var allHum   = document.querySelectorAll('.co-mf-hum');
+        var valuesArr = [], condsArr = [];
+        for (var i=0; i<allVal.length; i++) {
+            var val  = parseFloat(allVal[i].value);
+            var thick = parseFloat(allThick[i].value);
+            var temp  = parseFloat(allTemp[i].value);
+            var hum   = parseFloat(allHum[i].value);
+            if (isNaN(val)||val<0){ alert('Invalid value in row '+(i+1)); return false; }
+            if (isNaN(thick)||thick<=0){ alert('Thickness must be > 0 in row '+(i+1)); return false; }
+            if (isNaN(temp)){ alert('Temperature required in row '+(i+1)); return false; }
+            if (isNaN(hum)){ alert('Humidity required in row '+(i+1)); return false; }
+            valuesArr.push({value:val,thickness:thick});
+            condsArr.push({temperature:temp,humidity:hum});
+        }
+
+        var matData = {
+            name: name, family: family || getFamily(name), company: company, tdsLink: tdsLink,
+            isMetallized: false,
+            wvtrValues: currentMode==='wvtr' ? valuesArr : (mat&&mat.wvtrValues?mat.wvtrValues:[]),
+            otrValues:  currentMode==='otr'  ? valuesArr : (mat&&mat.otrValues?mat.otrValues:[]),
+            validConditions: condsArr,
+            testMethodWVTR: mat?mat.testMethodWVTR||'':'',
+            testMethodOTR:  mat?mat.testMethodOTR||'':'',
+            hygroscopicBetaWVTR:0, hygroscopicRefRHWVTR:50,
+            hygroscopicBetaOTR:0, hygroscopicRefRHOTR:50,
+            reliabilityVotes: mat?mat.reliabilityVotes||{up:0,down:0}:{up:0,down:0}
+        };
+        if (mat) matData._companyDocId = mat._companyDocId;
+
+        saveCompanyMaterial(matData).then(function(res) {
+            if (res.success) {
+                showCompanyToast('<strong>' + name + '</strong> ' + (mat ? 'updated' : 'added') + '!', '#15803d');
+                initCompanyMaterialsPage();
+            } else { alert('Error: ' + res.error); }
+        });
+        return true;
     });
 }
 
-function _renderCompanyMatList() {
-    var listEl  = document.getElementById('co-mat-list');
-    var countEl = document.getElementById('co-mat-count');
-    if (!listEl) return;
-    if (countEl) countEl.innerHTML = '<strong>' + _companyMats.length + '</strong> materials in company DB';
-    if (_companyMats.length === 0) {
-        listEl.innerHTML = '<div class="empty-state"><p>No materials shared yet.<br>' +
-            '<button class="btn btn-sm btn-primary" onclick="showShareMaterialToCompany()">+ Add first material</button></p></div>';
-        return;
-    }
-    var unit = State.mode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
-    listEl.innerHTML = _companyMats.map(function(m) {
-        var vals = State.mode === 'wvtr' ? (m.wvtrValues||[]) : (m.otrValues||[]);
-        var firstVal = vals[0] ? vals[0].value + ' ' + unit + ' @ ' + vals[0].thickness + 'µm' : '—';
-        var cond = (m.validConditions && m.validConditions[0]) ? m.validConditions[0].temperature + '°C/' + m.validConditions[0].humidity + '%' : '';
-        var canDelete = CompanyState.role === 'admin' || m.sharedBy === window.getOrCreateUserId();
-        return '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.85rem 1rem;display:flex;align-items:center;gap:0.75rem">' +
-            '<div style="width:8px;height:8px;border-radius:50%;background:#2563eb;flex-shrink:0"></div>' +
-            '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:0.85rem;font-weight:600;color:#0f172a">' + m.name + '</div>' +
-            '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.15rem">' +
-                (m.family||'') + (m.company ? ' · ' + m.company : '') + ' · ' + firstVal + (cond ? ' · ' + cond : '') +
-            '</div></div>' +
-            '<span class="badge badge-blue" style="font-size:0.65rem">Company</span>' +
-            (canDelete ? '<button class="btn btn-sm btn-danger" onclick="removeCompanyMaterial(\'' + m._companyDocId + '\')" style="font-size:0.72rem">Delete</button>' : '') +
-            '</div>';
-    }).join('');
+function coAddMatRow() {
+    var currentLabel = State.mode === 'wvtr' ? 'WVTR' : 'OTR';
+    document.getElementById('co-mat-rows').insertAdjacentHTML('beforeend',
+        '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr;animation:fadeIn 0.2s ease">' +
+        '<div style="display:flex;gap:0.4rem">' +
+        '<div class="form-group" style="margin:0;flex:1"><label>'+currentLabel+' Value</label><input type="number" step="any" class="form-input co-mf-val" placeholder="0"></div>' +
+        '<div class="form-group" style="margin:0;flex:1"><label>Thickness (µm)</label><input type="number" step="any" class="form-input co-mf-thick" placeholder="0"></div>' +
+        '</div><div style="display:flex;gap:0.4rem">' +
+        '<div class="form-group" style="margin:0;flex:1"><label>Temp (°C)</label><input type="number" step="any" class="form-input co-mf-temp" placeholder="23"></div>' +
+        '<div class="form-group" style="margin:0;flex:1"><label>Humidity (%)</label><input type="number" step="any" class="form-input co-mf-hum" placeholder="50"></div>' +
+        '</div></div>');
 }
 
 // ====================================================================
-// PAGE: LAMINATES COMPANY
+// PAGE: LAMINATES COMPANY — stessa UI di Laminates DB
 // ====================================================================
 var _companyLams = [];
 
 function renderCompanyLaminatesPage() {
-    if (!CompanyState.isActive()) {
-        return _renderCompanyGate();
-    }
-    var daysLeft = CompanyState.daysLeft();
-    var expiryBadge = _expiryBadge(daysLeft);
-    return '<div style="max-width:1100px;margin:0 auto">' +
-        _companyHeader('Laminates Company', expiryBadge) +
-        _companyDisclaimer() +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">' +
-        '<span id="co-lam-count" style="font-size:0.82rem;color:var(--text-light)">Loading...</span>' +
-        '<button class="btn btn-sm btn-outline" onclick="shareCurrentCalcToCompany()" style="font-size:0.78rem">+ Share Current Calc</button>' +
+    if (!CompanyState.isActive()) return _renderCompanyGate();
+    var unit = getUnit();
+    return '<div style="padding:0.25rem 0">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">' +
+        '<div>' +
+        '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#64748b">Private · ' + CompanyState.companyName + '</div>' +
+        '<div style="font-size:1rem;font-weight:700;color:#0f172a">Laminates Company <span class="badge badge-purple" id="co-lam-badge">...</span></div>' +
         '</div>' +
-        '<div id="co-lam-list" style="display:flex;flex-direction:column;gap:0.5rem">' +
-        '<div class="empty-state"><p>Loading company laminates...</p></div></div></div>';
+        '<div style="display:flex;gap:6px">' +
+        '<button class="btn btn-sm btn-outline" onclick="showCompanyModal()">Settings</button>' +
+        '</div></div>' +
+        _companyDisclaimer() +
+        '<div id="co-lam-list"><div class="empty-state"><p>Loading...</p></div></div>' +
+        '</div>';
 }
 
 async function initCompanyLaminatesPage() {
     _companyLams = await loadCompanyLaminates();
+    var badge = document.getElementById('co-lam-badge');
+    if (badge) badge.textContent = _companyLams.length;
     _renderCompanyLamList();
 }
 
 function _renderCompanyLamList() {
-    var listEl  = document.getElementById('co-lam-list');
-    var countEl = document.getElementById('co-lam-count');
+    var listEl = document.getElementById('co-lam-list');
     if (!listEl) return;
-    if (countEl) countEl.innerHTML = '<strong>' + _companyLams.length + '</strong> laminates in company DB';
+    var unit = getUnit();
     if (_companyLams.length === 0) {
-        listEl.innerHTML = '<div class="empty-state"><p>No laminates shared yet.<br>' +
-            '<button class="btn btn-sm btn-primary" onclick="shareCurrentCalcToCompany()">+ Share current calculation</button></p></div>';
+        listEl.innerHTML = '<div class="card"><div class="empty-state"><p>No laminates shared yet.<br><small style="color:var(--text-light)">Save a calculation in the Calculator tab and share it here.</small></p></div></div>';
         return;
     }
-    var unit = State.mode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
-    listEl.innerHTML = _companyLams.map(function(l) {
+    var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+    var html = '<div class="card"><h2>Company Laminates <span class="badge badge-purple">'+_companyLams.length+'</span></h2><div class="grid grid-2">';
+    _companyLams.forEach(function(l, i) {
         var canDelete = CompanyState.role === 'admin' || l.sharedBy === window.getOrCreateUserId();
         var layerNames = '';
         if (l.layers && l.layers.length) {
-            var names = l.layers.map(function(ly) {
-                var mat = DB.materials.find(function(m) { return String(m.id) === String(ly.mid); });
+            layerNames = l.layers.map(function(ly) {
+                var mat = DB.materials.find(function(m){ return String(m.id) === String(ly.mid); });
                 return mat ? mat.name + '(' + ly.thick + 'µm)' : '?';
-            });
-            layerNames = names.join(' / ');
+            }).join(' / ');
         }
-        return '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.85rem 1rem">' +
-            '<div style="display:flex;align-items:center;gap:0.75rem">' +
-            '<div style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;flex-shrink:0"></div>' +
-            '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:0.85rem;font-weight:600;color:#0f172a">' + l.name + '</div>' +
-            '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">' +
-                (l.total ? l.total.toFixed(5) + ' ' + unit : '') + ' · ' + (l.totalThickness||0) + 'µm · ' +
-                (l.temperature||'?') + '°C/' + (l.humidity||'?') + '%' +
+        html += '<div style="border:1.5px solid var(--border);border-radius:10px;padding:.85rem;border-top:4px solid '+colors[i%colors.length]+'">' +
+            '<div style="font-weight:600;font-size:.85rem;margin-bottom:.35rem">'+l.name+'</div>' +
+            '<div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">' +
+            '<div><div style="font-size:.65rem;color:var(--text-light)">'+(l.mode||State.mode).toUpperCase()+'</div><div style="font-size:1.2rem;font-weight:700;color:var(--primary)">'+(l.total?l.total.toFixed(5):'—')+'</div><div style="font-size:.65rem;color:var(--text-light)">'+unit+'</div></div>' +
+            '<div><div style="font-size:.65rem;color:var(--text-light)">Thickness</div><div style="font-weight:600">'+(l.totalThickness||0).toFixed(0)+' um</div></div>' +
+            '<div><div style="font-size:.65rem;color:var(--text-light)">Conditions</div><div style="font-weight:600">'+(l.temperature||'?')+'°C / '+(l.humidity||'?')+'%</div></div>' +
+            '<div><div style="font-size:.65rem;color:var(--text-light)">Recyclable</div><span class="sustainability-flag '+(l.recyclable?'yes':'no')+'">'+(l.recyclable?'Yes':'No')+'</span></div>' +
             '</div>' +
-            (layerNames ? '<div style="font-size:0.68rem;color:#cbd5e1;margin-top:0.1rem">' + layerNames + '</div>' : '') +
-            '</div>' +
-            '<span class="badge badge-purple" style="font-size:0.65rem">Company</span>' +
-            '<button class="btn btn-sm btn-outline" onclick="loadCompanyLaminateInCalc(\'' + String(l.id) + '\')" style="font-size:0.72rem">Load in Calc</button>' +
-            (canDelete ? '<button class="btn btn-sm btn-danger" onclick="removeCompanyLaminate(\'' + l._companyLamId + '\')" style="font-size:0.72rem">Delete</button>' : '') +
+            (layerNames ? '<div style="font-size:0.68rem;color:#94a3b8;margin-top:0.4rem;word-break:break-word">'+layerNames+'</div>' : '') +
+            '<div style="margin-top:.45rem;display:flex;gap:0.4rem;justify-content:flex-end">' +
+            '<button class="btn btn-sm btn-outline" onclick="loadCompanyLaminateInCalc(\'' + String(l.id) + '\')">Load in Calc</button>' +
+            (canDelete ? '<button class="btn btn-sm btn-danger" onclick="removeCompanyLaminate(\'' + l._companyLamId + '\')">Delete</button>' : '') +
             '</div></div>';
-    }).join('');
-}
-
-// ====================================================================
-// SHARE ACTIONS
-// ====================================================================
-function showShareMaterialToCompany() {
-    var opts = '<option value="">Select material...</option>';
-    DB.materials.filter(function(m){ return !m.isCompany; }).forEach(function(m) {
-        opts += '<option value="' + m.id + '">' + m.name + (m.company ? ' (' + m.company + ')' : '') + '</option>';
     });
-    var body = '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f">' +
-        'Only share technical data. No confidential business information.</div>' +
-        '<div class="form-group"><label>Select Material to Share</label>' +
-        '<select class="form-input" id="co-share-mat-id">' + opts + '</select></div>';
-    Modal.open('Share Material with Company', body, function() {
-        var id = document.getElementById('co-share-mat-id')?.value;
-        if (!id) { alert('Select a material'); return false; }
-        var mat = DB.materials.find(function(m){ return String(m.id) === String(id); });
-        if (!mat) { alert('Material not found'); return false; }
-        saveCompanyMaterial(mat).then(function(res) {
-            if (res.success) {
-                mat._companyDocId = res.id;
-                showCompanyToast('<strong>' + mat.name + '</strong> shared with company!', '#15803d');
-                if (State.tab === 'mat-company') initCompanyMaterialsPage();
-            } else { alert('Error: ' + res.error); }
-        });
-        return true;
-    });
-}
-
-function shareCurrentCalcToCompany() {
-    if (!State.calcResult || !State.calcResult.total || State.calcResult.total <= 0) {
-        alert('Calculate a laminate first in the Calculator tab.');
-        return;
+    html += '</div></div>';
+    if (_companyLams.length >= 2) {
+        html += '<div class="card" style="margin-top:1rem"><h2>Company Laminates Comparison</h2><div class="chart-container"><canvas id="coLamChart"></canvas></div></div>';
     }
-    var body = '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f">' +
-        'Only share technical data. No confidential business information.</div>' +
-        '<div class="form-group"><label>Laminate Name</label>' +
-        '<input type="text" id="co-lam-name" class="form-input" value="' + (State.laminateName||'') + '" placeholder="e.g. Coffee pouch structure"></div>' +
-        '<div style="background:#f8fafc;border-radius:6px;padding:0.6rem;font-size:0.75rem;color:var(--text-light)">' +
-        State.mode.toUpperCase() + ': <strong>' + State.calcResult.total.toFixed(6) + '</strong> ' + getUnit() +
-        ' · ' + State.layers.length + ' layers</div>';
-    Modal.open('Share Laminate with Company', body, function() {
-        var name = document.getElementById('co-lam-name')?.value.trim();
-        if (!name) { alert('Enter a name'); return false; }
-        var tt = 0; State.layers.forEach(function(l){ tt += (l.thick||0); });
-        var rec = Engine.checkRecyclability(State.layers, DB.materials);
-        saveCompanyLaminate({
-            name: name, total: State.calcResult.total, totalThickness: tt,
-            humidity: State.selCond?.humidity || 0, temperature: State.selCond?.temperature || 0,
-            mode: State.mode, recyclable: rec.recyclable, monoStructure: rec.monoStructure,
-            layerCount: State.layers.length, layers: JSON.parse(JSON.stringify(State.layers))
-        }).then(function(res) {
-            if (res.success) {
-                showCompanyToast('<strong>' + name + '</strong> shared with company!', '#15803d');
-                if (State.tab === 'lam-company') initCompanyLaminatesPage();
-            } else { alert('Error: ' + res.error); }
-        });
-        return true;
+    listEl.innerHTML = html;
+    if (_companyLams.length >= 2) setTimeout(_drawCoLamChart, 150);
+}
+
+function _drawCoLamChart() {
+    var canvas = document.getElementById('coLamChart'); if (!canvas) return;
+    destroyChart('coLam');
+    var ctx = canvas.getContext('2d');
+    var unit = getUnit();
+    var labels = _companyLams.map(function(l){ return l.name; });
+    var vals   = _companyLams.map(function(l){ return l.total || 0; });
+    var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+    chartInstances.coLam = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labels, datasets: [{ label: (State.mode||'wvtr').toUpperCase(), data: vals, backgroundColor: colors, borderRadius: 6 }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: unit } } } }
     });
 }
 
+// ====================================================================
+// SHARE FROM CALCULATOR — Save to General or Company
+// ====================================================================
+function saveLaminateWithChoice() {
+    var name = State.laminateName.trim();
+    if (!name) { alert('Enter a laminate name first'); return; }
+    if (!State.calcResult || State.calcResult.total <= 0) { alert('Calculate first'); return; }
+
+    var tt = 0;
+    State.layers.forEach(function(l){ tt += (l.thick||0); });
+    var rec = Engine.checkRecyclability(State.layers, DB.materials);
+    var lamData = {
+        name: name, total: State.calcResult.total, totalThickness: tt,
+        humidity: State.selCond.humidity, temperature: State.selCond.temperature,
+        mode: State.mode, recyclable: rec.recyclable, monoStructure: rec.monoStructure,
+        layerCount: State.layers.length, layers: JSON.parse(JSON.stringify(State.layers))
+    };
+
+    // Salva in General DB
+    DB.addLam(lamData);
+    State.laminateName = '';
+    var nameEl = document.getElementById('lam-name'); if (nameEl) nameEl.value = '';
+    var btn = document.getElementById('save-btn-general'); if (btn) btn.disabled = true;
+    var fb = document.getElementById('save-feedback');
+    if (fb) { fb.innerHTML = '<div class="alert alert-success" style="margin-top:.5rem">Saved to General DB!</div>'; setTimeout(function(){ fb.innerHTML=''; }, 3000); }
+}
+
+function saveLaminateToCompany() {
+    if (!CompanyState.isActive()) { showCompanyModal(); return; }
+    var name = State.laminateName.trim();
+    if (!name) { alert('Enter a laminate name first'); return; }
+    if (!State.calcResult || State.calcResult.total <= 0) { alert('Calculate first'); return; }
+
+    var tt = 0;
+    State.layers.forEach(function(l){ tt += (l.thick||0); });
+    var rec = Engine.checkRecyclability(State.layers, DB.materials);
+    saveCompanyLaminate({
+        name: name, total: State.calcResult.total, totalThickness: tt,
+        humidity: State.selCond?.humidity || 0, temperature: State.selCond?.temperature || 0,
+        mode: State.mode, recyclable: rec.recyclable, monoStructure: rec.monoStructure,
+        layerCount: State.layers.length, layers: JSON.parse(JSON.stringify(State.layers))
+    }).then(function(res) {
+        if (res.success) {
+            var fb = document.getElementById('save-feedback');
+            if (fb) { fb.innerHTML = '<div class="alert alert-success" style="margin-top:.5rem">Saved to Company DB!</div>'; setTimeout(function(){ fb.innerHTML=''; }, 3000); }
+        } else { alert('Error: ' + res.error); }
+    });
+}
+
+// ====================================================================
+// LOAD COMPANY LAMINATE IN CALC
+// ====================================================================
 function loadCompanyLaminateInCalc(lamId) {
     var lam = _companyLams.find(function(l){ return String(l.id) === String(lamId); });
     if (!lam) return;
-    State.layers      = JSON.parse(JSON.stringify(lam.layers || [{mid:null,thick:0}]));
+    State.layers       = JSON.parse(JSON.stringify(lam.layers || [{mid:null,thick:0}]));
     State.laminateName = lam.name;
-    State.selCond     = { temperature: lam.temperature, humidity: lam.humidity };
-    State.calcResult  = { total: lam.total, layers: [], error: null };
+    State.selCond      = { temperature: lam.temperature, humidity: lam.humidity };
+    State.calcResult   = { total: lam.total, layers: [], error: null };
     State.tab = 'calc';
     renderNav(); renderContent();
     showCompanyToast('Laminate <strong>' + lam.name + '</strong> loaded!', '#8b5cf6');
@@ -564,28 +731,17 @@ function leaveCompany() {
     if (!confirm('Leave ' + CompanyState.companyName + '? Your local data is not affected.')) return;
     CompanyState.clear();
     Modal.close();
-    // Rimuovi materiali company dal DB locale
-    DB.materials = DB.materials.filter(function(m) { return !m.isCompany; });
+    DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
     showCompanyToast('You have left the company database.', '#64748b');
     setTimeout(function(){ render(); }, 400);
-}
-
-// ====================================================================
-// SHELF LIFE: carica laminati company nel selector
-// ====================================================================
-async function loadCompanyLaminatesForShelfLife() {
-    if (!CompanyState.isActive()) return [];
-    return await loadCompanyLaminates();
 }
 
 // ====================================================================
 // HELPERS UI
 // ====================================================================
 function _renderCompanyGate() {
-    return '<div class="card"><div class="empty-state">' +
-        '<p>You are not in a company database.</p>' +
-        '<button class="btn btn-primary" onclick="showCompanyModal()">Join or Create Company</button>' +
-        '</div></div>';
+    return '<div class="card"><div class="empty-state"><p>You are not in a company database.</p>' +
+        '<button class="btn btn-primary" onclick="showCompanyModal()">Join or Create Company</button></div></div>';
 }
 
 function _expiryBadge(daysLeft) {
@@ -595,23 +751,10 @@ function _expiryBadge(daysLeft) {
     return '<span class="badge badge-red">Expired</span>';
 }
 
-function _companyHeader(title, expiryBadge) {
-    return '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem">' +
-        '<div>' +
-        '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#64748b">Private</div>' +
-        '<h2 style="font-size:1.3rem;font-weight:800;color:#0f172a;margin:0.1rem 0">' + title + '</h2>' +
-        '<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem">' +
-        '<span class="badge badge-blue">' + CompanyState.companyName + '</span>' +
-        '<span class="badge badge-green">' + CompanyState.role + '</span>' +
-        expiryBadge + '</div></div>' +
-        '<button class="btn btn-outline" onclick="showCompanyModal()" style="font-size:0.8rem">Settings</button>' +
-        '</div>';
-}
-
 function _companyDisclaimer() {
-    return '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem 0.85rem;margin-bottom:1.25rem;font-size:0.72rem;color:#78350f;display:flex;gap:0.5rem;align-items:center">' +
+    return '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.5rem 0.85rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f;display:flex;gap:0.5rem;align-items:center">' +
         '<span style="flex-shrink:0">⚠️</span>' +
-        '<span>This space is for <strong>technical packaging data only</strong>. Do not enter confidential business information, personal data, or trade secrets.</span></div>';
+        '<span>Technical packaging data only. No confidential business information, personal data, or trade secrets.</span></div>';
 }
 
 function showCompanyToast(html, bg) {
