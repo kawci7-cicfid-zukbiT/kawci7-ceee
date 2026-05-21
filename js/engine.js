@@ -652,8 +652,9 @@ var TABS = [
   { id: 'arrhenius',  label: 'Arrhenius' },
   { id: 'compare',    label: 'Compare laminates' },
   { id: 'materials',  label: 'Materials DB' },
-  { id: 'laminates',  label: 'Laminates DB' },
-{ id: 'company',   label: 'Company DB' }
+  { id: 'laminates',   label: 'Laminates DB' },
+  { id: 'mat-company', label: 'Materials Company DB' },
+  { id: 'lam-company', label: 'Laminates Company DB' }
 ];
 
 var chartInstances = {};
