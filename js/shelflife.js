@@ -291,16 +291,8 @@ const SL = {
     const prod    = PRODUCTS_DB[prodKey];
     if (!prod) { alert('⚠️ Select a product type first'); return; }
 
-    // 1. Rate
-    const src = document.querySelector('input[name="sl-source"]:checked')?.value;
-    let rateInput = 0;
-    if (src === 'manual') {
-      rateInput = parseFloat(document.getElementById('sl-rate-manual')?.value) || 0;
-      if (rateInput <= 0) { alert('Enter a valid rate'); return; }
-    } else {
-      rateInput = parseFloat(State.calcResult?.total) || 0;
-      if (rateInput <= 0) { alert('No calculated rate. Use manual or calculate laminate first.'); return; }
-    }
+    let rateInput = SL._getActiveRate();
+    if (rateInput <= 0) { alert('No valid rate. Select a laminate or enter manually.'); return; }
 
     // 2. Area & Weight
     const A = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
@@ -972,7 +964,96 @@ const SL = {
     State.calcResult   = { total: lam.total, layers: [], error: null };
     State.laminateName = lam.name;
     renderContent();
-  },  
+  }, 
+  _barrierSource: 'calc',
+  _manualOverride: false,
+
+  setBarrierSource(src) {
+    this._barrierSource = src;
+    const keys = ['calc', 'db', 'company'];
+    keys.forEach(k => {
+      const btn = document.getElementById('sl-src-btn-' + k);
+      if (!btn) return;
+      if (k === src) { btn.style.background = 'var(--primary)'; btn.style.color = '#fff'; btn.className = 'btn btn-sm'; }
+      else { btn.style.background = ''; btn.style.color = ''; btn.className = 'btn btn-sm btn-outline'; }
+    });
+    const panels = ['calc', 'db', 'company'];
+    panels.forEach(p => {
+      const el = document.getElementById('sl-panel-' + p);
+      if (el) el.style.display = p === src ? 'block' : 'none';
+    });
+    if (src === 'company' && CompanyState.isActive()) this._loadCompanyLaminatesIntoSelect();
+    if (src === 'calc') {
+      const rate = parseFloat(State.calcResult && State.calcResult.total ? State.calcResult.total : 0);
+      this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
+    }
+  },
+
+  async _loadCompanyLaminatesIntoSelect() {
+    const sel = document.getElementById('sl-co-lam-pick');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Loading...</option>';
+    try {
+      const lams = await loadCompanyLaminates();
+      const modeLabel = State.mode === 'wvtr' ? 'WVTR' : 'OTR';
+      sel.innerHTML = lams.length === 0
+        ? '<option value="">No laminates in company DB</option>'
+        : '<option value="">Select a laminate...</option>' +
+          lams.map(l => '<option value="' + l._companyLamId + '">' + l.name + ' (' + (l.total ? l.total.toFixed(5) : '?') + ' ' + modeLabel + ')</option>').join('');
+    } catch(e) { sel.innerHTML = '<option value="">Error loading</option>'; }
+  },
+
+  onDBLaminatePick(val) {
+    if (!val) return;
+    const lam = DB.laminates.find(function(l){ return String(l.id) === String(val); });
+    if (!lam) return;
+    this._applyLaminateToState(lam);
+  },
+
+  async onCompanyLaminatePick(val) {
+    if (!val) return;
+    try {
+      const lams = await loadCompanyLaminates();
+      const lam = lams.find(function(l){ return l._companyLamId === val; });
+      if (!lam) return;
+      this._applyLaminateToState(lam);
+    } catch(e) { console.warn('Company laminate pick error:', e); }
+  },
+
+  _applyLaminateToState(lam) {
+    State.layers       = JSON.parse(JSON.stringify(lam.layers || []));
+    State.selCond      = { temperature: lam.temperature || 23, humidity: lam.humidity || 50 };
+    State.calcResult   = { total: lam.total, layers: [], error: null };
+    State.laminateName = lam.name;
+    this._updateRateSummary(lam.total ? lam.total.toFixed(6) : '-');
+  },
+
+  toggleManualOverride(checked) {
+    this._manualOverride = checked;
+    const panel = document.getElementById('sl-panel-manual');
+    if (panel) panel.style.display = checked ? 'block' : 'none';
+    if (checked) this.onManualRateChange();
+    else {
+      const rate = parseFloat(State.calcResult && State.calcResult.total ? State.calcResult.total : 0);
+      this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
+    }
+  },
+
+  onManualRateChange() {
+    const val = parseFloat(document.getElementById('sl-rate-manual') && document.getElementById('sl-rate-manual').value || 0);
+    this._updateRateSummary(val > 0 ? val.toFixed(6) : '-');
+  },
+
+  _updateRateSummary(rateStr) {
+    const el = document.getElementById('sl-active-rate');
+    const unit = State.mode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
+    if (el) el.textContent = rateStr + ' ' + unit;
+  },
+
+  _getActiveRate() {
+    if (this._manualOverride) return parseFloat(document.getElementById('sl-rate-manual') && document.getElementById('sl-rate-manual').value || 0);
+    return parseFloat(State.calcResult && State.calcResult.total ? State.calcResult.total : 0);
+  },
 };    
 // ====================================================================
 // 📋 renderShelfLife() + renderShelfLifeMethodology()
@@ -1012,28 +1093,72 @@ function renderShelfLife() {
       </div>
 
       <!-- STEP 1: BARRIER RATE -->
-     <!-- STEP 1: BARRIER RATE -->
       <div style="padding:1rem;border-bottom:1px solid var(--border);">
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem;">▼ 1. Barrier Rate & Structure</div>
-        <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.5rem;margin-bottom:0.8rem;font-size:0.75rem;">
-          <div style="font-weight:700;margin-bottom:0.2rem;">${laminateName}</div>
-          <div style="color:var(--text-light);word-break:break-word;">${structureStr}</div>
-          <div style="margin-top:0.3rem;display:flex;justify-content:space-between;align-items:center;">
-            <span>Calculated ${modeLabel}:</span>
-            <strong style="color:var(--primary);font-size:0.9rem;">${currentRate || '-'} ${unit}</strong>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--primary);font-weight:600;font-size:0.85rem;">▼ 1. Barrier Rate & Structure</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.75rem">
+          <button id="sl-src-btn-calc" class="btn btn-sm" onclick="SL.setBarrierSource('calc')" style="font-size:0.75rem;background:var(--primary);color:#fff;border:none;">From Calculator</button>
+          <button id="sl-src-btn-db" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('db')" style="font-size:0.75rem;">Laminate DB</button>
+          <button id="sl-src-btn-company" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('company')" style="font-size:0.75rem;${CompanyState.isActive() ? '' : 'opacity:0.5'}">Company DB</button>
+        </div>
+
+        <div id="sl-panel-calc">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem;">
+            <div style="font-weight:700;margin-bottom:0.15rem;">${laminateName || 'No laminate calculated'}</div>
+            <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;">${structureStr}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Calculated ${modeLabel}:</span>
+              <strong style="color:var(--primary)">${currentRate || '-'} ${unit}</strong>
+            </div>
           </div>
         </div>
 
-        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem;margin-bottom:0.6rem;">
-          <label style="font-size:0.75rem;font-weight:600;margin-bottom:0.3rem;display:block">Load from saved laminate:</label>
-          <select class="form-input" id="sl-laminate-pick" onchange="SL.onLaminateSourceChange(this.value)" style="font-size:0.78rem">
-            <option value="">Select a laminate...</option>
-            <optgroup label="General Laminates">
-              ${DB.laminates.map(l => `<option value="gen_${l.id}">${l.name} (${l.total.toFixed(5)})</option>`).join('')}
-            </optgroup>
-            ${CompanyState.isActive() ? '<optgroup label="Company Laminates"><option value="__load_co__">Load company laminates...</option></optgroup>' : ''}
-          </select>
+        <div id="sl-panel-db" style="display:none">
+          <div class="form-group" style="margin:0">
+            <label style="font-size:0.75rem;font-weight:600">Select from General Laminates DB</label>
+            <select class="form-input" id="sl-db-lam-pick" onchange="SL.onDBLaminatePick(this.value)" style="font-size:0.78rem">
+              <option value="">Select a laminate...</option>
+              ${DB.laminates.map(l => '<option value="' + l.id + '">' + l.name + ' (' + l.total.toFixed(5) + ' ' + modeLabel + ')</option>').join('')}
+            </select>
+          </div>
         </div>
+
+        <div id="sl-panel-company" style="display:none">
+          ${CompanyState.isActive()
+            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label><select class="form-input" id="sl-co-lam-pick" onchange="SL.onCompanyLaminatePick(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
+            : '<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access company laminates. <a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join now</a></div>'}
+        </div>
+
+        <div style="margin-top:0.6rem;">
+          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--text-light)">
+            <input type="checkbox" id="sl-manual-toggle" onchange="SL.toggleManualOverride(this.checked)">
+            Or enter ${modeLabel} value manually
+          </label>
+        </div>
+
+        <div id="sl-panel-manual" style="display:none;margin-top:0.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem;">
+          <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">Manual input</div>
+          <div class="grid grid-2" style="gap:0.5rem;">
+            <div class="form-group" style="margin:0">
+              <label>${modeLabel} Value (${unit})</label>
+              <input type="number" id="sl-rate-manual" value="0.5" step="any" class="form-input" oninput="SL.onManualRateChange()">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Test Temperature (°C)</label>
+              <input type="number" id="sl-rate-temp" value="23" class="form-input">
+            </div>
+            <div class="form-group" style="margin:0;grid-column:1/-1">
+              <label>Test Humidity (%RH)</label>
+              <input type="number" id="sl-rate-hum" value="50" class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:0.6rem;background:var(--primary-light);border-radius:6px;padding:0.4rem 0.6rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.72rem;font-weight:600">Active ${modeLabel}:</span>
+          <strong id="sl-active-rate" style="color:var(--primary);font-size:0.88rem">${currentRate || '-'} ${unit}</strong>
+        </div>
+      </div>
 
         <div style="margin-bottom:0.5rem;">
           <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:500;">
