@@ -11,7 +11,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_f101b",
+      "systemId": "fb_eval_f101b",
       "author": "System",
       "wvtrValues": [
         {
@@ -66,7 +66,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_f171b",
+      "systemId": "fb_eval_f171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -117,7 +117,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_h171b",
+      "systemId": "fb_eval_h171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -168,7 +168,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_e105b",
+      "systemId": "fb_eval_e105b",
       "author": "System",
       "wvtrValues": [
         {
@@ -211,7 +211,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_t101b",
+      "systemId": "fb_eval_t101b",
       "author": "System",
       "wvtrValues": [
         {
@@ -254,7 +254,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_l101b",
+      "systemId": "fb_eval_l101b",
       "author": "System",
       "wvtrValues": [
         {
@@ -297,7 +297,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_g156b",
+      "systemId": "fb_eval_g156b",
       "author": "System",
       "wvtrValues": [
         {
@@ -340,7 +340,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_c109b",
+      "systemId": "fb_eval_c109b",
       "author": "System",
       "wvtrValues": [
         {
@@ -383,7 +383,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_et3803rb",
+      "systemId": "fb_soarnol_et3803rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -426,7 +426,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_dc3203rb",
+      "systemId": "fb_soarnol_dc3203rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -469,7 +469,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_a4412",
+      "systemId": "fb_soarnol_a4412",
       "author": "System",
       "wvtrValues": [
         {
@@ -512,7 +512,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_30ma720",
+      "systemId": "fb_bicor_30ma720",
       "author": "System",
       "wvtrValues": [
         {
@@ -555,7 +555,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_50ma750",
+      "systemId": "fb_bicor_50ma750",
       "author": "System",
       "wvtrValues": [
         {
@@ -598,7 +598,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_30mb400",
+      "systemId": "fb_bicor_30mb400",
       "author": "System",
       "wvtrValues": [
         {
@@ -641,7 +641,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_bopp_nno_20",
+      "systemId": "fb_treofan_bopp_nno_20",
       "author": "System",
       "wvtrValues": [
         {
@@ -684,7 +684,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_bopp_nno_30",
+      "systemId": "fb_treofan_bopp_nno_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -727,7 +727,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_bo_pp_30ay",
+      "systemId": "fb_taghleef_bo_pp_30ay",
       "author": "System",
       "wvtrValues": [
         {
@@ -770,7 +770,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_cpp_30",
+      "systemId": "fb_cosmo_bopp_cpp_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -813,7 +813,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_jy_20",
+      "systemId": "fb_jindal_bopp_jy_20",
       "author": "System",
       "wvtrValues": [
         {
@@ -856,7 +856,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_met_hb_30",
+      "systemId": "fb_bicor_met_hb_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -899,7 +899,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_metbopp_20",
+      "systemId": "fb_jindal_metbopp_20",
       "author": "System",
       "wvtrValues": [
         {
@@ -942,7 +942,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_metbopp_tr30",
+      "systemId": "fb_taghleef_metbopp_tr30",
       "author": "System",
       "wvtrValues": [
         {
@@ -985,7 +985,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_metbopp_mh25",
+      "systemId": "fb_cosmo_metbopp_mh25",
       "author": "System",
       "wvtrValues": [
         {
@@ -1028,7 +1028,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_s10_12",
+      "systemId": "fb_lumirror_s10_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1071,7 +1071,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_s10_23",
+      "systemId": "fb_lumirror_s10_23",
       "author": "System",
       "wvtrValues": [
         {
@@ -1114,7 +1114,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_t60_12",
+      "systemId": "fb_lumirror_t60_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1157,7 +1157,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rn_36",
+      "systemId": "fb_hostaphan_rn_36",
       "author": "System",
       "wvtrValues": [
         {
@@ -1200,7 +1200,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rn_12",
+      "systemId": "fb_hostaphan_rn_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1243,7 +1243,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh71_12",
+      "systemId": "fb_skc_sh71_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1286,7 +1286,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh71_23",
+      "systemId": "fb_skc_sh71_23",
       "author": "System",
       "wvtrValues": [
         {
@@ -1329,7 +1329,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_a_12",
+      "systemId": "fb_mylar_a_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1372,7 +1372,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_a_23",
+      "systemId": "fb_mylar_a_23",
       "author": "System",
       "wvtrValues": [
         {
@@ -1415,7 +1415,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_301h_12",
+      "systemId": "fb_melinex_301h_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1458,7 +1458,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_lumirror_vm_pet_12",
+      "systemId": "fb_toray_lumirror_vm_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1501,7 +1501,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rnk_met_12",
+      "systemId": "fb_hostaphan_rnk_met_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1544,7 +1544,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_metpet_12",
+      "systemId": "fb_skc_metpet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -1587,7 +1587,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_emblem_bopa_15n",
+      "systemId": "fb_emblem_bopa_15n",
       "author": "System",
       "wvtrValues": [
         {
@@ -1630,7 +1630,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_emblem_bopa_25n",
+      "systemId": "fb_emblem_bopa_25n",
       "author": "System",
       "wvtrValues": [
         {
@@ -1673,7 +1673,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_capran_emblem_1200_15",
+      "systemId": "fb_capran_emblem_1200_15",
       "author": "System",
       "wvtrValues": [
         {
@@ -1716,7 +1716,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_capran_emblem_1200_25",
+      "systemId": "fb_capran_emblem_1200_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -1759,7 +1759,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_domo_sniamid_pa6_25",
+      "systemId": "fb_domo_sniamid_pa6_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -1802,7 +1802,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_honeywell_capran_opal_1100_50",
+      "systemId": "fb_honeywell_capran_opal_1100_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -1845,7 +1845,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dowlex_2045g_lldpe_50",
+      "systemId": "fb_dowlex_2045g_lldpe_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -1888,7 +1888,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dowlex_2045g_lldpe_100",
+      "systemId": "fb_dowlex_2045g_lldpe_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -1931,7 +1931,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_ldpe_150e_50",
+      "systemId": "fb_dow_ldpe_150e_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -1974,7 +1974,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_ldpe_150e_100",
+      "systemId": "fb_dow_ldpe_150e_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -2017,7 +2017,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_hdpe_5502_50",
+      "systemId": "fb_ineos_hdpe_5502_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -2060,7 +2060,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_hdpe_5502_100",
+      "systemId": "fb_ineos_hdpe_5502_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -2103,7 +2103,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lyondellbasell_ldpe_2215_50",
+      "systemId": "fb_lyondellbasell_ldpe_2215_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -2146,7 +2146,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lyondellbasell_mlldpe_4009_60",
+      "systemId": "fb_lyondellbasell_mlldpe_4009_60",
       "author": "System",
       "wvtrValues": [
         {
@@ -2189,7 +2189,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_cpp_40_a",
+      "systemId": "fb_treofan_cpp_40_a",
       "author": "System",
       "wvtrValues": [
         {
@@ -2232,7 +2232,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_cpp_60_a",
+      "systemId": "fb_treofan_cpp_60_a",
       "author": "System",
       "wvtrValues": [
         {
@@ -2275,7 +2275,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_cpp_hs40",
+      "systemId": "fb_taghleef_cpp_hs40",
       "author": "System",
       "wvtrValues": [
         {
@@ -2318,7 +2318,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_cpp_na50",
+      "systemId": "fb_cosmo_cpp_na50",
       "author": "System",
       "wvtrValues": [
         {
@@ -2361,7 +2361,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_solvay_ixan_sga1_pvdc_coat_pet_12",
+      "systemId": "fb_solvay_ixan_sga1_pvdc_coat_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -2405,7 +2405,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_asb_x_pvdc_bopp_30",
+      "systemId": "fb_exxonmobil_asb_x_pvdc_bopp_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -2448,7 +2448,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_axt_pvdc_bopp_30",
+      "systemId": "fb_exxonmobil_axt_pvdc_bopp_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -2491,7 +2491,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_aluminium_foil_9_m",
+      "systemId": "fb_novelis_aluminium_foil_9_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -2534,7 +2534,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_aluminium_foil_12_m",
+      "systemId": "fb_novelis_aluminium_foil_12_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -2577,7 +2577,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hydro_aluminium_foil_6_35_m",
+      "systemId": "fb_hydro_aluminium_foil_6_35_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -2620,7 +2620,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_foil_7_m",
+      "systemId": "fb_constantia_foil_7_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -2663,7 +2663,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_ultra_siox_pet_12",
+      "systemId": "fb_amcor_ultra_siox_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -2706,7 +2706,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_toppan_gl_aeh_pet_12",
+      "systemId": "fb_toppan_gl_aeh_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -2749,7 +2749,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_toppan_gl_ae_pet_12",
+      "systemId": "fb_toppan_gl_ae_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -2792,7 +2792,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_diapak_c_pet_12",
+      "systemId": "fb_mitsubishi_diapak_c_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -2835,7 +2835,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_bopp_siox_barrier_25",
+      "systemId": "fb_treofan_bopp_siox_barrier_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -2878,7 +2878,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_mxd6_s6007_25",
+      "systemId": "fb_mitsubishi_mxd6_s6007_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -2921,7 +2921,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_mxd6_s6007_50",
+      "systemId": "fb_mitsubishi_mxd6_s6007_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -2964,7 +2964,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dupont_zytel_pa66_film_50",
+      "systemId": "fb_dupont_zytel_pa66_film_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3007,7 +3007,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ingeo_4032d_pla_30",
+      "systemId": "fb_ingeo_4032d_pla_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -3050,7 +3050,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ingeo_4043d_pla_50",
+      "systemId": "fb_ingeo_4043d_pla_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3093,7 +3093,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ingeo_2003d_pla_cast_100",
+      "systemId": "fb_ingeo_2003d_pla_cast_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -3136,7 +3136,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_totalenergies_bopla_30",
+      "systemId": "fb_totalenergies_bopla_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -3179,7 +3179,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_gpps_film_50_m_generic",
+      "systemId": "fb_gpps_film_50_m_generic",
       "author": "System",
       "wvtrValues": [
         {
@@ -3222,7 +3222,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hips_sheet_250_m_generic",
+      "systemId": "fb_hips_sheet_250_m_generic",
       "author": "System",
       "wvtrValues": [
         {
@@ -3265,7 +3265,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_covestro_makrofol_de_1_1_125",
+      "systemId": "fb_covestro_makrofol_de_1_1_125",
       "author": "System",
       "wvtrValues": [
         {
@@ -3308,7 +3308,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_natureflex_nvs_23",
+      "systemId": "fb_natureflex_nvs_23",
       "author": "System",
       "wvtrValues": [
         {
@@ -3351,7 +3351,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_natureflex_nk_30",
+      "systemId": "fb_natureflex_nk_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -3394,7 +3394,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dupont_surlyn_1652_50",
+      "systemId": "fb_dupont_surlyn_1652_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3437,7 +3437,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_total_lumicene_mpp_cast_50",
+      "systemId": "fb_total_lumicene_mpp_cast_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3480,7 +3480,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bh381mo_pp_50",
+      "systemId": "fb_borealis_bh381mo_pp_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3523,7 +3523,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eastman_spectar_petg_250",
+      "systemId": "fb_eastman_spectar_petg_250",
       "author": "System",
       "wvtrValues": [
         {
@@ -3566,7 +3566,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eastman_eastar_6763_petg_500",
+      "systemId": "fb_eastman_eastar_6763_petg_500",
       "author": "System",
       "wvtrValues": [
         {
@@ -3609,7 +3609,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dsm_akulon_k122_pa6_50",
+      "systemId": "fb_dsm_akulon_k122_pa6_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -3652,7 +3652,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dsm_akulon_k122_pa6_100",
+      "systemId": "fb_dsm_akulon_k122_pa6_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -3695,7 +3695,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lanxess_durethan_b30s_pa6_100",
+      "systemId": "fb_lanxess_durethan_b30s_pa6_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -3738,7 +3738,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_aoh_pvoh_bopp_30",
+      "systemId": "fb_exxonmobil_aoh_pvoh_bopp_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -3781,7 +3781,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kuraray_poval_pvoh_coat_pet_12",
+      "systemId": "fb_kuraray_poval_pvoh_coat_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -3824,7 +3824,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_suprashield_pet_evoh_12",
+      "systemId": "fb_amcor_suprashield_pet_evoh_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -3867,7 +3867,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_parade_90_g_m_coated_paper",
+      "systemId": "fb_sappi_parade_90_g_m_coated_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -3910,7 +3910,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_advantage_plus_sb_70g_kraftliner",
+      "systemId": "fb_mondi_advantage_plus_sb_70g_kraftliner",
       "author": "System",
       "wvtrValues": [
         {
@@ -3953,7 +3953,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_smurfit_kappa_kraftliner_125g_coated",
+      "systemId": "fb_smurfit_kappa_kraftliner_125g_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -3996,7 +3996,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_barrierpro_60g_grease_barrier",
+      "systemId": "fb_sappi_barrierpro_60g_grease_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -4039,7 +4039,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_advantage_sbs_300g_m",
+      "systemId": "fb_mondi_advantage_sbs_300g_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -4082,7 +4082,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_bopp_acrylic_coat_30",
+      "systemId": "fb_taghleef_bopp_acrylic_coat_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -4125,7 +4125,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_hhm_15",
+      "systemId": "fb_jindal_bopp_hhm_15",
       "author": "System",
       "wvtrValues": [
         {
@@ -4168,7 +4168,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_pw_25",
+      "systemId": "fb_jindal_bopp_pw_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -4211,7 +4211,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_fh_20",
+      "systemId": "fb_cosmo_bopp_fh_20",
       "author": "System",
       "wvtrValues": [
         {
@@ -4254,7 +4254,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_scb_30",
+      "systemId": "fb_cosmo_bopp_scb_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -4297,7 +4297,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_p60_25",
+      "systemId": "fb_lumirror_p60_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -4340,7 +4340,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_x10s_50",
+      "systemId": "fb_lumirror_x10s_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -4383,7 +4383,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_basf_styropor_eps_20mm_slab",
+      "systemId": "fb_basf_styropor_eps_20mm_slab",
       "author": "System",
       "wvtrValues": [
         {
@@ -4426,7 +4426,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kl_ckner_pentaplast_kpet_petg_tray_500",
+      "systemId": "fb_kl_ckner_pentaplast_kpet_petg_tray_500",
       "author": "System",
       "wvtrValues": [
         {
@@ -4469,7 +4469,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_wd2403b",
+      "systemId": "fb_soarnol_wd2403b",
       "author": "System",
       "wvtrValues": [
         {
@@ -4512,7 +4512,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_dt2903b",
+      "systemId": "fb_soarnol_dt2903b",
       "author": "System",
       "wvtrValues": [
         {
@@ -4555,7 +4555,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_basf_ecoflex_f_blend_50",
+      "systemId": "fb_basf_ecoflex_f_blend_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -4598,7 +4598,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novamont_mater_bi_nf803t_film_30",
+      "systemId": "fb_novamont_mater_bi_nf803t_film_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -4641,7 +4641,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kaneka_phbh_film_30",
+      "systemId": "fb_kaneka_phbh_film_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -4684,7 +4684,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_os200_pa_pe_70",
+      "systemId": "fb_sealed_air_cryovac_os200_pa_pe_70",
       "author": "System",
       "wvtrValues": [
         {
@@ -4727,7 +4727,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_bdf_barrier_film_80",
+      "systemId": "fb_sealed_air_cryovac_bdf_barrier_film_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -4770,7 +4770,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_flexibles_pa_pe_80_flex_pack",
+      "systemId": "fb_amcor_flexibles_pa_pe_80_flex_pack",
       "author": "System",
       "wvtrValues": [
         {
@@ -4813,7 +4813,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_berry_global_pe_evoh_pe_5l_100",
+      "systemId": "fb_berry_global_pe_evoh_pe_5l_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -4856,7 +4856,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_evoh_barrier_bag_120",
+      "systemId": "fb_sealed_air_cryovac_evoh_barrier_bag_120",
       "author": "System",
       "wvtrValues": [
         {
@@ -4899,7 +4899,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_lumirror_xd12_pvdc_12",
+      "systemId": "fb_toray_lumirror_xd12_pvdc_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -4942,7 +4942,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_honeywell_aclar_22a_51_m",
+      "systemId": "fb_honeywell_aclar_22a_51_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -4985,7 +4985,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_honeywell_aclar_33c_76_m",
+      "systemId": "fb_honeywell_aclar_33c_76_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -5028,7 +5028,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_honeywell_aclar_ultra_rx_102_m",
+      "systemId": "fb_honeywell_aclar_ultra_rx_102_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -5071,7 +5071,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_topas_coc_8007_film_100",
+      "systemId": "fb_topas_coc_8007_film_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -5114,7 +5114,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zeon_zeonor_1020r_cop_100",
+      "systemId": "fb_zeon_zeonor_1020r_cop_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -5157,7 +5157,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_elite_5960g_mlldpe_50",
+      "systemId": "fb_dow_elite_5960g_mlldpe_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -5200,7 +5200,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_ldpe_2100tn20_50",
+      "systemId": "fb_sabic_ldpe_2100tn20_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -5243,7 +5243,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_ft5230_ldpe_100",
+      "systemId": "fb_borealis_ft5230_ldpe_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -5286,7 +5286,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kl_ckner_pentaplast_pentaform_pvc_250",
+      "systemId": "fb_kl_ckner_pentaplast_pentaform_pvc_250",
       "author": "System",
       "wvtrValues": [
         {
@@ -5329,7 +5329,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kl_ckner_pentaplast_pentaform_pvc_200",
+      "systemId": "fb_kl_ckner_pentaplast_pentaform_pvc_200",
       "author": "System",
       "wvtrValues": [
         {
@@ -5372,7 +5372,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_pet_pe_lidding_80",
+      "systemId": "fb_sealed_air_cryovac_pet_pe_lidding_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -5415,7 +5415,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hyosung_bopa_15n",
+      "systemId": "fb_hyosung_bopa_15n",
       "author": "System",
       "wvtrValues": [
         {
@@ -5458,7 +5458,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hyosung_bopa_25n",
+      "systemId": "fb_hyosung_bopa_25n",
       "author": "System",
       "wvtrValues": [
         {
@@ -5501,7 +5501,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_evonik_plexiglas_pmma_sheet_3000_m",
+      "systemId": "fb_evonik_plexiglas_pmma_sheet_3000_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -5544,7 +5544,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_avantium_yxy_pef_film_100",
+      "systemId": "fb_avantium_yxy_pef_film_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -5587,7 +5587,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_covestro_desmopan_tpu_film_50",
+      "systemId": "fb_covestro_desmopan_tpu_film_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -5630,7 +5630,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lubrizol_pellethane_tpu_film_100",
+      "systemId": "fb_lubrizol_pellethane_tpu_film_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -5673,7 +5673,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_iggesund_invercote_g_fbb_300g",
+      "systemId": "fb_iggesund_invercote_g_fbb_300g",
       "author": "System",
       "wvtrValues": [
         {
@@ -5716,7 +5716,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_algro_fix_sbs_350g_coated",
+      "systemId": "fb_sappi_algro_fix_sbs_350g_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -5759,7 +5759,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_f101b_multi_t_20_m",
+      "systemId": "fb_eval_f101b_multi_t_20_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -5826,7 +5826,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_e105b_multi_t_20_m",
+      "systemId": "fb_eval_e105b_multi_t_20_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -5893,7 +5893,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_30ma720_multi_t",
+      "systemId": "fb_bicor_30ma720_multi_t",
       "author": "System",
       "wvtrValues": [
         {
@@ -5960,7 +5960,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_ldpe_150e_multi_t_50_m",
+      "systemId": "fb_dow_ldpe_150e_multi_t_50_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -6027,7 +6027,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_hdpe_5502_multi_t_50_m",
+      "systemId": "fb_ineos_hdpe_5502_multi_t_50_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -6094,7 +6094,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_mxd6_s6007_multi_t_25_m",
+      "systemId": "fb_mitsubishi_mxd6_s6007_multi_t_25_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -6161,7 +6161,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_s10_12_multi_t",
+      "systemId": "fb_lumirror_s10_12_multi_t",
       "author": "System",
       "wvtrValues": [
         {
@@ -6228,7 +6228,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_bopp_nno_30_multi_t",
+      "systemId": "fb_treofan_bopp_nno_30_multi_t",
       "author": "System",
       "wvtrValues": [
         {
@@ -6295,7 +6295,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_emblem_bopa_15n_multi_t",
+      "systemId": "fb_emblem_bopa_15n_multi_t",
       "author": "System",
       "wvtrValues": [
         {
@@ -6362,7 +6362,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_functional_barrier_paper_60g",
+      "systemId": "fb_mondi_functional_barrier_paper_60g",
       "author": "System",
       "wvtrValues": [
         {
@@ -6405,7 +6405,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_smurfit_kappa_barrierboard_300g",
+      "systemId": "fb_smurfit_kappa_barrierboard_300g",
       "author": "System",
       "wvtrValues": [
         {
@@ -6448,7 +6448,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_lumirror_x30_siox_12",
+      "systemId": "fb_toray_lumirror_x30_siox_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -6491,7 +6491,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_amprima_pe_recyclable_80",
+      "systemId": "fb_amcor_amprima_pe_recyclable_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -6534,7 +6534,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_berry_global_all_pe_stand_up_120",
+      "systemId": "fb_berry_global_all_pe_stand_up_120",
       "author": "System",
       "wvtrValues": [
         {
@@ -6577,7 +6577,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_bl7_barrier_lidding_90",
+      "systemId": "fb_sealed_air_cryovac_bl7_barrier_lidding_90",
       "author": "System",
       "wvtrValues": [
         {
@@ -6620,7 +6620,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_aisafoil_pet_foil_35",
+      "systemId": "fb_constantia_aisafoil_pet_foil_35",
       "author": "System",
       "wvtrValues": [
         {
@@ -6663,7 +6663,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_innovia_rayoface_c35_opp_pvdc",
+      "systemId": "fb_innovia_rayoface_c35_opp_pvdc",
       "author": "System",
       "wvtrValues": [
         {
@@ -6706,7 +6706,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kl_ckner_pentaplast_pentapharm_coc_200",
+      "systemId": "fb_kl_ckner_pentaplast_pentapharm_coc_200",
       "author": "System",
       "wvtrValues": [
         {
@@ -6749,7 +6749,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_borstar_lldpe_bl3901_60",
+      "systemId": "fb_borealis_borstar_lldpe_bl3901_60",
       "author": "System",
       "wvtrValues": [
         {
@@ -6792,7 +6792,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_vistamaxx_mpp_50",
+      "systemId": "fb_exxonmobil_vistamaxx_mpp_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -6835,7 +6835,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_uflex_bopet_12_um",
+      "systemId": "fb_uflex_bopet_12_um",
       "author": "System",
       "wvtrValues": [
         {
@@ -6878,7 +6878,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_uflex_metpet_12",
+      "systemId": "fb_uflex_metpet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -6921,7 +6921,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_metbopp_mo_25",
+      "systemId": "fb_jindal_metbopp_mo_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -6964,7 +6964,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_bo_pp_twister_30",
+      "systemId": "fb_taghleef_bo_pp_twister_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -7007,7 +7007,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_bopet_sh40_50",
+      "systemId": "fb_skc_bopet_sh40_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -7050,7 +7050,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_basf_ecovio_m2351_pla_pbat_30",
+      "systemId": "fb_basf_ecovio_m2351_pla_pbat_30",
       "author": "System",
       "wvtrValues": [
         {
@@ -7093,7 +7093,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_certrance_vb_bopet_12",
+      "systemId": "fb_toray_certrance_vb_bopet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -7136,7 +7136,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_pp_topseal_60",
+      "systemId": "fb_treofan_pp_topseal_60",
       "author": "System",
       "wvtrValues": [
         {
@@ -7179,7 +7179,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_hybridflex_mono_pe_lidding_80",
+      "systemId": "fb_mondi_hybridflex_mono_pe_lidding_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -7222,7 +7222,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_cryovac_pa_evoh_pe_120_retort",
+      "systemId": "fb_amcor_cryovac_pa_evoh_pe_120_retort",
       "author": "System",
       "wvtrValues": [
         {
@@ -7265,7 +7265,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_metbopp_mg_20",
+      "systemId": "fb_cosmo_metbopp_mg_20",
       "author": "System",
       "wvtrValues": [
         {
@@ -7308,7 +7308,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dupont_mylar_ol_23_pvoh_coat",
+      "systemId": "fb_dupont_mylar_ol_23_pvoh_coat",
       "author": "System",
       "wvtrValues": [
         {
@@ -7351,7 +7351,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_honeywell_aegis_ox_pa6_mxd6_100",
+      "systemId": "fb_honeywell_aegis_ox_pa6_mxd6_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -7394,7 +7394,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_flexibles_bopet_evoh_17",
+      "systemId": "fb_amcor_flexibles_bopet_evoh_17",
       "author": "System",
       "wvtrValues": [
         {
@@ -7437,7 +7437,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_affinity_pl1880g_poe_80",
+      "systemId": "fb_dow_affinity_pl1880g_poe_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -7480,7 +7480,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_ecolam_foil_free_barrier_90",
+      "systemId": "fb_constantia_ecolam_foil_free_barrier_90",
       "author": "System",
       "wvtrValues": [
         {
@@ -7523,7 +7523,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_hostaphan_bnl_19",
+      "systemId": "fb_mitsubishi_hostaphan_bnl_19",
       "author": "System",
       "wvtrValues": [
         {
@@ -7566,7 +7566,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_berry_global_bopp_mpp_heat_seal_25",
+      "systemId": "fb_berry_global_bopp_mpp_heat_seal_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -7609,7 +7609,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_evonik_plexiglas_hi_clear_sheet_2mm",
+      "systemId": "fb_evonik_plexiglas_hi_clear_sheet_2mm",
       "author": "System",
       "wvtrValues": [
         {
@@ -7652,7 +7652,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_xd22_pvdc_coat_bopet_19",
+      "systemId": "fb_toray_xd22_pvdc_coat_bopet_19",
       "author": "System",
       "wvtrValues": [
         {
@@ -7695,7 +7695,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pet",
+      "systemId": "fb_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -7762,7 +7762,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nylon_6_multi_temp",
+      "systemId": "fb_nylon_6_multi_temp",
       "author": "System",
       "wvtrValues": [
         {
@@ -7829,7 +7829,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ldpe_multi_temp",
+      "systemId": "fb_ldpe_multi_temp",
       "author": "System",
       "wvtrValues": [
         {
@@ -7896,7 +7896,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_evoh_multi_temp",
+      "systemId": "fb_evoh_multi_temp",
       "author": "System",
       "wvtrValues": [
         {
@@ -7963,7 +7963,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pp_multi_temp",
+      "systemId": "fb_pp_multi_temp",
       "author": "System",
       "wvtrValues": [
         {
@@ -8030,7 +8030,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyurethane",
+      "systemId": "fb_polyurethane",
       "author": "System",
       "wvtrValues": [
         {
@@ -8073,7 +8073,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_low_density_polyethylene_ldpe",
+      "systemId": "fb_low_density_polyethylene_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -8116,7 +8116,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_biaxially_oriented_polypropylene_bopp",
+      "systemId": "fb_biaxially_oriented_polypropylene_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -8159,7 +8159,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_rigid_pvc",
+      "systemId": "fb_rigid_pvc",
       "author": "System",
       "wvtrValues": [
         {
@@ -8202,7 +8202,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyester_pet",
+      "systemId": "fb_polyester_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -8245,7 +8245,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ethylene_vinyl_alcohol_evoh",
+      "systemId": "fb_ethylene_vinyl_alcohol_evoh",
       "author": "System",
       "wvtrValues": [
         {
@@ -8288,7 +8288,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_aluminum",
+      "systemId": "fb_aluminum",
       "author": "System",
       "wvtrValues": [
         {
@@ -8331,7 +8331,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nylon_6",
+      "systemId": "fb_nylon_6",
       "author": "System",
       "wvtrValues": [
         {
@@ -8374,7 +8374,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_high_density_polyethylene_hdpe",
+      "systemId": "fb_high_density_polyethylene_hdpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -8417,7 +8417,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pvdc_saran",
+      "systemId": "fb_pvdc_saran",
       "author": "System",
       "wvtrValues": [
         {
@@ -8460,7 +8460,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pet_evoh_laminate",
+      "systemId": "fb_pet_evoh_laminate",
       "author": "System",
       "wvtrValues": [
         {
@@ -8503,7 +8503,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_expanded_polyethylene",
+      "systemId": "fb_expanded_polyethylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -8546,7 +8546,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_butyl_rubber",
+      "systemId": "fb_butyl_rubber",
       "author": "System",
       "wvtrValues": [
         {
@@ -8589,7 +8589,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_silicone",
+      "systemId": "fb_silicone",
       "author": "System",
       "wvtrValues": [
         {
@@ -8632,7 +8632,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tyvek",
+      "systemId": "fb_tyvek",
       "author": "System",
       "wvtrValues": [
         {
@@ -8675,7 +8675,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kraft_paper",
+      "systemId": "fb_kraft_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -8718,7 +8718,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_waxed_paper",
+      "systemId": "fb_waxed_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -8761,7 +8761,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ptfe_fabric",
+      "systemId": "fb_ptfe_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -8804,7 +8804,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_gore_tex_membrane",
+      "systemId": "fb_gore_tex_membrane",
       "author": "System",
       "wvtrValues": [
         {
@@ -8847,7 +8847,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_biaxially_oriented_polypropylene_film",
+      "systemId": "fb_biaxially_oriented_polypropylene_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -8890,7 +8890,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_flexible_pvc_film",
+      "systemId": "fb_flexible_pvc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -8933,7 +8933,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyurethane_film",
+      "systemId": "fb_polyurethane_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -8976,7 +8976,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_crosslinked_polyethylene",
+      "systemId": "fb_crosslinked_polyethylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -9019,7 +9019,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nylon_6_6",
+      "systemId": "fb_nylon_6_6",
       "author": "System",
       "wvtrValues": [
         {
@@ -9062,7 +9062,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_metallized_polyester",
+      "systemId": "fb_metallized_polyester",
       "author": "System",
       "wvtrValues": [
         {
@@ -9105,7 +9105,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_high_barrier_polyethylene",
+      "systemId": "fb_high_barrier_polyethylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -9148,7 +9148,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_high_barrier_polypropylene",
+      "systemId": "fb_high_barrier_polypropylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -9191,7 +9191,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyimide_kapton",
+      "systemId": "fb_polyimide_kapton",
       "author": "System",
       "wvtrValues": [
         {
@@ -9234,7 +9234,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polysulfide",
+      "systemId": "fb_polysulfide",
       "author": "System",
       "wvtrValues": [
         {
@@ -9277,7 +9277,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyetherimide",
+      "systemId": "fb_polyetherimide",
       "author": "System",
       "wvtrValues": [
         {
@@ -9320,7 +9320,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyether_ether_ketone_peek",
+      "systemId": "fb_polyether_ether_ketone_peek",
       "author": "System",
       "wvtrValues": [
         {
@@ -9363,7 +9363,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polymethyl_methacrylate_pmma",
+      "systemId": "fb_polymethyl_methacrylate_pmma",
       "author": "System",
       "wvtrValues": [
         {
@@ -9406,7 +9406,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyvinylidene_fluoride_pvdf",
+      "systemId": "fb_polyvinylidene_fluoride_pvdf",
       "author": "System",
       "wvtrValues": [
         {
@@ -9449,7 +9449,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyoxymethylene_pom",
+      "systemId": "fb_polyoxymethylene_pom",
       "author": "System",
       "wvtrValues": [
         {
@@ -9492,7 +9492,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polysulfone",
+      "systemId": "fb_polysulfone",
       "author": "System",
       "wvtrValues": [
         {
@@ -9535,7 +9535,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyvinyl_alcohol_pva",
+      "systemId": "fb_polyvinyl_alcohol_pva",
       "author": "System",
       "wvtrValues": [
         {
@@ -9578,7 +9578,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pla_polylactic_acid",
+      "systemId": "fb_pla_polylactic_acid",
       "author": "System",
       "wvtrValues": [
         {
@@ -9621,7 +9621,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pha_polyhydroxyalkanoate",
+      "systemId": "fb_pha_polyhydroxyalkanoate",
       "author": "System",
       "wvtrValues": [
         {
@@ -9664,7 +9664,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_modified_starch",
+      "systemId": "fb_modified_starch",
       "author": "System",
       "wvtrValues": [
         {
@@ -9707,7 +9707,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_regenerated_cellulose",
+      "systemId": "fb_regenerated_cellulose",
       "author": "System",
       "wvtrValues": [
         {
@@ -9750,7 +9750,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_biodegradable_polyester",
+      "systemId": "fb_biodegradable_polyester",
       "author": "System",
       "wvtrValues": [
         {
@@ -9793,7 +9793,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pe_clay_nanocomposite",
+      "systemId": "fb_pe_clay_nanocomposite",
       "author": "System",
       "wvtrValues": [
         {
@@ -9836,7 +9836,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pet_silica_nanocomposite",
+      "systemId": "fb_pet_silica_nanocomposite",
       "author": "System",
       "wvtrValues": [
         {
@@ -9879,7 +9879,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_multilayer_pe_evoh_film",
+      "systemId": "fb_multilayer_pe_evoh_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -9922,7 +9922,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ceramic_coated_polyethylene",
+      "systemId": "fb_ceramic_coated_polyethylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -9965,7 +9965,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_organic_barrier_polypropylene",
+      "systemId": "fb_organic_barrier_polypropylene",
       "author": "System",
       "wvtrValues": [
         {
@@ -10008,7 +10008,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_breathable_waterproof_membrane",
+      "systemId": "fb_breathable_waterproof_membrane",
       "author": "System",
       "wvtrValues": [
         {
@@ -10051,7 +10051,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_osb_panel",
+      "systemId": "fb_osb_panel",
       "author": "System",
       "wvtrValues": [
         {
@@ -10094,7 +10094,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_fiberglass",
+      "systemId": "fb_fiberglass",
       "author": "System",
       "wvtrValues": [
         {
@@ -10137,7 +10137,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_expanded_pvc",
+      "systemId": "fb_expanded_pvc",
       "author": "System",
       "wvtrValues": [
         {
@@ -10180,7 +10180,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_extruded_polystyrene_xps",
+      "systemId": "fb_extruded_polystyrene_xps",
       "author": "System",
       "wvtrValues": [
         {
@@ -10223,7 +10223,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_synthetic_leather",
+      "systemId": "fb_synthetic_leather",
       "author": "System",
       "wvtrValues": [
         {
@@ -10266,7 +10266,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_food_wrap_pvc_film",
+      "systemId": "fb_food_wrap_pvc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -10309,7 +10309,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_silicone_gasket",
+      "systemId": "fb_silicone_gasket",
       "author": "System",
       "wvtrValues": [
         {
@@ -10352,7 +10352,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_medical_pu_film",
+      "systemId": "fb_medical_pu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -10395,7 +10395,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ptfe_technical_fabric",
+      "systemId": "fb_ptfe_technical_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -10438,7 +10438,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_stainless_steel",
+      "systemId": "fb_stainless_steel",
       "author": "System",
       "wvtrValues": [
         {
@@ -10481,7 +10481,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_thick_aluminum",
+      "systemId": "fb_thick_aluminum",
       "author": "System",
       "wvtrValues": [
         {
@@ -10524,7 +10524,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_corrugated_cardboard",
+      "systemId": "fb_corrugated_cardboard",
       "author": "System",
       "wvtrValues": [
         {
@@ -10567,7 +10567,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_plywood",
+      "systemId": "fb_plywood",
       "author": "System",
       "wvtrValues": [
         {
@@ -10610,7 +10610,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_porous_ceramic",
+      "systemId": "fb_porous_ceramic",
       "author": "System",
       "wvtrValues": [
         {
@@ -10653,7 +10653,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_waterproof_polyester_fabric",
+      "systemId": "fb_waterproof_polyester_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -10696,7 +10696,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pu_coated_nylon_fabric",
+      "systemId": "fb_pu_coated_nylon_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -10739,7 +10739,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_breathable_ptfe_fabric",
+      "systemId": "fb_breathable_ptfe_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -10782,7 +10782,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_silica_aerogel",
+      "systemId": "fb_silica_aerogel",
       "author": "System",
       "wvtrValues": [
         {
@@ -10825,7 +10825,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_graphene_polymer_film",
+      "systemId": "fb_graphene_polymer_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -10868,7 +10868,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mof_polymer_membrane",
+      "systemId": "fb_mof_polymer_membrane",
       "author": "System",
       "wvtrValues": [
         {
@@ -10911,7 +10911,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_laminated_glass",
+      "systemId": "fb_laminated_glass",
       "author": "System",
       "wvtrValues": [
         {
@@ -10954,7 +10954,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pvdc_pe_film",
+      "systemId": "fb_pvdc_pe_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -10997,7 +10997,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_conductive_polymer",
+      "systemId": "fb_conductive_polymer",
       "author": "System",
       "wvtrValues": [
         {
@@ -11040,7 +11040,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nanocrystalline_cellulose_film",
+      "systemId": "fb_nanocrystalline_cellulose_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11083,7 +11083,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zeolite_based_membrane",
+      "systemId": "fb_zeolite_based_membrane",
       "author": "System",
       "wvtrValues": [
         {
@@ -11126,7 +11126,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_shape_memory_polymer",
+      "systemId": "fb_shape_memory_polymer",
       "author": "System",
       "wvtrValues": [
         {
@@ -11169,7 +11169,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_thermochromic_polymer_film",
+      "systemId": "fb_thermochromic_polymer_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11212,7 +11212,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_graphene_pet_composite",
+      "systemId": "fb_graphene_pet_composite",
       "author": "System",
       "wvtrValues": [
         {
@@ -11255,7 +11255,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_antimicrobial_film",
+      "systemId": "fb_antimicrobial_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11298,7 +11298,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_piezoelectric_polymer",
+      "systemId": "fb_piezoelectric_polymer",
       "author": "System",
       "wvtrValues": [
         {
@@ -11341,7 +11341,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nanofiber_film",
+      "systemId": "fb_nanofiber_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11384,7 +11384,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cellulose_acetate_film",
+      "systemId": "fb_cellulose_acetate_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11427,7 +11427,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyamide_film",
+      "systemId": "fb_polyamide_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -11470,7 +11470,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ethylene_vinyl_acetate_eva",
+      "systemId": "fb_ethylene_vinyl_acetate_eva",
       "author": "System",
       "wvtrValues": [
         {
@@ -11513,7 +11513,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polypropylene_nonwoven_fabric",
+      "systemId": "fb_polypropylene_nonwoven_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -11556,7 +11556,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyethylene_terephthalate_nonwoven",
+      "systemId": "fb_polyethylene_terephthalate_nonwoven",
       "author": "System",
       "wvtrValues": [
         {
@@ -11599,7 +11599,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyvinyl_chloride_foam",
+      "systemId": "fb_polyvinyl_chloride_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11642,7 +11642,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polycarbonate_sheet",
+      "systemId": "fb_polycarbonate_sheet",
       "author": "System",
       "wvtrValues": [
         {
@@ -11685,7 +11685,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyurethane_foam",
+      "systemId": "fb_polyurethane_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11728,7 +11728,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyether_foam",
+      "systemId": "fb_polyether_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11771,7 +11771,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyamide_foam",
+      "systemId": "fb_polyamide_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11814,7 +11814,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyethylene_foam",
+      "systemId": "fb_polyethylene_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11857,7 +11857,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polypropylene_foam",
+      "systemId": "fb_polypropylene_foam",
       "author": "System",
       "wvtrValues": [
         {
@@ -11900,7 +11900,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyurethane_coated_fabric",
+      "systemId": "fb_polyurethane_coated_fabric",
       "author": "System",
       "wvtrValues": [
         {
@@ -11943,7 +11943,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyester_coated_paper",
+      "systemId": "fb_polyester_coated_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -11986,7 +11986,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_expanded_polystyrene_eps",
+      "systemId": "fb_expanded_polystyrene_eps",
       "author": "System",
       "wvtrValues": [
         {
@@ -12029,7 +12029,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyethylene_naphthalate_pen",
+      "systemId": "fb_polyethylene_naphthalate_pen",
       "author": "System",
       "wvtrValues": [
         {
@@ -12072,7 +12072,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyvinyl_butyral_pvb",
+      "systemId": "fb_polyvinyl_butyral_pvb",
       "author": "System",
       "wvtrValues": [
         {
@@ -12115,7 +12115,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polytetrafluoroethylene_ptfe_sheet",
+      "systemId": "fb_polytetrafluoroethylene_ptfe_sheet",
       "author": "System",
       "wvtrValues": [
         {
@@ -12158,7 +12158,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyphenylene_sulfide_pps",
+      "systemId": "fb_polyphenylene_sulfide_pps",
       "author": "System",
       "wvtrValues": [
         {
@@ -12201,7 +12201,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyether_block_amide_peba",
+      "systemId": "fb_polyether_block_amide_peba",
       "author": "System",
       "wvtrValues": [
         {
@@ -12244,7 +12244,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyvinylidene_chloride_pvdc_coating",
+      "systemId": "fb_polyvinylidene_chloride_pvdc_coating",
       "author": "System",
       "wvtrValues": [
         {
@@ -12287,7 +12287,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyethylene_terephthalate_glycol_petg",
+      "systemId": "fb_polyethylene_terephthalate_glycol_petg",
       "author": "System",
       "wvtrValues": [
         {
@@ -12330,7 +12330,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polypropylene_random_copolymer_pp_r",
+      "systemId": "fb_polypropylene_random_copolymer_pp_r",
       "author": "System",
       "wvtrValues": [
         {
@@ -12373,7 +12373,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyoxymethylene_copolymer_co_pom",
+      "systemId": "fb_polyoxymethylene_copolymer_co_pom",
       "author": "System",
       "wvtrValues": [
         {
@@ -12416,7 +12416,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyamide_imide_pai",
+      "systemId": "fb_polyamide_imide_pai",
       "author": "System",
       "wvtrValues": [
         {
@@ -12459,7 +12459,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_l171b",
+      "systemId": "fb_eval_l171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -12514,7 +12514,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_g156b_2",
+      "systemId": "fb_eval_g156b_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -12569,7 +12569,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_wd2203",
+      "systemId": "fb_soarnol_wd2203",
       "author": "System",
       "wvtrValues": [
         {
@@ -12624,7 +12624,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_h4815b",
+      "systemId": "fb_soarnol_h4815b",
       "author": "System",
       "wvtrValues": [
         {
@@ -12667,7 +12667,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exceval_aq_4104",
+      "systemId": "fb_exceval_aq_4104",
       "author": "System",
       "wvtrValues": [
         {
@@ -12710,7 +12710,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_emblem_pa25",
+      "systemId": "fb_emblem_pa25",
       "author": "System",
       "wvtrValues": [
         {
@@ -12765,7 +12765,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_rilsamid_amno_pa12",
+      "systemId": "fb_rilsamid_amno_pa12",
       "author": "System",
       "wvtrValues": [
         {
@@ -12808,7 +12808,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grilon_cf6s_pa6_66",
+      "systemId": "fb_grilon_cf6s_pa6_66",
       "author": "System",
       "wvtrValues": [
         {
@@ -12851,7 +12851,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultramid_a3k_pa66",
+      "systemId": "fb_ultramid_a3k_pa66",
       "author": "System",
       "wvtrValues": [
         {
@@ -12894,7 +12894,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_ol",
+      "systemId": "fb_mylar_ol",
       "author": "System",
       "wvtrValues": [
         {
@@ -12937,7 +12937,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rnk12",
+      "systemId": "fb_hostaphan_rnk12",
       "author": "System",
       "wvtrValues": [
         {
@@ -12992,7 +12992,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_x10s",
+      "systemId": "fb_lumirror_x10s",
       "author": "System",
       "wvtrValues": [
         {
@@ -13035,7 +13035,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sf82",
+      "systemId": "fb_skc_sf82",
       "author": "System",
       "wvtrValues": [
         {
@@ -13078,7 +13078,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_alox_coated_pet_ceramis_cx",
+      "systemId": "fb_alox_coated_pet_ceramis_cx",
       "author": "System",
       "wvtrValues": [
         {
@@ -13133,7 +13133,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_gte_siox",
+      "systemId": "fb_hostaphan_gte_siox",
       "author": "System",
       "wvtrValues": [
         {
@@ -13188,7 +13188,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_flecoflex_met_pet_12",
+      "systemId": "fb_flecoflex_met_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -13231,7 +13231,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_zv25_alox",
+      "systemId": "fb_lumirror_zv25_alox",
       "author": "System",
       "wvtrValues": [
         {
@@ -13286,7 +13286,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_borsoft_sd233cf",
+      "systemId": "fb_borealis_borsoft_sd233cf",
       "author": "System",
       "wvtrValues": [
         {
@@ -13330,7 +13330,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_torayfan_bo_ct",
+      "systemId": "fb_torayfan_bo_ct",
       "author": "System",
       "wvtrValues": [
         {
@@ -13373,7 +13373,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_thb",
+      "systemId": "fb_treofan_thb",
       "author": "System",
       "wvtrValues": [
         {
@@ -13416,7 +13416,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_cpp_hs",
+      "systemId": "fb_cosmo_bopp_cpp_hs",
       "author": "System",
       "wvtrValues": [
         {
@@ -13459,7 +13459,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exceed_xp_8656ml",
+      "systemId": "fb_exceed_xp_8656ml",
       "author": "System",
       "wvtrValues": [
         {
@@ -13502,7 +13502,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_elvaloy_ac_1125",
+      "systemId": "fb_elvaloy_ac_1125",
       "author": "System",
       "wvtrValues": [
         {
@@ -13545,7 +13545,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_elite_at_6401",
+      "systemId": "fb_elite_at_6401",
       "author": "System",
       "wvtrValues": [
         {
@@ -13588,7 +13588,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borcycle_me1210",
+      "systemId": "fb_borcycle_me1210",
       "author": "System",
       "wvtrValues": [
         {
@@ -13631,7 +13631,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_solmax_hdpe_barrier_300",
+      "systemId": "fb_solmax_hdpe_barrier_300",
       "author": "System",
       "wvtrValues": [
         {
@@ -13674,7 +13674,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_aluminum_foil_9_m_soft",
+      "systemId": "fb_aluminum_foil_9_m_soft",
       "author": "System",
       "wvtrValues": [
         {
@@ -13717,7 +13717,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_aluminum_foil_12_m_hard",
+      "systemId": "fb_aluminum_foil_12_m_hard",
       "author": "System",
       "wvtrValues": [
         {
@@ -13760,7 +13760,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_aluminum_foil_20_m_pharma",
+      "systemId": "fb_aluminum_foil_20_m_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -13807,7 +13807,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tedlar_pvf_film_25",
+      "systemId": "fb_tedlar_pvf_film_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -13850,7 +13850,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_teflon_ptfe_film_25",
+      "systemId": "fb_teflon_ptfe_film_25",
       "author": "System",
       "wvtrValues": [
         {
@@ -13893,7 +13893,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_makrofol_de_1_1",
+      "systemId": "fb_makrofol_de_1_1",
       "author": "System",
       "wvtrValues": [
         {
@@ -13936,7 +13936,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lexan_oq50_pc_film",
+      "systemId": "fb_lexan_oq50_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -13979,7 +13979,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_styroflex_2g66",
+      "systemId": "fb_styroflex_2g66",
       "author": "System",
       "wvtrValues": [
         {
@@ -14022,7 +14022,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pentapharm_formable_alu_alu_200",
+      "systemId": "fb_pentapharm_formable_alu_alu_200",
       "author": "System",
       "wvtrValues": [
         {
@@ -14077,7 +14077,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultrofilm_pvc_pvdc_250_90",
+      "systemId": "fb_ultrofilm_pvc_pvdc_250_90",
       "author": "System",
       "wvtrValues": [
         {
@@ -14132,7 +14132,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_technigraph_pvc_100_m",
+      "systemId": "fb_technigraph_pvc_100_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -14187,7 +14187,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_advantage_barrierpack_recyclable",
+      "systemId": "fb_mondi_advantage_barrierpack_recyclable",
       "author": "System",
       "wvtrValues": [
         {
@@ -14242,7 +14242,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_seal_barrier_kraft_80",
+      "systemId": "fb_sappi_seal_barrier_kraft_80",
       "author": "System",
       "wvtrValues": [
         {
@@ -14285,7 +14285,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kotkamills_isla_barrier_board",
+      "systemId": "fb_kotkamills_isla_barrier_board",
       "author": "System",
       "wvtrValues": [
         {
@@ -14328,7 +14328,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cryovac_os2100_retort_pa_pp",
+      "systemId": "fb_cryovac_os2100_retort_pa_pp",
       "author": "System",
       "wvtrValues": [
         {
@@ -14383,7 +14383,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bemis_retort_barrier_8_layer",
+      "systemId": "fb_bemis_retort_barrier_8_layer",
       "author": "System",
       "wvtrValues": [
         {
@@ -14438,7 +14438,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_coveris_highbarrier_pet_pe_retort",
+      "systemId": "fb_coveris_highbarrier_pet_pe_retort",
       "author": "System",
       "wvtrValues": [
         {
@@ -14493,7 +14493,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_winpak_retort_pouch_pa_evoh_pp",
+      "systemId": "fb_winpak_retort_pouch_pa_evoh_pp",
       "author": "System",
       "wvtrValues": [
         {
@@ -14536,7 +14536,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_flecoflex_mono_pe_recycle_ready",
+      "systemId": "fb_flecoflex_mono_pe_recycle_ready",
       "author": "System",
       "wvtrValues": [
         {
@@ -14579,7 +14579,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_berry_global_recyclable_mono_pe_barrier",
+      "systemId": "fb_berry_global_recyclable_mono_pe_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -14634,7 +14634,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_siox_coated",
+      "systemId": "fb_jindal_bopp_siox_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -14677,7 +14677,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_natureflex_nvs",
+      "systemId": "fb_natureflex_nvs",
       "author": "System",
       "wvtrValues": [
         {
@@ -14732,7 +14732,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_sp484b",
+      "systemId": "fb_eval_sp484b",
       "author": "System",
       "wvtrValues": [
         {
@@ -14787,7 +14787,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_at4403b",
+      "systemId": "fb_eval_at4403b",
       "author": "System",
       "wvtrValues": [
         {
@@ -14830,7 +14830,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_v2504rb",
+      "systemId": "fb_soarnol_v2504rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -14885,7 +14885,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_saran_ma134",
+      "systemId": "fb_saran_ma134",
       "author": "System",
       "wvtrValues": [
         {
@@ -14940,7 +14940,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ixan_pb140",
+      "systemId": "fb_ixan_pb140",
       "author": "System",
       "wvtrValues": [
         {
@@ -14984,7 +14984,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_durethan_c38f_pa6_66",
+      "systemId": "fb_durethan_c38f_pa6_66",
       "author": "System",
       "wvtrValues": [
         {
@@ -15039,7 +15039,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skyrol_sp65",
+      "systemId": "fb_skyrol_sp65",
       "author": "System",
       "wvtrValues": [
         {
@@ -15082,7 +15082,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_a_48ga",
+      "systemId": "fb_mylar_a_48ga",
       "author": "System",
       "wvtrValues": [
         {
@@ -15125,7 +15125,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_813_pvoh_coated",
+      "systemId": "fb_melinex_813_pvoh_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -15168,7 +15168,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_bn16",
+      "systemId": "fb_hostaphan_bn16",
       "author": "System",
       "wvtrValues": [
         {
@@ -15211,7 +15211,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_zx10_met_pet",
+      "systemId": "fb_lumirror_zx10_met_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -15254,7 +15254,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_ceraphan_zx_alox_pet",
+      "systemId": "fb_ceraphan_zx_alox_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -15309,7 +15309,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_huhtamaki_met_pet_12_barrier",
+      "systemId": "fb_huhtamaki_met_pet_12_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -15352,7 +15352,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_spectar_petg_dn004",
+      "systemId": "fb_spectar_petg_dn004",
       "author": "System",
       "wvtrValues": [
         {
@@ -15396,7 +15396,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_topas_6013s_04_coc",
+      "systemId": "fb_topas_6013s_04_coc",
       "author": "System",
       "wvtrValues": [
         {
@@ -15439,7 +15439,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zeonex_480r_cop",
+      "systemId": "fb_zeonex_480r_cop",
       "author": "System",
       "wvtrValues": [
         {
@@ -15482,7 +15482,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_innoplen_hp501h_bopp",
+      "systemId": "fb_innoplen_hp501h_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -15525,7 +15525,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_pp3155",
+      "systemId": "fb_exxonmobil_pp3155",
       "author": "System",
       "wvtrValues": [
         {
@@ -15568,7 +15568,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_hc318bf_bopp",
+      "systemId": "fb_borealis_hc318bf_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -15611,7 +15611,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_bicor_110pbl_met_bopp",
+      "systemId": "fb_bicor_110pbl_met_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -15654,7 +15654,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_at_opp_barrier",
+      "systemId": "fb_taghleef_at_opp_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -15709,7 +15709,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_torayfan_pvoh_coated_opp",
+      "systemId": "fb_torayfan_pvoh_coated_opp",
       "author": "System",
       "wvtrValues": [
         {
@@ -15752,7 +15752,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_coveris_pvoh_coated_opp",
+      "systemId": "fb_coveris_pvoh_coated_opp",
       "author": "System",
       "wvtrValues": [
         {
@@ -15795,7 +15795,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dowlex_2045g_lldpe",
+      "systemId": "fb_dowlex_2045g_lldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -15838,7 +15838,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_affinity_ga_1900g",
+      "systemId": "fb_affinity_ga_1900g",
       "author": "System",
       "wvtrValues": [
         {
@@ -15881,7 +15881,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_engage_8003_polyolefin",
+      "systemId": "fb_engage_8003_polyolefin",
       "author": "System",
       "wvtrValues": [
         {
@@ -15924,7 +15924,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_queo_0201_pe_plastomer",
+      "systemId": "fb_queo_0201_pe_plastomer",
       "author": "System",
       "wvtrValues": [
         {
@@ -15967,7 +15967,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nextene_g5351_mlldpe",
+      "systemId": "fb_nextene_g5351_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -16010,7 +16010,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_lldpe_118ne",
+      "systemId": "fb_sabic_lldpe_118ne",
       "author": "System",
       "wvtrValues": [
         {
@@ -16053,7 +16053,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_desmopan_dp_9370a_pu_film",
+      "systemId": "fb_desmopan_dp_9370a_pu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -16108,7 +16108,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_elastollan_c90a_tpu_film",
+      "systemId": "fb_elastollan_c90a_tpu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -16151,7 +16151,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_teflon_fep_film_50",
+      "systemId": "fb_teflon_fep_film_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -16194,7 +16194,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_aclam_pvc_pvdc_90_30_pharma",
+      "systemId": "fb_aclam_pvc_pvdc_90_30_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -16249,7 +16249,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pentapharm_pvc_pvdc_60_40",
+      "systemId": "fb_pentapharm_pvc_pvdc_60_40",
       "author": "System",
       "wvtrValues": [
         {
@@ -16304,7 +16304,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_pharma_foil_15_m",
+      "systemId": "fb_novelis_pharma_foil_15_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -16351,7 +16351,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hydro_aluminium_foil_25_m",
+      "systemId": "fb_hydro_aluminium_foil_25_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -16394,7 +16394,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_makrofol_id_pc_film",
+      "systemId": "fb_makrofol_id_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -16438,7 +16438,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_stora_enso_trayforma_barrier",
+      "systemId": "fb_stora_enso_trayforma_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -16481,7 +16481,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_upm_asendo_barrier_paper",
+      "systemId": "fb_upm_asendo_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -16536,7 +16536,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_smurfit_kappa_kraftliner_barrier",
+      "systemId": "fb_smurfit_kappa_kraftliner_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -16579,7 +16579,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_amlite_ultra_recyclable",
+      "systemId": "fb_amcor_amlite_ultra_recyclable",
       "author": "System",
       "wvtrValues": [
         {
@@ -16634,7 +16634,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sealed_air_cryovac_r520_retort",
+      "systemId": "fb_sealed_air_cryovac_r520_retort",
       "author": "System",
       "wvtrValues": [
         {
@@ -16678,7 +16678,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_siox_bopp_gl_barrier",
+      "systemId": "fb_taghleef_siox_bopp_gl_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -16721,7 +16721,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_t2315b",
+      "systemId": "fb_soarnol_t2315b",
       "author": "System",
       "wvtrValues": [
         {
@@ -16776,7 +16776,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mowiflex_tc_232_pvoh",
+      "systemId": "fb_mowiflex_tc_232_pvoh",
       "author": "System",
       "wvtrValues": [
         {
@@ -16831,7 +16831,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_akulon_f223_d_pa6",
+      "systemId": "fb_akulon_f223_d_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -16886,7 +16886,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_capron_b135wp_bopa",
+      "systemId": "fb_capron_b135wp_bopa",
       "author": "System",
       "wvtrValues": [
         {
@@ -16941,7 +16941,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultramid_b33l_pa6",
+      "systemId": "fb_ultramid_b33l_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -16996,7 +16996,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novamid_1007c_pa6",
+      "systemId": "fb_novamid_1007c_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -17039,7 +17039,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rds_matte_pet",
+      "systemId": "fb_hostaphan_rds_matte_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -17083,7 +17083,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_d_92ga",
+      "systemId": "fb_mylar_d_92ga",
       "author": "System",
       "wvtrValues": [
         {
@@ -17126,7 +17126,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_442_heat_seal_pet",
+      "systemId": "fb_melinex_442_heat_seal_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -17169,7 +17169,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skyrol_spw_white_pet",
+      "systemId": "fb_skyrol_spw_white_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -17212,7 +17212,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyplex_pet_barrier_film",
+      "systemId": "fb_polyplex_pet_barrier_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -17255,7 +17255,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rns23_siox",
+      "systemId": "fb_hostaphan_rns23_siox",
       "author": "System",
       "wvtrValues": [
         {
@@ -17310,7 +17310,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_bopet_met_23_m",
+      "systemId": "fb_mylar_bopet_met_23_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -17353,7 +17353,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_cpp_film_ck25",
+      "systemId": "fb_skc_cpp_film_ck25",
       "author": "System",
       "wvtrValues": [
         {
@@ -17396,7 +17396,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_nne25_bopp",
+      "systemId": "fb_treofan_nne25_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -17439,7 +17439,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_pearl_white_bopp",
+      "systemId": "fb_cosmo_pearl_white_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -17482,7 +17482,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_sop_sealable_opp",
+      "systemId": "fb_taghleef_sop_sealable_opp",
       "author": "System",
       "wvtrValues": [
         {
@@ -17525,7 +17525,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_pp1024e4_bopp",
+      "systemId": "fb_exxonmobil_pp1024e4_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -17568,7 +17568,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_brelen_mh18_bopp",
+      "systemId": "fb_brelen_mh18_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -17611,7 +17611,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bope_mono_pe_film",
+      "systemId": "fb_jindal_bope_mono_pe_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -17666,7 +17666,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_surlyn_1702_ionomer",
+      "systemId": "fb_surlyn_1702_ionomer",
       "author": "System",
       "wvtrValues": [
         {
@@ -17709,7 +17709,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nucrel_0903hc_eaa",
+      "systemId": "fb_nucrel_0903hc_eaa",
       "author": "System",
       "wvtrValues": [
         {
@@ -17752,7 +17752,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_escorene_ld_165bw_ldpe",
+      "systemId": "fb_escorene_ld_165bw_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -17795,7 +17795,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lacqtene_1020fn24_ldpe",
+      "systemId": "fb_lacqtene_1020fn24_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -17838,7 +17838,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borpure_mt61000_pe",
+      "systemId": "fb_borpure_mt61000_pe",
       "author": "System",
       "wvtrValues": [
         {
@@ -17881,7 +17881,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tyvek_1073b_hdpe_nonwoven",
+      "systemId": "fb_tyvek_1073b_hdpe_nonwoven",
       "author": "System",
       "wvtrValues": [
         {
@@ -17924,7 +17924,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_noveon_estane_58888_tpu",
+      "systemId": "fb_noveon_estane_58888_tpu",
       "author": "System",
       "wvtrValues": [
         {
@@ -17967,7 +17967,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_baymedix_fp505_pu_film",
+      "systemId": "fb_baymedix_fp505_pu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -18022,7 +18022,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_teflon_pfa_film_50",
+      "systemId": "fb_teflon_pfa_film_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -18065,7 +18065,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_saint_gobain_ptfe_film_100",
+      "systemId": "fb_saint_gobain_ptfe_film_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -18108,7 +18108,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_perlen_pvc_250_pharma",
+      "systemId": "fb_perlen_pvc_250_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -18163,7 +18163,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_wipak_pharma_pvc_pvdc_120_60",
+      "systemId": "fb_wipak_pharma_pvc_pvdc_120_60",
       "author": "System",
       "wvtrValues": [
         {
@@ -18218,7 +18218,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_aclar_suprx_ultra_pharma",
+      "systemId": "fb_aclar_suprx_ultra_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -18273,7 +18273,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_topas_9506f_04_coc",
+      "systemId": "fb_topas_9506f_04_coc",
       "author": "System",
       "wvtrValues": [
         {
@@ -18316,7 +18316,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_foil_40_m_retort",
+      "systemId": "fb_constantia_foil_40_m_retort",
       "author": "System",
       "wvtrValues": [
         {
@@ -18363,7 +18363,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_peelable_lidding_foil_50",
+      "systemId": "fb_amcor_peelable_lidding_foil_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -18406,7 +18406,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_holmen_iggesund_invercote_barrier",
+      "systemId": "fb_holmen_iggesund_invercote_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -18449,7 +18449,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_clearwater_paper_barrier_coated",
+      "systemId": "fb_clearwater_paper_barrier_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -18492,7 +18492,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_innovia_rct_cellulose_barrier",
+      "systemId": "fb_innovia_rct_cellulose_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -18547,7 +18547,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_functional_barrier_paper_sealpeel",
+      "systemId": "fb_mondi_functional_barrier_paper_sealpeel",
       "author": "System",
       "wvtrValues": [
         {
@@ -18590,7 +18590,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_f171b_2",
+      "systemId": "fb_eval_f171b_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -18645,7 +18645,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_m100b",
+      "systemId": "fb_eval_m100b",
       "author": "System",
       "wvtrValues": [
         {
@@ -18688,7 +18688,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_at4403rb",
+      "systemId": "fb_soarnol_at4403rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -18743,7 +18743,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nichigo_g_polymer_oks_8049",
+      "systemId": "fb_nichigo_g_polymer_oks_8049",
       "author": "System",
       "wvtrValues": [
         {
@@ -18798,7 +18798,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_monosol_m8630_pvoh_film",
+      "systemId": "fb_monosol_m8630_pvoh_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -18853,7 +18853,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_luminy_pla_l175",
+      "systemId": "fb_luminy_pla_l175",
       "author": "System",
       "wvtrValues": [
         {
@@ -18896,7 +18896,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mater_bi_nf803s",
+      "systemId": "fb_mater_bi_nf803s",
       "author": "System",
       "wvtrValues": [
         {
@@ -18939,7 +18939,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_durethan_bkv30h2_0_pa6",
+      "systemId": "fb_durethan_bkv30h2_0_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -18982,7 +18982,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_capron_8267f_opa",
+      "systemId": "fb_capron_8267f_opa",
       "author": "System",
       "wvtrValues": [
         {
@@ -19037,7 +19037,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_p11_pet",
+      "systemId": "fb_lumirror_p11_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -19080,7 +19080,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_516_pet",
+      "systemId": "fb_melinex_516_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -19135,7 +19135,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh40_pet_40_m",
+      "systemId": "fb_skc_sh40_pet_40_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -19178,7 +19178,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_gnb_barrier_pet",
+      "systemId": "fb_hostaphan_gnb_barrier_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -19221,7 +19221,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_toray_lumirror_eco_recycled_pet",
+      "systemId": "fb_toray_lumirror_eco_recycled_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -19264,7 +19264,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_x30s_alox_retort_pet",
+      "systemId": "fb_lumirror_x30s_alox_retort_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -19319,7 +19319,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_vm_pet_50000",
+      "systemId": "fb_mitsubishi_vm_pet_50000",
       "author": "System",
       "wvtrValues": [
         {
@@ -19362,7 +19362,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyplex_white_pet_film",
+      "systemId": "fb_polyplex_white_pet_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -19405,7 +19405,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_torayfan_zk400_heat_seal_pp",
+      "systemId": "fb_torayfan_zk400_heat_seal_pp",
       "author": "System",
       "wvtrValues": [
         {
@@ -19448,7 +19448,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_be_white_bopp",
+      "systemId": "fb_taghleef_be_white_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -19491,7 +19491,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_silver_met_bopp",
+      "systemId": "fb_cosmo_silver_met_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -19534,7 +19534,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_metlon_bopp_met",
+      "systemId": "fb_jindal_metlon_bopp_met",
       "author": "System",
       "wvtrValues": [
         {
@@ -19577,7 +19577,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_bhs_heat_stable_bopp",
+      "systemId": "fb_treofan_bhs_heat_stable_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -19620,7 +19620,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bb412e_cpp",
+      "systemId": "fb_borealis_bb412e_cpp",
       "author": "System",
       "wvtrValues": [
         {
@@ -19663,7 +19663,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bornewables_pp_ra120mf",
+      "systemId": "fb_bornewables_pp_ra120mf",
       "author": "System",
       "wvtrValues": [
         {
@@ -19706,7 +19706,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_agility_ec_7000_lldpe",
+      "systemId": "fb_dow_agility_ec_7000_lldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -19749,7 +19749,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_braskem_i_m_green_pe_seb_853",
+      "systemId": "fb_braskem_i_m_green_pe_seb_853",
       "author": "System",
       "wvtrValues": [
         {
@@ -19792,7 +19792,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_formolene_hdpe_1040h",
+      "systemId": "fb_formolene_hdpe_1040h",
       "author": "System",
       "wvtrValues": [
         {
@@ -19835,7 +19835,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_chemours_tefzel_etfe_100",
+      "systemId": "fb_chemours_tefzel_etfe_100",
       "author": "System",
       "wvtrValues": [
         {
@@ -19878,7 +19878,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_daikin_neoflon_etfe_film",
+      "systemId": "fb_daikin_neoflon_etfe_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -19921,7 +19921,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_klockner_clearform_cold_form_foil",
+      "systemId": "fb_klockner_clearform_cold_form_foil",
       "author": "System",
       "wvtrValues": [
         {
@@ -19968,7 +19968,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_retort_foil_35_m",
+      "systemId": "fb_novelis_retort_foil_35_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -20015,7 +20015,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_perlen_cold_form_opa_al_pvc",
+      "systemId": "fb_perlen_cold_form_opa_al_pvc",
       "author": "System",
       "wvtrValues": [
         {
@@ -20062,7 +20062,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kotkamills_absorbex_barrier_board",
+      "systemId": "fb_kotkamills_absorbex_barrier_board",
       "author": "System",
       "wvtrValues": [
         {
@@ -20105,7 +20105,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_seaman_paper_greenwrap_barrier",
+      "systemId": "fb_seaman_paper_greenwrap_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -20148,7 +20148,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_k171b",
+      "systemId": "fb_eval_k171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -20203,7 +20203,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_g105b",
+      "systemId": "fb_eval_g105b",
       "author": "System",
       "wvtrValues": [
         {
@@ -20258,7 +20258,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_j105b",
+      "systemId": "fb_eval_j105b",
       "author": "System",
       "wvtrValues": [
         {
@@ -20301,7 +20301,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_d171b",
+      "systemId": "fb_eval_d171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -20356,7 +20356,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_e3808",
+      "systemId": "fb_soarnol_e3808",
       "author": "System",
       "wvtrValues": [
         {
@@ -20411,7 +20411,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_c3803rb",
+      "systemId": "fb_soarnol_c3803rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -20454,7 +20454,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_e2903rb",
+      "systemId": "fb_soarnol_e2903rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -20509,7 +20509,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_sn2406b",
+      "systemId": "fb_soarnol_sn2406b",
       "author": "System",
       "wvtrValues": [
         {
@@ -20552,7 +20552,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_d2918rb",
+      "systemId": "fb_soarnol_d2918rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -20607,7 +20607,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_rh3510",
+      "systemId": "fb_soarnol_rh3510",
       "author": "System",
       "wvtrValues": [
         {
@@ -20650,7 +20650,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exceval_rs_2117",
+      "systemId": "fb_exceval_rs_2117",
       "author": "System",
       "wvtrValues": [
         {
@@ -20693,7 +20693,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grivory_g21_pa6i_6t",
+      "systemId": "fb_grivory_g21_pa6i_6t",
       "author": "System",
       "wvtrValues": [
         {
@@ -20736,7 +20736,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zytel_408ld_pa6_69",
+      "systemId": "fb_zytel_408ld_pa6_69",
       "author": "System",
       "wvtrValues": [
         {
@@ -20779,7 +20779,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultramid_b27_e_pa6",
+      "systemId": "fb_ultramid_b27_e_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -20834,7 +20834,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grilon_bt_40_pa6",
+      "systemId": "fb_grilon_bt_40_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -20877,7 +20877,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grilon_ra_pa66_6",
+      "systemId": "fb_grilon_ra_pa66_6",
       "author": "System",
       "wvtrValues": [
         {
@@ -20920,7 +20920,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_akulon_s223_d_pa6_film",
+      "systemId": "fb_akulon_s223_d_pa6_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -20975,7 +20975,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_technyl_one_a_218_v30_pa66",
+      "systemId": "fb_technyl_one_a_218_v30_pa66",
       "author": "System",
       "wvtrValues": [
         {
@@ -21018,7 +21018,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_akulon_f136_d_pa6",
+      "systemId": "fb_akulon_f136_d_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -21061,7 +21061,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_rilsan_besv_pa11_film",
+      "systemId": "fb_rilsan_besv_pa11_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -21116,7 +21116,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultramid_b36_e_pa6",
+      "systemId": "fb_ultramid_b36_e_pa6",
       "author": "System",
       "wvtrValues": [
         {
@@ -21171,7 +21171,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grilon_bm_50_pa6_66",
+      "systemId": "fb_grilon_bm_50_pa6_66",
       "author": "System",
       "wvtrValues": [
         {
@@ -21214,7 +21214,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ultramid_b50_pa6_high_mw",
+      "systemId": "fb_ultramid_b50_pa6_high_mw",
       "author": "System",
       "wvtrValues": [
         {
@@ -21269,7 +21269,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_klockner_clearform_cold_form_foil_2",
+      "systemId": "fb_klockner_clearform_cold_form_foil_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21316,7 +21316,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_retort_foil_35_m_2",
+      "systemId": "fb_novelis_retort_foil_35_m_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21363,7 +21363,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_perlen_cold_form_opa_al_pvc_2",
+      "systemId": "fb_perlen_cold_form_opa_al_pvc_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21410,7 +21410,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ahlstrom_munksj_pharma_barrier_2",
+      "systemId": "fb_ahlstrom_munksj_pharma_barrier_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21453,7 +21453,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_billerudkorsn_s_korsn_s_barrier_2",
+      "systemId": "fb_billerudkorsn_s_korsn_s_barrier_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21508,7 +21508,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kotkamills_absorbex_barrier_board_2",
+      "systemId": "fb_kotkamills_absorbex_barrier_board_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21551,7 +21551,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_seaman_paper_greenwrap_barrier_2",
+      "systemId": "fb_seaman_paper_greenwrap_barrier_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21594,7 +21594,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_r120b",
+      "systemId": "fb_eval_r120b",
       "author": "System",
       "wvtrValues": [
         {
@@ -21649,7 +21649,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_e3808_2",
+      "systemId": "fb_soarnol_e3808_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21704,7 +21704,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_c3803rb_2",
+      "systemId": "fb_soarnol_c3803rb_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21747,7 +21747,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_grivory_g21_pa6i_6t_2",
+      "systemId": "fb_grivory_g21_pa6i_6t_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -21790,7 +21790,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zytel_fe3736_pa6_66",
+      "systemId": "fb_zytel_fe3736_pa6_66",
       "author": "System",
       "wvtrValues": [
         {
@@ -21845,7 +21845,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_800_pet",
+      "systemId": "fb_melinex_800_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -21888,7 +21888,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_u34_uv_barrier_pet",
+      "systemId": "fb_lumirror_u34_uv_barrier_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -21931,7 +21931,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_wo_white_opaque_pet",
+      "systemId": "fb_hostaphan_wo_white_opaque_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -21974,7 +21974,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh20_pet_20_m",
+      "systemId": "fb_skc_sh20_pet_20_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -22017,7 +22017,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_flex_films_ua_ultrabarrier_pet",
+      "systemId": "fb_flex_films_ua_ultrabarrier_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -22072,7 +22072,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_techbarrier_lx_alox_pet",
+      "systemId": "fb_mitsubishi_techbarrier_lx_alox_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -22127,7 +22127,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_pvoh_coated_barrier_pet",
+      "systemId": "fb_amcor_pvoh_coated_barrier_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -22170,7 +22170,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_bnh_siox_pet",
+      "systemId": "fb_hostaphan_bnh_siox_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -22213,7 +22213,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_c50_chemical_resistant_pet",
+      "systemId": "fb_lumirror_c50_chemical_resistant_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -22256,7 +22256,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_synflex_cpp_sy30",
+      "systemId": "fb_skc_synflex_cpp_sy30",
       "author": "System",
       "wvtrValues": [
         {
@@ -22299,7 +22299,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_pearl_film_jp",
+      "systemId": "fb_jindal_bopp_pearl_film_jp",
       "author": "System",
       "wvtrValues": [
         {
@@ -22342,7 +22342,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_mo_matte_opp",
+      "systemId": "fb_taghleef_mo_matte_opp",
       "author": "System",
       "wvtrValues": [
         {
@@ -22385,7 +22385,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_thermal_laminating_bopp",
+      "systemId": "fb_cosmo_thermal_laminating_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -22428,7 +22428,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_opp_alox_barrier",
+      "systemId": "fb_treofan_opp_alox_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -22483,7 +22483,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_vistamaxx_6102_pp_elastomer",
+      "systemId": "fb_vistamaxx_6102_pp_elastomer",
       "author": "System",
       "wvtrValues": [
         {
@@ -22526,7 +22526,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_totalenergies_pp_3270_cpp",
+      "systemId": "fb_totalenergies_pp_3270_cpp",
       "author": "System",
       "wvtrValues": [
         {
@@ -22569,7 +22569,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_evolue_sp2040_mlldpe",
+      "systemId": "fb_evolue_sp2040_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -22612,7 +22612,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_marlex_hdpe_hmn_4550",
+      "systemId": "fb_marlex_hdpe_hmn_4550",
       "author": "System",
       "wvtrValues": [
         {
@@ -22655,7 +22655,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_petrothene_na961_ldpe",
+      "systemId": "fb_petrothene_na961_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -22698,7 +22698,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_alathon_h6560_hdpe",
+      "systemId": "fb_alathon_h6560_hdpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -22741,7 +22741,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pttgc_polene_lldpe_7004",
+      "systemId": "fb_pttgc_polene_lldpe_7004",
       "author": "System",
       "wvtrValues": [
         {
@@ -22784,7 +22784,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_lldpe_218n",
+      "systemId": "fb_sabic_lldpe_218n",
       "author": "System",
       "wvtrValues": [
         {
@@ -22827,7 +22827,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ecoflex_f_blend_c1200_biodeg",
+      "systemId": "fb_ecoflex_f_blend_c1200_biodeg",
       "author": "System",
       "wvtrValues": [
         {
@@ -22870,7 +22870,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_danimer_pha_9630",
+      "systemId": "fb_danimer_pha_9630",
       "author": "System",
       "wvtrValues": [
         {
@@ -22913,7 +22913,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tenite_cellulose_acetate_ca_394_60",
+      "systemId": "fb_tenite_cellulose_acetate_ca_394_60",
       "author": "System",
       "wvtrValues": [
         {
@@ -22956,7 +22956,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hytrel_3078_tpc_et",
+      "systemId": "fb_hytrel_3078_tpc_et",
       "author": "System",
       "wvtrValues": [
         {
@@ -22999,7 +22999,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_arnitel_pbt_ptmeg_tpc_vt3108",
+      "systemId": "fb_arnitel_pbt_ptmeg_tpc_vt3108",
       "author": "System",
       "wvtrValues": [
         {
@@ -23054,7 +23054,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_elastollan_s80a_tpu_film",
+      "systemId": "fb_elastollan_s80a_tpu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -23097,7 +23097,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_geon_pvc_8585_pharma",
+      "systemId": "fb_geon_pvc_8585_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -23152,7 +23152,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kanevinyl_pvc_s_1001_film",
+      "systemId": "fb_kanevinyl_pvc_s_1001_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -23195,7 +23195,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_teflon_af_2400_amorphous_ptfe",
+      "systemId": "fb_teflon_af_2400_amorphous_ptfe",
       "author": "System",
       "wvtrValues": [
         {
@@ -23238,7 +23238,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_makrolon_2858_pc_film",
+      "systemId": "fb_makrolon_2858_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -23281,7 +23281,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eastman_treva_bio_based_pc",
+      "systemId": "fb_eastman_treva_bio_based_pc",
       "author": "System",
       "wvtrValues": [
         {
@@ -23324,7 +23324,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_novatech_ops_film",
+      "systemId": "fb_ineos_novatech_ops_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -23367,7 +23367,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hydro_cold_form_pharma_foil_45_m",
+      "systemId": "fb_hydro_cold_form_pharma_foil_45_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -23414,7 +23414,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_ultra_thin_foil_8_m",
+      "systemId": "fb_novelis_ultra_thin_foil_8_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -23457,7 +23457,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_soft_alloy_foil_7_m",
+      "systemId": "fb_constantia_soft_alloy_foil_7_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -23500,7 +23500,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_guard_barrier_paper",
+      "systemId": "fb_sappi_guard_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -23543,7 +23543,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mayr_melnhof_barrier_board_mm",
+      "systemId": "fb_mayr_melnhof_barrier_board_mm",
       "author": "System",
       "wvtrValues": [
         {
@@ -23598,7 +23598,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mondi_haftona_barrier_paper",
+      "systemId": "fb_mondi_haftona_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -23641,7 +23641,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_f53_pet",
+      "systemId": "fb_lumirror_f53_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -23684,7 +23684,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh50_pet_50_m",
+      "systemId": "fb_skc_sh50_pet_50_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -23727,7 +23727,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_garware_pet_ub12",
+      "systemId": "fb_garware_pet_ub12",
       "author": "System",
       "wvtrValues": [
         {
@@ -23770,7 +23770,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kolon_pet_film_in12",
+      "systemId": "fb_kolon_pet_film_in12",
       "author": "System",
       "wvtrValues": [
         {
@@ -23813,7 +23813,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyplex_bo23_pet",
+      "systemId": "fb_polyplex_bo23_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -23856,7 +23856,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rnw_dual_coated_pet",
+      "systemId": "fb_hostaphan_rnw_dual_coated_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -23911,7 +23911,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_e20_pet",
+      "systemId": "fb_lumirror_e20_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -23954,7 +23954,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_terphane_bt10_pet",
+      "systemId": "fb_terphane_bt10_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -23997,7 +23997,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_flex_films_metlon_vm_pet_12",
+      "systemId": "fb_flex_films_metlon_vm_pet_12",
       "author": "System",
       "wvtrValues": [
         {
@@ -24040,7 +24040,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_pl_pearl_white_bopp",
+      "systemId": "fb_taghleef_pl_pearl_white_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24083,7 +24083,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bon_nylon_barrier_bopp",
+      "systemId": "fb_cosmo_bon_nylon_barrier_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24126,7 +24126,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_jsm_matte_sealable_bopp",
+      "systemId": "fb_jindal_jsm_matte_sealable_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24169,7 +24169,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_achieve_hd6719_cpp",
+      "systemId": "fb_exxonmobil_achieve_hd6719_cpp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24212,7 +24212,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_tnd_nucleated_bopp",
+      "systemId": "fb_treofan_tnd_nucleated_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24255,7 +24255,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_borflow_hl504fb_pp",
+      "systemId": "fb_borealis_borflow_hl504fb_pp",
       "author": "System",
       "wvtrValues": [
         {
@@ -24298,7 +24298,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_coveris_mono_pp_recycle_ready_barrier",
+      "systemId": "fb_coveris_mono_pp_recycle_ready_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -24353,7 +24353,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_innate_st30_lldpe",
+      "systemId": "fb_dow_innate_st30_lldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -24396,7 +24396,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_lldpe_ll_1001xv",
+      "systemId": "fb_exxonmobil_lldpe_ll_1001xv",
       "author": "System",
       "wvtrValues": [
         {
@@ -24439,7 +24439,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_reliance_relene_lldpe_m180",
+      "systemId": "fb_reliance_relene_lldpe_m180",
       "author": "System",
       "wvtrValues": [
         {
@@ -24482,7 +24482,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_versalis_riblene_ff_35_ldpe",
+      "systemId": "fb_versalis_riblene_ff_35_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -24525,7 +24525,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_pe_2040xf_mlldpe",
+      "systemId": "fb_ineos_pe_2040xf_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -24568,7 +24568,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cellophane_pt300_regenerated_cellulose",
+      "systemId": "fb_cellophane_pt300_regenerated_cellulose",
       "author": "System",
       "wvtrValues": [
         {
@@ -24623,7 +24623,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_futamura_natureflex_nct_coated",
+      "systemId": "fb_futamura_natureflex_nct_coated",
       "author": "System",
       "wvtrValues": [
         {
@@ -24678,7 +24678,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bioflex_f_1130_pla_blend",
+      "systemId": "fb_bioflex_f_1130_pla_blend",
       "author": "System",
       "wvtrValues": [
         {
@@ -24721,7 +24721,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pebax_mh_1657_peba",
+      "systemId": "fb_pebax_mh_1657_peba",
       "author": "System",
       "wvtrValues": [
         {
@@ -24776,7 +24776,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_nodax_pha_grade_c106",
+      "systemId": "fb_nodax_pha_grade_c106",
       "author": "System",
       "wvtrValues": [
         {
@@ -24819,7 +24819,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_renolit_pharma_pvc_250_clear",
+      "systemId": "fb_renolit_pharma_pvc_250_clear",
       "author": "System",
       "wvtrValues": [
         {
@@ -24874,7 +24874,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_klockner_pvc_pe_cold_form_blister",
+      "systemId": "fb_klockner_pvc_pe_cold_form_blister",
       "author": "System",
       "wvtrValues": [
         {
@@ -24929,7 +24929,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tecoflex_sg_80a_tpu_film",
+      "systemId": "fb_tecoflex_sg_80a_tpu_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -24972,7 +24972,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pellethane_2363_80ae_tpu",
+      "systemId": "fb_pellethane_2363_80ae_tpu",
       "author": "System",
       "wvtrValues": [
         {
@@ -25027,7 +25027,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_agc_fluon_ptfe_film_et",
+      "systemId": "fb_agc_fluon_ptfe_film_et",
       "author": "System",
       "wvtrValues": [
         {
@@ -25070,7 +25070,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_iupilon_e_2000_pc_film",
+      "systemId": "fb_iupilon_e_2000_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -25113,7 +25113,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_symetal_alfoil_retort_40_m",
+      "systemId": "fb_symetal_alfoil_retort_40_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -25160,7 +25160,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_huhtamaki_alu_peelable_lidding_50_m",
+      "systemId": "fb_huhtamaki_alu_peelable_lidding_50_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -25203,7 +25203,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_constantia_alu_liner_foil_30_m",
+      "systemId": "fb_constantia_alu_liner_foil_30_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -25246,7 +25246,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cascades_innopak_barrier_board",
+      "systemId": "fb_cascades_innopak_barrier_board",
       "author": "System",
       "wvtrValues": [
         {
@@ -25289,7 +25289,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ds_smith_greencoat_barrier_paper",
+      "systemId": "fb_ds_smith_greencoat_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -25344,7 +25344,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_graphic_packaging_sbs_barrier_board",
+      "systemId": "fb_graphic_packaging_sbs_barrier_board",
       "author": "System",
       "wvtrValues": [
         {
@@ -25387,7 +25387,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eval_n171b",
+      "systemId": "fb_eval_n171b",
       "author": "System",
       "wvtrValues": [
         {
@@ -25442,7 +25442,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_453_heat_stabilised_pet",
+      "systemId": "fb_melinex_453_heat_stabilised_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -25485,7 +25485,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_zx30_siox_retort_pet",
+      "systemId": "fb_lumirror_zx30_siox_retort_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -25540,7 +25540,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh75_pet_75_m",
+      "systemId": "fb_skc_sh75_pet_75_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -25583,7 +25583,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_flex_films_bo_pet_36_m",
+      "systemId": "fb_flex_films_bo_pet_36_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -25626,7 +25626,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rnt_thermal_pet",
+      "systemId": "fb_hostaphan_rnt_thermal_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -25669,7 +25669,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_vm_pet_70000",
+      "systemId": "fb_mitsubishi_vm_pet_70000",
       "author": "System",
       "wvtrValues": [
         {
@@ -25712,7 +25712,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyplex_hb_pvoh_coated_pet",
+      "systemId": "fb_polyplex_hb_pvoh_coated_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -25755,7 +25755,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ester_industries_ebi_pet_film",
+      "systemId": "fb_ester_industries_ebi_pet_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -25798,7 +25798,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_zx_r_alox_retort_pet",
+      "systemId": "fb_lumirror_zx_r_alox_retort_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -25853,7 +25853,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_holographic_film",
+      "systemId": "fb_jindal_bopp_holographic_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -25896,7 +25896,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_ca_cast_opp",
+      "systemId": "fb_taghleef_ca_cast_opp",
       "author": "System",
       "wvtrValues": [
         {
@@ -25939,7 +25939,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bec5070_cpp_retort",
+      "systemId": "fb_borealis_bec5070_cpp_retort",
       "author": "System",
       "wvtrValues": [
         {
@@ -25982,7 +25982,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_opp_barrier_film_ob20",
+      "systemId": "fb_skc_opp_barrier_film_ob20",
       "author": "System",
       "wvtrValues": [
         {
@@ -26025,7 +26025,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_tbf_transparent_barrier_bopp",
+      "systemId": "fb_treofan_tbf_transparent_barrier_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -26080,7 +26080,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_vistamaxx_3000_pp_plastomer",
+      "systemId": "fb_vistamaxx_3000_pp_plastomer",
       "author": "System",
       "wvtrValues": [
         {
@@ -26123,7 +26123,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_printpack_mono_pp_barrier_pouch",
+      "systemId": "fb_printpack_mono_pp_barrier_pouch",
       "author": "System",
       "wvtrValues": [
         {
@@ -26166,7 +26166,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lg_chem_lucene_lc100_mlldpe",
+      "systemId": "fb_lg_chem_lucene_lc100_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -26209,7 +26209,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hanwha_total_chemtone_lldpe_3300",
+      "systemId": "fb_hanwha_total_chemtone_lldpe_3300",
       "author": "System",
       "wvtrValues": [
         {
@@ -26252,7 +26252,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_qenos_alkathene_ldpe_wjc001",
+      "systemId": "fb_qenos_alkathene_ldpe_wjc001",
       "author": "System",
       "wvtrValues": [
         {
@@ -26295,7 +26295,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_orlen_malen_ldpe_f522023",
+      "systemId": "fb_orlen_malen_ldpe_f522023",
       "author": "System",
       "wvtrValues": [
         {
@@ -26338,7 +26338,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_chevron_phillips_marlex_hdpe_5502",
+      "systemId": "fb_chevron_phillips_marlex_hdpe_5502",
       "author": "System",
       "wvtrValues": [
         {
@@ -26381,7 +26381,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lyondellbasell_lupolen_ldpe_1800s",
+      "systemId": "fb_lyondellbasell_lupolen_ldpe_1800s",
       "author": "System",
       "wvtrValues": [
         {
@@ -26424,7 +26424,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ingeo_pla_2003d_film_grade",
+      "systemId": "fb_ingeo_pla_2003d_film_grade",
       "author": "System",
       "wvtrValues": [
         {
@@ -26467,7 +26467,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kaneka_phb_kp200",
+      "systemId": "fb_kaneka_phb_kp200",
       "author": "System",
       "wvtrValues": [
         {
@@ -26510,7 +26510,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novamont_mater_bi_ng93",
+      "systemId": "fb_novamont_mater_bi_ng93",
       "author": "System",
       "wvtrValues": [
         {
@@ -26553,7 +26553,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_total_corbion_pla_lx175",
+      "systemId": "fb_total_corbion_pla_lx175",
       "author": "System",
       "wvtrValues": [
         {
@@ -26596,7 +26596,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_braskem_green_pp_sgf7018",
+      "systemId": "fb_braskem_green_pp_sgf7018",
       "author": "System",
       "wvtrValues": [
         {
@@ -26639,7 +26639,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_bilcare_pvc_pvdc_120_40_pharma",
+      "systemId": "fb_bilcare_pvc_pvdc_120_40_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -26694,7 +26694,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sekisui_pharma_pvc_200_clear",
+      "systemId": "fb_sekisui_pharma_pvc_200_clear",
       "author": "System",
       "wvtrValues": [
         {
@@ -26749,7 +26749,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_hyperlast_dp5000_tpu",
+      "systemId": "fb_dow_hyperlast_dp5000_tpu",
       "author": "System",
       "wvtrValues": [
         {
@@ -26793,7 +26793,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_chemours_teflon_mfa_film_50",
+      "systemId": "fb_chemours_teflon_mfa_film_50",
       "author": "System",
       "wvtrValues": [
         {
@@ -26836,7 +26836,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_teijin_panlite_l_1225y_pc_film",
+      "systemId": "fb_teijin_panlite_l_1225y_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -26879,7 +26879,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_pactiv_evergreen_alu_foil_18_m",
+      "systemId": "fb_pactiv_evergreen_alu_foil_18_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -26922,7 +26922,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_laminazione_sottile_alfoil_30_m",
+      "systemId": "fb_laminazione_sottile_alfoil_30_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -26965,7 +26965,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_efootprint_foil_12_m",
+      "systemId": "fb_novelis_efootprint_foil_12_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -27008,7 +27008,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_westrock_barrier_board_enhance",
+      "systemId": "fb_westrock_barrier_board_enhance",
       "author": "System",
       "wvtrValues": [
         {
@@ -27051,7 +27051,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sappi_tambla_barrier_paper",
+      "systemId": "fb_sappi_tambla_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -27106,7 +27106,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ahlstrom_munksj_sterilization_barrier",
+      "systemId": "fb_ahlstrom_munksj_sterilization_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -27149,7 +27149,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_soarnol_xt2904rb",
+      "systemId": "fb_soarnol_xt2904rb",
       "author": "System",
       "wvtrValues": [
         {
@@ -27204,7 +27204,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rn19_pet",
+      "systemId": "fb_hostaphan_rn19_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27247,7 +27247,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_850_pet",
+      "systemId": "fb_melinex_850_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27302,7 +27302,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh9_ultra_thin_pet",
+      "systemId": "fb_skc_sh9_ultra_thin_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27345,7 +27345,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_terphane_ht_high_temperature_pet",
+      "systemId": "fb_terphane_ht_high_temperature_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27388,7 +27388,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_garware_pet_barrier_23_m",
+      "systemId": "fb_garware_pet_barrier_23_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -27431,7 +27431,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_q10_pet",
+      "systemId": "fb_lumirror_q10_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27474,7 +27474,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mylar_c_92ga_pet",
+      "systemId": "fb_mylar_c_92ga_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27517,7 +27517,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_kolon_km1_bopet_film",
+      "systemId": "fb_kolon_km1_bopet_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -27560,7 +27560,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_bhv_met_pet",
+      "systemId": "fb_hostaphan_bhv_met_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -27603,7 +27603,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bh345mo_bopp",
+      "systemId": "fb_borealis_bh345mo_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -27646,7 +27646,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_thermal_bt",
+      "systemId": "fb_cosmo_bopp_thermal_bt",
       "author": "System",
       "wvtrValues": [
         {
@@ -27689,7 +27689,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_twc_white_cavitated_bopp",
+      "systemId": "fb_treofan_twc_white_cavitated_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -27732,7 +27732,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_achieve_pp6936g2",
+      "systemId": "fb_exxonmobil_achieve_pp6936g2",
       "author": "System",
       "wvtrValues": [
         {
@@ -27775,7 +27775,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_translucent_jt",
+      "systemId": "fb_jindal_bopp_translucent_jt",
       "author": "System",
       "wvtrValues": [
         {
@@ -27818,7 +27818,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_pp_505p_film_grade",
+      "systemId": "fb_sabic_pp_505p_film_grade",
       "author": "System",
       "wvtrValues": [
         {
@@ -27861,7 +27861,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bec0550_cpp_low_temp_seal",
+      "systemId": "fb_borealis_bec0550_cpp_low_temp_seal",
       "author": "System",
       "wvtrValues": [
         {
@@ -27904,7 +27904,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_innate_pt_1450_lldpe",
+      "systemId": "fb_dow_innate_pt_1450_lldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -27947,7 +27947,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_exceed_1018ca_mlldpe",
+      "systemId": "fb_exxonmobil_exceed_1018ca_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -27990,7 +27990,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_lldpe_318c",
+      "systemId": "fb_sabic_lldpe_318c",
       "author": "System",
       "wvtrValues": [
         {
@@ -28033,7 +28033,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_westlake_ldpe_ef606",
+      "systemId": "fb_westlake_ldpe_ef606",
       "author": "System",
       "wvtrValues": [
         {
@@ -28076,7 +28076,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eastman_amphora_an004_copolyester",
+      "systemId": "fb_eastman_amphora_an004_copolyester",
       "author": "System",
       "wvtrValues": [
         {
@@ -28119,7 +28119,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_mxd6_s6011",
+      "systemId": "fb_mitsubishi_mxd6_s6011",
       "author": "System",
       "wvtrValues": [
         {
@@ -28174,7 +28174,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dupont_bynel_4164_adhesive_copolymer",
+      "systemId": "fb_dupont_bynel_4164_adhesive_copolymer",
       "author": "System",
       "wvtrValues": [
         {
@@ -28217,7 +28217,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_basf_ecovio_f2224_biopolymer",
+      "systemId": "fb_basf_ecovio_f2224_biopolymer",
       "author": "System",
       "wvtrValues": [
         {
@@ -28260,7 +28260,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_covestro_desmopan_591a_tpu",
+      "systemId": "fb_covestro_desmopan_591a_tpu",
       "author": "System",
       "wvtrValues": [
         {
@@ -28303,7 +28303,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_gore_eptfe_membrane_ra8516",
+      "systemId": "fb_gore_eptfe_membrane_ra8516",
       "author": "System",
       "wvtrValues": [
         {
@@ -28346,7 +28346,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lg_chem_lupoy_pc_1100l_film",
+      "systemId": "fb_lg_chem_lupoy_pc_1100l_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -28389,7 +28389,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_tekni_plex_tekniflex_pvc_pvdc_blister",
+      "systemId": "fb_tekni_plex_tekniflex_pvc_pvdc_blister",
       "author": "System",
       "wvtrValues": [
         {
@@ -28444,7 +28444,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_huhtamaki_pvc_pharma_blister_200_m",
+      "systemId": "fb_huhtamaki_pvc_pharma_blister_200_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -28499,7 +28499,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hydro_alflex_foil_18_m",
+      "systemId": "fb_hydro_alflex_foil_18_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -28542,7 +28542,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_barrier_lidding_foil_40_m",
+      "systemId": "fb_amcor_barrier_lidding_foil_40_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -28589,7 +28589,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_novelis_tl25_triplex_lamination_foil",
+      "systemId": "fb_novelis_tl25_triplex_lamination_foil",
       "author": "System",
       "wvtrValues": [
         {
@@ -28632,7 +28632,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_billerud_grease_barrier_kraft_paper",
+      "systemId": "fb_billerud_grease_barrier_kraft_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -28687,7 +28687,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_stora_enso_performa_ws_barrier",
+      "systemId": "fb_stora_enso_performa_ws_barrier",
       "author": "System",
       "wvtrValues": [
         {
@@ -28730,7 +28730,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_international_paper_barrier_board_ip",
+      "systemId": "fb_international_paper_barrier_board_ip",
       "author": "System",
       "wvtrValues": [
         {
@@ -28773,7 +28773,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_zytel_rs_pa610_bio_based_nylon_2",
+      "systemId": "fb_zytel_rs_pa610_bio_based_nylon_2",
       "author": "System",
       "wvtrValues": [
         {
@@ -28816,7 +28816,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_a4300_pet",
+      "systemId": "fb_lumirror_a4300_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -28859,7 +28859,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_melinex_460_pet",
+      "systemId": "fb_melinex_460_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -28914,7 +28914,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_sh100_pet_100_m",
+      "systemId": "fb_skc_sh100_pet_100_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -28957,7 +28957,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hostaphan_rn36_pet_36_m",
+      "systemId": "fb_hostaphan_rn36_pet_36_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -29000,7 +29000,7 @@
       "tdsLink": "",
       "isMetallized": true,
       "isCommunity": false,
-      "firebaseDocId": "fb_lumirror_zs10_siox_pet",
+      "systemId": "fb_lumirror_zs10_siox_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -29055,7 +29055,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_flex_films_pet_clear_bo23",
+      "systemId": "fb_flex_films_pet_clear_bo23",
       "author": "System",
       "wvtrValues": [
         {
@@ -29098,7 +29098,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_uflex_bopet_12_m_standard",
+      "systemId": "fb_uflex_bopet_12_m_standard",
       "author": "System",
       "wvtrValues": [
         {
@@ -29141,7 +29141,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_polyplex_pet_bo36",
+      "systemId": "fb_polyplex_pet_bo36",
       "author": "System",
       "wvtrValues": [
         {
@@ -29184,7 +29184,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_terphane_36hb_heat_seal_pet",
+      "systemId": "fb_terphane_36hb_heat_seal_pet",
       "author": "System",
       "wvtrValues": [
         {
@@ -29227,7 +29227,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_bj100mo_bopp",
+      "systemId": "fb_borealis_bj100mo_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -29270,7 +29270,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_cosmo_bopp_matte_opm_film",
+      "systemId": "fb_cosmo_bopp_matte_opm_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -29313,7 +29313,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_taghleef_mb_white_bopp",
+      "systemId": "fb_taghleef_mb_white_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -29356,7 +29356,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_jindal_bopp_clear_sealable_jc",
+      "systemId": "fb_jindal_bopp_clear_sealable_jc",
       "author": "System",
       "wvtrValues": [
         {
@@ -29399,7 +29399,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_treofan_b1_bopp",
+      "systemId": "fb_treofan_b1_bopp",
       "author": "System",
       "wvtrValues": [
         {
@@ -29442,7 +29442,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_pp2252e1_cpp",
+      "systemId": "fb_exxonmobil_pp2252e1_cpp",
       "author": "System",
       "wvtrValues": [
         {
@@ -29485,7 +29485,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_skc_opp_white_film_wb40",
+      "systemId": "fb_skc_opp_white_film_wb40",
       "author": "System",
       "wvtrValues": [
         {
@@ -29528,7 +29528,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_dow_dowlex_2049g_lldpe",
+      "systemId": "fb_dow_dowlex_2049g_lldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -29571,7 +29571,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_exxonmobil_ld_150bw_ldpe",
+      "systemId": "fb_exxonmobil_ld_150bw_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -29614,7 +29614,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_borealis_borpact_sb10_mlldpe",
+      "systemId": "fb_borealis_borpact_sb10_mlldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -29657,7 +29657,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_ldpe_2100tn00",
+      "systemId": "fb_sabic_ldpe_2100tn00",
       "author": "System",
       "wvtrValues": [
         {
@@ -29700,7 +29700,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_lyondellbasell_lupolen_3020d_ldpe",
+      "systemId": "fb_lyondellbasell_lupolen_3020d_ldpe",
       "author": "System",
       "wvtrValues": [
         {
@@ -29743,7 +29743,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ineos_ldpe_19n430",
+      "systemId": "fb_ineos_ldpe_19n430",
       "author": "System",
       "wvtrValues": [
         {
@@ -29786,7 +29786,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ingeo_pla_3052d",
+      "systemId": "fb_ingeo_pla_3052d",
       "author": "System",
       "wvtrValues": [
         {
@@ -29829,7 +29829,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mater_bi_cf04p_compostable_starch",
+      "systemId": "fb_mater_bi_cf04p_compostable_starch",
       "author": "System",
       "wvtrValues": [
         {
@@ -29872,7 +29872,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_ecoflex_fs_biodeg_film_grade",
+      "systemId": "fb_ecoflex_fs_biodeg_film_grade",
       "author": "System",
       "wvtrValues": [
         {
@@ -29915,7 +29915,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_eastman_tritan_ex401_copolyester_film",
+      "systemId": "fb_eastman_tritan_ex401_copolyester_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -29958,7 +29958,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_mitsubishi_chemical_pvc_sp_1700_pharma",
+      "systemId": "fb_mitsubishi_chemical_pvc_sp_1700_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -30013,7 +30013,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_inapack_pvc_pvdc_100_40_pharma",
+      "systemId": "fb_inapack_pvc_pvdc_100_40_pharma",
       "author": "System",
       "wvtrValues": [
         {
@@ -30068,7 +30068,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_chemours_teflon_nxt_pfa_film_75",
+      "systemId": "fb_chemours_teflon_nxt_pfa_film_75",
       "author": "System",
       "wvtrValues": [
         {
@@ -30111,7 +30111,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_sabic_lexan_oq15_pc_film",
+      "systemId": "fb_sabic_lexan_oq15_pc_film",
       "author": "System",
       "wvtrValues": [
         {
@@ -30154,7 +30154,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_totalenergies_lacqstyrene_2900_ops",
+      "systemId": "fb_totalenergies_lacqstyrene_2900_ops",
       "author": "System",
       "wvtrValues": [
         {
@@ -30197,7 +30197,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_amcor_peelfoil_pharma_foil_25_m",
+      "systemId": "fb_amcor_peelfoil_pharma_foil_25_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -30244,7 +30244,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_hydro_alflex_foil_12_m",
+      "systemId": "fb_hydro_alflex_foil_12_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -30287,7 +30287,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_symetal_lamination_foil_20_m",
+      "systemId": "fb_symetal_lamination_foil_20_m",
       "author": "System",
       "wvtrValues": [
         {
@@ -30330,7 +30330,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_walki_winflex_barrier_paper",
+      "systemId": "fb_walki_winflex_barrier_paper",
       "author": "System",
       "wvtrValues": [
         {
@@ -30373,7 +30373,7 @@
       "tdsLink": "",
       "isMetallized": false,
       "isCommunity": false,
-      "firebaseDocId": "fb_schur_packaging_barrier_kraft",
+      "systemId": "fb_schur_packaging_barrier_kraft",
       "author": "System",
       "wvtrValues": [
         {
