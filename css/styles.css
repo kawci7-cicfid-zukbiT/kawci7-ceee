@@ -493,35 +493,38 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
    NAV A DUE LIVELLI + MOBILE FIX
    ==================================================================== */
 
-/* === SUB-NAV === */
+/* === SUB-NAV CONTAINER === */
 #nav-subtabs {
   display: flex;
+  width: 100%;               /* ✅ FORZA LARGHEZZA PIENA */
+  box-sizing: border-box;    /* ✅ IL PADDING NON SBAFFA */
   gap: 0.15rem;
   padding: 0 1.5rem 0.5rem;
-  overflow-x: hidden; /* ← Cambiato da auto a hidden */
+  overflow-x: hidden;        /* ✅ NASCONDE SCROLL */
   scrollbar-width: none;
   background: rgba(0,0,0,0.15);
   border-top: 1px solid rgba(255,255,255,0.08);
 }
+#nav-subtabs::-webkit-scrollbar { display: none; }
 
+/* === SUB-TAB ITEMS === */
 .nav-subtab {
-  flex: 1;                /* ← AGGIUNTO: espande equamente */
-  min-width: 0;           /* ← AGGIUNTO: evita overflow */
+  flex: 1 1 0%;              /* ✅ ESPANSIONE EQUA (ignora lunghezza testo) */
+  min-width: 0;              /* ✅ PREVIEINE BLOCCHI FLESS */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.3rem 0.4rem; /* ← Ridotto padding laterale */
+  padding: 0.3rem 0.4rem;
   background: transparent;
   border: none;
   border-radius: 6px;
   color: rgba(255,255,255,0.6);
   cursor: pointer;
-  font-size: 0.92rem;     /* ← La tua modifica */
+  font-size: 0.92rem;
   font-weight: 500;
   transition: all 0.15s;
   white-space: nowrap;
   text-align: center;
-  /* ❌ Rimuovi flex-shrink: 0 se c'era */
 }
 .nav-subtab:hover {
   background: rgba(255,255,255,0.12);
