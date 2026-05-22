@@ -256,7 +256,7 @@ function createCompanyFromModal() {
 
 function showCompanyCreatedModal(name, code, expiresAt) {
     var expiryStr = expiresAt ? 'Expires: ' + new Date(expiresAt).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : 'Never expires';
-    var body = '<div style="text-align:center;margin-bottom:1.25rem"><div style="font-size:2rem;margin-bottom:0.5rem">🎉</div>' +
+    var body = '<div style="text-align:center;margin-bottom:1.25rem"><div style="font-size:2rem;margin-bottom:0.5rem"></div>' +
         '<div style="font-size:1rem;font-weight:700;color:#0f172a">Company created!</div>' +
         '<div style="font-size:0.78rem;color:#64748b;margin-top:0.25rem">' + name + '</div></div>' +
         '<div style="background:#f8fafc;border:2px dashed #cbd5e1;border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1rem">' +
