@@ -1,3 +1,4 @@
+
 // ====================================================================
 // 🏠 HOME PATCH — sostituisce renderHome() e initHomeAnimations()
 // Widget: Most Used (top 10) + New in Community + Recently Updated
