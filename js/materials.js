@@ -135,7 +135,7 @@ async function voteReliability(matId, voteType) {
     if(!mat) return;
     if(!mat.reliabilityVotes) mat.reliabilityVotes = { up: 0, down: 0 };
     var firebaseUpdate = {};
-    var needsSync = mat.firebaseDocId && window.communityDB;
+    var needsSync = mat.firebaseDocId && window.communityDB && mat.isCommunity === true;
 
     if(currentVote) {
         mat.reliabilityVotes[currentVote] = Math.max(0, (mat.reliabilityVotes[currentVote] || 0) - 1);
