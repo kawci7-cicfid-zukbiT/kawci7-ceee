@@ -95,7 +95,7 @@ header{background:linear-gradient(135deg,#0f172a,var(--primary),#38bdf8);color:#
   border-radius: 8px;
   color: rgba(255,255,255,0.7);
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 600;
   transition: all 0.2s;
   white-space: nowrap;
@@ -512,7 +512,7 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
   border-radius: 6px;
   color: rgba(255,255,255,0.6);
   cursor: pointer;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 500;
   transition: all 0.15s;
   white-space: nowrap;
