@@ -557,3 +557,8 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
     font-size: 0.78rem !important;
   }
 }
+@media (max-width: 768px) {
+  .home-widgets-row {
+    grid-template-columns: 1fr !important;
+  }
+}
