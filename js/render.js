@@ -550,7 +550,7 @@ function renderSensitivity() {
 // ====================================================================
 // SENSITIVITY METHODOLOGY
 // ====================================================================
-function renderSensitivityMethodology() {
+
 function renderSensitivityMethodology() {
 return `
 <div class="card methodology-card" style="margin-top:1.5rem; border-left:4px solid var(--primary); background: var(--card);">
