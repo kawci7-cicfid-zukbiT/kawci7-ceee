@@ -551,14 +551,74 @@ function renderSensitivity() {
 // SENSITIVITY METHODOLOGY
 // ====================================================================
 function renderSensitivityMethodology() {
-    return '<div class="card methodology-card" style="margin-top:1.5rem;border-left:4px solid var(--primary);background:var(--card);">' +
-        '<div style="padding:1.2rem 1.5rem;">' +
-        '<h2 style="font-family:Georgia,serif;font-size:1.3rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.5rem;margin-bottom:1rem;">Mechanics of Sensitivity Analysis</h2>' +
-        '<div style="font-size:0.95rem;line-height:1.8;color:#334155;font-family:Georgia,serif;">' +
-        '<p>Sensitivity Analysis sweeps the thickness of a single selected layer across a wide range while keeping all other layers locked, showing how the final transmission rate changes non-linearly.</p>' +
-        '<div style="background:#f8fafc;padding:1.1rem;border-radius:6px;font-family:monospace;font-size:0.95rem;text-align:center;border:1px dashed var(--border);margin:1rem 0;color:#0f172a;">R_variable(t) = t / (P_ref x T_ref)<br><br>Permeability(t) = 1 / (R_fixed + R_variable(t))</div>' +
-        '<div style="margin-top:1.5rem;padding:0.9rem;background:var(--bg);border-radius:8px;font-size:0.88rem;color:var(--text-light);border-left:4px solid var(--primary);font-family:sans-serif;"><strong>Disclaimer:</strong> Commercial specifications must always be validated with direct laboratory measurements.</div>' +
-        '</div></div></div>';
+function renderSensitivityMethodology() {
+return `
+<div class="card methodology-card" style="margin-top:1.5rem; border-left:4px solid var(--primary); background: var(--card);">
+<div style="padding:1.2rem 1.5rem;">
+<h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.3rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1rem;">
+Mechanics of Sensitivity Analysis
+</h2>
+<div style="font-size:0.95rem; line-height:1.8; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
+
+<p>In packaging optimization, a common question arises: <em>"What happens if we make this specific layer thinner to save money, or thicker to extend shelf life?"</em> Not all layers impact the final structure equally. Sensitivity Analysis is a powerful mathematical stress-test that answers this question. By sweeping the thickness of a single selected layer across a wide range while keeping all other layers locked, the model plots a dynamic trajectory showing exactly where you get the most "bang for your buck."</p>
+
+<div style="background:var(--primary-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--primary); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+<strong>The Mathematical Phenomenon:</strong> Even though a single layer's resistance scales linearly with its thickness, the final transmission rate (WVTR/OTR) of the laminate changes non-linearly. This creates a distinct curve because the variable layer is constantly shifting its percentage share of the global resistance pool.
+</div>
+
+<h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">The math under the hood</h3>
+<p>To plot your sensitivity curve, the calculator isolates the chosen layer and executes an iterative loops calculation. It samples multiple thickness points (ranging from thin to thick) and for every step, it re-computes Fick's resistance formula and recombines it into the global series model:</p>
+
+<div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin:1rem 0; color:#0f172a;">
+R<sub>variable</sub>(t) = Thickness<sub>sampled</sub> / (Permeability<sub>ref</sub> × Thickness<sub>ref</sub>)<br><br>
+R<sub>total</sub>(t) = R<sub>fixed_layers</sub> + R<sub>variable</sub>(t)<br><br>
+Laminate Permeability(t) = 1 / R<sub>total</sub>(t)
+</div>
+
+<h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">How to read the sensitivity chart</h3>
+<p>When you analyze the generated curve, your eyes should look for specific geometric patterns that dictate engineering decisions:</p>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0; font-family:sans-serif; font-size:0.88rem;">
+  <thead>
+    <tr style="background:#f1f5f9; border-bottom:2px solid var(--border);">
+      <th style="padding:0.6rem; text-align:left;">Curve Topography</th>
+      <th style="padding:0.6rem; text-align:left;">Physical Meaning</th>
+      <th style="padding:0.6rem; text-align:left;">Industrial Diagnostic Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.6rem; font-weight:bold; color:var(--danger);">The Steep Cliff</td>
+      <td>Critical Threshold Zone</td>
+      <td>Reducing thickness even by 1 or 2 microns here will cause a catastrophic spike in gas transmission. This is a high-risk zone for product shelf life.</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.6rem; font-weight:bold; color:var(--warning);">The "Knee" (Inflection)</td>
+      <td>Thermodynamic Optimum</td>
+      <td>The sweet spot. This is the exact point of cost-performance optimization where you achieve maximum barrier protection before the curve begins to flatten.</td>
+    </tr>
+    <tr>
+      <td style="padding:0.6rem; font-weight:bold; color:var(--success);">The Flat Plateau</td>
+      <td>System Bottleneck</td>
+      <td>Adding more material is a waste of money. The variable layer is no longer the limiting factor; another layer in the structure is bottlenecking the performance. Focus on optimizing other materials.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">Why metallized or coated layers stay flat?</h3>
+<p>If you run a sensitivity sweep on a metallized film (like MET-PET) or an oxide-coated material (AlO<sub>x</sub>/SiO<sub>x</sub>), you will notice that the resulting graph line is completely flat. This is physical proof that the model is working correctly. The calculator treats these structures as surface shields: their gas-blocking properties are dictated entirely by the quality of the nanometric vacuum deposition, not by the thickness of the plastic carrier underneath. Changing a carrier film from 12 µm to 20 µm changes mechanical properties, but leaves the barrier resistance unchanged.</p>
+
+
+<p>Use these graphic slopes to streamline your packaging specifications. By identifying structural plateaus, you can eliminate over-engineered components, reduce polymer plastic weights, minimize your eco-tax footprints, and cut production costs without risking standard food safety or chemical shelf-life metrics.</p>
+
+<div style="margin-top:1.5rem; padding:0.9rem; background:var(--bg); border-radius:8px; font-size:0.88rem; color:var(--text-light); border-left:4px solid var(--primary); font-family:sans-serif;">
+<strong>Industrial Protocol Disclaimer:</strong> This sensitivity framework serves as a rapid screening asset for early-stage structural conceptualization. Commercial specifications, safety certifications, or legal regulatory filings must always be cross-examined and validated with direct laboratory measurements according to standard methods like ASTM F1249 or ASTM D3985.
+</div>
+
+</div>
+</div>
+</div>
+`;
 }
 
 // ====================================================================
