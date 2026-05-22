@@ -556,8 +556,10 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
     padding: 0.3rem 0.5rem 0.45rem !important;
   }
   .nav-subtab {
-    padding: 0.35rem 0.7rem;
-    font-size: 0.72rem;
+    flex: 1;                /* ← AGGIUNTO */
+    min-width: 0;           /* ← AGGIUNTO */
+    padding: 0.35rem 0.5rem;
+    font-size: 0.85rem;     /* ← Aumentato per coerenza */
     min-height: 34px;
   }
 }
