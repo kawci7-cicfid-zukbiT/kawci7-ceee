@@ -460,7 +460,7 @@ async function recordMaterialUsage(matId) {
   var currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
   var mat = DB.materials.find(function(m) { return String(m.id) === String(matId); });
   if (mat) { mat.usageCount = (mat.usageCount || 0) + 1; mat.lastUsageMonth = currentMonth; }
- if (window.communityDB && mat && mat.firebaseDocId && mat.isCommunity === true) {
+ if (window.communityDB && mat && mat.firebaseDocId) {
     try {
       var ref = window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId);
       await window.fbUpdateDoc(ref, {
