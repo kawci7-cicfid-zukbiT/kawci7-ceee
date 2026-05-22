@@ -599,25 +599,51 @@ var DB = {
   },
 
   deduplicateMaterials: function() {
-    var map = new Map();
-    for (var i = 0; i < this.materials.length; i++) {
-      var mat = this.materials[i];
-      var key = mat.firebaseDocId || String(mat.id) || mat.name.toLowerCase().trim();
-      var existing = map.get(key);
-      if (!existing) {
-        map.set(key, mat);
-      } else {
-        var timeA = new Date(mat.updatedAt || 0).getTime();
-        var timeB = new Date(existing.updatedAt || 0).getTime();
-        if (timeA > timeB) map.set(key, mat);
-        else if (timeA === timeB &&
-                 (mat.wvtrValues ? mat.wvtrValues.length : 0) >= (existing.wvtrValues ? existing.wvtrValues.length : 0))
-          map.set(key, mat);
+  var seen = [];
+  var result = [];
+
+  for (var i = 0; i < this.materials.length; i++) {
+    var mat = this.materials[i];
+    var nameLower = mat.name.trim().toLowerCase();
+
+    // Cerca duplicato per firebaseDocId o per nome
+    var dupeIdx = -1;
+    for (var j = 0; j < seen.length; j++) {
+      var s = seen[j];
+      // Match per firebaseDocId (stesso documento Firebase)
+      if (mat.firebaseDocId && s.firebaseDocId && mat.firebaseDocId === s.firebaseDocId) {
+        dupeIdx = j; break;
+      }
+      // Match per nome (stesso materiale, una copia locale + una community)
+      if (s.name.trim().toLowerCase() === nameLower) {
+        dupeIdx = j; break;
       }
     }
-    this.materials = Array.from(map.values());
-    return this.materials;
+
+    if (dupeIdx === -1) {
+      // Nessun duplicato — tienilo
+      seen.push(mat);
+      result.push(mat);
+    } else {
+      // Duplicato trovato — tieni il migliore e unisci firebaseDocId
+      var existing = seen[dupeIdx];
+      var timeA = new Date(mat.updatedAt || 0).getTime();
+      var timeB = new Date(existing.updatedAt || 0).getTime();
+      var winner = (timeA > timeB) ? mat : existing;
+      var loser  = (timeA > timeB) ? existing : mat;
+
+      // Eredita il firebaseDocId da chiunque ce l'abbia
+      winner.firebaseDocId = winner.firebaseDocId || loser.firebaseDocId;
+      winner.isCommunity   = winner.isCommunity   || loser.isCommunity;
+
+      seen[dupeIdx]   = winner;
+      result[dupeIdx] = winner;
+    }
   }
+
+  this.materials = result;
+  return this.materials;
+}
 };
 window.DB = DB;
 
