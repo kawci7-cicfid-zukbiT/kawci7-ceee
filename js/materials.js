@@ -88,6 +88,9 @@ function contactSupplier(matName, company, email) {
 // ====================================================================
 // 🌍 SHARE / UPDATE WITH COMMUNITY
 // ====================================================================
+// ====================================================================
+// 🌍 SHARE / UPDATE WITH COMMUNITY — FIX anti-duplicazione
+// ====================================================================
 async function shareToCommunity(matId) {
     var mat = DB.materials.find(function(m){ return String(m.id) === String(matId); });
     if(!mat) return;
@@ -98,19 +101,15 @@ async function shareToCommunity(matId) {
         mat.author = mat.author || 'Community';
         var result = await window.saveToCommunity(mat);
         if(result.success) {
+            // ✅ FIX: salva il firebaseDocId PRIMA di settare isCommunity
+            // così al prossimo reload il match per firebaseDocId funziona
             mat.firebaseDocId = result.id;
             mat.isCommunity = true;
+            mat._communitySourceId = String(mat.id); // traccia l'ID locale originale
             DB.save();
             matApplyFilters();
-            var old = document.getElementById('trash-toast');
-            if(old) old.remove();
-            var toast = document.createElement('div');
-            toast.id = 'trash-toast';
-            toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#15803d;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3)';
-            toast.innerHTML = '✅ <strong>' + mat.name + '</strong> ' + (mat.firebaseDocId ? 'updated' : 'shared') + ' with the community!';
-            document.body.appendChild(toast);
-            setTimeout(function(){ if(toast.parentNode) toast.remove(); }, 4000);
-        } else { alert('❌ Error: ' + result.error); }
+            // toast ...
+        }
     } catch(e) { alert('❌ Unexpected error: ' + e.message); }
     finally { if(btn) { btn.disabled=false; btn.textContent = mat.firebaseDocId ? '🔄 Update community' : '🌍 Share with community'; } }
 }
