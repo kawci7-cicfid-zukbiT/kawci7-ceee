@@ -1874,52 +1874,111 @@ function renderShelfLife() {
 
 /** Render methodology section (static content) */
 function renderShelfLifeMethodology() {
-  return `
-<div class="card" style="margin-top:1rem;border-left:4px solid var(--primary);background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04)">
-<div style="padding:1.2rem 1.5rem">
-<h2 style="font-family:Georgia,'Times New Roman',serif;font-size:1.3rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.5rem;margin-bottom:1.2rem">
+return `
+<div class="card" style="margin-top:1rem; border-left:4px solid var(--primary); background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+<div style="padding:1.2rem 1.5rem;">
+<h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.3rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1.2rem;">
 Mechanics of Shelf-Life Prediction
 </h2>
-<div style="font-size:0.95rem;line-height:1.8;color:#334155;font-family:Georgia,'Times New Roman',serif">
-<p>Predicting the exact day a food or pharmaceutical product becomes unusable is one of the most critical challenges in packaging engineering. A package is not a static shield; it is a dynamic, semi-permeable membrane. To calculate shelf life, this software pairs the material's barrier values (WVTR/OTR) with the chemical degradation kinetics of the product.</p>
+<div style="font-size:0.95rem; line-height:1.8; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
 
-<h3 style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:1.1rem;color:var(--primary-dark);margin-top:1.5rem;font-weight:700">Moisture ingress & Dynamic equilibrium</h3>
-<p>Unlike simple models that assume moisture enters a package at a constant speed, the real physical world is non-linear. The velocity of moisture transport depends entirely on the chemical potential gradient — the difference between the relative humidity outside (RH<sub>ext</sub>) and the changing water activity inside the food matrix (a<sub>w</sub>).</p>
+<p>Predicting the exact day a food or pharmaceutical product becomes unusable is one of the most critical challenges in packaging engineering. A package is not a static shield; it is a dynamic, semi-permeable membrane. Molecules of water vapor and oxygen are constantly bombarded against the outer wall, slowly shifting the internal equilibrium of the ecosystem. To calculate shelf life, this software pairs the material's barrier values (WVTR/OTR) with the chemical degradation kinetics of the product.</p>
 
-<div style="background:#f8fafc;padding:1.1rem;border-radius:6px;font-family:monospace;font-size:0.95rem;text-align:center;border:1px dashed var(--border);margin:1rem 0;color:#0f172a">
-t<sub>shelf_life</sub> = [ ln( (RH<sub>ext</sub> - a<sub>w,initial</sub>) / (RH<sub>ext</sub> - a<sub>w,critical</sub>) ) ] × [ (W<sub>dry</sub> × M<sub>slope</sub>) / (A × WVTR<sub>scaled</sub>) ]
+<h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:1.5rem; font-weight:700;">Moisture ingress & Dynamic equilibrium</h3>
+<p>Unlike simple models that assume moisture enters a package at a constant, unvarying speed, the real physical world is non-linear. The velocity of moisture transport depends entirely on the chemical potential gradient—the difference between the relative humidity outside (RH<sub>ext</sub>) and the changing water activity inside the food matrix (a<sub>w</sub>).</p>
+
+<div style="background:var(--primary-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--primary); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+<strong>The Thermodynamic Principle:</strong> As a dry product (like a biscuit or milk powder) absorbs water vapor, its internal water activity (a<sub>w</sub>) climbs. It becomes progressively less "thirsty." This collapses the driving force gradient, causing moisture transport to start very rapidly and then naturally flatten out into an asymptotic curve.
 </div>
 
-<h3 style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:1.1rem;color:var(--primary-dark);margin-top:2rem;font-weight:700">Oxygen ingress & oxidative degradation</h3>
-<p>For products dense in unsaturated lipids (fried snacks, nuts, premium oils, coffee), oxygen is the primary catalyst for failure. The system applies a zero-order oxidative model:</p>
-<div style="background:#f8fafc;padding:1.1rem;border-radius:6px;font-family:monospace;font-size:0.95rem;text-align:center;border:1px dashed var(--border);margin:1rem 0;color:#0f172a">
-t<sub>shelf_life</sub> = [ Mass<sub>fat</sub> × Threshold<sub>O2_limit</sub> ] / [ A × OTR<sub>scaled</sub> × 1.43 ]
+<h4 style="margin:1.2rem 0 0.5rem 0; font-family:sans-serif; font-size:0.95rem; color:var(--text);">The Mathematical Equation:</h4>
+<div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin-bottom:1rem; color:#0f172a;">
+t<sub>shelf_life</sub> = [ ln( (RH<sub>ext</sub> - a<sub>w,initial</sub>) / (RH<sub>ext</sub> - a<sub>w,critical</sub>) ) ] &times; [ (W<sub>dry</sub> &times; M<sub>slope</sub>) / (A &times; WVTR<sub>scaled</sub>) ]
 </div>
 
-<h3 style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:1.1rem;color:var(--primary-dark);margin-top:2rem;font-weight:700">Temperature: the Arrhenius accelerator</h3>
-<table style="width:100%;border-collapse:collapse;margin:1rem 0;font-family:sans-serif;font-size:0.88rem">
-  <thead><tr style="background:#f1f5f9;border-bottom:2px solid var(--border)">
-    <th style="padding:0.6rem;text-align:left;width:25%">Thermal Model</th>
-    <th style="padding:0.6rem;text-align:left;width:45%">Operational Mechanics</th>
-    <th style="padding:0.6rem;text-align:left;width:30%">Engineering Application</th>
-  </tr></thead>
+<p>To accurately compute this, the calculator integrates the GAB (Guggenheim-Anderson-de Boer) Sorption Isotherm Model. This standard converting matrix translates raw moisture percentages into Water Activity, predicting the exact mathematical threshold where crispness turns into texture loss, or where microbial spore germination begins.</p>
+
+<div style="background:#f0fdf4; padding:1rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.9rem;">
+<strong style="color:#16a34a; font-size:0.95rem;">📊 Moisture Calculation Example:</strong><br>
+Imagine a <strong>200g bag of dry crackers</strong> with a surface area of <strong>0.05 m²</strong>, protected by a film with a real WVTR of <strong>1.0 g/m²·day</strong>. The storage warehouse is at <strong>75% RH</strong>.
+<ul>
+  <li><strong>The Product Limits:</strong> The product starts at 2% moisture (a<sub>w</sub> = 0.15) and becomes soggy/unacceptable at 4% moisture (a<sub>w</sub> = 0.45). This allows a total safe mass increase of <strong>4.0 grams of water</strong>.</li>
+  <li><strong>The Calculation Loop:</strong> At Day 1, the driving force is high: (0.75 - 0.15) = 0.60. Water rushes in at 0.03 g/day.</li>
+  <li>By Day 100, the product has absorbed water, and its internal a<sub>w</sub> has risen to 0.40. Now, the driving force drops to (0.75 - 0.40) = 0.35. The infiltration rate slows down significantly.</li>
+  <li>By factoring in this falling driving force, the system calculates an accurate shelf life (e.g., <strong>148 days</strong>) instead of an erroneous linear guess.</li>
+</ul>
+</div>
+
+<h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Oxygen ingress & oxidative degradation</h3>
+<p>For products dense in unsaturated lipids (fried snacks, nuts, premium oils, coffee), oxygen is the primary catalyst for failure. Unlike moisture, oxygen ingress typically operates under a steady-state kinetic model. Because active lipids consume oxygen molecules almost immediately upon entry, the internal oxygen concentration is often modeled close to 0%, keeping the driving pressure gradient constant.</p>
+
+<div style="background:var(--warning-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+<strong>Info:</strong> The system applies a zero-order oxidative model. The degradation rate remains linear until the total accumulated volume of oxygen hits a critical chemical mass threshold that triggers rancidity and off-flavors.
+</div>
+
+<h4 style="margin:1.2rem 0 0.5rem 0; font-family:sans-serif; font-size:0.95rem; color:var(--text);">The Mathematical Equation:</h4>
+<div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin-bottom:1rem; color:#0f172a;">
+t<sub>shelf_life</sub> = [ Mass<sub>fat</sub> &times; Threshold<sub>O2_limit</sub> ] / [ A &times; OTR<sub>scaled</sub> &times; 1.43 ]
+</div>
+
+<p><em>Note on advanced chemical behaviors:</em> In real industrial settings, lipid oxidation follows an autocatalytic pathway—moving slowly during an initial induction phase before accelerating violently via free-radical chain reactions. Because a zero-order model simplifies this into a steady average, this tool provides a highly reliable conservative baseline, perfect for fast-moving goods or early-stage packaging iterations.</p>
+
+<div style="background:#f0fdf4; padding:1rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.9rem;">
+<strong style="color:#16a34a; font-size:0.95rem;"> Oxygen Calculation Example:</strong><br>
+Let's analyze a <strong>100g pack of roasted peanuts</strong> containing <strong>50g of pure fat</strong>. The bag surface area is <strong>0.04 m²</strong>, and the laminate OTR is <strong>20 cc/m²·day</strong>.
+<ul>
+  <li><strong>The Degradation Target:</strong> Literature states that peanuts become rancid when they absorb <strong>2.0 mg of O₂ per gram of fat</strong>. Total allowable oxygen capacity = 50g &times; 2.0 mg = <strong>100 mg of O₂</strong>.</li>
+  <li><strong>Gas-to-Mass Translation:</strong> The film allows 20 cc/m²·day &times; 0.04 m² = <strong>0.80 cc of gas per day</strong> into the package. Since 1 cc of oxygen gas weighs approximately 1.43 mg at standard ambient conditions, the daily mass ingress is: 0.80 cc &times; 1.43 = <strong>1.144 mg of O₂/day</strong>.</li>
+  <li><strong>Final Computation:</strong> Shelf life = 100 mg / 1.144 mg/day = <strong>87.4 Days</strong>.</li>
+</ul>
+</div>
+
+<h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;"> Temperature: the Arrhenius accelerator</h3>
+<p>Thermal energy acts as a major catalyst for degradation. When a package enters a warm storage depot, the gas molecules gain kinetic energy and pass through the polymer matrix much faster. To scale shelf life across varying global supply chains, the calculator processes two distinct thermodynamic architectures:</p>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0; font-family:sans-serif; font-size:0.88rem;">
+  <thead>
+    <tr style="background:#f1f5f9; border-bottom:2px solid var(--border);">
+      <th style="padding:0.6rem; text-align:left; width:25%;">Thermal Model</th>
+      <th style="padding:0.6rem; text-align:left; width:45%;">Operational Mechanics</th>
+      <th style="padding:0.6rem; text-align:left; width:30%;">Engineering Application</th>
+    </tr>
+  </thead>
   <tbody>
-    <tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:0.6rem;font-weight:bold;color:var(--primary-dark)">Q<sub>10</sub> Rule</td>
-      <td>Degradation velocity multiplies by a fixed coefficient for every 10°C increase.</td>
-      <td>Ideal for rapid estimations in commercial supply chains.</td>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.6rem; font-weight:bold; color:var(--primary-dark);">Q<sub>10</sub> Rule</td>
+      <td>Assumes chemical degradation velocity multiplies by a fixed coefficient (typically 2.0x to 3.0x) for every step-increase of 10°C.</td>
+      <td>Ideal for rapid, high-velocity estimations in common commercial supply chains.</td>
     </tr>
     <tr>
-      <td style="padding:0.6rem;font-weight:bold;color:var(--purple)">Arrhenius Equation</td>
-      <td>Calculates exact exponential degradation profiles based on Activation Energy (E<sub>a</sub>).</td>
-      <td>Used for highly accurate simulations across extreme climates.</td>
+      <td style="padding:0.6rem; font-weight:bold; color:var(--purple);">Arrhenius Equation</td>
+      <td>Calculates exact exponential degradation profiles based on the material's specific Activation Energy (E<sub>a</sub>) and the universal gas constant (R).</td>
+      <td>Used for highly accurate scientific simulations across tropical or extreme climates.</td>
     </tr>
   </tbody>
 </table>
 
-<div style="margin-top:2rem;padding:0.9rem;background:var(--bg);border-radius:8px;font-size:0.88rem;color:var(--text-light);border-left:4px solid var(--primary);font-family:sans-serif">
-<strong>Industrial Protocol Disclaimer:</strong> This computational module is built to accelerate exploratory R&D. Final legal shelf-life validations must always be verified by real-time physical chamber testing in compliance with local food safety codes (FDA 21 CFR or EU 1169/2011).
+<h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Environmental humidity feedback on the barrier</h3>
+<p>If your design includes highly sensitive polymers like EVOH or Nylon, the barrier values themselves change dynamically as a function of environmental humidity. When storage conditions diverge from laboratory baseline parameters, the software re-scales the active barrier resistance using an exponential sensitivity multiplier:</p>
+
+<div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin:1rem 0; color:#0f172a;">
+Barrier<sub>corrected</sub> = Barrier<sub>baseline</sub> &times; e<sup>&beta; &times; (RH<sub>storage</sub> - RH<sub>reference</sub>)</sup>
 </div>
+
+<p>This integration ensures that if an EVOH pouch is shipped to an environment at 85% RH, its calculated barrier decreases automatically, preventing dangerous miscalculations in product stability forecasting.</p>
+
+<h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Scientific standards alignment matrix</h3>
+<p>The mathematical models and boundary conditions embedded within this system align directly with international testing protocols:</p>
+<p style="margin-left:1.2rem; color:var(--text-light); font-size:0.88rem; font-family:sans-serif;">
+• <strong>Permeation Metrics:</strong> ASTM F1249 / ISO 15106-3 (Water Vapor), ASTM D3985 / ISO 15106-2 (Oxygen Concentration)<br>
+• <strong>Sorption Thermodyamics:</strong> ISO 18787 (Water Activity Assessment), GAB Model Protocols (Van den Berg & Bruin)<br>
+• <strong>Stability Guidelines:</strong> ICH Q1A(R2) Standard Protocol for Accelerated Food and Drug Stability Testing
+</p>
+
+<div style="margin-top:2rem; padding:0.9rem; background:var(--bg); border-radius:8px; font-size:0.88rem; color:var(--text-light); border-left:4px solid var(--primary); font-family:sans-serif;">
+<strong>Industrial Protocol Disclaimer: </strong> This computational module is built to accelerate exploratory R&D and packaging concept optimization. Predictive modeling does not bypass regulatory legal frameworks. Final legal shelf-life validations and commercial packaging claims must always be verified by real-time physical chamber testing in compliance with local food safety codes (e.g., FDA 21 CFR or EU 1169/2011).
+</div>
+
 </div>
 </div>
 </div>
