@@ -859,51 +859,86 @@ function importFile(input) {
 // 📥 EXTERNAL materials.json LOADER
 // ====================================================================
 async function loadExternalMaterialsDB() {
-    try {
-        const res = await fetch('materials.json');
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        const externalMats = Array.isArray(data) ? data : (data.materials || []);
-        if(!externalMats.length) return;
-        let addedCount = 0;
-        for(const em of externalMats) {
-            if(!em || !em.name) continue;
-            var existingById = DB.materials.find(function(m){ return typeof m.id==='number' && typeof em.id==='number' && m.id===em.id; });
-            if(existingById) {
-                if(em.hygroscopicRefRHWVTR !== undefined){
-                    existingById.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
-                    existingById.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
-                    existingById.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
-                    existingById.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
-                }
-                continue;
-            }
-            var existingByName = DB.materials.find(function(m){ return m.name.toLowerCase() === em.name.toLowerCase(); });
-            if(existingByName) {
-                if(em.hygroscopicRefRHWVTR !== undefined){
-                    existingByName.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
-                    existingByName.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
-                    existingByName.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
-                    existingByName.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
-                }
-                continue;
-            }
-            const numericIds = DB.materials.map(function(m){ return typeof m.id==='number'?m.id:0; }).filter(function(id){ return id>0; });
-            const maxId = numericIds.length ? Math.max.apply(null,numericIds) : 0;
-            em.id      = maxId + 1 + addedCount;
-            em.family  = em.family || getFamily(em.name);
-            em.isMetallized    = em.isMetallized    || false;
-            em.reliabilityVotes= em.reliabilityVotes|| {up:0,down:0};
-            em.company = em.company || '';
-            em.tdsLink = em.tdsLink || '';
-            em.testMethodWVTR = em.testMethodWVTR || '';
-            em.testMethodOTR  = em.testMethodOTR  || '';
-            DB.materials.push(em);
-            addedCount++;
+  try {
+    var res = await fetch('materials.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    var externalMats = Array.isArray(data) ? data : (data.materials || []);
+    if (!externalMats.length) return;
+
+    // Costruisci set di firebaseDocId già presenti per match rapido
+    var existingByFirebaseId = {};
+    var existingByName = {};
+    for (var i = 0; i < DB.materials.length; i++) {
+      var m = DB.materials[i];
+      if (m.firebaseDocId) existingByFirebaseId[m.firebaseDocId] = m;
+      existingByName[m.name.trim().toLowerCase()] = m;
+    }
+
+    var addedCount = 0;
+    for (var ei = 0; ei < externalMats.length; ei++) {
+      var em = externalMats[ei];
+      if (!em || !em.name) continue;
+
+      var nameLower = em.name.trim().toLowerCase();
+
+      // 1. Match per firebaseDocId
+      if (em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
+        var existing = existingByFirebaseId[em.firebaseDocId];
+        // Aggiorna solo i campi hygroscopici se presenti
+        if (em.hygroscopicBetaWVTR !== undefined) {
+          existing.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
+          existing.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
+          existing.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
+          existing.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
         }
-        DB.save();
-        render();
-    } catch(e) { console.log('ℹ️ materials.json not loaded:', e.message); }
+        continue;
+      }
+
+      // 2. Match per nome
+      if (existingByName[nameLower]) {
+        var existingN = existingByName[nameLower];
+        // Collega il firebaseDocId e aggiorna hygro
+        if (em.firebaseDocId) existingN.firebaseDocId = em.firebaseDocId;
+        if (em.hygroscopicBetaWVTR !== undefined) {
+          existingN.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
+          existingN.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
+          existingN.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
+          existingN.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
+        }
+        continue;
+      }
+
+      // 3. Nuovo materiale — assegna ID sicuro (non in collisione)
+      // Usa il firebaseDocId come ID se disponibile, altrimenti genera numerico
+      var newMat = Object.assign({}, em);
+      if (em.firebaseDocId) {
+        // Mantieni l'id del JSON ma controlla collisioni con DEFAULT (0-7)
+        var numericIds = DB.materials.map(function(m) {
+          return typeof m.id === 'number' ? m.id : 0;
+        });
+        var maxId = numericIds.length ? Math.max.apply(null, numericIds) : 0;
+        newMat.id = maxId + 1 + addedCount;
+      }
+      newMat.family           = em.family || getFamily(em.name);
+      newMat.isMetallized     = em.isMetallized || false;
+      newMat.reliabilityVotes = em.reliabilityVotes || { up: 0, down: 0 };
+
+      DB.materials.push(newMat);
+      // Aggiorna gli indici per i prossimi giri
+      existingByFirebaseId[newMat.firebaseDocId] = newMat;
+      existingByName[nameLower] = newMat;
+      addedCount++;
+    }
+
+    if (addedCount > 0) {
+      DB.save();
+      render();
+      console.log('✅ materials.json: aggiunti ' + addedCount + ' materiali');
+    }
+  } catch (e) {
+    console.log('ℹ️ materials.json non caricato:', e.message);
+  }
 }
 
 // ====================================================================
