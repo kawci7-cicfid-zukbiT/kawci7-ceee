@@ -800,17 +800,40 @@ async function initApp() {
 
     await loadExternalMaterialsDB();
 
-    if (window.communityDB) {
-      var fbMats = await window.loadFromCommunity();
-      for (var fi = 0; fi < fbMats.length; fi++) {
+   if (window.communityDB) {
+    var fbMats = await window.loadFromCommunity();
+    for (var fi = 0; fi < fbMats.length; fi++) {
         var fm = fbMats[fi];
-        var localMat = DB.materials.find(function(m) { return m.firebaseDocId === fm.firebaseDocId; });
-        if (!localMat && !fm.firebaseDocId)
-          localMat = DB.materials.find(function(m) { return !m.firebaseDocId && m.name.toLowerCase().trim() === fm.name.toLowerCase().trim(); });
-        if (localMat) { Object.assign(localMat, fm); if (fm.firebaseDocId) localMat.firebaseDocId = fm.firebaseDocId; localMat.isCommunity = true; }
-        else DB.materials.push(Object.assign({}, fm, { isCommunity: true }));
-      }
+        if (!fm || !fm.name) continue;
+
+        // 1. Match per firebaseDocId (priorità massima)
+        var localMat = DB.materials.find(function(m) {
+            return fm.firebaseDocId && m.firebaseDocId === fm.firebaseDocId;
+        });
+
+        // 2. Match per nome se non trovato per ID
+        if (!localMat) {
+            localMat = DB.materials.find(function(m) {
+                return m.name.trim().toLowerCase() === fm.name.trim().toLowerCase();
+            });
+        }
+
+        if (localMat) {
+            // ✅ Aggiorna solo i campi sicuri, NON sovrascrivere l'ID locale
+            localMat.firebaseDocId    = fm.firebaseDocId || localMat.firebaseDocId;
+            localMat.isCommunity      = true;
+            localMat.reliabilityVotes = fm.reliabilityVotes || localMat.reliabilityVotes;
+            localMat.usageCount       = fm.usageCount       || localMat.usageCount;
+            localMat.author           = fm.author           || localMat.author;
+        } else {
+            // ✅ Nuovo materiale community — ID sempre fb_xxx
+            DB.materials.push(Object.assign({}, fm, {
+                id:          'fb_' + fm.firebaseDocId,
+                isCommunity: true
+            }));
+        }
     }
+}
 
     DB.deduplicateMaterials();
 
@@ -848,4 +871,42 @@ function onMatSourceChange(val) {
     } else {
         renderContent();
     }
+}
+// ====================================================================
+// 📥 COMMUNITY SYNC — FIX controllo duplicati robusto
+// ====================================================================
+// Da inserire nella funzione che carica i materiali dalla community
+// (probabilmente in app.js o engine.js, nella parte Firebase onSnapshot/getDocs)
+
+function mergeCommunityMaterial(remoteMat, remoteDocId) {
+    // 1. Già presente con questo firebaseDocId → aggiorna, non duplicare
+    var byFirebaseId = DB.materials.find(function(m){
+        return m.firebaseDocId === remoteDocId;
+    });
+    if(byFirebaseId) {
+        // Aggiorna solo i campi di voto e usage, non sovrascrivere tutto
+        byFirebaseId.reliabilityVotes = remoteMat.reliabilityVotes || byFirebaseId.reliabilityVotes;
+        byFirebaseId.usageCount = remoteMat.usageCount || byFirebaseId.usageCount;
+        return;
+    }
+
+    // 2. Già presente con lo stesso nome (case-insensitive) → non duplicare
+    var byName = DB.materials.find(function(m){
+        return m.name.trim().toLowerCase() === (remoteMat.name||'').trim().toLowerCase();
+    });
+    if(byName) {
+        // Collega il firebaseDocId al materiale locale esistente
+        byName.firebaseDocId = remoteDocId;
+        byName.isCommunity = true;
+        byName.reliabilityVotes = remoteMat.reliabilityVotes || byName.reliabilityVotes;
+        DB.save();
+        return;
+    }
+
+    // 3. Nuovo materiale community → inserisci
+    remoteMat.firebaseDocId = remoteDocId;
+    remoteMat.isCommunity = true;
+    remoteMat.id = 'fb_' + remoteDocId;
+    DB.materials.push(remoteMat);
+    DB.save();
 }
