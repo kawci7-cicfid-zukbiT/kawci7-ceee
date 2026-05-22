@@ -247,7 +247,7 @@ function renderHome() {
                 <h1 style="font-size:2.4rem;font-weight:800;color:#0f172a;line-height:1.15;margin:0 0 0.75rem 0;letter-spacing:-0.03em">WVTR / OTR<br>Calculator</h1>
                 <p style="font-size:0.95rem;color:#64748b;margin:0;max-width:480px;line-height:1.6">Professional barrier analysis for multilayer packaging structures. Resistance model, Arrhenius prediction, shelf life estimation.</p>
             </div>
-            <button onclick="document.getElementById('nav-tabs').querySelector('[data-tab=calc]').click()"
+            <button onclick="onGroupClick('analysis'); setTimeout(function(){ onSubTabClick('calc'); }, 50);"
                 style="background:#2563eb;color:#fff;border:none;padding:0.85rem 2rem;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.2s;white-space:nowrap"
                 onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                 Start Calculation →
@@ -256,26 +256,26 @@ function renderHome() {
     </div>
 
     <!-- KPI ROW -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#e2e8f0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:2rem">
+    '<div class="home-widgets-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem">'
         <div style="background:#fff;padding:1.5rem">
             <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Total Materials</div>
             <div style="font-size:2.6rem;font-weight:800;color:#2563eb;line-height:1;margin-bottom:0.35rem">${totalMats}</div>
             <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">In the database</div>
-            <button onclick="document.getElementById('nav-tabs').querySelector('[data-tab=materials]').click()"
+            <button onclick="onGroupClick('community');setTimeout(function(){onSubTabClick('materials');},50)"
                 style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Explore database →</button>
         </div>
         <div style="background:#fff;padding:1.5rem">
             <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Arrhenius Ready</div>
             <div style="font-size:2.6rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.35rem">${multiTempMats}</div>
             <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">Multi-temperature datasets</div>
-            <button onclick="document.getElementById('nav-tabs').querySelector('[data-tab=arrhenius]').click()"
+            <button onclick="onGroupClick('analysis');setTimeout(function(){onSubTabClick('arrhenius');},50)"
                 style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Run analysis →</button>
         </div>
         <div style="background:#fff;padding:1.5rem">
             <div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Saved Laminates</div>
             <div style="font-size:2.6rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.35rem">${totalLams}</div>
             <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">Structures in your library</div>
-            <button onclick="document.getElementById('nav-tabs').querySelector('[data-tab=laminates]').click()"
+            <button onclick="onGroupClick('community');setTimeout(function(){onSubTabClick('laminates');},50)"
                 style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">View library →</button>
         </div>
     </div>
