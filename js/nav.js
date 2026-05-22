@@ -13,19 +13,19 @@ var NAV_GROUPS = [
       { id: 'calc',        label: 'Calculator' },
       { id: 'sensitivity', label: 'Sensitivity' },
       { id: 'shelflife',   label: 'Shelf Life' },
-      { id: 'arrhenius',   label: 'Arrhenius' }
-    ]
-  },
-  {
-    id: 'community', label: 'Community',
-    tabs: [
-      { id: 'materials',  label: 'Materials' },
-      { id: 'laminates',  label: 'Laminates' },
+      { id: 'arrhenius',   label: 'Arrhenius' },
       { id: 'compare',    label: 'Compare' }
     ]
   },
   {
-    id: 'company', label: 'Company DB',
+    id: 'community', label: 'Community Database',
+    tabs: [
+      { id: 'materials',  label: 'Materials' },
+      { id: 'laminates',  label: 'Laminates' }
+    ]
+  },
+  {
+    id: 'company', label: 'Company Database',
     tabs: [
       { id: 'mat-company', label: 'Materials' },
       { id: 'lam-company', label: 'Laminates' }
