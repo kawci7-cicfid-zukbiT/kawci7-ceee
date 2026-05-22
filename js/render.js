@@ -117,18 +117,19 @@ function renderCalc() {
             if(!seen[key]){ seen[key] = true; uniqueConditions.push(c); }
         }
         var opts = '<option value="">Select temperature/humidity...</option>';
-        for(var ci = 0; ci < uniqueConditions.length; ci++){
-            var c = uniqueConditions[ci];
-            var selAttr = State.selCond && State.selCond.temperature === c.temperature && State.selCond.humidity === c.humidity ? ' selected' : '';
-            opts += '<option value="'+c.temperature+'|'+c.humidity+'"'+selAttr+'>'+c.temperature+'\u00b0C / '+c.humidity+'%</option>';
+        for(var ci2 = 0; ci2 < uniqueConditions.length; ci2++){
+            var uc = uniqueConditions[ci2];
+            var selAttr = State.selCond && State.selCond.temperature === uc.temperature && State.selCond.humidity === uc.humidity ? ' selected' : '';
+            opts += '<option value="'+uc.temperature+'|'+uc.humidity+'"'+selAttr+'>'+uc.temperature+'\u00b0C / '+uc.humidity+'%</option>';
         }
         condHTML = '<div class="form-group"><label>Test Conditions</label><select class="form-input" id="sel-cond" onchange="onCondSelect()">'+opts+'</select></div>';
     }
 
     var layersHTML = '';
-    for(var i=0; i<State.layers.length; i++){
-        var l = State.layers[i];
-        var res = State.calcResult && State.calcResult.layers ? State.calcResult.layers[i] : null;
+    for(var li=0; li<State.layers.length; li++){
+        var l = State.layers[li];
+        // FIX: safe access to calcResult.layers[li]
+        var res = (State.calcResult && State.calcResult.layers && State.calcResult.layers[li]) ? State.calcResult.layers[li] : null;
 
         var filteredMats = DB.materials.filter(function(mat){
             if (State.matSource === 'company') return mat.isCompany && passesTestMethodFilter(mat);
@@ -137,9 +138,10 @@ function renderCalc() {
         filteredMats.sort(function(a, b){ return a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}); });
 
         var otherMats = [];
+        // FIX: use separate loop variable to avoid collision with outer li
         for(var k=0; k<State.layers.length; k++){
-            if(k !== i && State.layers[k].mid !== null){
-                var matOther = DB.materials.find(function(m){ return m.id === State.layers[k].mid; });
+            if(k !== li && State.layers[k].mid !== null){
+                var matOther = findMaterialById(State.layers[k].mid);
                 if(matOther) otherMats.push(matOther);
             }
         }
@@ -148,9 +150,9 @@ function renderCalc() {
             reqConds = [].concat(otherMats[0].validConditions || []);
             for(var om=1; om<otherMats.length; om++){
                 var nc = otherMats[om].validConditions || [];
-                reqConds = reqConds.filter(function(c){
+                reqConds = reqConds.filter(function(cond){
                     return nc.some(function(n){
-                        return Math.abs(n.temperature-c.temperature)<0.01 && Math.abs(n.humidity-c.humidity)<0.01;
+                        return Math.abs(n.temperature-cond.temperature)<0.01 && Math.abs(n.humidity-cond.humidity)<0.01;
                     });
                 });
             }
@@ -172,17 +174,18 @@ function renderCalc() {
         for(var j=0; j<displayMats.length; j++){
             var mat = displayMats[j];
             var label = mat.name;
-            var currentTM = State.mode === 'wvtr' ? (mat.testMethodWVTR || '') : (mat.testMethodOTR || '');
-            if(currentTM) label += ' ['+currentTM+']';
-            var selected = (l.mid === mat.id) ? ' selected' : '';
+            var currentTM2 = State.mode === 'wvtr' ? (mat.testMethodWVTR || '') : (mat.testMethodOTR || '');
+            if(currentTM2) label += ' ['+currentTM2+']';
+            // FIX: compare as strings to support both numeric and string IDs
+            var selected = (String(l.mid) === String(mat.id)) ? ' selected' : '';
             matOpts += '<option value="'+mat.id+'"'+selected+'>'+label+'</option>';
         }
 
-        layersHTML += '<div class="layer-card"><span class="layer-badge">LAYER '+(i+1)+'</span>' +
+        layersHTML += '<div class="layer-card"><span class="layer-badge">LAYER '+(li+1)+'</span>' +
             '<div class="layer-grid">' +
-            '<div class="form-group" style="margin:0"><label>Material</label><select class="form-input" onchange="onLayerChange('+i+',\'mid\',this.value)">'+matOpts+'</select></div>' +
-            '<div class="form-group" style="margin:0"><label>Thickness (um)</label><input type="number" step="any" class="form-input" value="'+(l.thick||'')+'" placeholder="0" onchange="onLayerChange('+i+',\'thick\',this.value)"></div>' +
-            '<div style="display:flex;align-items:center;gap:.3rem">'+(i>0 ? '<button class="btn btn-sm btn-danger" onclick="rmLayer('+i+')">X</button>' : '')+
+            '<div class="form-group" style="margin:0"><label>Material</label><select class="form-input" onchange="onLayerChange('+li+',\'mid\',this.value)">'+matOpts+'</select></div>' +
+            '<div class="form-group" style="margin:0"><label>Thickness (um)</label><input type="number" step="any" class="form-input" value="'+(l.thick||'')+'" placeholder="0" onchange="onLayerChange('+li+',\'thick\',this.value)"></div>' +
+            '<div style="display:flex;align-items:center;gap:.3rem">'+(li>0 ? '<button class="btn btn-sm btn-danger" onclick="rmLayer('+li+')">X</button>' : '')+
             (res && res.transmissionAtThickness > 0 ? '<span class="badge badge-green">'+res.transmissionAtThickness.toFixed(3)+'</span>' : '')+
             (res && res.isBarrier ? '<span class="badge badge-purple">BARRIER</span>' : '')+
             '</div></div>'+
@@ -193,6 +196,9 @@ function renderCalc() {
     var selectedCond = State.selCond ? State.selCond.temperature+'\u00b0C/'+State.selCond.humidity+'%' : null;
     var canCalc = !!selectedCond && State.layers.every(function(l){ return l.mid !== null && l.thick > 0; });
     var hasResult = State.calcResult && !State.calcResult.error && State.calcResult.total > 0;
+
+    // FIX: guard against empty State.layers before accessing last element
+    var lastLayerEmpty = State.layers.length > 0 && State.layers[State.layers.length-1].mid === null;
 
     var resultHTML = '';
     if(State.calcError) {
@@ -212,8 +218,8 @@ function renderCalc() {
 
     if(hasResult && State.calcResult.layers) {
         var hygroWarnings = [];
-        for(var r = 0; r < State.calcResult.layers.length; r++) {
-            var lr = State.calcResult.layers[r];
+        for(var r2 = 0; r2 < State.calcResult.layers.length; r2++) {
+            var lr = State.calcResult.layers[r2];
             if(lr.hygroCorrection && lr.hygroCorrection.isSignificant) hygroWarnings.push(lr.hygroCorrection.message);
         }
         if(hygroWarnings.length > 0) {
@@ -228,7 +234,7 @@ function renderCalc() {
 
     var html = '<div class="grid grid-2">' +
         '<div><div class="card">'+cardHeader+matSourceFilter+testMethodFilter+layersHTML+
-        '<button class="btn btn-outline btn-full" onclick="addLayer()"'+(State.layers.length>0 && State.layers[State.layers.length-1].mid===null ? ' disabled' : '')+'>+ Add Layer</button></div>'+
+        '<button class="btn btn-outline btn-full" onclick="addLayer()"'+(lastLayerEmpty ? ' disabled' : '')+'>+ Add Layer</button></div>'+
         '<div class="card"><h2>Test Conditions</h2>'+condHTML+
         (selectedCond ? '<p style="font-size:.75rem;color:var(--text-light);margin-top:.5rem">Selected: <strong>'+selectedCond+'</strong></p>' : '')+
         '<div style="display:flex;align-items:center;gap:.4rem;margin:.5rem 0">'+
@@ -313,8 +319,8 @@ Corrected Permeability = Permeability<sub>base</sub> × e<sup>&beta; × (&Delta;
 <strong>Info:</strong> If no &beta; (beta) coefficient is supplied in the database, the model assumes the material is completely immune to moisture damage. In tropical or high-condensation environments, this assumption will generate overly optimistic shelf-life estimates.
 </div>
 
-<h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">Metallized and coated chields</h3>
-<p>Metallized films (such as MET-PET) and nanometric ceramic coatings (like AlO<sub>x</sub> or SiO<sub>x</sub>) follow entirely different physical rules. Their barrier performance does not come from the bulk polymer thickness, but rather from an ultra-thin, atomic layer of aluminum or oxide deposited onto the surface. Because a thicker base film will not have a better aluminum layer, the calculator treats these specialty materials as having a fixed, constant permeability barrier, bypasssing the linear thickness division rule.</p>
+<h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">Metallized and coated shields</h3>
+<p>Metallized films (such as MET-PET) and nanometric ceramic coatings (like AlO<sub>x</sub> or SiO<sub>x</sub>) follow entirely different physical rules. Their barrier performance does not come from the bulk polymer thickness, but rather from an ultra-thin, atomic layer of aluminum or oxide deposited onto the surface. Because a thicker base film will not have a better aluminum layer, the calculator treats these specialty materials as having a fixed, constant permeability barrier, bypassing the linear thickness division rule.</p>
 
 <h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">Reading your analysis matrix</h3>
 <p>The percentage contribution shown for each layer helps you pinpoint exactly where your money and material thickness are being effectively used:</p>
@@ -408,7 +414,6 @@ function renderArrheniusMethodology() {
 
   <div style="font-size:0.92rem; line-height:1.75; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
 
-  <!-- SECTION : WHAT IS IT -->
   <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">What is the Arrhenius equation, really?</h3>
   <p>At its heart, the Arrhenius equation helps us understand a simple but powerful idea: temperature changes how quickly molecules move through packaging materials. Whether you're measuring water vapor (WVTR) or oxygen (OTR), warmth gives molecules more energy to wiggle through tiny gaps in films and coatings.</p>
   
@@ -416,7 +421,6 @@ function renderArrheniusMethodology() {
   <strong>Think of it this way:</strong> Imagine trying to walk through a crowded room. When it's cool, people move slowly and you make progress gradually. When it's warm and energetic, everyone's moving faster—and so do the molecules trying to pass through your packaging. Arrhenius gives us the math to predict exactly how much faster.
   </div>
 
-  <!-- SECTION : COLLECTING DATA -->
   <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">How do we gather the data needed?</h3>
   <p>To unlock Arrhenius predictions, you need at least two measurements of the same material taken at different temperatures, while keeping relative humidity steady. More points = more confidence.</p>
 
@@ -442,15 +446,12 @@ function renderArrheniusMethodology() {
   <strong>Quick note:</strong> Keep humidity consistent (within ±5%) across all tests. Because humidity affects permeability independently of temperature, and we want to isolate temperature's role.
   </p>
 
-  <!-- SECTION : HOW THE CALCULATOR WORKS -->
   <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">What happens behind the scenes?</h3>
   <p>Once you've entered your multi-temperature data, here's how the calculator brings Arrhenius to life:</p>
   
   <ol style="padding-left:1.2rem; margin:0.5rem 0;">
   <li><strong>Transform the numbers:</strong> Temperatures get converted to Kelvin (K = °C + 273.15), and we take the natural logarithm of each WVTR/OTR value. This linearizes the relationship.</li>
-  
   <li><strong>Plot and check alignment:</strong> We graph ln(WVTR) versus 1/T. If your points fall roughly along a straight line, congratulations—your material follows Arrhenius behavior!</li>
-  
   <li><strong>Extract the key parameters:</strong>
   <ul style="padding-left:1rem; margin:0.3rem 0; font-size:0.9em;">
   <li><strong>Eₐ (Activation Energy):</strong> Measured in kJ/mol, this tells us how "temperature-sensitive" your material is. Higher Eₐ = bigger changes with temperature.</li>
@@ -458,7 +459,6 @@ function renderArrheniusMethodology() {
   <li><strong>R² (Goodness of Fit):</strong> A score from 0 to 1 showing how well your data matches the Arrhenius model. Closer to 1.0 means more trustworthy predictions.</li>
   </ul>
   </li>
-  
   <li><strong>Make predictions:</strong> With Eₐ and A in hand, the calculator can estimate WVTR/OTR at any temperature you specify—even ones you haven't tested yet.</li>
   </ol>
 
@@ -467,7 +467,6 @@ function renderArrheniusMethodology() {
   WVTR(T) = A · exp( -Eₐ / (R · T) )
   </div>
 
-  <!-- SECTION : READING YOUR RESULTS -->
   <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">Making sense of your output</h3>
   <p>After running the analysis, you'll see an R² value. Here's how to interpret it:</p>
   
@@ -483,7 +482,6 @@ function renderArrheniusMethodology() {
   </div>
   </div>
 
-  <!-- SECTION: BEST PRACTICES -->
   <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">Tips for reliable, publication-ready results</h3>
   <ul style="padding-left:1.2rem; margin:0.5rem 0; font-size:0.9rem;">
   <li><strong>Spread your temperatures:</strong> Aim for at least 3 distinct temperatures spanning your expected storage or use conditions. Wider ranges improve prediction confidence.</li>
@@ -493,13 +491,12 @@ function renderArrheniusMethodology() {
   <li><strong>Watch for phase changes:</strong> Some materials undergo structural shifts (like crystallization or glass transitions) at certain temperatures. These can cause deviations from Arrhenius behavior—flag them if you notice sudden changes in your data trend.</li>
   </ul>
 
-  <!-- REFERENCES -->
-  <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;"> Further Reading & Standards</h3>
+  <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.05rem; color:var(--primary-dark); margin:1.2rem 0 0.5rem 0; font-weight:700;">Further Reading & Standards</h3>
   <ul style="padding-left:1.2rem; margin:0.5rem 0; color:var(--text-light); font-size:0.85rem;">
   <li>ASTM F1249 / ISO 15106-3</li>
   <li>ASTM D3985 / ISO 15106-2</li>
-  <li>Arrhenius, S. (1889). </li>
-  <li>Robertson, G.L. (2016). </li>
+  <li>Arrhenius, S. (1889).</li>
+  <li>Robertson, G.L. (2016).</li>
   </ul>
 
   <div style="margin-top:1.5rem; padding:0.9rem; background:var(--bg); border-radius:8px; font-size:0.88rem; color:var(--text-light); border-left:4px solid var(--primary); font-family:sans-serif;">
@@ -519,14 +516,12 @@ function renderSensitivity() {
     var hasMats = State.layers.some(function(l){ return l.mid !== null; });
     var layerOpts = '';
     for(var i=0; i<State.layers.length; i++){
-        var mat = null;
-        if(State.layers[i].mid !== null) for(var m=0; m<DB.materials.length; m++) if(DB.materials[m].id===State.layers[i].mid){ mat=DB.materials[m]; break; }
+        var mat = findMaterialById(State.layers[i].mid);
         layerOpts += '<option value="'+i+'"'+(State.sensLayerIdx===i?' selected':'')+'>'+(i+1)+': '+((mat)?mat.name:'Unknown')+' ('+(State.layers[i].thick||0)+'um)</option>';
     }
     var barrierOpts = '';
     for(var i2=0; i2<State.layers.length; i2++){
-        var mat2 = null;
-        if(State.layers[i2].mid !== null) for(var m2=0; m2<DB.materials.length; m2++) if(DB.materials[m2].id===State.layers[i2].mid){ mat2=DB.materials[m2]; break; }
+        var mat2 = findMaterialById(State.layers[i2].mid);
         barrierOpts += '<option value="'+i2+'">'+(i2+1)+': '+((mat2)?mat2.name:'Unknown')+'</option>';
     }
     var html = '<div class="grid grid-2">' +
@@ -550,7 +545,6 @@ function renderSensitivity() {
 // ====================================================================
 // SENSITIVITY METHODOLOGY
 // ====================================================================
-
 function renderSensitivityMethodology() {
 return `
 <div class="card methodology-card" style="margin-top:1.5rem; border-left:4px solid var(--primary); background: var(--card);">
@@ -607,7 +601,6 @@ Laminate Permeability(t) = 1 / R<sub>total</sub>(t)
 
 <h3 style="font-size:1.1rem; color:var(--text); margin:1.2rem 0 0.5rem 0; font-family:sans-serif;">Why metallized or coated layers stay flat?</h3>
 <p>If you run a sensitivity sweep on a metallized film (like MET-PET) or an oxide-coated material (AlO<sub>x</sub>/SiO<sub>x</sub>), you will notice that the resulting graph line is completely flat. This is physical proof that the model is working correctly. The calculator treats these structures as surface shields: their gas-blocking properties are dictated entirely by the quality of the nanometric vacuum deposition, not by the thickness of the plastic carrier underneath. Changing a carrier film from 12 µm to 20 µm changes mechanical properties, but leaves the barrier resistance unchanged.</p>
-
 
 <p>Use these graphic slopes to streamline your packaging specifications. By identifying structural plateaus, you can eliminate over-engineered components, reduce polymer plastic weights, minimize your eco-tax footprints, and cut production costs without risking standard food safety or chemical shelf-life metrics.</p>
 
@@ -726,8 +719,10 @@ function onMatSourceChange(val) {
 function onLayerChange(i, field, val) {
     if(field === 'mid') {
         if(val !== '') {
-            if(!isNaN(val)) State.layers[i].mid = parseFloat(val);
-            else State.layers[i].mid = val;
+            // FIX: store as-is (string or number) to support both ID types;
+            // use string comparison everywhere for consistency
+            var numVal = parseFloat(val);
+            State.layers[i].mid = isNaN(numVal) ? val : numVal;
             recordMaterialUsage(val);
         } else {
             State.layers[i].mid = null;
@@ -761,6 +756,7 @@ function doCalcSilent() {
     var common = Engine.findCommonConditions(State.layers, DB.materials);
     if(common.error) return;
     var result = Engine.calcTotal(State.layers, DB.materials, State.selCond);
+    // FIX: always clear calcError on silent success so stale errors don't persist
     if(!result.error){ State.calcResult=result; State.calcError=null; renderContent(); setTimeout(postCalcRender, 150); }
 }
 
@@ -804,7 +800,7 @@ function onArrChange() {
     var selEa = document.getElementById('arr-ea');
     var resEl = document.getElementById('arr-result');
     if(!selMat || !selTemp) return;
-    var matId = parseFloat(selMat.value);
+    var matId = selMat.value;
     var targetTemp = parseFloat(selTemp.value) || 25;
     var customEaInput = selEa ? selEa.value.trim() : '';
     var customEa = customEaInput ? parseFloat(customEaInput) : NaN;
@@ -813,9 +809,14 @@ function onArrChange() {
         if(selEa) selEa.value = '';
         return;
     }
-    var mat = null;
-    for(var i=0; i<DB.materials.length; i++) { if(DB.materials[i].id === matId){ mat=DB.materials[i]; break; } }
+    // FIX: use string comparison for ID lookup, don't parseFloat the ID
+    var mat = findMaterialById(matId);
     if(!mat) return;
+    // FIX: guard validConditions existence before proceeding
+    if(!mat.validConditions || mat.validConditions.length === 0) {
+        if(resEl) resEl.innerHTML = '<div class="alert alert-error">No valid conditions found for this material.</div>';
+        return;
+    }
     var A, EaUsed, rSquared = 1, warn = '', relClass = 'reliability-medium';
     if(isNaN(customEa) || customEa <= 0) {
         var v = Engine.validateArrhenius(mat);
@@ -843,7 +844,7 @@ function onArrChange() {
     }
     var pred = Engine.predict(A, EaUsed, targetTemp);
     var minT = mat.validConditions[0].temperature, maxT = mat.validConditions[0].temperature;
-    for(var i=0; i<mat.validConditions.length; i++){ var t=mat.validConditions[i].temperature; if(t<minT) minT=t; if(t>maxT) maxT=t; }
+    for(var i2=0; i2<mat.validConditions.length; i2++){ var t=mat.validConditions[i2].temperature; if(t<minT) minT=t; if(t>maxT) maxT=t; }
     var isExtrapolation = targetTemp < minT-1 || targetTemp > maxT+1;
     if(isExtrapolation) warn += '<div class="alert alert-warning">Extrapolation outside measured range ('+minT.toFixed(0)+'-'+maxT.toFixed(0)+'C)</div>';
     if(resEl) {
@@ -857,8 +858,8 @@ function onArrChange() {
     }
     var dataPoints = [];
     var vals2 = Engine.getValues(mat);
-    for(var i=0; i<mat.validConditions.length; i++){
-        if(vals2[i] && vals2[i].value > 0 && mat.validConditions[i]) dataPoints.push({T_K: mat.validConditions[i].temperature+273.15, trans: vals2[i].value});
+    for(var i3=0; i3<mat.validConditions.length; i3++){
+        if(vals2[i3] && vals2[i3].value > 0 && mat.validConditions[i3]) dataPoints.push({T_K: mat.validConditions[i3].temperature+273.15, trans: vals2[i3].value});
     }
     drawArrTempChart(mat, {A:A, Ea:EaUsed, predicted:pred, targetTempC:targetTemp, minTemp:minT, maxTemp:maxT, isExtrapolation:isExtrapolation, dataPoints:dataPoints, rSquared:rSquared}, customEaInput !== '');
     drawArrLinChart(mat, {A:A, Ea:EaUsed, dataPoints:dataPoints, rSquared:rSquared}, customEaInput !== '');
@@ -880,21 +881,25 @@ function doOptimize() {
     var target = parseFloat(document.getElementById('opt-target') ? document.getElementById('opt-target').value : '0.5');
     var barrierIdx = parseInt(document.getElementById('opt-layer') ? document.getElementById('opt-layer').value : '0');
     var resEl = document.getElementById('opt-result'); if(!resEl) return;
+    // FIX: bounds check on barrierIdx before accessing State.layers
+    if(barrierIdx < 0 || barrierIdx >= State.layers.length) {
+        resEl.innerHTML = '<div class="alert alert-warning">Invalid layer selection.</div>';
+        return;
+    }
     var common = Engine.findCommonConditions(State.layers, DB.materials);
     var condition = State.selCond || (common.conditions && common.conditions[0]);
     if(!condition || !State.layers.every(function(l){ return l.mid!==null && l.thick>0; })){
         resEl.innerHTML = '<div class="alert alert-info">Configure and calculate first</div>'; return;
     }
     var barrierLayer = State.layers[barrierIdx];
-    var barrierMat = DB.materials.find(function(m){ return m.id === barrierLayer.mid; });
+    var barrierMat = findMaterialById(barrierLayer.mid);
     if(barrierMat && barrierMat.isMetallized){
         resEl.innerHTML = '<div class="alert alert-warning"><strong>Optimization not applicable:</strong> For metallized/coated films, barrier performance is independent of substrate thickness.</div>';
         return;
     }
     var result = Engine.optimizeForTarget(State.layers, DB.materials, condition, target, barrierIdx);
     if(result.error){ resEl.innerHTML='<div class="alert alert-warning">'+result.error+'</div>'; return; }
-    var mat = null;
-    for(var m=0; m<DB.materials.length; m++) if(DB.materials[m].id===State.layers[barrierIdx].mid){ mat=DB.materials[m]; break; }
+    var mat = findMaterialById(State.layers[barrierIdx].mid);
     var current = State.layers[barrierIdx].thick;
     resEl.innerHTML = '<div class="alert alert-success">' +
         'To achieve target '+getLabel()+' <= '+target+' '+getUnit()+' @ '+condition.temperature+'C/'+condition.humidity+'%: ' +
@@ -921,12 +926,23 @@ function postCompareRender() {
     var tableEl = document.getElementById('compare-table');
     if(tableEl && selected.length > 0){
         var modeLabel = (selected[0].mode || State.mode).toUpperCase();
-        var th = '<thead><tr><th>Parameter</th>'; for(var i=0;i<selected.length;i++) th+='<th>'+selected[i].name+'</th>'; th+='</tr></thead>';
+        var th = '<thead><tr><th>Parameter</th>';
+        // FIX: use separate loop variable to avoid var collision
+        for(var j=0; j<selected.length; j++) th+='<th>'+selected[j].name+'</th>';
+        th+='</tr></thead>';
         var body = '<tbody>';
-        body += '<tr><td><strong>'+modeLabel+'</strong></td>'; for(var i=0;i<selected.length;i++) body+='<td>'+selected[i].total.toFixed(4)+' '+unit+'</td>'; body+='</tr>';
-        body += '<tr><td><strong>Thickness</strong></td>'; for(var i=0;i<selected.length;i++) body+='<td>'+selected[i].totalThickness.toFixed(0)+' um</td>'; body+='</tr>';
-        body += '<tr><td><strong>Conditions</strong></td>'; for(var i=0;i<selected.length;i++) body+='<td>'+selected[i].temperature+'C / '+selected[i].humidity+'%</td>'; body+='</tr>';
-        body += '<tr><td><strong>Recyclable</strong></td>'; for(var i=0;i<selected.length;i++) body+='<td><span class="sustainability-flag '+((selected[i].recyclable)?'yes':'no')+'">'+(selected[i].recyclable?'Yes':'No')+'</span></td>'; body+='</tr>';
+        body += '<tr><td><strong>'+modeLabel+'</strong></td>';
+        for(var j2=0; j2<selected.length; j2++) body+='<td>'+selected[j2].total.toFixed(4)+' '+unit+'</td>';
+        body+='</tr>';
+        body += '<tr><td><strong>Thickness</strong></td>';
+        for(var j3=0; j3<selected.length; j3++) body+='<td>'+selected[j3].totalThickness.toFixed(0)+' um</td>';
+        body+='</tr>';
+        body += '<tr><td><strong>Conditions</strong></td>';
+        for(var j4=0; j4<selected.length; j4++) body+='<td>'+selected[j4].temperature+'C / '+selected[j4].humidity+'%</td>';
+        body+='</tr>';
+        body += '<tr><td><strong>Recyclable</strong></td>';
+        for(var j5=0; j5<selected.length; j5++) body+='<td><span class="sustainability-flag '+((selected[j5].recyclable)?'yes':'no')+'">'+(selected[j5].recyclable?'Yes':'No')+'</span></td>';
+        body+='</tr>';
         body += '</tbody>';
         tableEl.innerHTML = '<div class="card"><h2>Comparison Table</h2><table class="cond-table">'+th+body+'</table></div>';
     }
@@ -936,7 +952,7 @@ function postCompareRender() {
         var ctx = canvas.getContext('2d');
         var modeLabel2 = (selected[0].mode || State.mode).toUpperCase();
         var labels=[], vals=[], colors=[];
-        for(var i=0;i<selected.length;i++){ labels.push(selected[i].name); vals.push(selected[i].total); colors.push(LAYER_COLORS[i%LAYER_COLORS.length]); }
+        for(var j6=0; j6<selected.length; j6++){ labels.push(selected[j6].name); vals.push(selected[j6].total); colors.push(LAYER_COLORS[j6%LAYER_COLORS.length]); }
         chartInstances.compare = new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:modeLabel2,data:vals,backgroundColor:colors,borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,title:{display:true,text:unit}},x:{title:{display:true,text:'Laminates'}}}}});
     }
 }
@@ -944,6 +960,23 @@ function postCompareRender() {
 // ====================================================================
 // MISC HELPERS
 // ====================================================================
+
+/**
+ * FIX: Centralized material lookup using string comparison.
+ * Replaces scattered DB.materials.find() calls that break when IDs are
+ * non-numeric strings (e.g. Firebase-style keys like 'fb_abc123').
+ * Also avoids relying on Array.prototype.find which may be absent in
+ * older environments — uses a plain for-loop instead.
+ */
+function findMaterialById(id) {
+    if(id === null || id === undefined) return null;
+    var sid = String(id);
+    for(var i = 0; i < DB.materials.length; i++) {
+        if(String(DB.materials[i].id) === sid) return DB.materials[i];
+    }
+    return null;
+}
+
 function searchMaterialWeb(matName) {
     var encoded = encodeURIComponent(matName);
     Modal.open('Search Online: '+matName,
@@ -957,5 +990,8 @@ function searchMaterialWeb(matName) {
 }
 
 function getCommunityCount() {
-    return DB.materials.filter(function(m){ return m.isCommunity || String(m.id).startsWith('fb_'); }).length;
+    // FIX: replace .startsWith() with indexOf() for broader compatibility
+    return DB.materials.filter(function(m){
+        return m.isCommunity || String(m.id).indexOf('fb_') === 0;
+    }).length;
 }
