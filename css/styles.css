@@ -498,25 +498,30 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
   display: flex;
   gap: 0.15rem;
   padding: 0 1.5rem 0.5rem;
-  overflow-x: auto;
+  overflow-x: hidden; /* ← Cambiato da auto a hidden */
   scrollbar-width: none;
   background: rgba(0,0,0,0.15);
   border-top: 1px solid rgba(255,255,255,0.08);
 }
-#nav-subtabs::-webkit-scrollbar { display: none; }
 
 .nav-subtab {
-  padding: 0.3rem 0.75rem;
+  flex: 1;                /* ← AGGIUNTO: espande equamente */
+  min-width: 0;           /* ← AGGIUNTO: evita overflow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.4rem; /* ← Ridotto padding laterale */
   background: transparent;
   border: none;
   border-radius: 6px;
   color: rgba(255,255,255,0.6);
   cursor: pointer;
-  font-size: 0.92rem;
+  font-size: 0.92rem;     /* ← La tua modifica */
   font-weight: 500;
   transition: all 0.15s;
   white-space: nowrap;
-  flex-shrink: 0;
+  text-align: center;
+  /* ❌ Rimuovi flex-shrink: 0 se c'era */
 }
 .nav-subtab:hover {
   background: rgba(255,255,255,0.12);
