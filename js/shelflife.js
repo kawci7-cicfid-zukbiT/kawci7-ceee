@@ -1942,9 +1942,10 @@ Imagine a <strong>200g bag of dry crackers</strong> with a surface area of <stro
 
 <h4 style="margin:1.2rem 0 0.5rem 0; font-family:sans-serif; font-size:0.95rem; color:var(--text);">The Mathematical Equation:</h4>
 <div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin-bottom:1rem; color:#0f172a;">
-t<sub>shelf_life</sub> = [ Mass<sub>fat</sub> &times; Threshold<sub>O2_limit</sub> ] / [ A &times; OTR<sub>scaled</sub> &times; 1.43 ]
+t<sub>shelf_life</sub> = (fat_kg × O2_crit) / (OTR × A × 0.21)<br><br>
+where O2_crit is in cc O₂ / kg fat, OTR in cc/m²·day,<br>
+A in m², and 0.21 is the volumetric fraction of O₂ in air
 </div>
-
 <p><em>Note on advanced chemical behaviors:</em> In real industrial settings, lipid oxidation follows an autocatalytic pathway—moving slowly during an initial induction phase before accelerating violently via free-radical chain reactions. Because a zero-order model simplifies this into a steady average, this tool provides a highly reliable conservative baseline, perfect for fast-moving goods or early-stage packaging iterations.</p>
 
 <div style="background:#f0fdf4; padding:1rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.9rem;">
@@ -1952,8 +1953,8 @@ t<sub>shelf_life</sub> = [ Mass<sub>fat</sub> &times; Threshold<sub>O2_limit</su
 Let's analyze a <strong>100g pack of roasted peanuts</strong> containing <strong>50g of pure fat</strong>. The bag surface area is <strong>0.04 m²</strong>, and the laminate OTR is <strong>20 cc/m²·day</strong>.
 <ul>
   <li><strong>The Degradation Target:</strong> Literature states that peanuts become rancid when they absorb <strong>2.0 mg of O₂ per gram of fat</strong>. Total allowable oxygen capacity = 50g &times; 2.0 mg = <strong>100 mg of O₂</strong>.</li>
-  <li><strong>Gas-to-Mass Translation:</strong> The film allows 20 cc/m²·day &times; 0.04 m² = <strong>0.80 cc of gas per day</strong> into the package. Since 1 cc of oxygen gas weighs approximately 1.43 mg at standard ambient conditions, the daily mass ingress is: 0.80 cc &times; 1.43 = <strong>1.144 mg of O₂/day</strong>.</li>
-  <li><strong>Final Computation:</strong> Shelf life = 100 mg / 1.144 mg/day = <strong>87.4 Days</strong>.</li>
+  <li><strong>Gas-to-Mass Translation:</strong> The film allows 20 cc/m²·day × 0.04 m² × 0.21 = <strong>0.168 cc of O₂/day</strong> into the package. The calculation works entirely in volumes, consistent with the O2_crit threshold expressed in cc/kg.</li>
+  <li><strong>Final Computation:</strong> Shelf life = (0.05 kg × 400 cc/kg) / (20 cc/m²·day × 0.04 m² × 0.21) = 20 / 0.168 = <strong>119 Days</strong></li>
 </ul>
 </div>
 
