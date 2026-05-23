@@ -1913,10 +1913,14 @@ Mechanics of Shelf-Life Prediction
 
 <h4 style="margin:1.2rem 0 0.5rem 0; font-family:sans-serif; font-size:0.95rem; color:var(--text);">The Mathematical Equation:</h4>
 <div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin-bottom:1rem; color:#0f172a;">
-t<sub>shelf_life</sub> = [ ln( (RH<sub>ext</sub> - a<sub>w,initial</sub>) / (RH<sub>ext</sub> - a<sub>w,critical</sub>) ) ] &times; [ (W<sub>dry</sub> &times; M<sub>slope</sub>) / (A &times; WVTR<sub>scaled</sub>) ]
+Daily loop: M(t+1) = M(t) + WVTR<sub>eff</sub> × (dP / dP<sub>ref</sub>) × A / W × 100<br><br>
+where dP = P<sub>sat</sub>(T) × max(RH<sub>ext</sub> − RH<sub>in</sub>, 1) / 100<br>
+and RH<sub>in</sub> = GAB(M(t)) × 100
 </div>
-
 <p>To accurately compute this, the calculator integrates the GAB (Guggenheim-Anderson-de Boer) Sorption Isotherm Model. This standard converting matrix translates raw moisture percentages into Water Activity, predicting the exact mathematical threshold where crispness turns into texture loss, or where microbial spore germination begins.</p>
+<div style="background:var(--warning-light); padding:0.7rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:0.8rem 0; font-family:sans-serif; font-size:0.85rem;">
+<strong>Note on the model:</strong> The calculator uses a day-by-day numerical simulation rather than a closed-form equation. At each time step, the internal water activity aᵥ is computed via the GAB isotherm from the current moisture M, the driving pressure differential dP is derived from the difference between external RH and internal aᵥ, and the daily moisture increment dM is accumulated until M reaches M_crit. This approach is more accurate than a static analytical formula because it correctly captures the declining driving force as the product absorbs moisture.
+</div>
 
 <div style="background:#f0fdf4; padding:1rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.9rem;">
 <strong style="color:#16a34a; font-size:0.95rem;">📊 Moisture Calculation Example:</strong><br>
