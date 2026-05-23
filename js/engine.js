@@ -444,8 +444,10 @@ var DB = {
         var userMats    = JSON.parse(savedMats);
         var existingIds = new Set(this.materials.map(function(m) { return String(m.id); }));
         for (var i = 0; i < userMats.length; i++) {
-          var um  = userMats[i];
-          var idx = this.materials.findIndex(function(m) { return String(m.id) === String(um.id); });
+  var um = userMats[i];
+  if (um.isCompany) continue;   // ← NEW: ignora company salvati per errore
+  var idx = this.materials.findIndex(function(m) { return String(m.id) === String(um.id); });
+
           if (idx !== -1) {
             this.materials[idx] = Object.assign({}, um, {
               id:            this.materials[idx].id,
@@ -616,9 +618,10 @@ if (m.isCompany) continue;   // ← NEW: non salvare mai i materiali company in 
         dupeIdx = j; break;
       }
       // Match per nome (stesso materiale, una copia locale + una community)
-      if (s.name.trim().toLowerCase() === nameLower) {
-        dupeIdx = j; break;
-      }
+      if (s.name.trim().toLowerCase() === nameLower &&
+    !!s.isCompany === !!mat.isCompany) {   // ← NEW: non mescolare company e community
+  dupeIdx = j; break;
+}
     }
 
     if (dupeIdx === -1) {
