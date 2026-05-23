@@ -5,52 +5,6 @@
 // ====================================================================
 // HOME
 // ====================================================================
-function renderHome() {
-    var totalMats = DB.materials.length;
-    var totalLams = DB.laminates.length;
-    var multiTempMats = 0;
-    for(var i = 0; i < DB.materials.length; i++) {
-        if(Engine.validateArrhenius(DB.materials[i]).valid) multiTempMats++;
-    }
-    var commCount = getCommunityCount();
-    return '<div class="home-bg-glow"></div>' +
-    '<div style="max-width:1100px;margin:0 auto;padding:0 0.5rem;position:relative;z-index:10;">' +
-        '<div style="padding:3rem 2rem 2.5rem;margin-bottom:2rem;border-bottom:1px solid #e2e8f0">' +
-            '<div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem">' +
-                '<div>' +
-                    '<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.12em;color:#2563eb;text-transform:uppercase;margin-bottom:0.6rem">Packaging Engineering Tool</div>' +
-                    '<h1 style="font-size:2.4rem;font-weight:800;color:#0f172a;line-height:1.15;margin:0 0 0.75rem 0;letter-spacing:-0.03em">WVTR / OTR<br>Calculator</h1>' +
-                    '<p style="font-size:0.95rem;color:#64748b;margin:0;max-width:480px;line-height:1.6">Professional barrier analysis for multilayer packaging structures. Resistance model, Arrhenius prediction, shelf life estimation.</p>' +
-                '</div>' +
-                '<button onclick="document.getElementById(\'nav-tabs\').querySelector(\'[data-tab=calc]\').click()" style="background:#2563eb;color:#fff;border:none;padding:0.85rem 2rem;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;letter-spacing:0.01em;transition:background 0.2s;white-space:nowrap" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Start Calculation</button>' +
-            '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#e2e8f0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:2rem">' +
-            '<div style="background:#fff;padding:1.75rem 1.5rem"><div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.5rem">Total Materials</div><div style="font-size:2.8rem;font-weight:800;color:#2563eb;line-height:1;margin-bottom:0.4rem">' + totalMats + '</div><div style="font-size:0.78rem;color:#94a3b8">In the database</div><div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f1f5f9"><button onclick="document.getElementById(\'nav-tabs\').querySelector(\'[data-tab=materials]\').click()" style="font-size:0.78rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Explore database</button></div></div>' +
-            '<div style="background:#fff;padding:1.75rem 1.5rem"><div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.5rem">Arrhenius Ready</div><div style="font-size:2.8rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.4rem">' + multiTempMats + '</div><div style="font-size:0.78rem;color:#94a3b8">Multi-temperature datasets</div><div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f1f5f9"><button onclick="document.getElementById(\'nav-tabs\').querySelector(\'[data-tab=arrhenius]\').click()" style="font-size:0.78rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Run analysis</button></div></div>' +
-            '<div style="background:#fff;padding:1.75rem 1.5rem"><div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.5rem">Saved Laminates</div><div style="font-size:2.8rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.4rem">' + totalLams + '</div><div style="font-size:0.78rem;color:#94a3b8">Structures in your library</div><div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f1f5f9"><button onclick="document.getElementById(\'nav-tabs\').querySelector(\'[data-tab=laminates]\').click()" style="font-size:0.78rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">View library</button></div></div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">' +
-            '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">' +
-                '<div style="padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#64748b">This Month</div><div style="font-size:0.95rem;font-weight:700;color:#0f172a;margin-top:0.15rem">Most Used Materials</div></div><div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div></div>' +
-                '<div id="top3-ranking" style="padding:0.5rem 0"><div style="padding:1.5rem;text-align:center;color:#94a3b8;font-size:0.82rem">Loading rankings...</div></div>' +
-            '</div>' +
-            '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">' +
-                '<div style="padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9"><div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#64748b">Platform</div><div style="font-size:0.95rem;font-weight:700;color:#0f172a;margin-top:0.15rem">Core Capabilities</div></div>' +
-                '<div style="padding:0.5rem 0">' +
-                    '<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;border-bottom:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.82rem;font-weight:600;color:#0f172a">Multilayer Resistance Model</div><div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">Series resistance calculation per ISO/ASTM</div></div></div>' +
-                    '<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;border-bottom:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.82rem;font-weight:600;color:#0f172a">Arrhenius Temperature Fit</div><div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">R2 validated prediction at untested temperatures</div></div></div>' +
-                    '<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;border-bottom:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.82rem;font-weight:600;color:#0f172a">Shelf Life Engine</div><div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">GAB isotherm + oxidation kinetics</div></div></div>' +
-                    '<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.82rem;font-weight:600;color:#0f172a">Sensitivity and Optimization</div><div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">Thickness sweep and cost optimizer</div></div></div>' +
-                '</div>' +
-            '</div>' +
-        '</div>' +
-        '<div style="padding:1.5rem 0;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem">' +
-            '<div style="font-size:0.72rem;color:#94a3b8;line-height:1.4"><strong style="color:#64748b">Disclaimer:</strong> For R&D and engineering use only. Results require laboratory validation per ASTM F1249 / ISO 15106 standards.</div>' +
-            '<a href="mailto:wvtrotrcalculator@gmail.com?subject=Feedback" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;color:#2563eb;text-decoration:none;background:#eff6ff;border:1px solid #bfdbfe;padding:0.3rem 0.65rem;border-radius:6px">Send Feedback</a>' +
-        '</div>' +
-    '</div>';
-}
 
 // ====================================================================
 // CALCULATOR
