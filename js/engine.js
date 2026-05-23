@@ -486,7 +486,8 @@ var DB = {
       for (var i = this.materials.length - 1; i >= 0; i--) {
         var m        = this.materials[i];
         var isDefault = DEFAULT_MATERIALS.some(function(d) { return d.id === m.id; });
-        if (isDefault) continue;
+if (isDefault) continue;
+if (m.isCompany) continue;   // ← NEW: non salvare mai i materiali company in localStorage
         var key = String(m.id);
         if (!uniqueLocal.has(key)) uniqueLocal.set(key, m);
       }
