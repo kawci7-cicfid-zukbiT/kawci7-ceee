@@ -425,6 +425,10 @@ const SL = {
     const unit = (State.mode || 'wvtr') === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
     if (el) el.textContent = rateStr + ' ' + unit;
   },
+  onManualRateChange() {
+    const rate = parseFloat(document.getElementById('sl-rate-manual')?.value) || 0;
+    this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
+  },
 
   // ------------------------------------------------------------------
   // 🎯 MAIN CALCULATION ENGINE
