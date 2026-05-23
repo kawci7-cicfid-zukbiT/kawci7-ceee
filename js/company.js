@@ -209,7 +209,7 @@ function showCompanyModal() {
     body += '<div style="background:#fef3c7;border:2px solid #fcd34d;border-radius:10px;padding:0.85rem 1rem;margin-bottom:1.25rem">' +
         '<div style="display:flex;gap:0.5rem;align-items:flex-start"><span style="font-size:1.1rem;flex-shrink:0">⚠️</span>' +
         '<div><div style="font-size:0.82rem;font-weight:700;color:#92400e;margin-bottom:0.3rem">Important Disclaimer</div>' +
-        '<div style="font-size:0.75rem;color:#78350f;line-height:1.55">Do not enter sensitive or confidential company data. This database is for packaging material technical parameters only (WVTR, OTR, thickness, test conditions). Do not share trade secrets, customer data, pricing, or personal information.</div>' +
+        '<div style="font-size:0.75rem;color:#78350f;line-height:1.55">This database accepts only packaging material technical parameters (WVTR, OTR, thickness, test conditions). Please do not submit confidential, commercial, or personal data.</div>' +
         '</div></div></div>';
 
     if (isActive) {
