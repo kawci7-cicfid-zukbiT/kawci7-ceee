@@ -252,7 +252,9 @@ function showCompanyModal() {
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
 }
-
+if (CompanyState.isActive() && CompanyState.role === 'admin') {
+    setTimeout(loadAndShowCompanyCode, 150);
+}
 function createCompanyFromModal() {
     var name = (document.getElementById('co-create-name')?.value || '').trim();
     var dur  = parseInt(document.getElementById('co-create-duration')?.value || '0');
@@ -773,7 +775,20 @@ function showCompanyToast(html, bg) {
     document.body.appendChild(t);
     setTimeout(function(){ if(t.parentNode) t.remove(); }, 4000);
 }
-
+function loadAndShowCompanyCode() {
+    var codeEl = document.getElementById('co-code-value');
+    if (!codeEl || !CompanyState.isActive() || !window.communityDB) return;
+    window.fbGetDoc(window.fbDoc(window.communityDB, 'companies', CompanyState.companyId))
+        .then(function(snap) {
+            if (snap.exists()) {
+                var data = snap.data();
+                codeEl.textContent = data.code || '—';
+            } else {
+                codeEl.textContent = 'Not found';
+            }
+        })
+        .catch(function() { codeEl.textContent = 'Error loading'; });
+}
 // ====================================================================
 // INIT
 // ====================================================================
