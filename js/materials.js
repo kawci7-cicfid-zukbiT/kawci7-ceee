@@ -786,8 +786,9 @@ function showMatModal(editId) {
                 }, 300);
             }
 
-            return true;
-    );
+           return true;
+        }   // ← chiude il callback function(){}
+    );      // ← chiude Modal.open(...)
 
     setTimeout(function(){
         var tmSelect = document.getElementById('mf-testmethod-select');
