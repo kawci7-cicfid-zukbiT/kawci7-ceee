@@ -479,8 +479,10 @@ function showEditCompanyMaterial(docId) {
 function _showCompanyMatModal(mat) {
     var currentMode  = State.mode;
     var currentLabel = currentMode === 'wvtr' ? 'WVTR' : 'OTR';
-    var currentUnit  = currentMode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
-    var currentValues = currentMode === 'wvtr' ? (mat ? mat.wvtrValues : [{value:'',thickness:''}]) : (mat ? mat.otrValues : [{value:'',thickness:''}]);
+    var currentUnit  = currentMode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
+    var currentValues = currentMode === 'wvtr'
+        ? (mat ? mat.wvtrValues  : [{value:'',thickness:''}])
+        : (mat ? mat.otrValues   : [{value:'',thickness:''}]);
     var conds = mat ? (mat.validConditions || []) : [{temperature:'',humidity:''}];
 
     var familyOpts = '<option value="">Select family...</option>';
@@ -488,11 +490,62 @@ function _showCompanyMatModal(mat) {
         familyOpts += '<option value="'+fam+'"'+(mat&&mat.family===fam?' selected':'')+'>'+fam+'</option>';
     }
 
+    var metallizedCheck = mat && mat.isMetallized ? 'checked' : '';
+    var metallizedHTML =
+        '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--warning-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem">' +
+        '<input type="checkbox" id="co-mf-metallized" '+metallizedCheck+'>' +
+        '<label for="co-mf-metallized" style="font-size:0.75rem;color:var(--text-light);margin:0;cursor:pointer">' +
+        '<strong>Metallized/Coated film</strong> – Barrier independent of substrate thickness</label></div>';
+
+    var betaWVTR  = mat ? (mat.hygroscopicBetaWVTR  || '') : '';
+    var refRHWVTR = mat ? (mat.hygroscopicRefRHWVTR || 50) : 50;
+    var betaOTR   = mat ? (mat.hygroscopicBetaOTR   || '') : '';
+    var refRHOTR  = mat ? (mat.hygroscopicRefRHOTR  || 50) : 50;
+    var betaVal   = currentMode === 'wvtr' ? betaWVTR  : betaOTR;
+    var refRHVal  = currentMode === 'wvtr' ? refRHWVTR : refRHOTR;
+    var betaId    = currentMode === 'wvtr' ? 'co-mf-beta-wvtr'  : 'co-mf-beta-otr';
+    var refRHId   = currentMode === 'wvtr' ? 'co-mf-refrh-wvtr' : 'co-mf-refrh-otr';
+
+    var hygroHTML =
+        '<div class="form-group" style="margin-top:0.8rem">' +
+        '<label>Hygroscopic Properties ('+currentLabel+')</label>' +
+        '<div class="grid grid-2" style="gap:0.5rem">' +
+        '<div class="form-group" style="margin:0"><label>β Coefficient (%/RH)</label>' +
+        '<input type="number" step="0.001" class="form-input" id="'+betaId+'" value="'+betaVal+'" placeholder="0.034"></div>' +
+        '<div class="form-group" style="margin:0"><label>Reference RH (%)</label>' +
+        '<input type="number" class="form-input" id="'+refRHId+'" value="'+refRHVal+'" placeholder="50"></div>' +
+        '</div></div>';
+
+    // Test method
+    var ctmWVTR = ['','ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122','Custom/Other'];
+    var ctmOTR  = ['','ASTM D3985','ISO 15106-2','JIS K7126','MOCON OXTRAN','Custom/Other'];
+    var ctm = currentMode === 'wvtr' ? ctmWVTR : ctmOTR;
+    var currentTM = currentMode === 'wvtr' ? (mat ? mat.testMethodWVTR||'' : '') : (mat ? mat.testMethodOTR||'' : '');
+    var isCustomTM = currentTM && ctm.indexOf(currentTM) < 0;
+    var testMethodBlock =
+        '<div class="form-group" id="co-mf-testmethod-group">' +
+        '<label>Test Method for '+currentLabel+'</label>' +
+        '<select class="form-input" id="co-mf-testmethod-select" onchange="onCoTestMethodSelectChange(this)">' +
+        (function(){
+            var o = '<option value="">Select or enter method...</option>';
+            for(var t=0; t<ctm.length; t++){
+                var s = (currentTM === ctm[t]) ? ' selected' : '';
+                o += '<option value="'+ctm[t]+'"'+s+'>'+(ctm[t]||'-- Select --')+'</option>';
+            }
+            o += '<option value="_custom" style="font-weight:600">+ Enter custom method...</option>';
+            return o;
+        })() +
+        '</select>' +
+        '<input type="text" class="form-input" id="co-mf-testmethod-custom" value="'+(isCustomTM?currentTM:'')+'" placeholder="Enter custom method..." style="display:'+(isCustomTM?'block':'none')+';margin-top:0.3rem">' +
+        '</div>';
+
+    // Existing rows
     var rowsHTML = '';
-    for (var r=0; r<currentValues.length; r++) {
+    for (var r = 0; r < currentValues.length; r++) {
         var v = currentValues[r] || {value:'',thickness:''};
         var c = conds[r] || {temperature:'',humidity:''};
-        rowsHTML += '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr">' +
+        rowsHTML +=
+            '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr">' +
             '<div style="display:flex;gap:0.4rem">' +
             '<div class="form-group" style="margin:0;flex:1"><label>'+currentLabel+' Value</label><input type="number" step="any" class="form-input co-mf-val" value="'+(v.value||'')+'" placeholder="0"></div>' +
             '<div class="form-group" style="margin:0;flex:1"><label>Thickness (µm)</label><input type="number" step="any" class="form-input co-mf-thick" value="'+(v.thickness||'')+'" placeholder="0"></div>' +
@@ -503,11 +556,15 @@ function _showCompanyMatModal(mat) {
             '</div></div>';
     }
 
-    var body = '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f">Only share technical data. No confidential information.</div>' +
+    var body =
+        '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.6rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f">Only share technical data. No confidential information.</div>' +
         '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="co-mat-name" value="'+(mat?mat.name:'')+'"></div>' +
         '<div class="form-group"><label>Material Family</label><select class="form-input" id="co-mat-family">'+familyOpts+'</select></div>' +
         '<div class="form-group"><label>Company / Supplier</label><input type="text" class="form-input" id="co-mat-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont"></div>' +
-        '<div class="form-group"><label>TDS Link</label><input type="url" class="form-input" id="co-mat-tds" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."></div>' +
+        '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(enables Contact Supplier button)</span></label>' +
+        '<input type="email" class="form-input" id="co-mat-email" value="'+(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
+        '<div class="form-group"><label>TDS Link (optional)</label><input type="url" class="form-input" id="co-mat-tds" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."></div>' +
+        metallizedHTML + hygroHTML + testMethodBlock +
         '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;font-size:0.75rem"><strong>'+currentLabel+'</strong> · '+currentUnit+'</div>' +
         '<div id="co-mat-rows">'+rowsHTML+'</div>' +
         '<button class="btn btn-outline btn-full" style="margin-top:0.4rem" onclick="coAddMatRow()">+ Add Condition</button>';
@@ -515,39 +572,57 @@ function _showCompanyMatModal(mat) {
     Modal.open(mat ? 'Edit Company Material' : 'Add Company Material', body, function() {
         var name = document.getElementById('co-mat-name')?.value.trim();
         if (!name) { alert('Enter material name'); return false; }
-        var family  = document.getElementById('co-mat-family')?.value;
-        var company = document.getElementById('co-mat-company')?.value.trim();
-        var tdsLink = document.getElementById('co-mat-tds')?.value.trim();
+
+        var family       = document.getElementById('co-mat-family')?.value;
+        var company      = document.getElementById('co-mat-company')?.value.trim();
+        var tdsLink      = document.getElementById('co-mat-tds')?.value.trim();
+        var supplierEmail= document.getElementById('co-mat-email')?.value.trim();
+        var isMetallized = document.getElementById('co-mf-metallized')?.checked || false;
+
+        // Test method
+        var tmSelect = document.getElementById('co-mf-testmethod-select');
+        var tmCustom = document.getElementById('co-mf-testmethod-custom');
+        var testMethodValue = '';
+        if (tmSelect && tmSelect.value && tmSelect.value !== '_custom') testMethodValue = tmSelect.value;
+        if (tmCustom && tmCustom.style.display !== 'none' && tmCustom.value.trim()) testMethodValue = tmCustom.value.trim();
+        var testMethodWVTR = currentMode === 'wvtr' ? testMethodValue : (mat ? mat.testMethodWVTR||'' : '');
+        var testMethodOTR  = currentMode === 'otr'  ? testMethodValue : (mat ? mat.testMethodOTR||'' : '');
+
+        // Hygroscopic
+        var betaElVal  = parseFloat(document.getElementById(betaId)?.value)  || 0;
+        var refRHElVal = parseFloat(document.getElementById(refRHId)?.value) || 50;
 
         var allVal   = document.querySelectorAll('.co-mf-val');
         var allThick = document.querySelectorAll('.co-mf-thick');
         var allTemp  = document.querySelectorAll('.co-mf-temp');
         var allHum   = document.querySelectorAll('.co-mf-hum');
         var valuesArr = [], condsArr = [];
-        for (var i=0; i<allVal.length; i++) {
-            var val  = parseFloat(allVal[i].value);
+        for (var i = 0; i < allVal.length; i++) {
+            var val   = parseFloat(allVal[i].value);
             var thick = parseFloat(allThick[i].value);
             var temp  = parseFloat(allTemp[i].value);
             var hum   = parseFloat(allHum[i].value);
-            if (isNaN(val)||val<0){ alert('Invalid value in row '+(i+1)); return false; }
+            if (isNaN(val)||val<0)    { alert('Invalid value in row '+(i+1)); return false; }
             if (isNaN(thick)||thick<=0){ alert('Thickness must be > 0 in row '+(i+1)); return false; }
-            if (isNaN(temp)){ alert('Temperature required in row '+(i+1)); return false; }
-            if (isNaN(hum)){ alert('Humidity required in row '+(i+1)); return false; }
-            valuesArr.push({value:val,thickness:thick});
-            condsArr.push({temperature:temp,humidity:hum});
+            if (isNaN(temp))           { alert('Temperature required in row '+(i+1)); return false; }
+            if (isNaN(hum))            { alert('Humidity required in row '+(i+1)); return false; }
+            valuesArr.push({value:val, thickness:thick});
+            condsArr.push({temperature:temp, humidity:hum});
         }
 
         var matData = {
-            name: name, family: family || getFamily(name), company: company, tdsLink: tdsLink,
-            isMetallized: false,
+            name: name, family: family || getFamily(name),
+            company: company, tdsLink: tdsLink, supplierEmail: supplierEmail,
+            isMetallized: isMetallized,
+            testMethodWVTR: testMethodWVTR, testMethodOTR: testMethodOTR,
+            hygroscopicBetaWVTR:  currentMode==='wvtr' ? betaElVal  : (mat?mat.hygroscopicBetaWVTR||0:0),
+            hygroscopicRefRHWVTR: currentMode==='wvtr' ? refRHElVal : (mat?mat.hygroscopicRefRHWVTR||50:50),
+            hygroscopicBetaOTR:   currentMode==='otr'  ? betaElVal  : (mat?mat.hygroscopicBetaOTR||0:0),
+            hygroscopicRefRHOTR:  currentMode==='otr'  ? refRHElVal : (mat?mat.hygroscopicRefRHOTR||50:50),
             wvtrValues: currentMode==='wvtr' ? valuesArr : (mat&&mat.wvtrValues?mat.wvtrValues:[]),
             otrValues:  currentMode==='otr'  ? valuesArr : (mat&&mat.otrValues?mat.otrValues:[]),
             validConditions: condsArr,
-            testMethodWVTR: mat?mat.testMethodWVTR||'':'',
-            testMethodOTR:  mat?mat.testMethodOTR||'':'',
-            hygroscopicBetaWVTR:0, hygroscopicRefRHWVTR:50,
-            hygroscopicBetaOTR:0, hygroscopicRefRHOTR:50,
-            reliabilityVotes: mat?mat.reliabilityVotes||{up:0,down:0}:{up:0,down:0}
+            reliabilityVotes: mat ? mat.reliabilityVotes||{up:0,down:0} : {up:0,down:0}
         };
         if (mat) matData._companyDocId = mat._companyDocId;
 
@@ -557,12 +632,28 @@ function _showCompanyMatModal(mat) {
                 initCompanyMaterialsPage();
             } else { alert('Error: ' + res.error); }
         });
-         return true;
+        return true;
     });
 
-    // ✅ Aggiungi queste due righe
+    // Footer visibile per il Save
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = '';
+
+    // Custom test method handler
+    setTimeout(function(){
+        var tmSelect2 = document.getElementById('co-mf-testmethod-select');
+        var tmCustom2 = document.getElementById('co-mf-testmethod-custom');
+        if(!tmSelect2 || !tmCustom2) return;
+        if(isCustomTM){ tmCustom2.style.display='block'; tmSelect2.value=''; }
+    }, 50);
+}
+
+// Handler test method per company modal
+function onCoTestMethodSelectChange(select) {
+    var customInput = document.getElementById('co-mf-testmethod-custom');
+    if (!customInput) return;
+    if (select.value === '_custom') { customInput.style.display='block'; customInput.focus(); select.value=''; }
+    else customInput.style.display = 'none';
 }
 
 function coAddMatRow() {
