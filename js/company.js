@@ -859,7 +859,7 @@ function _expiryBadge(daysLeft) {
 function _companyDisclaimer() {
     return '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.5rem 0.85rem;margin-bottom:1rem;font-size:0.72rem;color:#78350f;display:flex;gap:0.5rem;align-items:center">' +
         '<span style="flex-shrink:0">⚠️</span>' +
-        '<span>Technical packaging data only. No confidential business information, personal data, or trade secrets.</span></div>';
+        '<span>Technical packaging data only.</span></div>';
 }
 
 function showCompanyToast(html, bg) {
