@@ -285,16 +285,20 @@ function renderHome() {
         '<div><strong>Zeon Corporation:</strong> Zeonex&#174;, Zeonor&#174;</div>' +
     '</div>' +
 
-    '<p style="margin:0.75rem 0 0 0;font-size:0.67rem">Any other product or brand names mentioned on this platform that are not explicitly listed above are likewise the property of their respective owners and may be registered trademarks or trademarks in one or more jurisdictions. The absence of a trademark symbol does not imply that such names are free to use. This list is not exhaustive and will not automatically update as new materials are added to the platform over time.</p>' +
-
+     '<p style="margin:0.75rem 0 0 0;font-size:0.67rem">Any other product or brand names mentioned on this platform that are not explicitly listed above are likewise the property of their respective owners and may be registered trademarks or trademarks in one or more jurisdictions. The absence of a trademark symbol does not imply that such names are free to use. This list is not exhaustive and will not automatically update as new materials are added to the platform over time.</p>' +
+ 
     '<h4 style="margin:1.25rem 0 0.5rem 0;font-size:0.75rem;font-weight:600;color:#475569;border-bottom:1px solid #e2e8f0;padding-bottom:0.5rem">PLATFORM USE DISCLAIMER</h4>' +
     '<p style="margin:0 0 0.5rem 0;font-size:0.67rem">This platform is an independent technical tool intended solely to assist engineers and technical professionals in preliminary barrier performance analysis. It has no commercial relationship, partnership, affiliation, or formal contact with any of the film or material manufacturers whose products are referenced herein. All data presented is sourced from publicly available technical documentation and is provided for reference purposes only.</p>' +
-
+ 
     '<div style="margin-top:1rem;padding:0.6rem 0.75rem;background:#fff7ed;border-left:3px solid #f97316;border-radius:0 4px 4px 0;font-size:0.68rem;color:#9a3412">' +
         '<strong style="display:block;margin-bottom:0.25rem">For R&amp;D use only</strong>' +
         'Results require laboratory validation per ASTM F1249 / ISO 15106. All barrier performance values presented on this platform are indicative and must be independently verified through accredited laboratory testing before use in any product specification, regulatory submission, or commercial application. The platform operators accept no liability for decisions made on the basis of the data provided.' +
     '</div>' +
-
+ 
+    '<div style="padding:1.5rem 0;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-top:1.25rem">' +
+        '<div style="font-size:0.72rem;color:#94a3b8"><strong style="color:#64748b">Disclaimer:</strong> For R&amp;D use only. Results require lab validation per ASTM F1249 / ISO 15106.</div>' +
+        '<a href="mailto:wvtrotrcalculator@gmail.com?subject=Feedback" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;color:#2563eb;text-decoration:none;background:#eff6ff;border:1px solid #bfdbfe;padding:0.3rem 0.65rem;border-radius:6px">Send Feedback</a>' +
+    '</div>' +
     '</div>' + // end footer
     '</div>'; // end max-width wrapper
 }
