@@ -251,10 +251,11 @@ function showCompanyModal() {
     Modal.open('Company Database', body, function() { return true; });
     var footer = document.getElementById('modal-footer');
     if (footer) footer.style.display = 'none';
-}
+
 if (CompanyState.isActive() && CompanyState.role === 'admin') {
     setTimeout(loadAndShowCompanyCode, 150);
 }
+    }
 function createCompanyFromModal() {
     var name = (document.getElementById('co-create-name')?.value || '').trim();
     var dur  = parseInt(document.getElementById('co-create-duration')?.value || '0');
