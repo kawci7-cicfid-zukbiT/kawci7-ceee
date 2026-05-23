@@ -557,8 +557,12 @@ function _showCompanyMatModal(mat) {
                 initCompanyMaterialsPage();
             } else { alert('Error: ' + res.error); }
         });
-        return true;
+         return true;
     });
+
+    // ✅ Aggiungi queste due righe
+    var footer = document.getElementById('modal-footer');
+    if (footer) footer.style.display = '';
 }
 
 function coAddMatRow() {
