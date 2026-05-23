@@ -1,6 +1,7 @@
 // ====================================================================
 // 🚀 APP.JS - Navigation, render orchestration, helpers, usage tracking
 // ====================================================================
+
 // ====================================================================
 // 🧮 FORMATTING HELPERS
 // ====================================================================
@@ -97,11 +98,11 @@ function renderNav() {
 }
 
 function setMode(mode) {
-  State.mode              = mode;
-  Engine.mode             = mode;
+  State.mode               = mode;
+  Engine.mode              = mode;
   State.selectedTestMethod = '';
-  State.calcResult        = null;
-  State.calcError         = null;
+  State.calcResult         = null;
+  State.calcError          = null;
   var radios = document.querySelectorAll('input[name="mode"]');
   for (var r = 0; r < radios.length; r++) radios[r].checked = radios[r].value === mode;
   DB.saveState(State);
@@ -112,13 +113,13 @@ function setMode(mode) {
 
 function postNavRender() {
   setTimeout(function() {
-    if (State.tab === 'home')       initHomeAnimations();
-    if (State.tab === 'calc'       && State.calcResult) postCalcRender();
-    if (State.tab === 'arrhenius')  postArrheniusRender();
+    if (State.tab === 'home')        initHomeAnimations();
+    if (State.tab === 'calc'        && State.calcResult) postCalcRender();
+    if (State.tab === 'arrhenius')   postArrheniusRender();
     if (State.tab === 'sensitivity') postSensitivityRender();
-    if (State.tab === 'compare')    postCompareRender();
-    if (State.tab === 'laminates'  && DB.laminates.length >= 2) drawLamChart();
-    if (State.tab === 'materials')  matApplyFilters();
+    if (State.tab === 'compare')     postCompareRender();
+    if (State.tab === 'laminates'   && DB.laminates.length >= 2) drawLamChart();
+    if (State.tab === 'materials')   matApplyFilters();
   }, 150);
 }
 
@@ -133,9 +134,9 @@ function renderContent() {
       case 'compare':     c.innerHTML = renderCompare();     break;
       case 'shelflife':   c.innerHTML = renderShelfLife();   break;
       case 'materials':   c.innerHTML = renderMaterials();   break;
-      case 'laminates':    c.innerHTML = renderLaminates(); break;
-case 'mat-company':  c.innerHTML = renderCompanyMaterialsPage(); setTimeout(initCompanyMaterialsPage, 100); break;
-case 'lam-company':  c.innerHTML = renderCompanyLaminatesPage(); setTimeout(initCompanyLaminatesPage, 100); break;
+      case 'laminates':   c.innerHTML = renderLaminates();   break;
+      case 'mat-company': c.innerHTML = renderCompanyMaterialsPage(); setTimeout(initCompanyMaterialsPage, 100); break;
+      case 'lam-company': c.innerHTML = renderCompanyLaminatesPage(); setTimeout(initCompanyLaminatesPage, 100); break;
       default:            c.innerHTML = renderHome();
     }
   } catch (e) {
@@ -159,12 +160,12 @@ function nav(tab) {
   renderContent();
   if (tab !== 'home') { destroyChart('demo1'); destroyChart('demo2'); }
   requestAnimationFrame(function() {
-    if (tab === 'home')       initHomeAnimations();
-    if (tab === 'calc'       && State.calcResult) postCalcRender();
-    if (tab === 'arrhenius')  postArrheniusRender();
+    if (tab === 'home')        initHomeAnimations();
+    if (tab === 'calc'        && State.calcResult) postCalcRender();
+    if (tab === 'arrhenius')   postArrheniusRender();
     if (tab === 'sensitivity') postSensitivityRender();
-    if (tab === 'compare')    postCompareRender();
-    if (tab === 'laminates'  && DB.laminates.length >= 2) drawLamChart();
+    if (tab === 'compare')     postCompareRender();
+    if (tab === 'laminates'   && DB.laminates.length >= 2) drawLamChart();
   });
 }
 
@@ -173,11 +174,11 @@ function nav(tab) {
 // ====================================================================
 function clearProject() {
   if (!confirm('Cancel current calculation and clear all layers?')) return;
-  State.layers      = [{ mid: null, thick: 0 }];
-  State.selCond     = null;
+  State.layers       = [{ mid: null, thick: 0 }];
+  State.selCond      = null;
   State.laminateName = '';
-  State.calcResult  = null;
-  State.calcError   = null;
+  State.calcResult   = null;
+  State.calcError    = null;
   DB.saveState(State);
   render();
 }
@@ -185,7 +186,7 @@ function clearProject() {
 function onCondSelect() {
   var sel = document.getElementById('sel-cond');
   if (sel && sel.value) {
-    var parts   = sel.value.split('|');
+    var parts     = sel.value.split('|');
     State.selCond = { temperature: parseFloat(parts[0]), humidity: parseFloat(parts[1]) };
   } else {
     State.selCond = null;
@@ -370,8 +371,8 @@ function postCompareRender() {
   var selected = [];
   for (var i = 0; i < DB.laminates.length; i++)
     if (State.compareIds.indexOf(DB.laminates[i].id) >= 0) selected.push(DB.laminates[i]);
-  var unit     = getUnit();
-  var tableEl  = document.getElementById('compare-table');
+  var unit    = getUnit();
+  var tableEl = document.getElementById('compare-table');
   if (tableEl && selected.length > 0) {
     var modeLabel = (selected[0].mode || State.mode).toUpperCase();
     var th = '<thead><tr><th>Parameter</th>';
@@ -436,87 +437,16 @@ function searchMaterialWeb(matName) {
 }
 
 // ====================================================================
-// 📈 USAGE TRACKING & TOP 3
+// 🏷️ VERIFIED BADGE HELPER
 // ====================================================================
-function getMonthlyStats() {
-  var now          = new Date();
-  var currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-  var stats        = JSON.parse(localStorage.getItem('wvtr_monthly_stats') || '{}');
-  if (stats.month !== currentMonth && stats.counts) {
-    stats.prevTop3 = Object.entries(stats.counts)
-      .sort(function(a, b) { return b[1] - a[1]; }).slice(0, 3)
-      .map(function(e) { return { id: String(e[0]), count: e[1] }; });
-    stats.counts = {};
-  }
-  stats.month  = currentMonth;
-  stats.counts = stats.counts || {};
-  return stats;
+function isVerifiedMaterial(mat) {
+  if (!window.VERIFIED_MATERIALS) return null;
+  return window.VERIFIED_MATERIALS[mat.name] || null;
 }
 
-async function recordMaterialUsage(matId) {
-  if (!matId) return;
-  var activeLayers = State.layers.filter(function(l) { return l.mid !== null; });
-  if (activeLayers.length !== 1) return;
-  var currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
-  var mat = DB.materials.find(function(m) { return String(m.id) === String(matId); });
-  if (mat) { mat.usageCount = (mat.usageCount || 0) + 1; mat.lastUsageMonth = currentMonth; }
- if (window.communityDB && mat && mat.firebaseDocId && mat.isCommunity === true) {
-    try {
-      var ref = window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId);
-      await window.fbUpdateDoc(ref, {
-        usageCount:     window.fbIncrement(1),
-        lastUsageMonth: currentMonth
-      });
-    } catch (e) { console.warn('⚠️ Firebase sync failed:', e); }
-  }
-  if (State.tab === 'home') setTimeout(function() { if (typeof updateTop3UI === 'function') updateTop3UI(); }, 200);
-}
-
-function getTop3Materials() {
-  var currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
-  var candidates   = DB.materials.filter(function(m) {
-    return m.lastUsageMonth === currentMonth && (m.usageCount || 0) > 0;
-  });
-  if (candidates.length === 0) {
-    var stats  = getMonthlyStats();
-    var counts = stats.counts || {};
-    return Object.entries(counts)
-      .sort(function(a, b) { return b[1] - a[1]; }).slice(0, 3)
-      .map(function(e, idx) {
-        var mat = DB.materials.find(function(m) { return String(m.id) === String(e[0]); });
-        return mat ? { name: mat.name, company: mat.company || null, count: e[1], icon: ['🥇','🥈','🥉'][idx] } : null;
-      }).filter(Boolean);
-  }
-  candidates.sort(function(a, b) { return (b.usageCount || 0) - (a.usageCount || 0); });
-  return candidates.slice(0, 3).map(function(mat, idx) {
-    return { name: mat.name, company: mat.company || null, count: mat.usageCount || 0, icon: ['🥇','🥈','🥉'][idx] };
-  });
-}
-
-async function refreshGlobalRankings() {
-  var currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
-  if (window.communityDB) {
-    try {
-      var q        = window.fbQuery(window.fbCollection(window.communityDB, 'materials'), window.fbOrderBy('usageCount', 'desc'));
-      var snapshot = await window.fbGetDocs(q);
-      var globalTop = [];
-      snapshot.forEach(function(doc) {
-        var data = doc.data();
-        if (data.lastUsageMonth === currentMonth && (data.usageCount || 0) > 0)
-          globalTop.push({ name: data.name, company: data.company || null, count: data.usageCount || 0, firebaseDocId: doc.id });
-      });
-      if (globalTop.length > 0) {
-        globalTop.forEach(function(item) {
-          var localMat = DB.materials.find(function(m) { return m.firebaseDocId === item.firebaseDocId; });
-          if (localMat) { localMat.usageCount = item.count; localMat.lastUsageMonth = currentMonth; }
-        });
-        return globalTop.slice(0, 3).map(function(m, idx) { return Object.assign({}, m, { icon: ['🥇','🥈','🥉'][idx] }); });
-      }
-    } catch (e) { console.warn('⚠️ Firebase ranking failed:', e); }
-  }
-  return getTop3Materials();
-}
-
+// ====================================================================
+// 🔢 COMMUNITY COUNT
+// ====================================================================
 function getCommunityCount() {
   return DB.materials.filter(function(m) { return m.isCommunity || String(m.id).startsWith('fb_'); }).length;
 }
@@ -543,180 +473,6 @@ var Modal = {
 window.refreshAds = function() {
   try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
 };
-
-// ====================================================================
-// ✅ VERIFIED BADGE HELPER
-// ====================================================================
-function isVerifiedMaterial(mat) {
-  if (!window.VERIFIED_MATERIALS) return null;
-  return window.VERIFIED_MATERIALS[mat.name] || null;
-}
-
-// ====================================================================
-// 🗳️ RELIABILITY VOTING
-// ====================================================================
-async function voteReliability(matId, voteType) {
-  var matIdStr   = String(matId);
-  var currentVote = hasUserVoted(matIdStr);
-  var mat         = DB.materials.find(function(m) { return String(m.id) === matIdStr; });
-  if (!mat) return;
-  if (!mat.reliabilityVotes) mat.reliabilityVotes = { up: 0, down: 0 };
-  var firebaseUpdate = {};
-  var needsSync      = mat.firebaseDocId && window.communityDB;
-
-  if (currentVote) {
-    mat.reliabilityVotes[currentVote] = Math.max(0, (mat.reliabilityVotes[currentVote] || 0) - 1);
-    if (needsSync) firebaseUpdate['reliabilityVotes.' + currentVote] = window.fbIncrement(-1);
-    if (currentVote === voteType) {
-      recordUserVote(matIdStr, null);
-      DB.save();
-      renderContent();
-      if (needsSync) {
-        try { await window.fbUpdateDoc(window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId), firebaseUpdate); }
-        catch (e) { console.warn('⚠️ Vote un-sync failed:', e); }
-      }
-      return;
-    }
-  }
-
-  mat.reliabilityVotes[voteType] = (mat.reliabilityVotes[voteType] || 0) + 1;
-  recordUserVote(matIdStr, voteType);
-  if (needsSync) firebaseUpdate['reliabilityVotes.' + voteType] = window.fbIncrement(1);
-  DB.save();
-  renderContent();
-  if (needsSync && Object.keys(firebaseUpdate).length > 0) {
-    try { await window.fbUpdateDoc(window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId), firebaseUpdate); }
-    catch (e) { console.warn('⚠️ Vote sync failed:', e); }
-  }
-}
-
-function hasUserVoted(matId) {
-  try { return JSON.parse(localStorage.getItem('wvtr_user_votes') || '{}')[String(matId)] || null; }
-  catch (e) { return null; }
-}
-
-function recordUserVote(matId, voteType) {
-  try {
-    var votes = JSON.parse(localStorage.getItem('wvtr_user_votes') || '{}');
-    if (voteType) votes[String(matId)] = voteType;
-    else delete votes[String(matId)];
-    localStorage.setItem('wvtr_user_votes', JSON.stringify(votes));
-  } catch (e) { console.error('Vote save error:', e); }
-}
-
-function getReliabilityScore(mat) {
-  if (!mat.reliabilityVotes) return 50;
-  var up    = mat.reliabilityVotes.up   || 0;
-  var down  = mat.reliabilityVotes.down || 0;
-  var total = up + down;
-  if (total === 0) return 50;
-  return Math.round((up / total) * 100);
-}
-
-function getReliabilityBadge(score) {
-  if (score >= 70) return '<span class="badge badge-green">✓ Reliable ' + score + '%</span>';
-  if (score >= 40) return '<span class="badge badge-yellow">⚠ Mixed ' + score + '%</span>';
-  return '<span class="badge badge-red">✗ Unreliable ' + score + '%</span>';
-}
-
-// ====================================================================
-// 🌍 FIREBASE - SHARE TO COMMUNITY
-// ====================================================================
-async function shareToCommunity(matId) {
-  var mat = DB.materials.find(function(m) { return String(m.id) === String(matId); });
-  if (!mat) return;
-  if (!window.communityDB) { alert('⚠️ Database not connected. Try again later.'); return; }
-  var btn = event && event.target ? event.target : null;
-  if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
-  try {
-    mat.author = mat.author || 'Community';
-    var result = await window.saveToCommunity(mat);
-    if (result.success) {
-      mat.firebaseDocId = result.id;
-      mat.isCommunity   = true;
-      DB.save();
-      matApplyFilters();
-      var old = document.getElementById('trash-toast'); if (old) old.remove();
-      var toast = document.createElement('div');
-      toast.id = 'trash-toast';
-      toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#15803d;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3)';
-      toast.innerHTML = '✅ <strong>' + mat.name + '</strong> ' + (mat.firebaseDocId ? 'updated' : 'shared') + ' with the community!';
-      document.body.appendChild(toast);
-      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
-    } else { alert('❌ Error: ' + result.error); }
-  } catch (e) { alert('❌ Unexpected error: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = mat.firebaseDocId ? '🔄 Update community' : '🌍 Share with community'; }
-  }
-}
-
-// alias used in matCardHTML
-function submitToFirebaseById(matId) { shareToCommunity(matId); }
-
-// ====================================================================
-// 📧 CONTACT SUPPLIER
-// ====================================================================
-function contactSupplier(matName, company, email) {
-  if (!email) { alert('No supplier email available.\nEdit the material to add one.'); return; }
-  var subject = encodeURIComponent('Technical Data Request – ' + matName + ' (WVTR/OTR)');
-  var body    = encodeURIComponent(
-    'Dear ' + (company || 'Supplier') + ',\n\nI am contacting you regarding "' + matName + '".\n\n' +
-    'Please send:\n- WVTR per ASTM F1249 / ISO 15106\n- OTR per ASTM D3985 / ISO 15106-2\n\nThank you.'
-  );
-  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
-}
-
-// ====================================================================
-// 🗑️ SOFT DELETE / TRASH
-// ====================================================================
-var _matTrash = [];
-
-function softDeleteMat(matId) {
-  var idx = DB.materials.findIndex(function(m) { return String(m.id) === String(matId); });
-  if (idx < 0) return;
-  var mat = DB.materials[idx];
-  _matTrash.push(mat);
-  DB.materials.splice(idx, 1);
-  DB.save();
-  matApplyFilters();
-  showTrashNotification(mat);
-}
-
-function restoreFromTrash(matId) {
-  var idx = _matTrash.findIndex(function(m) { return String(m.id) === String(matId); });
-  if (idx < 0) return;
-  var mat = _matTrash[idx];
-  _matTrash.splice(idx, 1);
-  DB.materials.push(mat);
-  DB.save();
-  matApplyFilters();
-}
-
-function showTrashNotification(mat) {
-  var old = document.getElementById('trash-toast'); if (old) old.remove();
-  var toast = document.createElement('div');
-  toast.id = 'trash-toast';
-  toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;display:flex;align-items:center;gap:1rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:fadeIn 0.2s ease';
-  toast.innerHTML =
-    '<span>🗑️ <strong>' + mat.name + '</strong> moved to trash</span>' +
-    '<button onclick="restoreFromTrash(\'' + String(mat.id) + '\');this.closest(\'#trash-toast\').remove()" ' +
-    'style="background:var(--primary);color:#fff;border:none;padding:0.3rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600">Undo</button>' +
-    '<button onclick="this.closest(\'#trash-toast\').remove()" style="background:transparent;color:rgba(255,255,255,0.5);border:none;cursor:pointer;font-size:1rem;padding:0 0.25rem">✕</button>';
-  document.body.appendChild(toast);
-  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 6000);
-}
-
-function showTrashPanel() {
-  if (_matTrash.length === 0) { alert('The trash is empty.'); return; }
-  var body = '<div style="font-size:0.8rem;color:var(--text-light);margin-bottom:0.75rem">Items in trash are recovered to your local database only.</div>';
-  body += _matTrash.map(function(m) {
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)">' +
-      '<span style="font-size:0.85rem;font-weight:500">' + m.name + '</span>' +
-      '<button class="btn btn-sm btn-success" onclick="restoreFromTrash(\'' + String(m.id) + '\');Modal.close();matApplyFilters()">↩ Restore</button>' +
-      '</div>';
-  }).join('');
-  Modal.open('🗑️ Trash (' + _matTrash.length + ' items)', body, function() { return true; });
-}
 
 // ====================================================================
 // 📥 EXTERNAL MATERIALS DB LOADER
@@ -762,8 +518,8 @@ async function loadExternalMaterialsDB() {
       em.family      = em.family || getFamily(em.name);
       em.isMetallized = em.isMetallized || false;
       if (!em.reliabilityVotes) em.reliabilityVotes = { up: 0, down: 0 };
-      em.company      = em.company      || '';
-      em.tdsLink      = em.tdsLink      || '';
+      em.company       = em.company       || '';
+      em.tdsLink       = em.tdsLink       || '';
       em.testMethodWVTR = em.testMethodWVTR || '';
       em.testMethodOTR  = em.testMethodOTR  || '';
       DB.materials.push(em);
@@ -800,40 +556,34 @@ async function initApp() {
 
     await loadExternalMaterialsDB();
 
-   if (window.communityDB) {
-    var fbMats = await window.loadFromCommunity();
-    for (var fi = 0; fi < fbMats.length; fi++) {
+    if (window.communityDB) {
+      var fbMats = await window.loadFromCommunity();
+      for (var fi = 0; fi < fbMats.length; fi++) {
         var fm = fbMats[fi];
         if (!fm || !fm.name) continue;
 
-        // 1. Match per firebaseDocId (priorità massima)
         var localMat = DB.materials.find(function(m) {
-            return fm.firebaseDocId && m.firebaseDocId === fm.firebaseDocId;
+          return fm.firebaseDocId && m.firebaseDocId === fm.firebaseDocId;
         });
-
-        // 2. Match per nome se non trovato per ID
         if (!localMat) {
-            localMat = DB.materials.find(function(m) {
-                return m.name.trim().toLowerCase() === fm.name.trim().toLowerCase();
-            });
+          localMat = DB.materials.find(function(m) {
+            return m.name.trim().toLowerCase() === fm.name.trim().toLowerCase();
+          });
         }
-
         if (localMat) {
-            // ✅ Aggiorna solo i campi sicuri, NON sovrascrivere l'ID locale
-            localMat.firebaseDocId    = fm.firebaseDocId || localMat.firebaseDocId;
-            localMat.isCommunity      = true;
-            localMat.reliabilityVotes = fm.reliabilityVotes || localMat.reliabilityVotes;
-            localMat.usageCount       = fm.usageCount       || localMat.usageCount;
-            localMat.author           = fm.author           || localMat.author;
+          localMat.firebaseDocId    = fm.firebaseDocId || localMat.firebaseDocId;
+          localMat.isCommunity      = true;
+          localMat.reliabilityVotes = fm.reliabilityVotes || localMat.reliabilityVotes;
+          localMat.usageCount       = fm.usageCount       || localMat.usageCount;
+          localMat.author           = fm.author           || localMat.author;
         } else {
-            // ✅ Nuovo materiale community — ID sempre fb_xxx
-            DB.materials.push(Object.assign({}, fm, {
-                id:          'fb_' + fm.firebaseDocId,
-                isCommunity: true
-            }));
+          DB.materials.push(Object.assign({}, fm, {
+            id:          'fb_' + fm.firebaseDocId,
+            isCommunity: true
+          }));
         }
+      }
     }
-}
 
     DB.deduplicateMaterials();
 
@@ -860,57 +610,19 @@ async function initApp() {
     render();
   }
 }
+
+// ====================================================================
+// 🏭 MAT SOURCE CHANGE (Calculator)
+// ====================================================================
 function onMatSourceChange(val) {
-    State.matSource = val || 'general';
-    // Rimuovi SEMPRE i materiali company da DB.materials
-    DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
-
-    if (val === 'company') {
-        loadCompanyMaterials().then(function(mats) {
-            // Aggiunge temporaneamente solo per il Calculator
-            // NON vengono salvati in DB.save()
-            mats.forEach(function(m){ DB.materials.push(m); });
-            renderContent();
-        });
-    } else {
-        renderContent();
-    }
-}
-// ====================================================================
-// 📥 COMMUNITY SYNC — FIX controllo duplicati robusto
-// ====================================================================
-// Da inserire nella funzione che carica i materiali dalla community
-// (probabilmente in app.js o engine.js, nella parte Firebase onSnapshot/getDocs)
-
-function mergeCommunityMaterial(remoteMat, remoteDocId) {
-    // 1. Già presente con questo firebaseDocId → aggiorna, non duplicare
-    var byFirebaseId = DB.materials.find(function(m){
-        return m.firebaseDocId === remoteDocId;
+  State.matSource = val || 'general';
+  DB.materials = DB.materials.filter(function(m) { return !m.isCompany; });
+  if (val === 'company') {
+    loadCompanyMaterials().then(function(mats) {
+      mats.forEach(function(m) { DB.materials.push(m); });
+      renderContent();
     });
-    if(byFirebaseId) {
-        // Aggiorna solo i campi di voto e usage, non sovrascrivere tutto
-        byFirebaseId.reliabilityVotes = remoteMat.reliabilityVotes || byFirebaseId.reliabilityVotes;
-        byFirebaseId.usageCount = remoteMat.usageCount || byFirebaseId.usageCount;
-        return;
-    }
-
-    // 2. Già presente con lo stesso nome (case-insensitive) → non duplicare
-    var byName = DB.materials.find(function(m){
-        return m.name.trim().toLowerCase() === (remoteMat.name||'').trim().toLowerCase();
-    });
-    if(byName) {
-        // Collega il firebaseDocId al materiale locale esistente
-        byName.firebaseDocId = remoteDocId;
-        byName.isCommunity = true;
-        byName.reliabilityVotes = remoteMat.reliabilityVotes || byName.reliabilityVotes;
-        DB.save();
-        return;
-    }
-
-    // 3. Nuovo materiale community → inserisci
-    remoteMat.firebaseDocId = remoteDocId;
-    remoteMat.isCommunity = true;
-    remoteMat.id = 'fb_' + remoteDocId;
-    DB.materials.push(remoteMat);
-    DB.save();
+  } else {
+    renderContent();
+  }
 }
