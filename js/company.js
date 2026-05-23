@@ -253,9 +253,10 @@ function showCompanyModal() {
     if (footer) footer.style.display = 'none';
 
 if (CompanyState.isActive() && CompanyState.role === 'admin') {
-    setTimeout(loadAndShowCompanyCode, 150);
-}
+        setTimeout(loadAndShowCompanyCode, 150);
     }
+}
+
 function createCompanyFromModal() {
     var name = (document.getElementById('co-create-name')?.value || '').trim();
     var dur  = parseInt(document.getElementById('co-create-duration')?.value || '0');
@@ -381,11 +382,7 @@ async function initCompanyMaterialsPage() {
     var badge = document.getElementById('co-mat-badge');
     if (badge) badge.textContent = _companyMats.length;
     coMatApplyFilters();
-    // Sync in DB locale per Calculator
-    DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
-    _companyMats.forEach(function(m){ DB.materials.push(Object.assign({}, m)); });
 }
-
 function coMatApplyFilters() {
     var q       = (document.getElementById('co-mat-search')?.value || '').trim().toLowerCase();
     var fc      = document.getElementById('co-mf-company')?.value || '';
