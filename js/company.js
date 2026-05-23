@@ -224,7 +224,15 @@ function showCompanyModal() {
             '<button class="btn btn-outline" onclick="Modal.close();State.tab=\'mat-company\';renderNav();renderContent()" style="font-size:0.82rem">Materials Company</button>' +
             '<button class="btn btn-outline" onclick="Modal.close();State.tab=\'lam-company\';renderNav();renderContent()" style="font-size:0.82rem">Laminates Company</button>' +
             '</div>' +
-            (CompanyState.role === 'admin' ? '<button class="btn btn-outline btn-full" onclick="showCompanyCodeManager()" style="font-size:0.82rem;margin-bottom:0.5rem">Manage Access Code</button>' : '') +
+            // DOPO (mostra codice inline + bottone manage):
+(CompanyState.role === 'admin' ? 
+    '<div id="co-code-preview" style="background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:10px;padding:0.85rem;margin-bottom:0.6rem;text-align:center">' +
+    '<div style="font-size:0.65rem;font-weight:700;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem">Your Access Code</div>' +
+    '<div id="co-code-value" style="font-family:monospace;font-size:1.1rem;font-weight:800;letter-spacing:0.12em;color:#0f172a;margin-bottom:0.5rem">Loading...</div>' +
+    '<button onclick="copyCompanyCode(document.getElementById(\'co-code-value\').textContent)" class="btn btn-sm btn-outline">Copy</button>' +
+    '</div>' +
+    '<button class="btn btn-outline btn-full" onclick="showCompanyCodeManager()" style="font-size:0.82rem;margin-bottom:0.5rem">Manage / Regenerate Code</button>' 
+: '') +
             '<button class="btn btn-danger btn-full" onclick="leaveCompany()" style="font-size:0.82rem">Leave Company</button>';
     } else {
         body += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">' +
