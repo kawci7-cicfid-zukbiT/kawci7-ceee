@@ -520,24 +520,24 @@ function renderMaterials() {
             '<div style="font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;font-size:0.68rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.4rem">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#2563eb"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
                 'Badge Guide' +
-            '</div>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">' +
-                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f5f3ff;border-radius:8px;border-left:3px solid #7c3aed">' +
-                    '<span class="badge badge-purple" style="flex-shrink:0;white-space:nowrap">🌍 Community</span>' +
-                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">User-submitted — verify before production.</span>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
-                    '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✅ Verified</span>' +
-                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Cross-checked against official TDS.</span>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#fefce8;border-radius:8px;border-left:3px solid #d97706">' +
-                    '<span class="badge badge-yellow" style="flex-shrink:0;white-space:nowrap">⚙️ Metallized</span>' +
-                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Barrier from coating — not thickness-dependent.</span>' +
-                '</div>' +
-                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
-                    '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✓ Arrhenius</span>' +
-                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">≥ 2 temps at constant RH — Arrhenius ready.</span>' +
-                '</div>' +
+           '</div>' +
+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">' +
+    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f5f3ff;border-radius:8px;border-left:3px solid #7c3aed">' +
+        '<span class="badge badge-purple" style="flex-shrink:0;white-space:nowrap">🌍 Community</span>' +
+        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">User-submitted data.</span>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
+        '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✅ Verified</span>' +
+        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Cross-checked against official TDS.</span>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#fefce8;border-radius:8px;border-left:3px solid #d97706">' +
+        '<span class="badge badge-yellow" style="flex-shrink:0;white-space:nowrap">⚙️ Metallized</span>' +
+        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Barrier independent of thickness.</span>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
+        '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✓ Arrhenius</span>' +
+        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">≥ 2 temperatures at constant RH.</span>' +
+    '</div>' +
             '</div>' +
         '</div>' +
 
