@@ -528,7 +528,7 @@ function renderMaterials() {
     '</div>' +
     '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
         '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✅ Verified</span>' +
-        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Cross-checked against official TDS.</span>' +
+        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Certified Materials</span>' +
     '</div>' +
     '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#fefce8;border-radius:8px;border-left:3px solid #d97706">' +
         '<span class="badge badge-yellow" style="flex-shrink:0;white-space:nowrap">⚙️ Metallized</span>' +
