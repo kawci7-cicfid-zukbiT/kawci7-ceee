@@ -150,7 +150,7 @@ function renderHome() {
             '<button onclick="onGroupClick(\'analysis\');setTimeout(function(){onSubTabClick(\'calc\');},50)" ' +
                 'style="background:#2563eb;color:#fff;border:none;padding:0.85rem 2rem;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;white-space:nowrap" ' +
                 'onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">' +
-                'Start Calculation →' +
+                'Start Calculation &#8594;' +
             '</button>' +
         '</div>' +
     '</div>' +
@@ -161,19 +161,19 @@ function renderHome() {
             '<div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Total Materials</div>' +
             '<div style="font-size:2.6rem;font-weight:800;color:#2563eb;line-height:1;margin-bottom:0.35rem">' + totalMats + '</div>' +
             '<div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">In the database</div>' +
-            '<button onclick="onGroupClick(\'community\');setTimeout(function(){onSubTabClick(\'materials\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Explore database →</button>' +
+            '<button onclick="onGroupClick(\'community\');setTimeout(function(){onSubTabClick(\'materials\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Explore database &#8594;</button>' +
         '</div>' +
         '<div style="background:#fff;padding:1.5rem">' +
             '<div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Arrhenius Ready</div>' +
             '<div style="font-size:2.6rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.35rem">' + multiTempMats + '</div>' +
             '<div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">Multi-temperature datasets</div>' +
-            '<button onclick="onGroupClick(\'analysis\');setTimeout(function(){onSubTabClick(\'arrhenius\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Run analysis →</button>' +
+            '<button onclick="onGroupClick(\'analysis\');setTimeout(function(){onSubTabClick(\'arrhenius\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">Run analysis &#8594;</button>' +
         '</div>' +
         '<div style="background:#fff;padding:1.5rem">' +
             '<div style="font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:0.4rem">Saved Laminates</div>' +
             '<div style="font-size:2.6rem;font-weight:800;color:#0f172a;line-height:1;margin-bottom:0.35rem">' + totalLams + '</div>' +
             '<div style="font-size:0.75rem;color:#94a3b8;margin-bottom:1rem">Structures in your library</div>' +
-            '<button onclick="onGroupClick(\'community\');setTimeout(function(){onSubTabClick(\'laminates\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">View library →</button>' +
+            '<button onclick="onGroupClick(\'community\');setTimeout(function(){onSubTabClick(\'laminates\');},50)" style="font-size:0.75rem;color:#2563eb;background:none;border:none;cursor:pointer;padding:0;font-weight:600">View library &#8594;</button>' +
         '</div>' +
     '</div>' +
 
@@ -220,74 +220,83 @@ function renderHome() {
         '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(2,1fr)">' +
             '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem;border-bottom:1px solid #f8fafc;border-right:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Multilayer Resistance Model</div><div style="font-size:0.7rem;color:#94a3b8">Series resistance per ISO/ASTM</div></div></div>' +
-            '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem;border-bottom:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Arrhenius Temperature Fit</div><div style="font-size:0.7rem;color:#94a3b8">R² prediction at untested temperatures</div></div></div>' +
+            '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem;border-bottom:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Arrhenius Temperature Fit</div><div style="font-size:0.7rem;color:#94a3b8">R&#178; prediction at untested temperatures</div></div></div>' +
             '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem;border-right:1px solid #f8fafc"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Shelf Life Engine</div><div style="font-size:0.7rem;color:#94a3b8">GAB isotherm + oxidation kinetics</div></div></div>' +
-            '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Sensitivity & Optimization</div><div style="font-size:0.7rem;color:#94a3b8">Thickness sweep and cost optimizer</div></div></div>' +
+            '<div style="display:flex;align-items:center;gap:0.9rem;padding:0.8rem 1.25rem"><div style="width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0"></div><div><div style="font-size:0.8rem;font-weight:600;color:#0f172a">Sensitivity &amp; Optimization</div><div style="font-size:0.7rem;color:#94a3b8">Thickness sweep and cost optimizer</div></div></div>' +
         '</div>' +
     '</div>' +
 
-    // FOOTER
+    // FOOTER / DISCLAIMER
     '<div style="padding:1.5rem;font-size:0.7rem;color:#64748b;line-height:1.5;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px">' +
-    
+
     '<h4 style="margin:0 0 0.75rem 0;font-size:0.75rem;font-weight:600;color:#475569;border-bottom:1px solid #e2e8f0;padding-bottom:0.5rem">TRADEMARK DISCLAIMER</h4>' +
-    '<p style="margin:0 0 0.75rem 0">All product names, brand names, and trademarks mentioned on this platform are the property of their respective owners. The following are known registered trademarks or trademarks of their respective companies:</p>' +
-    
-    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.35rem 0.5rem;margin:0.75rem 0">' +
-        '<div><strong>AGC Chemicals:</strong> Fluon®</div>' +
-        '<div><strong>Arkema:</strong> Pebax®, Rilsan®, Rilsamid®</div>' +
-        '<div><strong>BASF:</strong> Ecoflex®, Ecovio®, Elastollan®, Styroflex®, Ultramid®</div>' +
-        '<div><strong>Borealis:</strong> Borcycle®, Borpure®, Borstar®, Bornewables®, Queo®</div>' +
-        '<div><strong>Celanese:</strong> Hytrel®, Zytel®</div>' +
-        '<div><strong>Chemours:</strong> Teflon®, Tefzel®</div>' +
-        '<div><strong>Chevron Phillips:</strong> Marlex®</div>' +
-        '<div><strong>Covestro:</strong> Baymedix®, Desmopan®, Makrofol®, Makrolon®</div>' +
-        '<div><strong>Daikin:</strong> Neoflon®</div>' +
-        '<div><strong>Danimer Scientific:</strong> Nodax®</div>' +
-        '<div><strong>DOMO Chemicals:</strong> Technyl®</div>' +
-        '<div><strong>Dow:</strong> Affinity®, Bynel®, Dowlex®, Elvaloy®, Engage®, INNATE®, Nucrel®, Saran®, Surlyn®</div>' +
-        '<div><strong>DuPont:</strong> Tedlar®, Tyvek®</div>' +
-        '<div><strong>Eastman:</strong> Amphora®, Spectar®, Tenite®, Tritan®</div>' +
-        '<div><strong>EMS-Chemie:</strong> Grilon®, Grivory®</div>' +
-        '<div><strong>Envalior:</strong> Akulon®, Durethan®</div>' +
-        '<div><strong>ExxonMobil:</strong> Escorene®, Exceed®, Vistamaxx®</div>' +
-        '<div><strong>FKuR:</strong> BioFlex®</div>' +
-        '<div><strong>Futamura / Innovia Films:</strong> NatureFlex®</div>' +
-        '<div><strong>Honeywell:</strong> Aclar®, Capran®, Capron®</div>' +
-        '<div><strong>Indorama Ventures:</strong> Melinex®, Mylar®</div>' +
-        '<div><strong>Jindal Films:</strong> Bicor®, Treofan®</div>' +
-        '<div><strong>Kuraray Co., Ltd.:</strong> EVAL™, Exceval™</div>' +
-        '<div><strong>LG Chem:</strong> Lucene®</div>' +
-        '<div><strong>Lubrizol:</strong> Estane®, Pellethane®, Tecoflex®</div>' +
-        '<div><strong>LyondellBasell:</strong> Alathon®, Innoplen®, Lupolen®, Nextene®, Petrothene®</div>' +
-        '<div><strong>Mitsubishi Chemical:</strong> Soarnol™</div>' +
-        '<div><strong>Mitsubishi Polyester Film:</strong> Hostaphan®</div>' +
-        '<div><strong>NatureWorks:</strong> Ingeo®</div>' +
-        '<div><strong>Novamont:</strong> Mater-Bi®</div>' +
-        '<div><strong>Prime Polymer:</strong> Evolue®</div>' +
-        '<div><strong>SABIC:</strong> Lexan®</div>' +
-        '<div><strong>SKC:</strong> Skyrol®</div>' +
-        '<div><strong>Syensqo:</strong> Ixan®</div>' +
-        '<div><strong>Teijin:</strong> Panlite®</div>' +
-        '<div><strong>Terphane LLC:</strong> Terphane®</div>' +
-        '<div><strong>Topas Advanced Polymers:</strong> Topas®</div>' +
-        '<div><strong>Toray Industries:</strong> Lumirror®, Torayfan®</div>' +
-        '<div><strong>TotalEnergies:</strong> Lacqtene®</div>' +
-        '<div><strong>TotalEnergies Corbion:</strong> Luminy®</div>' +
-        '<div><strong>Unitika / Coveris:</strong> Emblem®</div>' +
-        '<div><strong>Zeon Corporation:</strong> Zeonex®, Zeonor®</div>' +
+    '<p style="margin:0 0 0.75rem 0;font-size:0.68rem">All product names, brand names, and trademarks mentioned on this platform are the property of their respective owners. The following are known registered trademarks or trademarks of their respective companies:</p>' +
+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.35rem 0.5rem;margin:0.75rem 0;font-size:0.67rem">' +
+        '<div><strong>AGC Chemicals:</strong> Fluon&#174;</div>' +
+        '<div><strong>Arkema:</strong> Pebax&#174;, Rilsan&#174;, Rilsamid&#174;</div>' +
+        '<div><strong>BASF:</strong> Ecoflex&#174;, Ecovio&#174;, Elastollan&#174;, Styroflex&#174;, Ultramid&#174;</div>' +
+        '<div><strong>Borealis:</strong> Borcycle&#174;, Bornewables&#174;, Borpact&#174;, Borpure&#174;, Borstar&#174;, Queo&#174;</div>' +
+        '<div><strong>Celanese:</strong> Zytel&#174;</div>' +
+        '<div><strong>Chemours:</strong> Teflon&#174;, Tefzel&#174;</div>' +
+        '<div><strong>Chevron Phillips:</strong> Marlex&#174;</div>' +
+        '<div><strong>Covestro:</strong> Baymedix&#174;, Desmopan&#174;, Makrofol&#174;, Makrolon&#174;</div>' +
+        '<div><strong>Cryovac / Sealed Air:</strong> Cryovac&#174;</div>' +
+        '<div><strong>Daikin:</strong> Neoflon&#174;</div>' +
+        '<div><strong>Danimer Scientific:</strong> Nodax&#174;</div>' +
+        '<div><strong>Dow:</strong> Affinity&#174;, Bynel&#174;, Dowlex&#174;, Elvaloy&#174;, Elite&#174;, Engage&#174;, INNATE&#174;, Nucrel&#174;, Saran&#174;, Surlyn&#174;</div>' +
+        '<div><strong>DSM / Envalior:</strong> Akulon&#174;, Arnitel&#174;, Novamid&#174;</div>' +
+        '<div><strong>DuPont:</strong> Hytrel&#174;, Tedlar&#174;, Tyvek&#174;</div>' +
+        '<div><strong>Eastman:</strong> Amphora&#174;, Spectar&#174;, Tenite&#174;, Tritan&#174;</div>' +
+        '<div><strong>EMS-Chemie:</strong> Grilon&#174;, Grivory&#174;</div>' +
+        '<div><strong>Envalior / Lanxess:</strong> Durethan&#174;</div>' +
+        '<div><strong>ExxonMobil:</strong> Escorene&#174;, Exceed&#174;, Vistamaxx&#174;</div>' +
+        '<div><strong>FKuR:</strong> BioFlex&#174;</div>' +
+        '<div><strong>Futamura / Innovia Films:</strong> NatureFlex&#174;</div>' +
+        '<div><strong>Hanwha TotalEnergies:</strong> Chemtone&#174;</div>' +
+        '<div><strong>Honeywell:</strong> Aclar&#174;, Capran&#174;, Capron&#174;</div>' +
+        '<div><strong>Jindal Films:</strong> Bicor&#174;, Treofan&#174;</div>' +
+        '<div><strong>Kaneka:</strong> Kaneka PHBH&#174;</div>' +
+        '<div><strong>Kuraray Co., Ltd.:</strong> EVAL&#8482;, Exceval&#8482;</div>' +
+        '<div><strong>LG Chem:</strong> Lucene&#174;</div>' +
+        '<div><strong>Lubrizol:</strong> Estane&#174;, Pellethane&#174;, Tecoflex&#174;</div>' +
+        '<div><strong>LyondellBasell:</strong> Alathon&#174;, Innoplen&#174;, Lupolen&#174;, Nextene&#174;, Petrothene&#174;</div>' +
+        '<div><strong>Mitsubishi Chemical / Nippon Gohsei:</strong> Soarnol&#8482;</div>' +
+        '<div><strong>Mitsubishi Polyester Film:</strong> Hostaphan&#174;</div>' +
+        '<div><strong>Mylar Specialty Films (JV Celanese &amp; Teijin):</strong> Melinex&#174;, Mylar&#174;</div>' +
+        '<div><strong>NatureWorks:</strong> Ingeo&#174;</div>' +
+        '<div><strong>Novamont:</strong> Mater-Bi&#174;</div>' +
+        '<div><strong>PKN Orlen:</strong> Malen&#174;</div>' +
+        '<div><strong>Prime Polymer:</strong> Evolue&#174;</div>' +
+        '<div><strong>PTTGC:</strong> Polene&#174;</div>' +
+        '<div><strong>Reliance Industries:</strong> Relene&#174;</div>' +
+        '<div><strong>SABIC:</strong> Lexan&#174;</div>' +
+        '<div><strong>SKC:</strong> Skyrol&#174;</div>' +
+        '<div><strong>Solvay / Syensqo:</strong> Ixan&#174;, Technyl&#174;</div>' +
+        '<div><strong>Teijin:</strong> Panlite&#174;</div>' +
+        '<div><strong>Terphane LLC:</strong> Terphane&#174;</div>' +
+        '<div><strong>Topas Advanced Polymers:</strong> Topas&#174;</div>' +
+        '<div><strong>Toray Industries:</strong> Lumirror&#174;, Torayfan&#174;</div>' +
+        '<div><strong>TotalEnergies:</strong> Lacqtene&#174;</div>' +
+        '<div><strong>TotalEnergies Corbion:</strong> Luminy&#174;</div>' +
+        '<div><strong>Unitika / Coveris:</strong> Emblem&#174;</div>' +
+        '<div><strong>Versalis:</strong> Riblene&#174;</div>' +
+        '<div><strong>W.L. Gore:</strong> Gore-Tex&#174;</div>' +
+        '<div><strong>Zeon Corporation:</strong> Zeonex&#174;, Zeonor&#174;</div>' +
     '</div>' +
-    
-    '<p style="margin:0.75rem 0 0 0;font-size:0.68rem">Any other product or brand names mentioned on this platform that are not explicitly listed above are likewise the property of their respective owners and may be registered trademarks or trademarks in one or more jurisdictions. The absence of a trademark symbol does not imply that such names are free to use. This list is not exhaustive and may not reflect updates due to the addition of new materials over time.</p>' +
-    
+
+    '<p style="margin:0.75rem 0 0 0;font-size:0.67rem">Any other product or brand names mentioned on this platform that are not explicitly listed above are likewise the property of their respective owners and may be registered trademarks or trademarks in one or more jurisdictions. The absence of a trademark symbol does not imply that such names are free to use. This list is not exhaustive and will not automatically update as new materials are added to the platform over time.</p>' +
+
     '<h4 style="margin:1.25rem 0 0.5rem 0;font-size:0.75rem;font-weight:600;color:#475569;border-bottom:1px solid #e2e8f0;padding-bottom:0.5rem">PLATFORM USE DISCLAIMER</h4>' +
-    '<p style="margin:0 0 0.5rem 0;font-size:0.68rem">This platform is an independent technical tool intended solely to assist engineers and technical professionals in preliminary barrier performance analysis. It has no commercial relationship, partnership, affiliation, or formal contact with any of the film or material manufacturers whose products are referenced herein. All data presented is sourced from publicly available technical documentation and is provided for reference purposes only.</p>' +
-    
+    '<p style="margin:0 0 0.5rem 0;font-size:0.67rem">This platform is an independent technical tool intended solely to assist engineers and technical professionals in preliminary barrier performance analysis. It has no commercial relationship, partnership, affiliation, or formal contact with any of the film or material manufacturers whose products are referenced herein. All data presented is sourced from publicly available technical documentation and is provided for reference purposes only.</p>' +
+
     '<div style="margin-top:1rem;padding:0.6rem 0.75rem;background:#fff7ed;border-left:3px solid #f97316;border-radius:0 4px 4px 0;font-size:0.68rem;color:#9a3412">' +
-        '<strong style="display:block;margin-bottom:0.25rem"> For R&D use only</strong>' +
+        '<strong style="display:block;margin-bottom:0.25rem">For R&amp;D use only</strong>' +
         'Results require laboratory validation per ASTM F1249 / ISO 15106. All barrier performance values presented on this platform are indicative and must be independently verified through accredited laboratory testing before use in any product specification, regulatory submission, or commercial application. The platform operators accept no liability for decisions made on the basis of the data provided.' +
     '</div>' +
-    
-'</div>';
+
+    '</div>' + // end footer
+    '</div>'; // end max-width wrapper
 }
 
 // ====================================================================
