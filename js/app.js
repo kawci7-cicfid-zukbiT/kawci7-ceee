@@ -862,9 +862,13 @@ async function initApp() {
 }
 function onMatSourceChange(val) {
     State.matSource = val || 'general';
+    // Rimuovi SEMPRE i materiali company da DB.materials
+    DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
+
     if (val === 'company') {
         loadCompanyMaterials().then(function(mats) {
-            DB.materials = DB.materials.filter(function(m){ return !m.isCompany; });
+            // Aggiunge temporaneamente solo per il Calculator
+            // NON vengono salvati in DB.save()
             mats.forEach(function(m){ DB.materials.push(m); });
             renderContent();
         });
