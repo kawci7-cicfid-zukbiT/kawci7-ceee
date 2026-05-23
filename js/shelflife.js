@@ -58,16 +58,32 @@ const SL = {
 
   /** Toggle manual override for barrier rate */
   toggleManualOverride(checked) {
-    this._manualOverride = !!checked;
-    const panel = document.getElementById('sl-panel-manual');
-    if (panel) panel.style.display = checked ? 'block' : 'none';
-    if (checked) {
-      this.onManualRateChange();
-    } else {
-      const rate = parseFloat(State.calcResult?.total || 0);
-      this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
-    }
-  },
+  this._manualOverride = !!checked;
+  const panel = document.getElementById('sl-panel-manual');
+  if (panel) panel.style.display = checked ? 'block' : 'none';
+
+  // Blocca/sblocca i pulsanti sorgente
+  ['calc', 'db', 'company'].forEach(key => {
+    const btn = document.getElementById('sl-src-btn-' + key);
+    if (!btn) return;
+    btn.disabled = checked;
+    btn.style.opacity = checked ? '0.35' : '1';
+    btn.style.cursor = checked ? 'not-allowed' : 'pointer';
+  });
+
+  // Nascondi tutti i pannelli sorgente quando override è attivo
+  ['calc', 'db', 'company'].forEach(p => {
+    const el = document.getElementById('sl-panel-' + p);
+    if (el) el.style.display = checked ? 'none' : (p === this._barrierSource ? 'block' : 'none');
+  });
+
+  if (checked) {
+    this.onManualRateChange();
+  } else {
+    // Ripristina il pannello attivo
+    this.setBarrierSource(this._barrierSource);
+  }
+},
 
   /** Set barrier rate source: 'calc' | 'db' | 'company' */
   setBarrierSource(src) {
@@ -491,9 +507,9 @@ const SL = {
 
     // 5. Hygroscopic correction (if materials have beta coefficient)
     let hygroFactor = 1;
-    const hygroMsg = [];
-    
-    if (State.layers?.length && State.selCond) {
+const hygroMsg = [];
+
+if (!this._manualOverride && State.layers?.length && State.selCond) {
       for (const layer of State.layers) {
         if (!layer.mid) continue;
         const mat = DB.materials?.find(m => m.id === layer.mid);
@@ -900,7 +916,7 @@ const SL = {
       // Hygroscopic factor for this step
       let hygroFactor = 1;
       if (State.layers) {
-        for (const layer of State.layers) {
+  for (const layer of State.layers) {
           if (!layer.mid) continue;
           const mat = DB.materials?.find(m => m.id === layer.mid);
           if (!mat) continue;
@@ -1031,7 +1047,7 @@ const SL = {
       // Hygroscopic factor
       let hygroFactor = 1;
       if (State.layers) {
-        for (const layer of State.layers) {
+  for (const layer of State.layers) {
           if (!layer.mid) continue;
           const mat = DB.materials?.find(m => m.id === layer.mid);
           if (!mat) continue;
