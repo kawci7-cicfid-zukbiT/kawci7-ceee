@@ -802,6 +802,10 @@ function onArrChange() {
     if(!selMat || !selTemp) return;
     var matId = selMat.value;
     var targetTemp = parseFloat(selTemp.value) || 25;
+    if(selEa && matId !== onArrChange._lastMatId) {
+        selEa.value = '';
+        onArrChange._lastMatId = matId;
+    }
     var customEaInput = selEa ? selEa.value.trim() : '';
     var customEa = customEaInput ? parseFloat(customEaInput) : NaN;
     if(!matId) {
