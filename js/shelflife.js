@@ -100,7 +100,7 @@ const SL = {
       } else {
         btn.className = 'btn btn-sm btn-outline';
         btn.style.cssText = 'font-size:0.75rem';
-        if (key === 'company' && !CompanyState?.isActive?.()) {
+        if (key === 'company' && !(CompanyState && CompanyState.isActive && CompanyState.isActive())) {
           btn.style.opacity = '0.5';
           btn.disabled = true;
         }
@@ -114,7 +114,7 @@ const SL = {
     });
 
     // Load company laminates if needed
-    if (src === 'company' && typeof CompanyState !== 'undefined' && CompanyState.isActive?.()) {
+    if (src === 'company' && typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive()) {
       this._loadCompanyLaminatesIntoSelect();
     }
 
@@ -1751,8 +1751,7 @@ function renderShelfLife() {
           <button id="sl-src-btn-db" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('db')" 
             style="font-size:0.75rem">From Community DB</button>
           <button id="sl-src-btn-company" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('company')" 
-            style="font-size:0.75rem;${typeof CompanyState !== 'undefined' && CompanyState.isActive?.() ? '' : 'opacity:0.5;cursor:not-allowed'}" 
-            ${typeof CompanyState !== 'undefined' && CompanyState.isActive?.() ? '' : 'disabled'}>From Company DB</button>
+            style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB</button>
         </div>
 
         <!-- Panel: From Calculator -->
