@@ -100,7 +100,7 @@ const SL = {
       } else {
         btn.className = 'btn btn-sm btn-outline';
         btn.style.cssText = 'font-size:0.75rem';
-        if (key === 'company' && !(CompanyState && CompanyState.isActive && CompanyState.isActive())) {
+        if (key === 'company' && !(typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive())) {
           btn.style.opacity = '0.5';
           btn.disabled = true;
         }
@@ -1662,8 +1662,13 @@ if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
   onDBLaminatePick(val) {
     if (!val) return;
     const lam = DB.laminates?.find(l => String(l.id) === String(val));
-    if (!lam) return;
-    this._applyLaminateToState(lam);
+    if (lam) { this._applyLaminateToState(lam); return; }
+    // Prova anche nei laminati community
+    if (window.loadFromCommunity) {
+      loadFromCommunity().then(mats => {
+        // community mats non sono laminati, skip
+      });
+    }
   },
 
   /** Handle Company laminate selection */
@@ -1721,7 +1726,7 @@ function renderShelfLife() {
   for (const k in PRODUCTS_DB) {
     prodOpts += `<option value="${k}">${PRODUCTS_DB[k].name}</option>`;
   }
-
+const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive();
   return `
   <div class="grid grid-2" style="gap:1.2rem;align-items:start">
     
@@ -1751,7 +1756,8 @@ function renderShelfLife() {
           <button id="sl-src-btn-db" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('db')" 
             style="font-size:0.75rem">From Community DB</button>
           <button id="sl-src-btn-company" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('company')" 
-            style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB</button>
+            style="font-size:0.75rem${companyActive ? '' : ';opacity:0.5;cursor:not-allowed'}"
+            ${companyActive ? '' : 'disabled'}>From Company DB</button>
         </div>
 
         <!-- Panel: From Calculator -->
@@ -1772,8 +1778,8 @@ function renderShelfLife() {
             <label style="font-size:0.75rem;font-weight:600">Select from General Laminates DB</label>
             <select class="form-input" id="sl-db-lam-pick" onchange="SL.onDBLaminatePick(this.value)" style="font-size:0.78rem">
   <option value="">Select a laminate...</option>
-  ${(DB.laminates || []).filter(l => l.mode === State.mode).map(l => `<option value="${l.id}">${l.name} (${l.total?.toFixed(5) || '?'} ${modeLabel})</option>`).join('')}
-</select>
+ ${(DB.laminates || []).filter(l => !l.mode || l.mode === State.mode).map(l => `<option value="${l.id}">${l.name} (${l.total?.toFixed(5) || '?'} ${modeLabel})</option>`).join('')}
+ </select>
           </div>
         </div>
 
@@ -2032,6 +2038,17 @@ function renderShelfLife() {
     </div>
   </div>
 
+<script>
+    setTimeout(function() {
+      var btn = document.getElementById('sl-src-btn-company');
+      if (btn && typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive()) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      }
+    }, 500);
+  </script>
+  
   <!-- EXPORT BUTTON (full width) -->
   <div class="card" style="margin-top:1.2rem;text-align:center">
     <button class="btn btn-primary btn-full" onclick="SL.exportToPDF(event)" style="padding:0.7rem;font-size:0.85rem">
