@@ -564,6 +564,17 @@ function showMatModal(editId) {
     }
     var isReadOnly = isDefaultMat || isCommMat;
 
+    // ✅ AVViso inline per materiali read-only (visibile vicino a Save)
+    var saveWarningHTML = '';
+    if(isReadOnly) {
+        saveWarningHTML = 
+            '<div style="margin:1rem 0 0.5rem 0;padding:0.75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;gap:0.5rem;align-items:flex-start">' +
+            '<span style="font-size:1.1rem;flex-shrink:0">⚠️</span>' +
+            '<div style="font-size:0.78rem;color:#991b1b;line-height:1.5">' +
+            '<strong>Warning: This measurement cannot be edited or deleted after saving.</strong><br>' +
+            'Please double-check all values before confirming. If you need corrections later, contact support at the bottom of the Home page.' +
+            '</div></div>';
+    }
     var currentMode  = State.mode;
     var currentLabel = currentMode === 'wvtr' ? 'WVTR' : 'OTR';
     var currentUnit  = currentMode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
@@ -676,7 +687,8 @@ function showMatModal(editId) {
         (isReadOnly ? '<div style="margin-top:0.9rem;padding-top:0.75rem;border-top:2px dashed var(--primary);"><div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem">Add New Condition</div>' : '') +
         '<button class="btn btn-outline btn-full" '+addCondStyle+' onclick="addMatRow()">'+(isReadOnly?'+ Add New Condition (allowed)':'+ Add Condition')+'</button>' +
         (isReadOnly ? '</div>' : ''),
-
+        saveWarningHTML,
+        
         function(){
             var name = document.getElementById('mf-name').value.trim();
             if(!name){ alert('Enter material name'); return false; }
@@ -759,18 +771,12 @@ function showMatModal(editId) {
             // SOSTITUISCI IL BLOCCO DELL'ALERT CON QUESTO (più semplice e affidabile):
 
 if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
-else DB.addMat(matData);
-render();
+            else DB.addMat(matData);
+            render();
 
-// ✅ FIX: Alert nativo per materiali read-only (funziona sempre)
-if(isReadOnly) {
-    // Usiamo alert() nativo invece di Modal.open() per evitare conflitti di timing
-    setTimeout(function() {
-        alert('⚠️ Important Notice\n\nData saved — but cannot be modified\n\nThe new test condition you just added to this community material cannot be edited or deleted once saved.\n\nIf you made an error, please contact us by email at the bottom of the Home page and we will correct it manually.\n\nEmail: wvtrotrcalculator@gmail.com');
-    }, 100);
-}
+            // ✅ Nessun alert popup: l'avviso inline saveWarningHTML è già visibile nel modal
 
-return true;
+            return true;
         }
     );
 
