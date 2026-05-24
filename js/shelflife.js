@@ -113,6 +113,10 @@ const SL = {
       if (el) el.style.display = (p === src) ? 'block' : 'none';
     });
 
+    // Load community laminates if needed
+    if (src === 'db') {
+      this._loadCommunityLaminatesIntoSelect();
+    }
     // Load company laminates if needed
     if (src === 'company' && typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive()) {
       this._loadCompanyLaminatesIntoSelect();
