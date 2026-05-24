@@ -103,6 +103,7 @@ function setMode(mode) {
   State.selectedTestMethod = '';
   State.calcResult         = null;
   State.calcError          = null;
+  State.compareIds         = [];
   var radios = document.querySelectorAll('input[name="mode"]');
   for (var r = 0; r < radios.length; r++) radios[r].checked = radios[r].value === mode;
   DB.saveState(State);
