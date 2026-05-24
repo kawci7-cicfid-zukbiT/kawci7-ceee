@@ -291,7 +291,8 @@ function matCardHTML(m, q) {
     var verified  = isVerifiedMaterial(m);
     var relScore  = getReliabilityScore(m);
     var userVote  = hasUserVoted(m.id);
-    var vals      = Engine.getValues(m);
+    Engine.mode = State.mode;
+var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
     var arrOk     = Engine.validateArrhenius(m).valid;
     var currentUnit = getUnit();
     var idStr     = String(m.id);
