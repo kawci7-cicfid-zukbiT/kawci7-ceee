@@ -296,7 +296,7 @@ function renderHome() {
     '</div>' +
 
         '<div style="font-size:0.65rem;color:#94a3b8;text-align:center;padding:0.5rem 0;margin-top:0.5rem">' +
-        '© 2025 WVTR/OTR Calculator — All rights reserved. Unauthorized copying prohibited.' +
+        '© 2026 WVTR/OTR Calculator — All rights reserved. Unauthorized copying prohibited.' +
     '</div>' +
     
     '<div style="padding:1.5rem 0;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-top:1.25rem">' +
