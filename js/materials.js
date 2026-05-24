@@ -668,41 +668,38 @@ function showMatModal(editId) {
     var addCondStyle = isReadOnly
         ? 'style="margin-top:0.75rem;border:2px solid var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700"'
         : 'style="margin-top:0.4rem"';
-
-        Modal.open(
-        editId !== undefined ? 'Edit Material' : 'Add Material',
-
-        // ✅ CORPO DEL MODAL: concatena tutto con + saveWarningHTML alla fine
+    // ✅ Costruisci il body del modal in una variabile (più sicuro)
+    var modalBody = 
         readOnlyBanner +
         '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mf-name" value="'+(mat?mat.name:'')+'"'+RO+'></div>' +
         '<div class="form-group"><label>Material Family</label><select class="form-input" id="mf-family"'+RO+'>'+familyOpts+'</select></div>' +
         '<div class="form-group"><label>Company Name</label><input type="text" class="form-input" id="mf-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>' +
-        '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(enables Contact Supplier button)</span></label>' +
-        '<input type="email" class="form-input" id="mf-email" value="'+(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
+        '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(enables Contact Supplier button)</span></label><input type="email" class="form-input" id="mf-email" value="'+(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
         '<div class="form-group"><label>TDS Link (optional)</label><input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."'+RO+'></div>' +
         metallizedHTML + hygroHTML + testMethodBlock +
-        '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem">' +
-        '<span style="font-size:0.75rem;color:var(--text-light)"><strong>'+currentLabel+'</strong> • Unit: '+currentUnit+'</span></div>' +
+        '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.75rem;color:var(--text-light)"><strong>'+currentLabel+'</strong> • Unit: '+currentUnit+'</span></div>' +
         (isReadOnly && currentValues.length > 0 ? '<div style="font-size:0.72rem;font-weight:600;color:var(--text-light);letter-spacing:0.06em;text-transform:uppercase;margin:0.5rem 0 0.3rem 0">Existing data (read-only)</div>' : '') +
         '<div id="mf-rows">'+rowsHTML+'</div>' +
         (isReadOnly ? '<div style="margin-top:0.9rem;padding-top:0.75rem;border-top:2px dashed var(--primary);"><div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem">Add New Condition</div>' : '') +
         '<button class="btn btn-outline btn-full" '+addCondStyle+' onclick="addMatRow()">'+(isReadOnly?'+ Add New Condition (allowed)':'+ Add Condition')+'</button>' +
         (isReadOnly ? '</div>' : '') +
-        // ✅ AVVISO INLINE CONCATENATO QUI (dentro il body, non come argomento separato!)
-        saveWarningHTML,
+        saveWarningHTML; // ✅ Avviso inline aggiunto qui
 
-        // ✅ CALLBACK DI SALVATAGGIO (SENZA DUPLICATI)
+    // ✅ Chiamata corretta a Modal.open (3 argomenti: title, body, callback)
+    Modal.open(
+        editId !== undefined ? 'Edit Material' : 'Add Material',
+        modalBody,
         function(){
+            // === VALIDAZIONE ===
             var name = document.getElementById('mf-name').value.trim();
             if(!name){ alert('Enter material name'); return false; }
-
-            var family  = document.getElementById('mf-family').value;
+            var family = document.getElementById('mf-family').value;
             var company = document.getElementById('mf-company').value.trim();
             var tdsLink = document.getElementById('mf-tdslink').value.trim();
             if(tdsLink && !tdsLink.startsWith('http')){ alert('TDS Link must start with http:// or https://'); return false; }
 
             var testMethodWVTR = mat ? mat.testMethodWVTR : '';
-            var testMethodOTR  = mat ? mat.testMethodOTR  : '';
+            var testMethodOTR = mat ? mat.testMethodOTR : '';
             if(!isReadOnly){
                 var tmSelect = document.getElementById('mf-testmethod-select');
                 var tmCustom = document.getElementById('mf-testmethod-custom');
@@ -712,24 +709,23 @@ function showMatModal(editId) {
                 if(currentMode === 'wvtr') testMethodWVTR = testMethodValue;
                 else testMethodOTR = testMethodValue;
             }
-
             var isMetallized = document.getElementById('mf-metallized') ? document.getElementById('mf-metallized').checked : false;
 
-            var allValInputs   = document.querySelectorAll('.mf-val');
+            // === RACCOLTA VALORI ===
+            var allValInputs = document.querySelectorAll('.mf-val');
             var allThickInputs = document.querySelectorAll('.mf-thick');
-            var allTempInputs  = document.querySelectorAll('.mf-temp');
-            var allHumInputs   = document.querySelectorAll('.mf-hum');
-
-            var existingCount  = isReadOnly ? currentValues.length : 0;
-            var valuesArray    = [];
-            var conditionsArray= [];
+            var allTempInputs = document.querySelectorAll('.mf-temp');
+            var allHumInputs = document.querySelectorAll('.mf-hum');
+            var existingCount = isReadOnly ? currentValues.length : 0;
+            var valuesArray = [];
+            var conditionsArray = [];
 
             for(var i=0; i<allValInputs.length; i++){
                 if(isReadOnly && i < existingCount){ valuesArray.push(currentValues[i]); conditionsArray.push(conds[i]); continue; }
-                var val   = parseFloat(allValInputs[i].value);
+                var val = parseFloat(allValInputs[i].value);
                 var thick = parseFloat(allThickInputs[i].value);
-                var temp  = parseFloat(allTempInputs[i].value);
-                var hum   = parseFloat(allHumInputs[i].value);
+                var temp = parseFloat(allTempInputs[i].value);
+                var hum = parseFloat(allHumInputs[i].value);
                 if(isNaN(val)||val<0){ alert(currentLabel+' value invalid in row '+(i+1)); return false; }
                 if(isNaN(thick)||thick<=0){ alert('Thickness must be > 0 in row '+(i+1)); return false; }
                 if(isNaN(temp)){ alert('Temperature required in row '+(i+1)); return false; }
@@ -737,44 +733,42 @@ function showMatModal(editId) {
                 valuesArray.push({value:val,thickness:thick});
                 conditionsArray.push({temperature:temp,humidity:hum});
             }
-
             if(isReadOnly && valuesArray.length === existingCount){
                 alert('ℹ️ No new conditions added. Use "+ Add New Condition" to extend this material.');
                 return false;
             }
 
+            // === PREPARA DATI ===
             var finalFamily = family || getFamily(name);
-            var betaId  = currentMode==='wvtr'?'mf-beta-wvtr':'mf-beta-otr';
+            var betaId = currentMode==='wvtr'?'mf-beta-wvtr':'mf-beta-otr';
             var refRHId = currentMode==='wvtr'?'mf-refrh-wvtr':'mf-refrh-otr';
-            var betaEl  = document.getElementById(betaId);
+            var betaEl = document.getElementById(betaId);
             var refRHEl = document.getElementById(refRHId);
-            var betaVal  = betaEl  ? (parseFloat(betaEl.value)  || 0)  : 0;
+            var betaVal = betaEl ? (parseFloat(betaEl.value) || 0) : 0;
             var refRHVal = refRHEl ? (parseFloat(refRHEl.value) || 50) : 50;
 
             var matData = {
-                name:    name, family: finalFamily, company: company, tdsLink: tdsLink,
+                name: name, family: finalFamily, company: company, tdsLink: tdsLink,
                 supplierEmail: (document.getElementById('mf-email') ? document.getElementById('mf-email').value.trim() : ''),
                 isMetallized: isMetallized,
-                hygroscopicBetaWVTR:  currentMode==='wvtr' ? betaVal  : (mat?mat.hygroscopicBetaWVTR:0),
+                hygroscopicBetaWVTR: currentMode==='wvtr' ? betaVal : (mat?mat.hygroscopicBetaWVTR:0),
                 hygroscopicRefRHWVTR: currentMode==='wvtr' ? refRHVal : (mat?mat.hygroscopicRefRHWVTR:50),
-                hygroscopicBetaOTR:   currentMode==='otr'  ? betaVal  : (mat?mat.hygroscopicBetaOTR:0),
-                hygroscopicRefRHOTR:  currentMode==='otr'  ? refRHVal : (mat?mat.hygroscopicRefRHOTR:50),
+                hygroscopicBetaOTR: currentMode==='otr' ? betaVal : (mat?mat.hygroscopicBetaOTR:0),
+                hygroscopicRefRHOTR: currentMode==='otr' ? refRHVal : (mat?mat.hygroscopicRefRHOTR:50),
                 isHygroscopic: betaVal > 0, hygroscopicBeta: betaVal, hygroscopicRefRH: refRHVal,
                 testMethodWVTR: testMethodWVTR, testMethodOTR: testMethodOTR,
                 wvtrValues: currentMode==='wvtr' ? valuesArray : (mat&&mat.wvtrValues?mat.wvtrValues:[]),
-                otrValues:  currentMode==='otr'  ? valuesArray : (mat&&mat.otrValues?mat.otrValues:[]),
+                otrValues: currentMode==='otr' ? valuesArray : (mat&&mat.otrValues?mat.otrValues:[]),
                 validConditions: conditionsArray
             };
 
-            // ✅ SALVATAGGIO (ESEGUITO UNA SOLA VOLTA)
+            // === SALVATAGGIO (UNA SOLA VOLTA) ===
             if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
             else DB.addMat(matData);
             render();
-
             return true;
         }
     );
-
     setTimeout(function(){
         var tmSelect = document.getElementById('mf-testmethod-select');
         var tmCustom = document.getElementById('mf-testmethod-custom');
