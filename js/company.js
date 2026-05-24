@@ -742,8 +742,8 @@ function _drawCoLamChart() {
     destroyChart('coLam');
     var ctx = canvas.getContext('2d');
     var unit = getUnit();
-    var labels = _companyLams.map(function(l){ return l.name; });
-    var vals   = _companyLams.map(function(l){ return l.total || 0; });
+    var labels = _filteredLams.map(function(l){ return l.name; });
+    var vals   = _filteredLams.map(function(l){ return l.total || 0; });
     var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
     chartInstances.coLam = new Chart(ctx, {
         type: 'bar',
