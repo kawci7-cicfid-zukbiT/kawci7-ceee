@@ -368,6 +368,7 @@ var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
 // 🔍 FILTER + RENDER LIST
 // ====================================================================
 function matApplyFilters() {
+    Engine.mode = State.mode;
     var q       = ((document.getElementById('mat-search')  ? document.getElementById('mat-search').value  : State.searchQuery) || '').trim().toLowerCase();
     var fc      = (document.getElementById('mf-company')   ? document.getElementById('mf-company').value  : '');
     var fperf   = (document.getElementById('mf-perf')      ? document.getElementById('mf-perf').value     : '');
