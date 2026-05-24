@@ -1674,7 +1674,25 @@ if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
       });
     }
   },
-
+  async _loadCommunityLaminatesIntoSelect() {
+    var sel = document.getElementById('sl-db-lam-pick');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Loading...</option>';
+    try {
+      var allLams = (DB.laminates || []).filter(function(l) { return !l.mode || l.mode === State.mode; });
+      var modeLabel = (State.mode || 'wvtr') === 'wvtr' ? 'WVTR' : 'OTR';
+      if (allLams.length === 0) {
+        sel.innerHTML = '<option value="">No ' + modeLabel + ' laminates saved yet</option>';
+      } else {
+        sel.innerHTML = '<option value="">Select a laminate...</option>' +
+          allLams.map(function(l) {
+            return '<option value="' + l.id + '">' + l.name + ' (' + (l.total ? l.total.toFixed(5) : '?') + ' ' + modeLabel + ')</option>';
+          }).join('');
+      }
+    } catch(e) {
+      sel.innerHTML = '<option value="">Error loading</option>';
+    }
+  },
   /** Handle Company laminate selection */
   async onCompanyLaminatePick(val) {
     if (!val) return;
