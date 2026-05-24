@@ -699,14 +699,14 @@ function _renderCompanyLamList() {
     var listEl = document.getElementById('co-lam-list');
     if (!listEl) return;
     var unit = getUnit();
-    var _filteredLams = _companyLams.filter(function(l){ return l.mode === State.mode; });
-    if (_filteredLams.length === 0) {
-        listEl.innerHTML = '<div class="card"><div class="empty-state"><p>No laminates shared yet.<br><small style="color:var(--text-light)">Save a calculation in the Calculator tab and share it here.</small></p></div></div>';
+    var filteredLams = _companyLams.filter(function(l){ return l.mode === State.mode; });
+    if (filteredLams.length === 0) {
+        listEl.innerHTML = '<div class="card"><div class="empty-state"><p>No ' + State.mode.toUpperCase() + ' laminates shared yet.<br><small style="color:var(--text-light)">Save a calculation in the Calculator tab and share it here.</small></p></div></div>';
         return;
     }
     var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
-    var html = '<div class="card"><h2>Company Laminates <span class="badge badge-purple">'+_companyLams.length+'</span></h2><div class="grid grid-2">';
-    _filteredLams.forEach(function(l, i) {
+    var html = '<div class="card"><h2>Company Laminates <span class="badge badge-purple">'+filteredLams.length+'</span></h2><div class="grid grid-2">';
+    filteredLams.forEach(function(l, i) {
         var canDelete = CompanyState.role === 'admin' || l.sharedBy === window.getOrCreateUserId();
         var layerNames = '';
         if (l.layers && l.layers.length) {
@@ -730,20 +730,20 @@ function _renderCompanyLamList() {
             '</div></div>';
     });
     html += '</div></div>';
-    if (_filteredLams.length >= 2) {
+    if (filteredLams.length >= 2) {
         html += '<div class="card" style="margin-top:1rem"><h2>Company Laminates Comparison</h2><div class="chart-container"><canvas id="coLamChart"></canvas></div></div>';
     }
     listEl.innerHTML = html;
-    if (_companyLams.length >= 2) setTimeout(_drawCoLamChart, 150);
+    if (filteredLams.length >= 2) setTimeout(function(){ _drawCoLamChart(filteredLams); }, 150);
 }
 
-function _drawCoLamChart() {
+function _drawCoLamChart(filteredLams) {
     var canvas = document.getElementById('coLamChart'); if (!canvas) return;
     destroyChart('coLam');
     var ctx = canvas.getContext('2d');
     var unit = getUnit();
-    var labels = _filteredLams.map(function(l){ return l.name; });
-    var vals   = _filteredLams.map(function(l){ return l.total || 0; });
+    var labels = filteredLams.map(function(l){ return l.name; });
+    var vals   = filteredLams.map(function(l){ return l.total || 0; });
     var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
     chartInstances.coLam = new Chart(ctx, {
         type: 'bar',
