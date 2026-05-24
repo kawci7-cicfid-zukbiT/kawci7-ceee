@@ -593,11 +593,13 @@ function renderCompare() {
 // ====================================================================
 function renderLaminates() {
     var unit = getUnit();
-    if(!DB.laminates.length) return '<div class="card"><div class="empty-state"><p>No laminates saved yet</p></div></div>';
-    var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
-    var html = '<div class="card"><h2>Laminates <span class="badge badge-purple">'+DB.laminates.length+'</span></h2><div class="grid grid-2">';
-    for(var i=0; i<DB.laminates.length; i++){
-        var l = DB.laminates[i];
+    // DOPO:
+var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
+if(!filteredLams.length) return '<div class="card"><div class="empty-state"><p>No ' + State.mode.toUpperCase() + ' laminates saved yet</p></div></div>';
+var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+var html = '<div class="card"><h2>Laminates <span class="badge badge-purple">'+filteredLams.length+'</span></h2><div class="grid grid-2">';
+for(var i=0; i<filteredLams.length; i++){
+    var l = filteredLams[i];
         html += '<div style="border:1.5px solid var(--border);border-radius:10px;padding:.85rem;border-top:4px solid '+colors[i%colors.length]+'">' +
             '<div style="font-weight:600;font-size:.85rem;margin-bottom:.35rem">'+l.name+'</div>' +
             '<div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">' +
