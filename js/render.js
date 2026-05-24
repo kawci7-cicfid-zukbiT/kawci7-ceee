@@ -574,10 +574,13 @@ Laminate Permeability(t) = 1 / R<sub>total</sub>(t)
 function renderCompare() {
     var unit = getUnit();
     var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
-if(filteredLams.length < 2) return '<div class="card"><div class="empty-state"><p>Save 2+ ' + State.mode.toUpperCase() + ' laminates to compare</p></div></div>';
-var maxC = Math.min(filteredLams.length, 6);
-for(var i=0; i<maxC; i++){
-    var l = filteredLams[i];
+    if(filteredLams.length < 2) return '<div class="card"><div class="empty-state"><p>Save 2+ ' + State.mode.toUpperCase() + ' laminates to compare</p></div></div>';
+    
+    var html = '<div class="card"><h2>Side-by-Side Comparison</h2><p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">Select up to 3 laminates</p><div class="grid grid-2">';
+    
+    var maxC = Math.min(filteredLams.length, 6);
+    for(var i=0; i<maxC; i++){
+        var l = filteredLams[i];
         var checked = State.compareIds.indexOf(l.id) >= 0 ? 'checked' : '';
         var bg = State.compareIds.indexOf(l.id) >= 0 ? 'background:var(--primary-light);border-color:var(--primary)' : '';
         html += '<label style="display:flex;align-items:center;gap:.5rem;padding:.5rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;'+bg+'">' +
