@@ -756,36 +756,21 @@ function showMatModal(editId) {
             render();
 
             // ✅ FIX: Alert in inglese con timing corretto per materiali read-only
-            if(isReadOnly) {
-                setTimeout(function() {
-                    // Chiudi esplicitamente il modal corrente prima di aprire il nuovo
-                    if(typeof Modal !== 'undefined' && Modal.close) Modal.close();
-                    
-                    setTimeout(function() {
-                        Modal.open(
-                            '⚠️ Important Notice',
-                            '<div style="text-align:center;padding:0.5rem 0">' +
-                            '<div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>' +
-                            '<div style="font-size:0.9rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem">Data saved — but cannot be modified</div>' +
-                            '<div style="font-size:0.8rem;color:#64748b;line-height:1.6;margin-bottom:1rem">' +
-                            'The new test condition you just added to this community material <strong>cannot be edited or deleted</strong> once saved.<br><br>' +
-                            'If you made an error, please contact us by email at the bottom of the Home page and we will correct it manually' +
-                            '</div>' +
-                            '<a href="mailto:wvtrotrcalculator@gmail.com?subject=Data correction request" ' +
-                            'style="display:inline-block;background:#2563eb;color:#fff;padding:0.5rem 1.25rem;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:600">📧 Contact us</a>' +
-                            '</div>',
-                            function(){ return true; }
-                        );
-                        // Nascondi il footer solo sul modal di avviso
-                        setTimeout(function(){
-                            var footer = document.getElementById('modal-footer');
-                            if(footer) footer.style.display = 'none';
-                        }, 50);
-                    }, 100);
-                }, 500);
-            }
+            // SOSTITUISCI IL BLOCCO DELL'ALERT CON QUESTO (più semplice e affidabile):
 
-           return true;
+if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
+else DB.addMat(matData);
+render();
+
+// ✅ FIX: Alert nativo per materiali read-only (funziona sempre)
+if(isReadOnly) {
+    // Usiamo alert() nativo invece di Modal.open() per evitare conflitti di timing
+    setTimeout(function() {
+        alert('⚠️ Important Notice\n\nData saved — but cannot be modified\n\nThe new test condition you just added to this community material cannot be edited or deleted once saved.\n\nIf you made an error, please contact us by email at the bottom of the Home page and we will correct it manually.\n\nEmail: wvtrotrcalculator@gmail.com');
+    }, 100);
+}
+
+return true;
         }
     );
 
