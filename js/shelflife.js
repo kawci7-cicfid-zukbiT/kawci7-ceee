@@ -1647,10 +1647,11 @@ if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
     try {
       const lams = await loadCompanyLaminates();
       const modeLabel = (State.mode || 'wvtr') === 'wvtr' ? 'WVTR' : 'OTR';
-      sel.innerHTML = lams.length === 0
-        ? '<option value="">No laminates in company DB</option>'
-        : '<option value="">Select a laminate...</option>' +
-          lams.map(l => `<option value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');
+      const filtered = lams.filter(l => l.mode === State.mode);
+sel.innerHTML = filtered.length === 0
+  ? `<option value="">No ${State.mode.toUpperCase()} laminates in company DB</option>`
+  : '<option value="">Select a laminate...</option>' +
+    filtered.map(l => `<option value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');tion value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');
     } catch(e) {
       sel.innerHTML = '<option value="">Error loading</option>';
       console.warn('Failed to load company laminates:', e);
@@ -1771,9 +1772,9 @@ function renderShelfLife() {
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem;font-weight:600">Select from General Laminates DB</label>
             <select class="form-input" id="sl-db-lam-pick" onchange="SL.onDBLaminatePick(this.value)" style="font-size:0.78rem">
-              <option value="">Select a laminate...</option>
-              ${(DB.laminates || []).map(l => `<option value="${l.id}">${l.name} (${l.total?.toFixed(5) || '?'} ${modeLabel})</option>`).join('')}
-            </select>
+  <option value="">Select a laminate...</option>
+  ${(DB.laminates || []).filter(l => l.mode === State.mode).map(l => `<option value="${l.id}">${l.name} (${l.total?.toFixed(5) || '?'} ${modeLabel})</option>`).join('')}
+</select>
           </div>
         </div>
 
