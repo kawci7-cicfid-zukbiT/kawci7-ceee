@@ -420,7 +420,7 @@ function coMatApplyFilters() {
 
 function _coMatCardHTML(m, q) {
     var currentUnit = State.mode === 'wvtr' ? 'g/m2·day' : 'cc/m2·day';
-    var vals = Engine.getValues(m);
+    var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
     var arrOk = Engine.validateArrhenius(m).valid;
     var idStr = String(m.id);
 
