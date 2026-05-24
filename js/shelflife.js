@@ -59,21 +59,17 @@ const EA_BY_FAMILY = {
 // ====================================================================
 const SL = {
   // Internal state
-  _barrierSource: 'calc',      // 'calc' | 'db' | 'company'
-  _manualOverride: false,      // User override flag
-  _currentMode: null,          // Cache for mode detection
+  _barrierSource: 'calc',
+  _manualOverride: false,
+  _currentMode: null,
 
   // ------------------------------------------------------------------
   // 🔬 AUTO Ea FROM LAMINATE
-  // Computes a resistance-weighted average Ea from all non-metallized
-  // layers in the current laminate. Uses Arrhenius regression when
-  // multi-temperature data is available, otherwise falls back to the
-  // theoretical EA_BY_FAMILY table.
   // ------------------------------------------------------------------
   _autoCalcEa() {
     const layers = State.layers;
     if (!layers || layers.length === 0) {
-      alert('Nessun layer nel laminato.');
+      alert('Nessun layer nel laminato. Calcola prima nel tab Calculator.');
       return;
     }
     const mode = document.getElementById('calc-mode')?.value || 'wvtr';
@@ -85,27 +81,22 @@ const SL = {
       const vals = mode === 'wvtr' ? mat.wvtrValues : mat.otrValues;
       if (!vals || vals.length === 0) continue;
 
-      // Resistance = thickness / rate (proxy for barrier contribution)
       const resistance = vals[0].thickness / vals[0].value;
-
-      // Metallized layers: exclude from Ea average (constant T assumption)
       if (mat.isMetallized) continue;
 
       let ea = null;
       let method = 'theoretical';
 
-      // Try Arrhenius regression if multi-temperature data available
       if (vals.length >= 2 && mat.validConditions && mat.validConditions.length >= 2) {
         try {
           const params = Engine.calcArrheniusParams(vals, mat.validConditions);
           if (params?.Ea > 10000 && params.Ea < 200000) {
-            ea = params.Ea / 1000; // J/mol → kJ/mol
+            ea = params.Ea / 1000;
             method = 'regression';
           }
-        } catch (e) { /* fall through to theoretical */ }
+        } catch (e) { /* fall through */ }
       }
 
-      // Fall back to theoretical family value
       if (ea === null) {
         ea = EA_BY_FAMILY[mat.family] ?? 50;
       }
@@ -118,42 +109,178 @@ const SL = {
       return;
     }
 
-    // Resistance-weighted average Ea
     const totalRes = usable.reduce((s, l) => s + l.resistance, 0);
     let weightedEa = usable.reduce((s, l) => s + (l.resistance / totalRes) * l.ea, 0);
     weightedEa = Math.round(weightedEa * 10) / 10;
 
-    // Apply to Ea field
     const eaEl = document.getElementById('sl-ea');
     if (eaEl) {
       eaEl.value = weightedEa;
       eaEl.disabled = false;
-      // Yellow highlight when at least one layer used theoretical value
       const hasTheoretical = usable.some(l => l.method === 'theoretical');
       eaEl.style.backgroundColor = hasTheoretical ? '#fffbe6' : '';
       eaEl.style.borderColor     = hasTheoretical ? '#f0a500' : '';
     }
 
-    // Clear Q10 (mutually exclusive)
     const q10El = document.getElementById('sl-q10');
     if (q10El) q10El.value = '';
 
-    // Trigger recalculation
     if (typeof this.onEaChange === 'function') this.onEaChange();
     else if (typeof this.calculate === 'function') this.calculate();
   },
 
   // ------------------------------------------------------------------
-  // 🔀 UI TOGGLES - Single source of truth
+  // 📋 PER-LAYER Ea PANEL
   // ------------------------------------------------------------------
 
-  /** Toggle manual override for barrier rate */
+  /** Toggle the per-layer Ea panel open/closed and populate it */
+  _renderEaLayerPanel() {
+    const panel = document.getElementById('sl-ea-layers-panel');
+    if (!panel) return;
+
+    const isVisible = panel.style.display === 'block';
+    if (isVisible) {
+      panel.style.display = 'none';
+      return;
+    }
+
+    const layers = State.layers;
+    if (!layers || layers.length === 0) {
+      alert('Nessun layer nel laminato. Calcola prima nel tab Calculator.');
+      return;
+    }
+
+    const mode = document.getElementById('calc-mode')?.value || 'wvtr';
+    let html = `
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);
+        margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:0.05em">
+        Ea per layer — modifica e clicca Applica
+      </div>`;
+
+    layers.forEach((layer, idx) => {
+      const mat = DB?.materials?.find(m => m.id === layer.mid);
+      if (!mat) return;
+
+      const isMetallized = !!mat.isMetallized;
+      const familyEa = EA_BY_FAMILY[mat.family] ?? 50;
+      const vals = mode === 'wvtr' ? mat.wvtrValues : mat.otrValues;
+
+      let methodLabel = 'teorico';
+      let methodColor = 'background:#f1f5f9;color:#64748b';
+      if (isMetallized) {
+        methodLabel = 'metallizzato';
+        methodColor = 'background:#fef3c7;color:#92400e';
+      } else if (vals?.length >= 2 && mat.validConditions?.length >= 2) {
+        methodLabel = 'regressione';
+        methodColor = 'background:#dcfce7;color:#166534';
+      }
+
+      // Try regression Ea if available
+      let displayEa = familyEa;
+      if (!isMetallized && vals?.length >= 2 && mat.validConditions?.length >= 2) {
+        try {
+          const params = Engine.calcArrheniusParams(vals, mat.validConditions);
+          if (params?.Ea > 10000 && params.Ea < 200000) {
+            displayEa = Math.round(params.Ea / 100) / 10;
+          }
+        } catch (e) { /* keep familyEa */ }
+      }
+
+      html += `
+        <div style="display:grid;grid-template-columns:1fr auto;gap:0.5rem;
+          align-items:center;margin-bottom:0.35rem;padding:0.5rem 0.6rem;
+          background:var(--bg);border:1px solid var(--border);border-radius:6px">
+          <div style="min-width:0">
+            <div style="font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap">
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${mat.name}</span>
+              <span style="font-size:0.65rem;padding:1px 5px;border-radius:4px;flex-shrink:0;${methodColor}">${methodLabel}</span>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text-light);margin-top:1px">
+              ${mat.family || '?'} · ${layer.thick || 0} µm${isMetallized ? ' — escluso dal calcolo' : ''}
+            </div>
+          </div>
+          <input type="number" id="sl-ea-layer-${idx}"
+            value="${isMetallized ? '' : displayEa}"
+            ${isMetallized ? 'disabled' : ''}
+            step="0.1" min="10" max="200"
+            style="width:68px;padding:0.35rem 0.4rem;
+              border:1.5px solid var(--border);border-radius:5px;
+              font-size:0.82rem;text-align:center;
+              ${isMetallized ? 'opacity:0.35;background:#f1f5f9;cursor:not-allowed' : ''}">
+        </div>`;
+    });
+
+    html += `
+      <button type="button" onclick="SL._applyLayerEa()"
+        style="width:100%;margin-top:0.5rem;padding:0.55rem;
+          background:var(--primary);color:#fff;border:none;border-radius:6px;
+          font-size:0.8rem;font-weight:600;cursor:pointer;
+          transition:opacity 0.15s">
+        ✓ Applica Ea ponderato
+      </button>`;
+
+    panel.innerHTML = html;
+    panel.style.display = 'block';
+  },
+
+  /** Compute weighted Ea from per-layer inputs and write to sl-ea field */
+  _applyLayerEa() {
+    const layers = State.layers;
+    if (!layers?.length) return;
+    const mode = document.getElementById('calc-mode')?.value || 'wvtr';
+
+    const usable = [];
+    layers.forEach((layer, idx) => {
+      const mat = DB?.materials?.find(m => m.id === layer.mid);
+      if (!mat || mat.isMetallized) return;
+      const input = document.getElementById(`sl-ea-layer-${idx}`);
+      const ea = parseFloat(input?.value);
+      if (!ea || ea <= 0) return;
+      const vals = mode === 'wvtr' ? mat.wvtrValues : mat.otrValues;
+      const resistance = (vals?.[0]?.thickness || 1) / (vals?.[0]?.value || 1);
+      usable.push({ ea, resistance });
+    });
+
+    if (!usable.length) {
+      alert('Nessun layer valido con Ea specificato.');
+      return;
+    }
+
+    const totalRes = usable.reduce((s, l) => s + l.resistance, 0);
+    const weightedEa = Math.round(
+      usable.reduce((s, l) => s + (l.resistance / totalRes) * l.ea, 0) * 10
+    ) / 10;
+
+    const eaEl = document.getElementById('sl-ea');
+    if (eaEl) {
+      eaEl.value = weightedEa;
+      eaEl.disabled = false;
+      eaEl.style.backgroundColor = '#fffbe6';
+      eaEl.style.borderColor = '#f0a500';
+    }
+
+    const q10El = document.getElementById('sl-q10');
+    if (q10El) { q10El.value = ''; q10El.disabled = false; q10El.style.opacity = '1'; }
+
+    const panel = document.getElementById('sl-ea-layers-panel');
+    if (panel) panel.style.display = 'none';
+
+    const hint = document.getElementById('sl-ea-q10-hint');
+    if (hint) hint.textContent = `Ea ponderato applicato: ${weightedEa} kJ/mol`;
+
+    if (typeof this.onEaChange === 'function') this.onEaChange();
+    else if (typeof this.calculate === 'function') this.calculate();
+  },
+
+  // ------------------------------------------------------------------
+  // 🔀 UI TOGGLES
+  // ------------------------------------------------------------------
+
   toggleManualOverride(checked) {
     this._manualOverride = !!checked;
     const panel = document.getElementById('sl-panel-manual');
     if (panel) panel.style.display = checked ? 'block' : 'none';
 
-    // Blocca/sblocca i pulsanti sorgente
     ['calc', 'db', 'company'].forEach(key => {
       const btn = document.getElementById('sl-src-btn-' + key);
       if (!btn) return;
@@ -162,7 +289,6 @@ const SL = {
       btn.style.cursor = checked ? 'not-allowed' : 'pointer';
     });
 
-    // Nascondi tutti i pannelli sorgente quando override è attivo
     ['calc', 'db', 'company'].forEach(p => {
       const el = document.getElementById('sl-panel-' + p);
       if (el) el.style.display = checked ? 'none' : (p === this._barrierSource ? 'block' : 'none');
@@ -171,17 +297,14 @@ const SL = {
     if (checked) {
       this.onManualRateChange();
     } else {
-      // Ripristina il pannello attivo
       this.setBarrierSource(this._barrierSource);
     }
   },
 
-  /** Set barrier rate source: 'calc' | 'db' | 'company' */
   setBarrierSource(src) {
     if (!['calc', 'db', 'company'].includes(src)) return;
     this._barrierSource = src;
 
-    // Update button styles
     ['calc', 'db', 'company'].forEach(key => {
       const btn = document.getElementById(`sl-src-btn-${key}`);
       if (!btn) return;
@@ -198,25 +321,21 @@ const SL = {
       }
     });
 
-    // Show/hide panels
     ['calc', 'db', 'company'].forEach(p => {
       const el = document.getElementById(`sl-panel-${p}`);
       if (el) el.style.display = (p === src) ? 'block' : 'none';
     });
 
-    // Load company laminates if needed
     if (src === 'company' && typeof CompanyState !== 'undefined' && CompanyState.isActive?.()) {
       this._loadCompanyLaminatesIntoSelect();
     }
 
-    // Update summary
     if (src === 'calc' && !this._manualOverride) {
       const rate = parseFloat(State.calcResult?.total || 0);
       this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
     }
   },
 
-  /** Toggle packaging geometry mode: 'auto' | 'manual' */
   togglePkgMode() {
     const mode = document.querySelector('input[name="pkg-geom"]:checked')?.value || 'auto';
     const geomSel = document.getElementById('geom-selector');
@@ -235,15 +354,12 @@ const SL = {
     }
   },
 
-  /** Handle shape selection change */
   onShapeChange() {
     const sel = document.getElementById('sl-shape');
     if (!sel) return;
     const type = sel.value;
-
     const pouchDims  = document.getElementById('dims-pouch');
     const bottleDims = document.getElementById('dims-bottle');
-
     if (type === 'bottle') {
       if (pouchDims)  pouchDims.style.display  = 'none';
       if (bottleDims) bottleDims.style.display = 'grid';
@@ -254,12 +370,10 @@ const SL = {
     this.calcArea();
   },
 
-  /** Handle package type change (updates labels & defaults) */
   onPkgChange() {
     const sel = document.getElementById('sl-shape');
     if (!sel) return;
     const type = sel.value;
-
     const pouchDims  = document.getElementById('dims-pouch');
     const bottleDims = document.getElementById('dims-bottle');
     if (type === 'bottle') {
@@ -296,7 +410,6 @@ const SL = {
   // 📐 AREA CALCULATION
   // ------------------------------------------------------------------
 
-  /** Calculate effective packaging area in m² */
   calcArea() {
     const mode = document.querySelector('input[name="pkg-geom"]:checked')?.value || 'auto';
     let area = 0;
@@ -339,7 +452,7 @@ const SL = {
           case 'tray':     areaCm2 = (wT * hT) + 2 * (wT * dT) + 2 * (hT * dT); break;
           default:         areaCm2 = 2 * wT * hT;
         }
-        area = areaCm2 / 10000; // cm² → m²
+        area = areaCm2 / 10000;
       }
     }
 
@@ -349,7 +462,6 @@ const SL = {
     if (hidden)  hidden.value = area.toFixed(4);
   },
 
-  /** Update area when manual input changes */
   updateManualArea() {
     const val     = document.getElementById('sl-area-manual')?.value || '0';
     const display = document.getElementById('sl-area-display');
@@ -362,7 +474,6 @@ const SL = {
   // 🎯 PRODUCT & SAFE ZONE
   // ------------------------------------------------------------------
 
-  /** Handle product template change */
   onProductChange() {
     const prodKey = document.getElementById('sl-product')?.value;
     const prod    = PRODUCTS_DB[prodKey];
@@ -380,7 +491,6 @@ const SL = {
       set('sl-ea', prod.Ea ? (prod.Ea / 1000).toFixed(1) : '');
     }
 
-    // Update Ea placeholder with product default
     const eaEl = document.getElementById('sl-ea');
     if (eaEl && prod.Ea) {
       eaEl.placeholder = `Auto (${(prod.Ea / 1000).toFixed(0)} kJ/mol)`;
@@ -389,7 +499,6 @@ const SL = {
     this.drawSafeZone();
   },
 
-  /** Draw moisture safe zone visualization */
   drawSafeZone() {
     const init = parseFloat(document.getElementById('sl-minit')?.value) || 0;
     const crit = parseFloat(document.getElementById('sl-mcrit')?.value) || 0;
@@ -402,15 +511,14 @@ const SL = {
 
     vLabel.textContent = crit + '%';
     const max = Math.max(crit * 1.5, 20);
-    bar.style.width  = (crit / max * 100) + '%';
+    bar.style.width   = (crit / max * 100) + '%';
     marker.style.left = (init / max * 100) + '%';
   },
 
   // ------------------------------------------------------------------
-  // 🔥 THERMAL ACCELERATION (Ea / Q10)
+  // 🔥 THERMAL ACCELERATION
   // ------------------------------------------------------------------
 
-  /** Handle Ea input - disable Q10 when Ea is set */
   onEaInput() {
     const ea   = document.getElementById('sl-ea')?.value;
     const q10  = document.getElementById('sl-q10');
@@ -421,15 +529,14 @@ const SL = {
       q10.disabled = true;
       q10.style.opacity = '0.4';
       q10.value = '';
-      hint.textContent = 'Eₐ set — Q₁₀ disabled.';
+      hint.textContent = 'Eₐ impostato — Q₁₀ disabilitato.';
     } else {
       q10.disabled = false;
       q10.style.opacity = '1';
-      hint.textContent = 'Leave empty to use product default.';
+      hint.textContent = 'Lascia vuoto per usare il default del prodotto.';
     }
   },
 
-  /** Handle Q10 input - disable Ea when Q10 is set */
   onQ10Input() {
     const q10  = document.getElementById('sl-q10')?.value;
     const ea   = document.getElementById('sl-ea');
@@ -440,11 +547,11 @@ const SL = {
       ea.disabled = true;
       ea.style.opacity = '0.4';
       ea.value = '';
-      hint.textContent = 'Q₁₀ set — Eₐ disabled.';
+      hint.textContent = 'Q₁₀ impostato — Eₐ disabilitato.';
     } else {
       ea.disabled = false;
       ea.style.opacity = '1';
-      hint.textContent = 'Leave empty to use product default.';
+      hint.textContent = 'Lascia vuoto per usare il default del prodotto.';
     }
   },
 
@@ -452,7 +559,6 @@ const SL = {
   // 🚚 LOGISTICS CHAIN MODE
   // ------------------------------------------------------------------
 
-  /** Toggle between single condition and logistics chain */
   toggleCond(mode) {
     const singleDiv = document.getElementById('sl-cond-single');
     const chainDiv  = document.getElementById('sl-cond-chain');
@@ -471,7 +577,6 @@ const SL = {
     setActive(btnChain,  mode === 'chain');
   },
 
-  /** Add a new row to the logistics chain table */
   addChainRow() {
     const tbody = document.getElementById('sl-chain-rows');
     if (!tbody) return;
@@ -505,7 +610,6 @@ const SL = {
   // 🧮 MATHEMATICAL CORE
   // ------------------------------------------------------------------
 
-  /** Solve GAB equation for water activity (binary search) */
   solveGAB(M, params) {
     if (!params?.M_m || !params?.C || !params?.K) return 0.5;
     let low = 0.01, high = 0.99;
@@ -520,7 +624,6 @@ const SL = {
     return (low + high) / 2;
   },
 
-  /** Get the active barrier rate (manual override or calculated) */
   _getActiveRate() {
     if (this._manualOverride) {
       return parseFloat(document.getElementById('sl-rate-manual')?.value || 0);
@@ -528,7 +631,6 @@ const SL = {
     return parseFloat(State.calcResult?.total || 0);
   },
 
-  /** Update the active rate summary display */
   _updateRateSummary(rateStr) {
     const el   = document.getElementById('sl-active-rate');
     const unit = (State.mode || 'wvtr') === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
@@ -544,24 +646,20 @@ const SL = {
   // 🎯 MAIN CALCULATION ENGINE
   // ------------------------------------------------------------------
 
-  /** Execute shelf life calculation */
   calculate() {
     const prodKey = document.getElementById('sl-product')?.value;
     const prod    = PRODUCTS_DB[prodKey];
-    if (!prod) { alert('⚠️ Select a product type first'); return; }
+    if (!prod) { alert('⚠️ Seleziona prima un tipo di prodotto'); return; }
 
-    // 1. Get barrier rate
     const rateInput = this._getActiveRate();
     if (rateInput <= 0) {
-      alert('No valid rate. Select a laminate or enter manually.');
+      alert('Nessun valore di barriera. Seleziona un laminato o inserisci manualmente.');
       return;
     }
 
-    // 2. Area & Weight
     const A = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
     const W = parseFloat(document.getElementById('sl-weight')?.value) || 100;
 
-    // 3. Storage conditions (single or chain)
     let T_store = 25, RH_out = 65;
     const isChain = document.getElementById('sl-cond-chain')?.style.display !== 'none';
 
@@ -579,13 +677,9 @@ const SL = {
       RH_out  = parseFloat(document.getElementById('sl-rh-ext')?.value) || 65;
     }
 
-    // 4. Thermal acceleration — three-branch fallback:
-    //    (a) Ea field filled & enabled  → Arrhenius with user value
-    //    (b) Q10 field filled & enabled → Q10 rule with user value
-    //    (c) Both empty/disabled        → Arrhenius with product default Ea
-    const eaIn  = document.getElementById('sl-ea')?.value;
-    const eaDis = document.getElementById('sl-ea')?.disabled;
-    const q10In = document.getElementById('sl-q10')?.value;
+    const eaIn   = document.getElementById('sl-ea')?.value;
+    const eaDis  = document.getElementById('sl-ea')?.disabled;
+    const q10In  = document.getElementById('sl-q10')?.value;
     const q10Dis = document.getElementById('sl-q10')?.disabled;
 
     let accel = 1;
@@ -595,12 +689,10 @@ const SL = {
     } else if (q10In && parseFloat(q10In) > 0 && !q10Dis) {
       accel = Math.pow(parseFloat(q10In), (T_store - 25) / 10);
     } else {
-      // Product default Ea (J/mol)
-      const eaDef = prod.Ea ? prod.Ea / 1000 : 60; // already in kJ/mol
+      const eaDef = prod.Ea ? prod.Ea / 1000 : 60;
       accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
     }
 
-    // 5. Hygroscopic correction
     let hygroFactor = 1;
     const hygroMsg  = [];
 
@@ -632,17 +724,16 @@ const SL = {
           hygroFactor *= factor;
           hygroMsg.push(`${mat.name}: ×${factor.toFixed(2)} @ ${RH_out.toFixed(0)}% RH vs ${testRH}% RH test`);
         } else {
-          hygroMsg.push(`${mat.name}: ⚠ hygroscopic (β=${beta}) — calculated at test RH (${testRH}%), no correction`);
+          hygroMsg.push(`${mat.name}: ⚠ igroscopico (β=${beta}) — calcolato a RH test (${testRH}%), nessuna correzione`);
         }
       }
     }
 
     const effectiveRate = rateInput * accel * hygroFactor;
 
-    // 6. Run simulation
     const result = {
       days: 0, history: [], mode: State.mode, type: prod.type,
-      hygroWarning: hygroMsg.length ? { message: 'Hygroscopic correction applied', details: hygroMsg } : null,
+      hygroWarning: hygroMsg.length ? { message: 'Correzione igroscopica applicata', details: hygroMsg } : null,
       isChain
     };
 
@@ -650,7 +741,7 @@ const SL = {
       const M_crit = parseFloat(document.getElementById('sl-mcrit')?.value) || prod.M_crit;
       const M_init = parseFloat(document.getElementById('sl-minit')?.value) || prod.M_init;
 
-      if (M_crit <= M_init) { alert('⚠️ Critical moisture must be > initial'); return; }
+      if (M_crit <= M_init) { alert('⚠️ L\'umidità critica deve essere > umidità iniziale'); return; }
 
       const T_test_std = 23;
       const Psat_std   = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
@@ -677,10 +768,10 @@ const SL = {
       result.M_init = M_init;
 
     } else {
-      const fatKg  = prod.fat_kg || 0.3;
+      const fatKg   = prod.fat_kg || 0.3;
       const O2_crit = prod.O2_crit || 400;
       const totalO2 = O2_crit * fatKg;
-      const dayO2  = effectiveRate * A * 0.21;
+      const dayO2   = effectiveRate * A * 0.21;
 
       if (dayO2 <= 0) {
         result.days = Infinity;
@@ -704,7 +795,6 @@ const SL = {
   // 📊 RESULT RENDERING & CHARTS
   // ------------------------------------------------------------------
 
-  /** Render the main result panel */
   renderResult(res) {
     const panel = document.getElementById('sl-result-panel');
     if (!panel) return;
@@ -756,14 +846,12 @@ const SL = {
     }
   },
 
-  /** Draw main charts: Quality Decay + Temp Sensitivity */
   drawCharts(res) {
     if (typeof destroyChart === 'function') {
       destroyChart('slDecay');
       destroyChart('slTemp');
     }
 
-    // Quality Decay Chart
     const ctx1 = document.getElementById('slDecayChart')?.getContext('2d');
     if (ctx1 && res.history?.length > 1 && typeof Chart !== 'undefined') {
       if (!window.chartInstances) window.chartInstances = {};
@@ -803,7 +891,6 @@ const SL = {
       });
     }
 
-    // Temperature Sensitivity Chart
     const ctx2 = document.getElementById('slTempChart')?.getContext('2d');
     if (ctx2 && typeof Chart !== 'undefined') {
       const A        = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
@@ -811,9 +898,9 @@ const SL = {
       const baseRate = this._getActiveRate() || 0.5;
       const temps    = Array.from({ length: 36 }, (_, i) => 15 + i);
 
-      const eaIn  = document.getElementById('sl-ea')?.value;
-      const eaDis = document.getElementById('sl-ea')?.disabled;
-      const q10In = document.getElementById('sl-q10')?.value;
+      const eaIn   = document.getElementById('sl-ea')?.value;
+      const eaDis  = document.getElementById('sl-ea')?.disabled;
+      const q10In  = document.getElementById('sl-q10')?.value;
       const q10Dis = document.getElementById('sl-q10')?.disabled;
       const prodKey = document.getElementById('sl-product')?.value;
       const prod    = PRODUCTS_DB[prodKey];
@@ -860,7 +947,6 @@ const SL = {
     }
   },
 
-  /** Draw logistics chain charts */
   drawLogisticsCharts(res) {
     if (typeof destroyChart === 'function') {
       destroyChart('slChain');
@@ -872,7 +958,6 @@ const SL = {
     const rows = document.querySelectorAll('#sl-chain-rows tr');
     if (!rows.length) return;
 
-    // Conditions Chart
     const ctx1 = document.getElementById('slChainChart')?.getContext('2d');
     if (ctx1 && typeof Chart !== 'undefined') {
       const labels = [], temps = [], rhs = [];
@@ -905,7 +990,6 @@ const SL = {
     this.drawStepImpactChart(res);
     if (res?.type === 'moisture') this.drawMoistureAccumulationChart(res);
 
-    // Cumulative Timeline Chart
     const ctx2 = document.getElementById('slCumulativeChart')?.getContext('2d');
     if (ctx2 && typeof Chart !== 'undefined') {
       let cum = 0;
@@ -937,7 +1021,6 @@ const SL = {
     }
   },
 
-  /** Draw step impact chart */
   drawStepImpactChart(res) {
     if (typeof destroyChart === 'function') destroyChart('slStepImpact');
 
@@ -980,7 +1063,6 @@ const SL = {
       const RH   = parseFloat(r.querySelector('.sl-cr')?.value) || 65;
       const days = parseFloat(r.querySelector('.sl-cd')?.value) || 1;
 
-      // Three-branch thermal acceleration
       let accel = 1;
       if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
         accel = Math.exp(-(parseFloat(eaIn) * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
@@ -991,7 +1073,6 @@ const SL = {
         accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
       }
 
-      // Hygroscopic factor for this step
       let hygroFactor = 1;
       if (State.layers) {
         for (const layer of State.layers) {
@@ -1016,9 +1097,9 @@ const SL = {
         }
       }
 
-      const effRate    = baseRate * accel * hygroFactor;
+      const effRate     = baseRate * accel * hygroFactor;
       const transferred = effRate * A * days * (res.type === 'otx' ? 0.21 : 1);
-      const pct        = totalAllowed > 0 ? (transferred / totalAllowed) * 100 : 0;
+      const pct         = totalAllowed > 0 ? (transferred / totalAllowed) * 100 : 0;
 
       labels.push(name);
       consumptionPct.push(parseFloat(pct.toFixed(1)));
@@ -1070,7 +1151,6 @@ const SL = {
     });
   },
 
-  /** Draw moisture accumulation chart */
   drawMoistureAccumulationChart(res) {
     if (typeof destroyChart === 'function') destroyChart('slMoistureAcc');
 
@@ -1112,7 +1192,6 @@ const SL = {
       const days   = parseFloat(r.querySelector('.sl-cd')?.value) || 1;
       const Psat   = 0.61094 * Math.exp((17.625 * T) / (T + 243.04)) * 1000;
 
-      // Three-branch thermal acceleration
       let accel = 1;
       if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
         accel = Math.exp(-(parseFloat(eaIn) * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
@@ -1123,7 +1202,6 @@ const SL = {
         accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
       }
 
-      // Hygroscopic factor
       let hygroFactor = 1;
       if (State.layers) {
         for (const layer of State.layers) {
@@ -1197,8 +1275,8 @@ const SL = {
                 label: function (ctx) {
                   const val    = ctx.parsed.y;
                   const detail = pointDetails[ctx.dataIndex];
-                  const status = val >= M_crit            ? ' 🔴 ABOVE LIMIT' :
-                                 val >= M_crit * 0.9     ? ' 🟡 WARNING'     : ' 🟢 Safe';
+                  const status = val >= M_crit        ? ' 🔴 ABOVE LIMIT' :
+                                 val >= M_crit * 0.9 ? ' 🟡 WARNING'     : ' 🟢 Safe';
                   return [
                     ` ${ctx.dataset.label}: ${val.toFixed(2)}%${status}`,
                     ` Day ${detail?.day || ctx.dataIndex}`,
