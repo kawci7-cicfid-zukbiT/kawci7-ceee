@@ -1771,15 +1771,13 @@ const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActi
             </div>
           </div>
         </div>
-
-        <!-- Panel: Laminate DB -->
+<!-- Panel: Laminate DB -->
         <div id="sl-panel-db" style="display:none">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600">Select from General Laminates DB</label>
+            <label style="font-size:0.75rem;font-weight:600">Select from Community DB</label>
             <select class="form-input" id="sl-db-lam-pick" onchange="SL.onDBLaminatePick(this.value)" style="font-size:0.78rem">
-  <option value="">Select a laminate...</option>
- ${(DB.laminates || []).filter(l => !l.mode || l.mode === State.mode).map(l => `<option value="${l.id}">${l.name} (${l.total?.toFixed(5) || '?'} ${modeLabel})</option>`).join('')}
- </select>
+              <option value="">Loading...</option>
+            </select>
           </div>
         </div>
 
