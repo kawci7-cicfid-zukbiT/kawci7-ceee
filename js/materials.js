@@ -88,9 +88,6 @@ function contactSupplier(matName, company, email) {
 // ====================================================================
 // 🌍 SHARE / UPDATE WITH COMMUNITY
 // ====================================================================
-// ====================================================================
-// 🌍 SHARE / UPDATE WITH COMMUNITY — FIX anti-duplicazione
-// ====================================================================
 async function shareToCommunity(matId) {
     var mat = DB.materials.find(function(m){ return String(m.id) === String(matId); });
     if(!mat) return;
@@ -101,20 +98,16 @@ async function shareToCommunity(matId) {
         mat.author = mat.author || 'Community';
         var result = await window.saveToCommunity(mat);
         if(result.success) {
-            // ✅ FIX: salva il firebaseDocId PRIMA di settare isCommunity
-            // così al prossimo reload il match per firebaseDocId funziona
             mat.firebaseDocId = result.id;
             mat.isCommunity = true;
-            mat._communitySourceId = String(mat.id); // traccia l'ID locale originale
+            mat._communitySourceId = String(mat.id);
             DB.save();
             matApplyFilters();
-            // toast ...
         }
     } catch(e) { alert('❌ Unexpected error: ' + e.message); }
     finally { if(btn) { btn.disabled=false; btn.textContent = mat.firebaseDocId ? '🔄 Update community' : '🌍 Share with community'; } }
 }
 
-// Alias used in matCardHTML
 function submitToFirebaseById(matId) { shareToCommunity(matId); }
 
 // ====================================================================
@@ -126,7 +119,7 @@ function isVerifiedMaterial(mat) {
 }
 
 // ====================================================================
-// 👍 RELIABILITY VOTING
+// 👍 RELIABILITY VOTING — ✅ FIX: DB non sparisce dopo il voto
 // ====================================================================
 async function voteReliability(matId, voteType) {
     var matIdStr = String(matId);
@@ -143,7 +136,8 @@ async function voteReliability(matId, voteType) {
         if(currentVote === voteType) {
             recordUserVote(matIdStr, null);
             DB.save();
-            renderContent();
+            // ✅ FIX: usa matApplyFilters se siamo nella tab materiali, altrimenti renderContent
+            if(State.tab === 'materials') { matApplyFilters(); } else { renderContent(); }
             if(needsSync) {
                 try { const ref = window.fbDoc(window.communityDB,"materials",mat.firebaseDocId); await window.fbUpdateDoc(ref, firebaseUpdate); } catch(e) {}
             }
@@ -155,7 +149,8 @@ async function voteReliability(matId, voteType) {
     recordUserVote(matIdStr, voteType);
     if(needsSync) firebaseUpdate["reliabilityVotes." + voteType] = window.fbIncrement(1);
     DB.save();
-    renderContent();
+    // ✅ FIX: stessa logica qui
+    if(State.tab === 'materials') { matApplyFilters(); } else { renderContent(); }
     if(needsSync && Object.keys(firebaseUpdate).length > 0) {
         try { const ref = window.fbDoc(window.communityDB,"materials",mat.firebaseDocId); await window.fbUpdateDoc(ref, firebaseUpdate); } catch(e) {}
     }
@@ -379,7 +374,6 @@ function matApplyFilters() {
     var ffamily = (document.getElementById('mf-family')    ? document.getElementById('mf-family').value   : '');
     var ftype   = (document.getElementById('mf-type')      ? document.getElementById('mf-type').value     : '');
 
-    // Active filter chips
     var chipsEl = document.getElementById('mf-chips');
     if(chipsEl) {
         var chips = [];
@@ -550,7 +544,7 @@ function renderMaterials() {
 }
 
 // ====================================================================
-// ✏️ ADD / EDIT MATERIAL MODAL
+// ✏️ ADD / EDIT MATERIAL MODAL — ✅ FIX: Alert timing corretto
 // ====================================================================
 function showMatModal(editId) {
     var mat = null;
@@ -605,7 +599,6 @@ function showMatModal(editId) {
         '<label for="mf-metallized" style="font-size:0.75rem;color:var(--text-light);margin:0;cursor:'+(isReadOnly?'not-allowed':'pointer')+'">' +
         '<strong>Metallized/Coated film</strong> – Barrier independent of substrate thickness</label></div>';
 
-    // Hygroscopic block
     var hygroHTML = '';
     if(!isReadOnly) {
         var betaId  = currentMode === 'wvtr' ? 'mf-beta-wvtr' : 'mf-beta-otr';
@@ -621,7 +614,6 @@ function showMatModal(editId) {
             '</div></div>';
     }
 
-    // Test method options
     var ctmWVTR = ['','ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122','Custom/Other'];
     var ctmOTR  = ['','ASTM D3985','ISO 15106-2','JIS K7126','MOCON OXTRAN','Custom/Other'];
     var ctm = currentMode === 'wvtr' ? ctmWVTR : ctmOTR;
@@ -644,7 +636,6 @@ function showMatModal(editId) {
         '<input type="text" class="form-input" id="mf-testmethod-custom" value="'+(isCustomTM?currentTM:'')+'" placeholder="Enter custom method..." style="display:'+(isCustomTM?'block':'none')+';margin-top:0.3rem"'+RO+'>' +
         '</div>';
 
-    // Existing rows
     var rowsHTML = '';
     for(var r=0; r<currentValues.length; r++){
         var v = currentValues[r] || {value:'',thickness:''};
@@ -764,32 +755,39 @@ function showMatModal(editId) {
             else DB.addMat(matData);
             render();
 
-            // ✅ Avviso se si aggiunge una condizione a materiale community/built-in
+            // ✅ FIX: Alert in inglese con timing corretto per materiali read-only
             if(isReadOnly) {
                 setTimeout(function() {
-                    Modal.open(
-                        '⚠️ Important Notice',
-                        '<div style="text-align:center;padding:0.5rem 0">' +
-                        '<div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>' +
-                        '<div style="font-size:0.9rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem">Data saved — but cannot be modified</div>' +
-                        '<div style="font-size:0.8rem;color:#64748b;line-height:1.6;margin-bottom:1rem">' +
-                        'The new test condition you just added to this community material <strong>cannot be edited or deleted</strong> once saved.<br><br>' +
-                        'If you made an error, please contact us by email at the bottom of the Home page and we will correct it manually' +
-                        '</div>' +
-                        '<a href="mailto:wvtrotrcalculator@gmail.com?subject=Data correction request" ' +
-                        'style="display:inline-block;background:#2563eb;color:#fff;padding:0.5rem 1.25rem;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:600">📧 Contact us</a>' +
-                        '</div>',
-                        function(){ return true; }
-                    );
-                    var footer = document.getElementById('modal-footer');
-                    if(footer) footer.style.display = 'none';
-                }, 300);
+                    // Chiudi esplicitamente il modal corrente prima di aprire il nuovo
+                    if(typeof Modal !== 'undefined' && Modal.close) Modal.close();
+                    
+                    setTimeout(function() {
+                        Modal.open(
+                            '⚠️ Important Notice',
+                            '<div style="text-align:center;padding:0.5rem 0">' +
+                            '<div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>' +
+                            '<div style="font-size:0.9rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem">Data saved — but cannot be modified</div>' +
+                            '<div style="font-size:0.8rem;color:#64748b;line-height:1.6;margin-bottom:1rem">' +
+                            'The new test condition you just added to this community material <strong>cannot be edited or deleted</strong> once saved.<br><br>' +
+                            'If you made an error, please contact us by email at the bottom of the Home page and we will correct it manually' +
+                            '</div>' +
+                            '<a href="mailto:wvtrotrcalculator@gmail.com?subject=Data correction request" ' +
+                            'style="display:inline-block;background:#2563eb;color:#fff;padding:0.5rem 1.25rem;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:600">📧 Contact us</a>' +
+                            '</div>',
+                            function(){ return true; }
+                        );
+                        // Nascondi il footer solo sul modal di avviso
+                        setTimeout(function(){
+                            var footer = document.getElementById('modal-footer');
+                            if(footer) footer.style.display = 'none';
+                        }, 50);
+                    }, 100);
+                }, 500);
             }
 
            return true;
-        }   // ← chiude function(){ ... } callback di Modal.open
-    );      // ← chiude Modal.open(
-
+        }
+    );
 
     setTimeout(function(){
         var tmSelect = document.getElementById('mf-testmethod-select');
@@ -890,7 +888,6 @@ async function loadExternalMaterialsDB() {
     var externalMats = Array.isArray(data) ? data : (data.materials || []);
     if (!externalMats.length) return;
 
-    // Costruisci set di firebaseDocId già presenti per match rapido
     var existingByFirebaseId = {};
     var existingByName = {};
     for (var i = 0; i < DB.materials.length; i++) {
@@ -906,10 +903,8 @@ async function loadExternalMaterialsDB() {
 
       var nameLower = em.name.trim().toLowerCase();
 
-      // 1. Match per firebaseDocId
       if (em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
         var existing = existingByFirebaseId[em.firebaseDocId];
-        // Aggiorna solo i campi hygroscopici se presenti
         if (em.hygroscopicBetaWVTR !== undefined) {
           existing.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
           existing.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
@@ -919,10 +914,8 @@ async function loadExternalMaterialsDB() {
         continue;
       }
 
-      // 2. Match per nome
       if (existingByName[nameLower]) {
         var existingN = existingByName[nameLower];
-        // Collega il firebaseDocId e aggiorna hygro
         if (em.firebaseDocId) existingN.firebaseDocId = em.firebaseDocId;
         if (em.hygroscopicBetaWVTR !== undefined) {
           existingN.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
@@ -933,11 +926,8 @@ async function loadExternalMaterialsDB() {
         continue;
       }
 
-      // 3. Nuovo materiale — assegna ID sicuro (non in collisione)
-      // Usa il firebaseDocId come ID se disponibile, altrimenti genera numerico
       var newMat = Object.assign({}, em);
       if (em.firebaseDocId) {
-        // Mantieni l'id del JSON ma controlla collisioni con DEFAULT (0-7)
         var numericIds = DB.materials.map(function(m) {
           return typeof m.id === 'number' ? m.id : 0;
         });
@@ -949,7 +939,6 @@ async function loadExternalMaterialsDB() {
       newMat.reliabilityVotes = em.reliabilityVotes || { up: 0, down: 0 };
 
       DB.materials.push(newMat);
-      // Aggiorna gli indici per i prossimi giri
       existingByFirebaseId[newMat.firebaseDocId] = newMat;
       existingByName[nameLower] = newMat;
       addedCount++;
@@ -968,4 +957,3 @@ async function loadExternalMaterialsDB() {
 // ====================================================================
 // 🚀 APP INIT
 // ====================================================================
-
