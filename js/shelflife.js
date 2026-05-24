@@ -44,6 +44,17 @@ const PRODUCTS_DB = {
 };
 
 // ====================================================================
+// 🔬 Ea TABLE BY POLYMER FAMILY (theoretical values, kJ/mol)
+// Metallized materials are excluded from Ea calculation (constant T)
+// Other / unknown families default to 50 kJ/mol
+// ====================================================================
+const EA_BY_FAMILY = {
+  PE: 45, PP: 50, PET: 55, PA: 75, EVOH: 90,
+  PVC: 50, PS: 48, PC: 58, PTFE: 40, PU: 52,
+  AL: 30, Paper: 38, Other: 50
+};
+
+// ====================================================================
 // 📦 SL OBJECT - All shelf life logic (unified & cleaned)
 // ====================================================================
 const SL = {
@@ -53,43 +64,123 @@ const SL = {
   _currentMode: null,          // Cache for mode detection
 
   // ------------------------------------------------------------------
+  // 🔬 AUTO Ea FROM LAMINATE
+  // Computes a resistance-weighted average Ea from all non-metallized
+  // layers in the current laminate. Uses Arrhenius regression when
+  // multi-temperature data is available, otherwise falls back to the
+  // theoretical EA_BY_FAMILY table.
+  // ------------------------------------------------------------------
+  _autoCalcEa() {
+    const layers = State.layers;
+    if (!layers || layers.length === 0) {
+      alert('Nessun layer nel laminato.');
+      return;
+    }
+    const mode = document.getElementById('calc-mode')?.value || 'wvtr';
+    const usable = [];
+
+    for (const layer of layers) {
+      const mat = layer.material || DB?.materials?.find(m => m.id === layer.mid);
+      if (!mat) continue;
+      const vals = mode === 'wvtr' ? mat.wvtrValues : mat.otrValues;
+      if (!vals || vals.length === 0) continue;
+
+      // Resistance = thickness / rate (proxy for barrier contribution)
+      const resistance = vals[0].thickness / vals[0].value;
+
+      // Metallized layers: exclude from Ea average (constant T assumption)
+      if (mat.isMetallized) continue;
+
+      let ea = null;
+      let method = 'theoretical';
+
+      // Try Arrhenius regression if multi-temperature data available
+      if (vals.length >= 2 && mat.validConditions && mat.validConditions.length >= 2) {
+        try {
+          const params = Engine.calcArrheniusParams(vals, mat.validConditions);
+          if (params?.Ea > 10000 && params.Ea < 200000) {
+            ea = params.Ea / 1000; // J/mol → kJ/mol
+            method = 'regression';
+          }
+        } catch (e) { /* fall through to theoretical */ }
+      }
+
+      // Fall back to theoretical family value
+      if (ea === null) {
+        ea = EA_BY_FAMILY[mat.family] ?? 50;
+      }
+
+      usable.push({ mat, resistance, ea, method });
+    }
+
+    if (usable.length === 0) {
+      alert('Nessun layer utilizzabile per il calcolo Ea (tutti metallizzati o senza dati).');
+      return;
+    }
+
+    // Resistance-weighted average Ea
+    const totalRes = usable.reduce((s, l) => s + l.resistance, 0);
+    let weightedEa = usable.reduce((s, l) => s + (l.resistance / totalRes) * l.ea, 0);
+    weightedEa = Math.round(weightedEa * 10) / 10;
+
+    // Apply to Ea field
+    const eaEl = document.getElementById('sl-ea');
+    if (eaEl) {
+      eaEl.value = weightedEa;
+      eaEl.disabled = false;
+      // Yellow highlight when at least one layer used theoretical value
+      const hasTheoretical = usable.some(l => l.method === 'theoretical');
+      eaEl.style.backgroundColor = hasTheoretical ? '#fffbe6' : '';
+      eaEl.style.borderColor     = hasTheoretical ? '#f0a500' : '';
+    }
+
+    // Clear Q10 (mutually exclusive)
+    const q10El = document.getElementById('sl-q10');
+    if (q10El) q10El.value = '';
+
+    // Trigger recalculation
+    if (typeof this.onEaChange === 'function') this.onEaChange();
+    else if (typeof this.calculate === 'function') this.calculate();
+  },
+
+  // ------------------------------------------------------------------
   // 🔀 UI TOGGLES - Single source of truth
   // ------------------------------------------------------------------
 
   /** Toggle manual override for barrier rate */
   toggleManualOverride(checked) {
-  this._manualOverride = !!checked;
-  const panel = document.getElementById('sl-panel-manual');
-  if (panel) panel.style.display = checked ? 'block' : 'none';
+    this._manualOverride = !!checked;
+    const panel = document.getElementById('sl-panel-manual');
+    if (panel) panel.style.display = checked ? 'block' : 'none';
 
-  // Blocca/sblocca i pulsanti sorgente
-  ['calc', 'db', 'company'].forEach(key => {
-    const btn = document.getElementById('sl-src-btn-' + key);
-    if (!btn) return;
-    btn.disabled = checked;
-    btn.style.opacity = checked ? '0.35' : '1';
-    btn.style.cursor = checked ? 'not-allowed' : 'pointer';
-  });
+    // Blocca/sblocca i pulsanti sorgente
+    ['calc', 'db', 'company'].forEach(key => {
+      const btn = document.getElementById('sl-src-btn-' + key);
+      if (!btn) return;
+      btn.disabled = checked;
+      btn.style.opacity = checked ? '0.35' : '1';
+      btn.style.cursor = checked ? 'not-allowed' : 'pointer';
+    });
 
-  // Nascondi tutti i pannelli sorgente quando override è attivo
-  ['calc', 'db', 'company'].forEach(p => {
-    const el = document.getElementById('sl-panel-' + p);
-    if (el) el.style.display = checked ? 'none' : (p === this._barrierSource ? 'block' : 'none');
-  });
+    // Nascondi tutti i pannelli sorgente quando override è attivo
+    ['calc', 'db', 'company'].forEach(p => {
+      const el = document.getElementById('sl-panel-' + p);
+      if (el) el.style.display = checked ? 'none' : (p === this._barrierSource ? 'block' : 'none');
+    });
 
-  if (checked) {
-    this.onManualRateChange();
-  } else {
-    // Ripristina il pannello attivo
-    this.setBarrierSource(this._barrierSource);
-  }
-},
+    if (checked) {
+      this.onManualRateChange();
+    } else {
+      // Ripristina il pannello attivo
+      this.setBarrierSource(this._barrierSource);
+    }
+  },
 
   /** Set barrier rate source: 'calc' | 'db' | 'company' */
   setBarrierSource(src) {
     if (!['calc', 'db', 'company'].includes(src)) return;
     this._barrierSource = src;
-    
+
     // Update button styles
     ['calc', 'db', 'company'].forEach(key => {
       const btn = document.getElementById(`sl-src-btn-${key}`);
@@ -131,7 +222,7 @@ const SL = {
     const geomSel = document.getElementById('geom-selector');
     const dimsSel = document.getElementById('dims-selector');
     const manInp  = document.getElementById('manual-area-input');
-    
+
     if (mode === 'auto') {
       if (geomSel) geomSel.style.display = 'grid';
       if (dimsSel) dimsSel.style.display = 'block';
@@ -149,10 +240,10 @@ const SL = {
     const sel = document.getElementById('sl-shape');
     if (!sel) return;
     const type = sel.value;
-    
+
     const pouchDims  = document.getElementById('dims-pouch');
     const bottleDims = document.getElementById('dims-bottle');
-    
+
     if (type === 'bottle') {
       if (pouchDims)  pouchDims.style.display  = 'none';
       if (bottleDims) bottleDims.style.display = 'grid';
@@ -168,8 +259,7 @@ const SL = {
     const sel = document.getElementById('sl-shape');
     if (!sel) return;
     const type = sel.value;
-    
-    // Toggle bottle/pouch dimensions
+
     const pouchDims  = document.getElementById('dims-pouch');
     const bottleDims = document.getElementById('dims-bottle');
     if (type === 'bottle') {
@@ -180,7 +270,6 @@ const SL = {
       if (bottleDims) bottleDims.style.display = 'none';
     }
 
-    // Update dimension labels and defaults
     const configs = {
       flat:     { w: 12, h: 17, d: 0,  l1: 'Width (cm)', l2: 'Height (cm)', l3: 'Depth/Gusset (cm)' },
       standup:  { w: 13, h: 22, d: 0,  l1: 'Width (cm)', l2: 'Height (cm)', l3: 'Gusset/Depth (cm)' },
@@ -191,7 +280,7 @@ const SL = {
       bottle:   { w: 0,  h: 0,  d: 0,  l1: '—', l2: '—', l3: '—' }
     };
     const cfg = configs[type] || configs.flat;
-    
+
     if (pouchDims && pouchDims.style.display !== 'none') {
       const labels = pouchDims.querySelectorAll('label');
       ['sl-w', 'sl-h', 'sl-d'].forEach((id, i) => {
@@ -215,11 +304,10 @@ const SL = {
     if (mode === 'manual') {
       area = parseFloat(document.getElementById('sl-area-manual')?.value) || 0;
     } else {
-      const type = document.getElementById('sl-shape')?.value || 'flat';
+      const type   = document.getElementById('sl-shape')?.value || 'flat';
       const margin = parseFloat(document.getElementById('sl-margin')?.value) || 0;
 
       if (type === 'bottle') {
-        // Complex bottle geometry calculation
         const R_body     = parseFloat(document.getElementById('sl-bottle-body-r')?.value) || 3.5;
         const H_body     = parseFloat(document.getElementById('sl-bottle-body-h')?.value) || 16;
         const R_neck     = parseFloat(document.getElementById('sl-bottle-neck-r')?.value) || 1.2;
@@ -228,27 +316,26 @@ const SL = {
 
         const areaBodyLat = 2 * Math.PI * R_body * H_body;
         const areaNeckLat = 2 * Math.PI * R_neck * H_neck;
-        const slantH = Math.sqrt(Math.pow(R_body - R_neck, 2) + Math.pow(H_shoulder, 2));
-        const areaShould = Math.PI * (R_body + R_neck) * slantH;
-        const areaBottom = Math.PI * Math.pow(R_body, 2);
+        const slantH      = Math.sqrt(Math.pow(R_body - R_neck, 2) + Math.pow(H_shoulder, 2));
+        const areaShould  = Math.PI * (R_body + R_neck) * slantH;
+        const areaBottom  = Math.PI * Math.pow(R_body, 2);
         const marginFactor = 1 + (margin / 100);
 
         area = (areaBodyLat + areaNeckLat + areaShould + areaBottom) * marginFactor / 10000;
       } else {
-        // Standard shapes
         const w = parseFloat(document.getElementById('sl-w')?.value) || 0;
         const h = parseFloat(document.getElementById('sl-h')?.value) || 0;
         const d = parseFloat(document.getElementById('sl-d')?.value) || 0;
-        
+
         const wT = w + margin * 2, hT = h + margin * 2, dT = d + margin * 2;
         let areaCm2 = 0;
 
-        switch(type) {
+        switch (type) {
           case 'flat':     areaCm2 = 2 * wT * hT; break;
           case 'standup':  areaCm2 = 2 * wT * hT * 1.3; break;
           case 'flow':     areaCm2 = wT * hT * 2.2; break;
           case 'box':      areaCm2 = 2 * (wT * hT + wT * dT + hT * dT); break;
-          case 'cylinder': areaCm2 = 2 * Math.PI * (d/2) * (d/2 + hT); break;
+          case 'cylinder': areaCm2 = 2 * Math.PI * (d / 2) * (d / 2 + hT); break;
           case 'tray':     areaCm2 = (wT * hT) + 2 * (wT * dT) + 2 * (hT * dT); break;
           default:         areaCm2 = 2 * wT * hT;
         }
@@ -256,7 +343,6 @@ const SL = {
       }
     }
 
-    // Update display
     const display = document.getElementById('sl-area-display');
     const hidden  = document.getElementById('sl-area');
     if (display) display.textContent = area.toFixed(4) + ' m²';
@@ -265,7 +351,7 @@ const SL = {
 
   /** Update area when manual input changes */
   updateManualArea() {
-    const val = document.getElementById('sl-area-manual')?.value || '0';
+    const val     = document.getElementById('sl-area-manual')?.value || '0';
     const display = document.getElementById('sl-area-display');
     const hidden  = document.getElementById('sl-area');
     if (display) display.textContent = val + ' m²';
@@ -279,11 +365,11 @@ const SL = {
   /** Handle product template change */
   onProductChange() {
     const prodKey = document.getElementById('sl-product')?.value;
-    const prod = PRODUCTS_DB[prodKey];
+    const prod    = PRODUCTS_DB[prodKey];
     if (!prod) return;
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-    
+
     if (prod.type === 'moisture') {
       set('sl-minit', prod.M_init);
       set('sl-mcrit', prod.M_crit);
@@ -293,6 +379,13 @@ const SL = {
       set('sl-mcrit', '');
       set('sl-ea', prod.Ea ? (prod.Ea / 1000).toFixed(1) : '');
     }
+
+    // Update Ea placeholder with product default
+    const eaEl = document.getElementById('sl-ea');
+    if (eaEl && prod.Ea) {
+      eaEl.placeholder = `Auto (${(prod.Ea / 1000).toFixed(0)} kJ/mol)`;
+    }
+
     this.drawSafeZone();
   },
 
@@ -300,16 +393,16 @@ const SL = {
   drawSafeZone() {
     const init = parseFloat(document.getElementById('sl-minit')?.value) || 0;
     const crit = parseFloat(document.getElementById('sl-mcrit')?.value) || 0;
-    
+
     const vLabel = document.getElementById('sl-mcrit-val');
     const bar    = document.getElementById('sl-safe-green');
     const marker = document.getElementById('sl-safe-now');
-    
+
     if (!vLabel || !bar || !marker) return;
-    
+
     vLabel.textContent = crit + '%';
     const max = Math.max(crit * 1.5, 20);
-    bar.style.width = (crit / max * 100) + '%';
+    bar.style.width  = (crit / max * 100) + '%';
     marker.style.left = (init / max * 100) + '%';
   },
 
@@ -319,11 +412,11 @@ const SL = {
 
   /** Handle Ea input - disable Q10 when Ea is set */
   onEaInput() {
-    const ea = document.getElementById('sl-ea')?.value;
-    const q10 = document.getElementById('sl-q10');
+    const ea   = document.getElementById('sl-ea')?.value;
+    const q10  = document.getElementById('sl-q10');
     const hint = document.getElementById('sl-ea-q10-hint');
     if (!q10 || !hint) return;
-    
+
     if (ea && parseFloat(ea) > 0) {
       q10.disabled = true;
       q10.style.opacity = '0.4';
@@ -338,11 +431,11 @@ const SL = {
 
   /** Handle Q10 input - disable Ea when Q10 is set */
   onQ10Input() {
-    const q10 = document.getElementById('sl-q10')?.value;
-    const ea = document.getElementById('sl-ea');
+    const q10  = document.getElementById('sl-q10')?.value;
+    const ea   = document.getElementById('sl-ea');
     const hint = document.getElementById('sl-ea-q10-hint');
     if (!ea || !hint) return;
-    
+
     if (q10 && parseFloat(q10) > 0) {
       ea.disabled = true;
       ea.style.opacity = '0.4';
@@ -365,44 +458,44 @@ const SL = {
     const chainDiv  = document.getElementById('sl-cond-chain');
     const btnSingle = document.getElementById('btn-single');
     const btnChain  = document.getElementById('btn-chain');
-    
+
     if (singleDiv) singleDiv.style.display = (mode === 'single') ? 'block' : 'none';
     if (chainDiv)  chainDiv.style.display  = (mode === 'chain')  ? 'block' : 'none';
-    
+
     const setActive = (btn, active) => {
       if (!btn) return;
       btn.style.background = active ? 'var(--primary)' : 'var(--bg)';
-      btn.style.color = active ? '#fff' : 'var(--text-light)';
+      btn.style.color      = active ? '#fff' : 'var(--text-light)';
     };
     setActive(btnSingle, mode === 'single');
-    setActive(btnChain, mode === 'chain');
+    setActive(btnChain,  mode === 'chain');
   },
 
   /** Add a new row to the logistics chain table */
   addChainRow() {
     const tbody = document.getElementById('sl-chain-rows');
     if (!tbody) return;
-    
+
     tbody.insertAdjacentHTML('beforeend', `
     <tr style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04);animation:fadeIn 0.2s ease">
       <td style="padding:0.5rem">
-        <input type="text" value="Storage" 
+        <input type="text" value="Storage"
           style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fafbfc">
       </td>
       <td style="padding:0.5rem">
-        <input type="number" value="22" class="sl-ct" 
+        <input type="number" value="22" class="sl-ct"
           style="width:100%;padding:0.55rem 0.4rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;text-align:center">
       </td>
       <td style="padding:0.5rem">
-        <input type="number" value="60" class="sl-cr" 
+        <input type="number" value="60" class="sl-cr"
           style="width:100%;padding:0.55rem 0.4rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;text-align:center">
       </td>
       <td style="padding:0.5rem">
-        <input type="number" value="30" class="sl-cd" 
+        <input type="number" value="30" class="sl-cd"
           style="width:100%;padding:0.55rem 0.4rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;text-align:center">
       </td>
       <td style="padding:0.5rem;text-align:center">
-        <span style="cursor:pointer;color:var(--danger);font-size:1.2rem;line-height:1" 
+        <span style="cursor:pointer;color:var(--danger);font-size:1.2rem;line-height:1"
           onclick="this.closest('tr').remove()">✕</span>
       </td>
     </tr>`);
@@ -416,9 +509,9 @@ const SL = {
   solveGAB(M, params) {
     if (!params?.M_m || !params?.C || !params?.K) return 0.5;
     let low = 0.01, high = 0.99;
-    
+
     for (let i = 0; i < 50; i++) {
-      const aw = (low + high) / 2;
+      const aw    = (low + high) / 2;
       const denom = (1 - params.K * aw) * (1 - params.K * aw + params.C * params.K * aw);
       if (denom === 0) break;
       const Mc = (params.M_m * params.C * params.K * aw) / denom;
@@ -437,10 +530,11 @@ const SL = {
 
   /** Update the active rate summary display */
   _updateRateSummary(rateStr) {
-    const el = document.getElementById('sl-active-rate');
+    const el   = document.getElementById('sl-active-rate');
     const unit = (State.mode || 'wvtr') === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
     if (el) el.textContent = rateStr + ' ' + unit;
   },
+
   onManualRateChange() {
     const rate = parseFloat(document.getElementById('sl-rate-manual')?.value) || 0;
     this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
@@ -453,7 +547,7 @@ const SL = {
   /** Execute shelf life calculation */
   calculate() {
     const prodKey = document.getElementById('sl-product')?.value;
-    const prod = PRODUCTS_DB[prodKey];
+    const prod    = PRODUCTS_DB[prodKey];
     if (!prod) { alert('⚠️ Select a product type first'); return; }
 
     // 1. Get barrier rate
@@ -464,76 +558,76 @@ const SL = {
     }
 
     // 2. Area & Weight
-    const A = parseFloat(document.getElementById('sl-area')?.value) || 0.1;
+    const A = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
     const W = parseFloat(document.getElementById('sl-weight')?.value) || 100;
 
     // 3. Storage conditions (single or chain)
     let T_store = 25, RH_out = 65;
     const isChain = document.getElementById('sl-cond-chain')?.style.display !== 'none';
-    
+
     if (isChain) {
       let totD = 0, wT = 0, wRH = 0;
       document.querySelectorAll('#sl-chain-rows tr').forEach(r => {
-        const d = parseFloat(r.querySelector('.sl-cd')?.value) || 0;
+        const d  = parseFloat(r.querySelector('.sl-cd')?.value) || 0;
         wT  += (parseFloat(r.querySelector('.sl-ct')?.value) || 0) * d;
         wRH += (parseFloat(r.querySelector('.sl-cr')?.value) || 0) * d;
         totD += d;
       });
-      if (totD > 0) {
-        T_store = wT / totD;
-        RH_out  = wRH / totD;
-      }
+      if (totD > 0) { T_store = wT / totD; RH_out = wRH / totD; }
     } else {
-      T_store = parseFloat(document.getElementById('sl-temp')?.value) || 25;
+      T_store = parseFloat(document.getElementById('sl-temp')?.value)   || 25;
       RH_out  = parseFloat(document.getElementById('sl-rh-ext')?.value) || 65;
     }
 
-    // 4. Thermal acceleration (Arrhenius or Q10)
-    const Ea_val = parseFloat(document.getElementById('sl-ea')?.value) || (prod.Ea ? prod.Ea / 1000 : 60);
-    const Q10_val = parseFloat(document.getElementById('sl-q10')?.value) || (prod.Q10 || 2.0);
-    const Ea_J = Ea_val * 1000;
-    
-    const eaInput = document.getElementById('sl-ea')?.value;
-    const eaDisabled = document.getElementById('sl-ea')?.disabled;
-    
+    // 4. Thermal acceleration — three-branch fallback:
+    //    (a) Ea field filled & enabled  → Arrhenius with user value
+    //    (b) Q10 field filled & enabled → Q10 rule with user value
+    //    (c) Both empty/disabled        → Arrhenius with product default Ea
+    const eaIn  = document.getElementById('sl-ea')?.value;
+    const eaDis = document.getElementById('sl-ea')?.disabled;
+    const q10In = document.getElementById('sl-q10')?.value;
+    const q10Dis = document.getElementById('sl-q10')?.disabled;
+
     let accel = 1;
-    if (eaInput && parseFloat(eaInput) > 0 && !eaDisabled) {
-      // Arrhenius equation
+    if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
+      const Ea_J = parseFloat(eaIn) * 1000;
       accel = Math.exp(-(Ea_J / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
+    } else if (q10In && parseFloat(q10In) > 0 && !q10Dis) {
+      accel = Math.pow(parseFloat(q10In), (T_store - 25) / 10);
     } else {
-      // Q10 rule
-      accel = Math.pow(Q10_val, (T_store - 25) / 10);
+      // Product default Ea (J/mol)
+      const eaDef = prod.Ea ? prod.Ea / 1000 : 60; // already in kJ/mol
+      accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
     }
 
-    // 5. Hygroscopic correction (if materials have beta coefficient)
+    // 5. Hygroscopic correction
     let hygroFactor = 1;
-const hygroMsg = [];
+    const hygroMsg  = [];
 
-if (!this._manualOverride && State.layers?.length && State.selCond) {
+    if (!this._manualOverride && State.layers?.length && State.selCond) {
       for (const layer of State.layers) {
         if (!layer.mid) continue;
         const mat = DB.materials?.find(m => m.id === layer.mid);
         if (!mat) continue;
-        
+
         const isWVTR = (State.mode || 'wvtr') === 'wvtr';
-        const beta = isWVTR ? (mat.hygroscopicBetaWVTR || 0) : (mat.hygroscopicBetaOTR || 0);
+        const beta   = isWVTR ? (mat.hygroscopicBetaWVTR || 0) : (mat.hygroscopicBetaOTR || 0);
         if (beta <= 0) continue;
-        
-        // Find closest test condition
+
         let testRH = 50;
         if (mat.validConditions?.length > 0) {
           let bestCond = mat.validConditions[0];
-          let minDiff = Math.abs(mat.validConditions[0].temperature - T_store);
+          let minDiff  = Math.abs(mat.validConditions[0].temperature - T_store);
           for (const cond of mat.validConditions) {
             const diff = Math.abs(cond.temperature - T_store);
             if (diff < minDiff) { minDiff = diff; bestCond = cond; }
           }
           testRH = bestCond.humidity;
         }
-        
+
         const rhDiff = RH_out - testRH;
         const factor = Math.exp(beta * rhDiff);
-        
+
         if (Math.abs(rhDiff) > 2) {
           hygroFactor *= factor;
           hygroMsg.push(`${mat.name}: ×${factor.toFixed(2)} @ ${RH_out.toFixed(0)}% RH vs ${testRH}% RH test`);
@@ -553,26 +647,24 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     };
 
     if (prod.type === 'moisture') {
-      // Moisture ingress simulation
       const M_crit = parseFloat(document.getElementById('sl-mcrit')?.value) || prod.M_crit;
       const M_init = parseFloat(document.getElementById('sl-minit')?.value) || prod.M_init;
-      
+
       if (M_crit <= M_init) { alert('⚠️ Critical moisture must be > initial'); return; }
-      
+
       const T_test_std = 23;
-      const Psat_std = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
-      const dP_std = Psat_std * 0.50;
-      const Psat = 0.61094 * Math.exp((17.625 * T_store) / (T_store + 243.04)) * 1000;
-      
+      const Psat_std   = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
+      const dP_std     = Psat_std * 0.50;
+      const Psat       = 0.61094 * Math.exp((17.625 * T_store) / (T_store + 243.04)) * 1000;
+
       let M = M_init, t = 0;
       result.history = [{ t: 0, M, quality: 100 }];
-      
+
       while (M < M_crit && t < 5000) {
-        const aw = this.solveGAB(M / 100, prod.GAB);
+        const aw  = this.solveGAB(M / 100, prod.GAB);
         const RH_in = aw * 100;
-        const dP = Psat * Math.max((RH_out - RH_in), 1) / 100;
-        const dM = (effectiveRate * (dP / dP_std) * A) / W * 100;
-        
+        const dP  = Psat * Math.max((RH_out - RH_in), 1) / 100;
+        const dM  = (effectiveRate * (dP / dP_std) * A) / W * 100;
         M += dM; t++;
         result.history.push({
           t,
@@ -580,17 +672,16 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
           quality: Math.max(0, 100 - ((M - M_init) / (M_crit - M_init)) * 100)
         });
       }
-      result.days = t;
+      result.days   = t;
       result.M_crit = M_crit;
       result.M_init = M_init;
-      
+
     } else {
-      // Oxygen transmission / oxidation simulation
-      const fatKg = prod.fat_kg || 0.3;
+      const fatKg  = prod.fat_kg || 0.3;
       const O2_crit = prod.O2_crit || 400;
       const totalO2 = O2_crit * fatKg;
-      const dayO2 = effectiveRate * A * 0.21; // 21% O2 in air
-      
+      const dayO2  = effectiveRate * A * 0.21;
+
       if (dayO2 <= 0) {
         result.days = Infinity;
       } else {
@@ -617,12 +708,14 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
   renderResult(res) {
     const panel = document.getElementById('sl-result-panel');
     if (!panel) return;
-    
-    const months = res.days / 30.44;
-    const years = res.days / 365.25;
-    const unit = res.mode === 'wvtr' ? 'Moisture Gain' : 'Lipid Oxidation';
-    const daysStr = isFinite(res.days) 
-      ? (typeof formatWithSigFigs === 'function' ? formatWithSigFigs(res.days, typeof getDisplayPrecision === 'function' ? getDisplayPrecision() : 3) : res.days.toFixed(1))
+
+    const months  = res.days / 30.44;
+    const years   = res.days / 365.25;
+    const unit    = res.mode === 'wvtr' ? 'Moisture Gain' : 'Lipid Oxidation';
+    const daysStr = isFinite(res.days)
+      ? (typeof formatWithSigFigs === 'function'
+          ? formatWithSigFigs(res.days, typeof getDisplayPrecision === 'function' ? getDisplayPrecision() : 3)
+          : res.days.toFixed(1))
       : '∞';
 
     panel.innerHTML = `
@@ -636,26 +729,24 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       </div>
     </div>`;
 
-    // Hygroscopic warning
     if (res.hygroWarning) {
       panel.innerHTML += `
       <div class="alert alert-warning" style="margin-top:0.5rem;font-size:0.75rem;
         background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fcd34d;
         border-radius:8px;padding:0.6rem 0.8rem">
         <strong style="font-weight:700">⚠️ ${res.hygroWarning.message}</strong><br>
-        ${res.hygroWarning.details.map(d => 
+        ${res.hygroWarning.details.map(d =>
           `<span style="display:block;margin-top:0.2rem;color:#92400e;font-weight:500">• ${d}</span>`
         ).join('')}
       </div>`;
     }
 
-    // Trigger chart rendering
     const chartsContainer = document.getElementById('sl-charts-container');
     if (chartsContainer) {
       chartsContainer.style.display = 'block';
       requestAnimationFrame(() => { setTimeout(() => this.drawCharts(res), 100); });
     }
-    
+
     const logisticsContainer = document.getElementById('sl-logistics-charts');
     if (logisticsContainer) {
       logisticsContainer.style.display = res.isChain ? 'block' : 'none';
@@ -667,7 +758,6 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
 
   /** Draw main charts: Quality Decay + Temp Sensitivity */
   drawCharts(res) {
-    // Cleanup existing charts
     if (typeof destroyChart === 'function') {
       destroyChart('slDecay');
       destroyChart('slTemp');
@@ -687,33 +777,24 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
               data: res.history.map(h => h.quality),
               borderColor: '#3b82f6',
               backgroundColor: 'rgba(59,130,246,0.1)',
-              fill: true,
-              tension: 0.35,
-              pointRadius: 2,
-              borderWidth: 2
+              fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2
             },
             {
               label: 'Critical (0%)',
               data: new Array(res.history.length).fill(0),
               borderColor: '#ef4444',
               borderDash: [6, 4],
-              borderWidth: 2,
-              pointRadius: 0,
-              fill: false
+              borderWidth: 2, pointRadius: 0, fill: false
             }
           ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } }
-          },
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
           scales: {
             x: { title: { display: true, text: 'Days' }, ticks: { font: { size: 9 } } },
             y: {
-              beginAtZero: true,
-              max: 100,
+              beginAtZero: true, max: 100,
               title: { display: true, text: 'Quality %' },
               ticks: { font: { size: 9 }, callback: v => v + '%' }
             }
@@ -725,30 +806,32 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     // Temperature Sensitivity Chart
     const ctx2 = document.getElementById('slTempChart')?.getContext('2d');
     if (ctx2 && typeof Chart !== 'undefined') {
-      const Ea_kJ = parseFloat(document.getElementById('sl-ea')?.value) || 60;
-      const Q10 = parseFloat(document.getElementById('sl-q10')?.value) || 2.0;
-      const A = parseFloat(document.getElementById('sl-area')?.value) || 0.1;
-      const W = parseFloat(document.getElementById('sl-weight')?.value) || 100;
-      
+      const A        = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
+      const W        = parseFloat(document.getElementById('sl-weight')?.value) || 100;
       const baseRate = this._getActiveRate() || 0.5;
-      const temps = Array.from({ length: 36 }, (_, i) => 15 + i);
-      
+      const temps    = Array.from({ length: 36 }, (_, i) => 15 + i);
+
+      const eaIn  = document.getElementById('sl-ea')?.value;
+      const eaDis = document.getElementById('sl-ea')?.disabled;
+      const q10In = document.getElementById('sl-q10')?.value;
+      const q10Dis = document.getElementById('sl-q10')?.disabled;
+      const prodKey = document.getElementById('sl-product')?.value;
+      const prod    = PRODUCTS_DB[prodKey];
+
       const daysArr = temps.map(T => {
-        const eaIn = document.getElementById('sl-ea')?.value;
-        const eaDis = document.getElementById('sl-ea')?.disabled;
         let acc = 1;
-        
         if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-          acc = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+          acc = Math.exp(-(parseFloat(eaIn) * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+        } else if (q10In && parseFloat(q10In) > 0 && !q10Dis) {
+          acc = Math.pow(parseFloat(q10In), (T - 25) / 10);
         } else {
-          acc = Math.pow(Q10, (T - 25) / 10);
+          const eaDef = prod?.Ea ? prod.Ea / 1000 : 60;
+          acc = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
         }
-        
         const rate = baseRate * acc;
         if (res.type === 'moisture') {
           return ((res.M_crit || 8) - (res.M_init || 3)) / 100 * W / (rate * A);
         } else {
-          const prod = PRODUCTS_DB[document.getElementById('sl-product')?.value];
           return ((prod?.O2_crit || 400) * (prod?.fat_kg || 0.3) * 0.21) / (rate * A);
         }
       });
@@ -762,13 +845,11 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
             label: 'Shelf Life vs Temp',
             data: daysArr,
             borderColor: '#8b5cf6',
-            fill: true,
-            tension: 0.4
+            fill: true, tension: 0.4
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive: true, maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
             x: { title: { display: true, text: 'Storage °C' } },
@@ -791,32 +872,30 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     const rows = document.querySelectorAll('#sl-chain-rows tr');
     if (!rows.length) return;
 
-    // Conditions Chart (Temp + RH per step)
+    // Conditions Chart
     const ctx1 = document.getElementById('slChainChart')?.getContext('2d');
     if (ctx1 && typeof Chart !== 'undefined') {
       const labels = [], temps = [], rhs = [];
       rows.forEach(r => {
         labels.push(r.querySelector('input[type="text"]')?.value || 'Step');
         temps.push(parseFloat(r.querySelector('.sl-ct')?.value) || 0);
-        rhs.push(parseFloat(r.querySelector('.sl-cr')?.value) || 0);
+        rhs.push(parseFloat(r.querySelector('.sl-cr')?.value)   || 0);
       });
-
       if (!window.chartInstances) window.chartInstances = {};
       window.chartInstances.slChain = new Chart(ctx1, {
         type: 'bar',
         data: {
           labels,
           datasets: [
-            { label: 'Temperature (°C)', data: temps, backgroundColor: 'rgba(59,130,246,0.7)', yAxisID: 'y' },
-            { label: 'RH (%)', data: rhs, backgroundColor: 'rgba(239,68,68,0.7)', yAxisID: 'y1' }
+            { label: 'Temperature (°C)', data: temps, backgroundColor: 'rgba(59,130,246,0.7)', yAxisID: 'y'  },
+            { label: 'RH (%)',           data: rhs,   backgroundColor: 'rgba(239,68,68,0.7)',  yAxisID: 'y1' }
           ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive: true, maintainAspectRatio: false,
           plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
           scales: {
-            y: { position: 'left', title: { display: true, text: '°C' } },
+            y:  { position: 'left',  title: { display: true, text: '°C'   } },
             y1: { position: 'right', title: { display: true, text: 'RH %' } }
           }
         }
@@ -837,7 +916,6 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         cumDays.push(cum);
         cumLabels.push(r.querySelector('input[type="text"]')?.value || `Step ${i + 1}`);
       });
-
       if (!window.chartInstances) window.chartInstances = {};
       window.chartInstances.slCumulative = new Chart(ctx2, {
         type: 'line',
@@ -847,14 +925,11 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
             label: 'Cumulative Days',
             data: cumDays,
             borderColor: '#16a34a',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 5
+            fill: true, tension: 0.3, pointRadius: 5
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive: true, maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: { y: { title: { display: true, text: 'Days' } } }
         }
@@ -862,24 +937,23 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     }
   },
 
-  /** Draw step impact chart (% of shelf life consumed per logistics step) */
+  /** Draw step impact chart */
   drawStepImpactChart(res) {
     if (typeof destroyChart === 'function') destroyChart('slStepImpact');
-    
+
     const canvas = document.getElementById('slStepImpactChart');
     if (!canvas || !res || typeof Chart === 'undefined') return;
-    
-    const ctx = canvas.getContext('2d');
-    const rows = document.querySelectorAll('#sl-chain-rows tr');
+
+    const ctx     = canvas.getContext('2d');
+    const rows    = document.querySelectorAll('#sl-chain-rows tr');
     if (!rows.length) return;
 
-    const A = parseFloat(document.getElementById('sl-area')?.value) || 0.1;
-    const W = parseFloat(document.getElementById('sl-weight')?.value) || 100;
+    const A       = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
+    const W       = parseFloat(document.getElementById('sl-weight')?.value) || 100;
     const prodKey = document.getElementById('sl-product')?.value;
-    const prod = PRODUCTS_DB[prodKey];
+    const prod    = PRODUCTS_DB[prodKey];
     if (!prod) return;
 
-    // Calculate total allowed transfer
     let totalAllowed = 0;
     if (prod.type === 'moisture') {
       const Mc = parseFloat(document.getElementById('sl-mcrit')?.value) || prod.M_crit;
@@ -892,37 +966,41 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     const baseRate = this._getActiveRate() || 0.5;
     if (!baseRate || baseRate <= 0) return;
 
+    const eaIn   = document.getElementById('sl-ea')?.value;
+    const eaDis  = document.getElementById('sl-ea')?.disabled;
+    const q10In  = document.getElementById('sl-q10')?.value;
+    const q10Dis = document.getElementById('sl-q10')?.disabled;
+
     const labels = [], consumptionPct = [], details = [];
     let cumConsumed = 0;
 
     rows.forEach((r, idx) => {
       const name = r.querySelector('input[type="text"]')?.value || `Step ${idx + 1}`;
-      const T = parseFloat(r.querySelector('.sl-ct')?.value) || 25;
-      const RH = parseFloat(r.querySelector('.sl-cr')?.value) || 65;
+      const T    = parseFloat(r.querySelector('.sl-ct')?.value) || 25;
+      const RH   = parseFloat(r.querySelector('.sl-cr')?.value) || 65;
       const days = parseFloat(r.querySelector('.sl-cd')?.value) || 1;
-      
-      const Ea_kJ = parseFloat(document.getElementById('sl-ea')?.value) || 60;
-      const Q10 = parseFloat(document.getElementById('sl-q10')?.value) || 2.0;
-      const eaIn = document.getElementById('sl-ea')?.value;
-      const eaDis = document.getElementById('sl-ea')?.disabled;
-      
+
+      // Three-branch thermal acceleration
       let accel = 1;
       if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-        accel = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+        accel = Math.exp(-(parseFloat(eaIn) * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+      } else if (q10In && parseFloat(q10In) > 0 && !q10Dis) {
+        accel = Math.pow(parseFloat(q10In), (T - 25) / 10);
       } else {
-        accel = Math.pow(Q10, (T - 25) / 10);
+        const eaDef = prod.Ea ? prod.Ea / 1000 : 60;
+        accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
       }
 
       // Hygroscopic factor for this step
       let hygroFactor = 1;
       if (State.layers) {
-  for (const layer of State.layers) {
+        for (const layer of State.layers) {
           if (!layer.mid) continue;
-          const mat = DB.materials?.find(m => m.id === layer.mid);
+          const mat  = DB.materials?.find(m => m.id === layer.mid);
           if (!mat) continue;
-          const beta = ((State.mode || 'wvtr') === 'wvtr') 
-            ? (mat.hygroscopicBetaWVTR || 0) 
-            : (mat.hygroscopicBetaOTR || 0);
+          const beta = ((State.mode || 'wvtr') === 'wvtr')
+            ? (mat.hygroscopicBetaWVTR || 0)
+            : (mat.hygroscopicBetaOTR  || 0);
           if (beta > 0) {
             let testRH = 50;
             if (mat.validConditions?.length) {
@@ -938,19 +1016,19 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         }
       }
 
-      const effRate = baseRate * accel * hygroFactor;
+      const effRate    = baseRate * accel * hygroFactor;
       const transferred = effRate * A * days * (res.type === 'otx' ? 0.21 : 1);
-      const pct = totalAllowed > 0 ? (transferred / totalAllowed) * 100 : 0;
-      
+      const pct        = totalAllowed > 0 ? (transferred / totalAllowed) * 100 : 0;
+
       labels.push(name);
       consumptionPct.push(parseFloat(pct.toFixed(1)));
       cumConsumed += pct;
       details.push({ name, T, RH, days, pct: pct.toFixed(1), cumulative: cumConsumed.toFixed(1) });
     });
 
-    const colors = consumptionPct.map(p => 
-      p >= 30 ? 'rgba(239,68,68,0.85)' : 
-      p >= 15 ? 'rgba(245,158,11,0.85)' : 
+    const colors = consumptionPct.map(p =>
+      p >= 30 ? 'rgba(239,68,68,0.85)' :
+      p >= 15 ? 'rgba(245,158,11,0.85)' :
       'rgba(59,130,246,0.7)'
     );
 
@@ -964,14 +1042,12 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
           data: consumptionPct,
           backgroundColor: colors,
           borderColor: colors,
-          borderWidth: 1,
-          borderRadius: 6
+          borderWidth: 1, borderRadius: 6
         }]
       },
       options: {
         indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -985,8 +1061,7 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         },
         scales: {
           x: {
-            beginAtZero: true,
-            max: 100,
+            beginAtZero: true, max: 100,
             title: { display: true, text: '% of Total Shelf Life' },
             ticks: { callback: v => v + '%' }
           }
@@ -995,80 +1070,82 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     });
   },
 
-  /** Draw moisture accumulation chart (for moisture-type products) */
+  /** Draw moisture accumulation chart */
   drawMoistureAccumulationChart(res) {
     if (typeof destroyChart === 'function') destroyChart('slMoistureAcc');
-    
+
     const canvas = document.getElementById('slMoistureAccChart');
     if (!canvas || !res || res.type !== 'moisture' || typeof Chart === 'undefined') return;
-    
-    const ctx = canvas.getContext('2d');
-    const rows = document.querySelectorAll('#sl-chain-rows tr');
+
+    const ctx     = canvas.getContext('2d');
+    const rows    = document.querySelectorAll('#sl-chain-rows tr');
     if (!rows.length) return;
 
     const prodKey = document.getElementById('sl-product')?.value;
-    const prod = PRODUCTS_DB[prodKey];
+    const prod    = PRODUCTS_DB[prodKey];
     if (!prod || prod.type !== 'moisture') return;
 
     const M_crit = parseFloat(document.getElementById('sl-mcrit')?.value) || prod.M_crit;
     const M_init = parseFloat(document.getElementById('sl-minit')?.value) || prod.M_init;
-    const A = parseFloat(document.getElementById('sl-area')?.value) || 0.1;
-    const W = parseFloat(document.getElementById('sl-weight')?.value) || 100;
-    
+    const A      = parseFloat(document.getElementById('sl-area')?.value)   || 0.1;
+    const W      = parseFloat(document.getElementById('sl-weight')?.value) || 100;
+
     let baseRate = this._getActiveRate();
     if (!baseRate || baseRate <= 0) baseRate = 0.5;
 
     const T_test_std = 23;
-    const Psat_std = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
-    const dP_std = Psat_std * 0.50;
+    const Psat_std   = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
+    const dP_std     = Psat_std * 0.50;
+
+    const eaIn   = document.getElementById('sl-ea')?.value;
+    const eaDis  = document.getElementById('sl-ea')?.disabled;
+    const q10In  = document.getElementById('sl-q10')?.value;
+    const q10Dis = document.getElementById('sl-q10')?.disabled;
 
     const labels = [], moisturePoints = [], pointDetails = [];
     let M_current = M_init, dayCounter = 0;
 
     rows.forEach((r, idx) => {
-      const name = r.querySelector('input[type="text"]')?.value || `Step ${idx + 1}`;
-      const T = parseFloat(r.querySelector('.sl-ct')?.value) || 25;
+      const name   = r.querySelector('input[type="text"]')?.value || `Step ${idx + 1}`;
+      const T      = parseFloat(r.querySelector('.sl-ct')?.value) || 25;
       const RH_out = parseFloat(r.querySelector('.sl-cr')?.value) || 65;
-      const days = parseFloat(r.querySelector('.sl-cd')?.value) || 1;
-      
-      const Psat = 0.61094 * Math.exp((17.625 * T) / (T + 243.04)) * 1000;
-      const Ea_kJ = parseFloat(document.getElementById('sl-ea')?.value) || 60;
-      const Q10 = parseFloat(document.getElementById('sl-q10')?.value) || 2.0;
-      const eaIn = document.getElementById('sl-ea')?.value;
-      const eaDis = document.getElementById('sl-ea')?.disabled;
-      
+      const days   = parseFloat(r.querySelector('.sl-cd')?.value) || 1;
+      const Psat   = 0.61094 * Math.exp((17.625 * T) / (T + 243.04)) * 1000;
+
+      // Three-branch thermal acceleration
       let accel = 1;
       if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-        accel = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+        accel = Math.exp(-(parseFloat(eaIn) * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+      } else if (q10In && parseFloat(q10In) > 0 && !q10Dis) {
+        accel = Math.pow(parseFloat(q10In), (T - 25) / 10);
       } else {
-        accel = Math.pow(Q10, (T - 25) / 10);
+        const eaDef = prod.Ea ? prod.Ea / 1000 : 60;
+        accel = Math.exp(-(eaDef * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
       }
 
       // Hygroscopic factor
       let hygroFactor = 1;
       if (State.layers) {
-  for (const layer of State.layers) {
+        for (const layer of State.layers) {
           if (!layer.mid) continue;
-          const mat = DB.materials?.find(m => m.id === layer.mid);
+          const mat  = DB.materials?.find(m => m.id === layer.mid);
           if (!mat) continue;
-          const beta = mat.hygroscopicBetaWVTR || 0;
-          const refRH = mat.hygroscopicRefRHWVTR || 50;
+          const beta   = mat.hygroscopicBetaWVTR || 0;
+          const refRH  = mat.hygroscopicRefRHWVTR || 50;
           if (beta > 0) hygroFactor *= Math.exp(beta * (RH_out - refRH));
         }
       }
 
       const effRate = baseRate * accel * hygroFactor;
-      const step = Math.max(1, Math.floor(days / 8));
-      
+      const step    = Math.max(1, Math.floor(days / 8));
+
       for (let d = 0; d < days; d++) {
         const aw_cur = Math.min(0.99, Math.max(0.01, M_current / M_crit * 0.85));
-        const RH_in = aw_cur * 100;
-        const dP = Psat * Math.max((RH_out - RH_in), 1) / 100;
-        const dM = (effRate * (dP / dP_std) * A) / W * 100;
-        
-        M_current = Math.min(M_current + dM, M_crit * 1.5);
+        const RH_in  = aw_cur * 100;
+        const dP     = Psat * Math.max((RH_out - RH_in), 1) / 100;
+        const dM     = (effRate * (dP / dP_std) * A) / W * 100;
+        M_current    = Math.min(M_current + dM, M_crit * 1.5);
         dayCounter++;
-        
         if (d % step === 0 || d === days - 1) {
           labels.push(`${name}+${d + 1}d`);
           moisturePoints.push(parseFloat(M_current.toFixed(2)));
@@ -1081,7 +1158,7 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
     });
 
     const maxMoisture = moisturePoints.length > 0 ? Math.max(...moisturePoints) : M_crit;
-    
+
     try {
       if (!window.chartInstances) window.chartInstances = {};
       window.chartInstances.slMoistureAcc = new Chart(ctx, {
@@ -1094,9 +1171,8 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
               data: moisturePoints,
               borderColor: '#3b82f6',
               backgroundColor: 'rgba(59,130,246,0.2)',
-              fill: true,
-              tension: 0.35,
-              pointRadius: ctx => pointDetails[ctx.dataIndex]?.isEnd ? 5 : 3,
+              fill: true, tension: 0.35,
+              pointRadius:      ctx => pointDetails[ctx.dataIndex]?.isEnd ? 5 : 3,
               pointHoverRadius: 7,
               pointBackgroundColor: ctx => moisturePoints[ctx.dataIndex] >= M_crit ? '#ef4444' : '#3b82f6',
               pointBorderColor: '#fff',
@@ -1108,24 +1184,21 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
               data: new Array(labels.length).fill(M_crit),
               borderColor: '#ef4444',
               borderDash: [6, 4],
-              borderWidth: 2.5,
-              pointRadius: 0,
-              fill: false
+              borderWidth: 2.5, pointRadius: 0, fill: false
             }
           ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive: true, maintainAspectRatio: false,
           plugins: {
             legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 }, padding: 10 } },
             tooltip: {
               callbacks: {
-                label: function(ctx) {
-                  const val = ctx.parsed.y;
+                label: function (ctx) {
+                  const val    = ctx.parsed.y;
                   const detail = pointDetails[ctx.dataIndex];
-                  const status = val >= M_crit ? ' 🔴 ABOVE LIMIT' : 
-                                val >= M_crit * 0.9 ? ' 🟡 WARNING' : ' 🟢 Safe';
+                  const status = val >= M_crit            ? ' 🔴 ABOVE LIMIT' :
+                                 val >= M_crit * 0.9     ? ' 🟡 WARNING'     : ' 🟢 Safe';
                   return [
                     ` ${ctx.dataset.label}: ${val.toFixed(2)}%${status}`,
                     ` Day ${detail?.day || ctx.dataIndex}`,
@@ -1139,14 +1212,14 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
             x: {
               title: { display: true, text: 'Logistics Chain Progress', font: { size: 10 } },
               ticks: { font: { size: 8 }, maxRotation: 45 },
-              grid: { display: false }
+              grid:  { display: false }
             },
             y: {
               beginAtZero: true,
               max: Math.max(M_crit * 1.3, maxMoisture * 1.1),
               title: { display: true, text: 'Moisture Content (%)', font: { size: 10 } },
               ticks: { callback: v => v.toFixed(1) + '%', font: { size: 9 } },
-              grid: { color: 'rgba(0,0,0,0.04)' }
+              grid:  { color: 'rgba(0,0,0,0.04)' }
             }
           }
         }
