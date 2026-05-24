@@ -883,8 +883,14 @@ function toggleCompare(id) {
 
 function postCompareRender() {
     if(State.compareIds.length < 1) return;
+    // Reset compareIds che appartengono a mode diverso
+    var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
+    State.compareIds = State.compareIds.filter(function(id){
+        return filteredLams.some(function(l){ return l.id === id; });
+    });
+    if(State.compareIds.length < 1) return;
     var selected = [];
-    for(var i=0; i<DB.laminates.length; i++) if(State.compareIds.indexOf(DB.laminates[i].id) >= 0) selected.push(DB.laminates[i]);
+    for(var i=0; i<filteredLams.length; i++) if(State.compareIds.indexOf(filteredLams[i].id) >= 0) selected.push(filteredLams[i]);
     var unit = getUnit();
     var tableEl = document.getElementById('compare-table');
     if(tableEl && selected.length > 0){
