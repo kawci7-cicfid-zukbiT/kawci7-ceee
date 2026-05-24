@@ -1648,10 +1648,10 @@ if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
       const lams = await loadCompanyLaminates();
       const modeLabel = (State.mode || 'wvtr') === 'wvtr' ? 'WVTR' : 'OTR';
       const filtered = lams.filter(l => l.mode === State.mode);
-sel.innerHTML = filtered.length === 0
-  ? `<option value="">No ${State.mode.toUpperCase()} laminates in company DB</option>`
-  : '<option value="">Select a laminate...</option>' +
-    filtered.map(l => `<option value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');tion value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');
+      sel.innerHTML = filtered.length === 0
+        ? `<option value="">No ${State.mode.toUpperCase()} laminates in company DB</option>`
+        : '<option value="">Select a laminate...</option>' +
+          filtered.map(l => `<option value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');
     } catch(e) {
       sel.innerHTML = '<option value="">Error loading</option>';
       console.warn('Failed to load company laminates:', e);
