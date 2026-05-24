@@ -493,17 +493,21 @@ const SL = {
     const Q10_val = parseFloat(document.getElementById('sl-q10')?.value) || (prod.Q10 || 2.0);
     const Ea_J = Ea_val * 1000;
     
-    const eaInput = document.getElementById('sl-ea')?.value;
-    const eaDisabled = document.getElementById('sl-ea')?.disabled;
-    
-    let accel = 1;
-    if (eaInput && parseFloat(eaInput) > 0 && !eaDisabled) {
-      // Arrhenius equation
-      accel = Math.exp(-(Ea_J / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
-    } else {
-      // Q10 rule
-      accel = Math.pow(Q10_val, (T_store - 25) / 10);
-    }
+    const eaRaw   = document.getElementById('sl-ea')?.value;
+const q10Raw  = document.getElementById('sl-q10')?.value;
+const eaNum   = parseFloat(eaRaw);
+const q10Num  = parseFloat(q10Raw);
+
+// Se l'utente ha inserito Ea valido (e Q10 non è esplicitamente attivo) → Arrhenius
+// Altrimenti → Q10 (con fallback a prod.Q10 o 2.0)
+let accel = 1;
+if (!isNaN(eaNum) && eaNum > 0 && !(q10Num > 0)) {
+  const Ea_use = eaNum * 1000;
+  accel = Math.exp(-(Ea_use / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
+} else {
+  const q10Use = (q10Num > 0) ? q10Num : (prod.Q10 || 2.0);
+  accel = Math.pow(q10Use, (T_store - 25) / 10);
+}
 
     // 5. Hygroscopic correction (if materials have beta coefficient)
     let hygroFactor = 1;
@@ -738,11 +742,13 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         const eaDis = document.getElementById('sl-ea')?.disabled;
         let acc = 1;
         
-        if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-          acc = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
-        } else {
-          acc = Math.pow(Q10, (T - 25) / 10);
-        }
+        const eaNum2 = parseFloat(eaIn);
+const q10Num2 = parseFloat(document.getElementById('sl-q10')?.value);
+if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
+  acc = Math.exp(-(eaNum2 * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+} else {
+  acc = Math.pow((q10Num2 > 0 ? q10Num2 : Q10), (T - 25) / 10);
+}
         
         const rate = baseRate * acc;
         if (res.type === 'moisture') {
@@ -907,11 +913,13 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       const eaDis = document.getElementById('sl-ea')?.disabled;
       
       let accel = 1;
-      if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-        accel = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
-      } else {
-        accel = Math.pow(Q10, (T - 25) / 10);
-      }
+const eaNum2 = parseFloat(eaIn);
+const q10Num2 = parseFloat(document.getElementById('sl-q10')?.value);
+if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
+  accel = Math.exp(-(eaNum2 * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+} else {
+  accel = Math.pow((q10Num2 > 0 ? q10Num2 : Q10), (T - 25) / 10);
+}
 
       // Hygroscopic factor for this step
       let hygroFactor = 1;
@@ -1038,11 +1046,13 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       const eaDis = document.getElementById('sl-ea')?.disabled;
       
       let accel = 1;
-      if (eaIn && parseFloat(eaIn) > 0 && !eaDis) {
-        accel = Math.exp(-(Ea_kJ * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
-      } else {
-        accel = Math.pow(Q10, (T - 25) / 10);
-      }
+const eaNum2 = parseFloat(eaIn);
+const q10Num2 = parseFloat(document.getElementById('sl-q10')?.value);
+if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
+  accel = Math.exp(-(eaNum2 * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
+} else {
+  accel = Math.pow((q10Num2 > 0 ? q10Num2 : Q10), (T - 25) / 10);
+}
 
       // Hygroscopic factor
       let hygroFactor = 1;
