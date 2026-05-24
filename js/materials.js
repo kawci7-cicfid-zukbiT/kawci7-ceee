@@ -669,9 +669,10 @@ function showMatModal(editId) {
         ? 'style="margin-top:0.75rem;border:2px solid var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700"'
         : 'style="margin-top:0.4rem"';
 
-    Modal.open(
+        Modal.open(
         editId !== undefined ? 'Edit Material' : 'Add Material',
 
+        // ✅ CORPO DEL MODAL: concatena tutto con + saveWarningHTML alla fine
         readOnlyBanner +
         '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mf-name" value="'+(mat?mat.name:'')+'"'+RO+'></div>' +
         '<div class="form-group"><label>Material Family</label><select class="form-input" id="mf-family"'+RO+'>'+familyOpts+'</select></div>' +
@@ -686,9 +687,11 @@ function showMatModal(editId) {
         '<div id="mf-rows">'+rowsHTML+'</div>' +
         (isReadOnly ? '<div style="margin-top:0.9rem;padding-top:0.75rem;border-top:2px dashed var(--primary);"><div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem">Add New Condition</div>' : '') +
         '<button class="btn btn-outline btn-full" '+addCondStyle+' onclick="addMatRow()">'+(isReadOnly?'+ Add New Condition (allowed)':'+ Add Condition')+'</button>' +
-        (isReadOnly ? '</div>' : ''),
+        (isReadOnly ? '</div>' : '') +
+        // ✅ AVVISO INLINE CONCATENATO QUI (dentro il body, non come argomento separato!)
         saveWarningHTML,
-        
+
+        // ✅ CALLBACK DI SALVATAGGIO (SENZA DUPLICATI)
         function(){
             var name = document.getElementById('mf-name').value.trim();
             if(!name){ alert('Enter material name'); return false; }
@@ -763,18 +766,10 @@ function showMatModal(editId) {
                 validConditions: conditionsArray
             };
 
+            // ✅ SALVATAGGIO (ESEGUITO UNA SOLA VOLTA)
             if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
             else DB.addMat(matData);
             render();
-
-            // ✅ FIX: Alert in inglese con timing corretto per materiali read-only
-            // SOSTITUISCI IL BLOCCO DELL'ALERT CON QUESTO (più semplice e affidabile):
-
-if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
-            else DB.addMat(matData);
-            render();
-
-            // ✅ Nessun alert popup: l'avviso inline saveWarningHTML è già visibile nel modal
 
             return true;
         }
