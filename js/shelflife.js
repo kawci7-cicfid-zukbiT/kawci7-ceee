@@ -1780,17 +1780,9 @@ function renderShelfLife() {
 
         <!-- Panel: Company DB -->
         <div id="sl-panel-company" style="display:none">
-          ${typeof CompanyState !== 'undefined' && CompanyState.isActive?.()
-            ? `<div class="form-group" style="margin:0">
-                <label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label>
-                <select class="form-input" id="sl-co-lam-pick" onchange="SL.onCompanyLaminatePick(this.value)" style="font-size:0.78rem">
-                  <option value="">Loading...</option>
-                </select>
-              </div>`
-            : `<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">
-                Join a company to access company laminates. 
-                <a href="#" onclick="showCompanyModal?.();return false" style="color:var(--primary)">Join now</a>
-              </div>`
+          ${(typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive())
+            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label><select class="form-input" id="sl-co-lam-pick" onchange="SL.onCompanyLaminatePick(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
+            : '<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access company laminates. <a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join now</a></div>'
           }
         </div>
 
