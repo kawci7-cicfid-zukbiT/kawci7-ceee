@@ -1238,7 +1238,7 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         pdf.setFontSize(7);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...C.white);
-        pdf.text('WVTR/OTR Shelf Life Calculator  |  wvtrotrcalculator.com  |  For R&D use only', ML, PH - 3.5);
+        pdf.text('WVTR/OTR Shelf Life Calculator  |  wvtr-otr-calculator.com  |  For R&D use only', ML, PH - 3.5);
         pdf.text('Page ' + pdf.internal.getNumberOfPages(), PW - MR, PH - 3.5, { align: 'right' });
         pdf.setTextColor(...C.black);
       };
@@ -1442,7 +1442,7 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
         pdf.text('Access the tool online:', ML + 2, y + 5);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...C.slate);
-        pdf.text('wvtrotrcalculator.com', ML + 2, y + 10);
+        pdf.text('wvtr-otr-calculator.com', ML + 2, y + 10);
         pdf.text('Free | R&D Use Only | No Registration', ML + 2, y + 15);
         pdf.text('ASTM F1249 / ISO 15106 compliant methodology', ML + 2, y + 20);
         pdf.setTextColor(...C.black);
@@ -1569,7 +1569,7 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(...C.white);
-      pdf.text('Report generated on ' + genDate + '  |  WVTR/OTR Calculator  |  wvtrotrcalculator.com', ML + CW/2, y + 5.5, { align: 'center' });
+      pdf.text('Report generated on ' + genDate + '  |  WVTR/OTR Calculator  |  wvtr-otr-calculator.com', ML + CW/2, y + 5.5, { align: 'center' });
       pdf.setFontSize(7);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(186, 210, 255);
