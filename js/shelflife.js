@@ -1841,13 +1841,6 @@ function renderShelfLife() {
               <div style="display:flex;gap:0.4rem;align-items:center">
   <input type="number" id="sl-ea" value="" step="0.1" class="form-input" 
     placeholder="Auto or 60" oninput="SL.onEaInput()" style="flex:1">
-  <button type="button" onclick="SL._autoCalcEa()" 
-    title="Calcola Ea automaticamente dal laminato"
-    style="white-space:nowrap;padding:0.55rem 0.6rem;border:1.5px solid var(--border);
-    border-radius:6px;background:#fff;font-size:0.75rem;cursor:pointer;
-    color:var(--primary);font-weight:600">
-     Auto
-  </button>
 </div>
             </div>
             <div class="form-group" style="margin:0">
