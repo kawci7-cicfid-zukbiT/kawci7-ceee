@@ -21,8 +21,15 @@ function renderCalc() {
     var testMethods = {};
     for(var i=0; i<DB.materials.length; i++){
         var m = DB.materials[i];
-        var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR || '') : (m.testMethodOTR || '');
+        // Top-level field (legacy schema)
+        var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR || m.testMethod || '') : (m.testMethodOTR || m.testMethod || '');
         if(currentTM && currentTM.trim() !== '') testMethods[currentTM.trim()] = true;
+        // Embedded testMethod in value rows (new schema)
+        var mVals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
+        for(var vi=0; vi<mVals.length; vi++){
+            if(mVals[vi] && mVals[vi].testMethod && mVals[vi].testMethod.trim() !== '')
+                testMethods[mVals[vi].testMethod.trim()] = true;
+        }
     }
     var tmOpts = '<option value="">All test methods</option>';
     var tmList = Object.keys(testMethods).sort();
@@ -101,11 +108,12 @@ function renderCalc() {
         }
         var reqConds = [];
         if(otherMats.length > 0){
-            reqConds = [].concat(otherMats[0].validConditions || []);
+            // Use Engine._getAvailableConditions so new-schema materials (embedded conditions) work too
+            reqConds = Engine._getAvailableConditions(otherMats[0]).slice();
             for(var om=1; om<otherMats.length; om++){
-                var nc = otherMats[om].validConditions || [];
+                var omConds = Engine._getAvailableConditions(otherMats[om]);
                 reqConds = reqConds.filter(function(cond){
-                    return nc.some(function(n){
+                    return omConds.some(function(n){
                         return Math.abs(n.temperature-cond.temperature)<0.01 && Math.abs(n.humidity-cond.humidity)<0.01;
                     });
                 });
@@ -114,7 +122,8 @@ function renderCalc() {
         var displayMats = filteredMats;
         if(reqConds.length > 0){
             displayMats = filteredMats.filter(function(mat){
-                var vc = mat.validConditions || [];
+                // Use Engine._getAvailableConditions for compatibility with both schema types
+                var vc = Engine._getAvailableConditions(mat);
                 return vc.some(function(v){
                     return reqConds.some(function(r){
                         return Math.abs(v.temperature - r.temperature) < 0.01 && Math.abs(v.humidity - r.humidity) < 0.01;
@@ -650,9 +659,16 @@ function onCondSelect() {
 
 function passesTestMethodFilter(mat) {
     if(!State.selectedTestMethod) return true;
-    var tm = State.mode === 'wvtr' ? (mat.testMethodWVTR || '') : (mat.testMethodOTR || '');
-    if(!tm) return false;
-    return tm.trim().toLowerCase() === State.selectedTestMethod.trim().toLowerCase();
+    var filter = State.selectedTestMethod.trim().toLowerCase();
+    // 1. Check top-level field (legacy schema)
+    var topTM = State.mode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '');
+    if(topTM && topTM.trim().toLowerCase() === filter) return true;
+    // 2. Check testMethod embedded in each value row (new schema)
+    var vals = State.mode === 'wvtr' ? (mat.wvtrValues || []) : (mat.otrValues || []);
+    for(var i = 0; i < vals.length; i++) {
+        if(vals[i] && vals[i].testMethod && vals[i].testMethod.trim().toLowerCase() === filter) return true;
+    }
+    return false;
 }
 
 function onTestMethodFilterChange(value) {
