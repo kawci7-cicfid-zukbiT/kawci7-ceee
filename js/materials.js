@@ -306,9 +306,12 @@ var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
     var tags = '';
     if(m.isMetallized) tags += '<span class="badge badge-yellow" style="font-size:0.65rem">⚙️ Metallized</span> ';
     for(var t=0; t<vals.length; t++){
-        var cond = (m.validConditions && m.validConditions[t]) ? m.validConditions[t] : {temperature:'?',humidity:'?'};
-        var v = vals[t] || {value:'?',thickness:'?'};
-        tags += '<span class="mat-tag">'+Engine.getUnits().label+': <strong>'+v.value+'</strong> '+currentUnit+' · '+v.thickness+'µm · '+cond.temperature+'°C/'+cond.humidity+'%</span>';
+        var v = vals[t] || {value:'?', thickness:'?'};
+        // Condition: prefer embedded (new schema), fallback to validConditions[t] (legacy)
+        var condTemp = (v.temperature != null) ? v.temperature : ((m.validConditions && m.validConditions[t]) ? m.validConditions[t].temperature : '?');
+        var condHum  = (v.humidity    != null) ? v.humidity    : ((m.validConditions && m.validConditions[t]) ? m.validConditions[t].humidity    : '?');
+        var tmLabel  = v.testMethod ? (' · <em style="color:var(--text-light)">' + v.testMethod + '</em>') : '';
+        tags += '<span class="mat-tag">'+Engine.getUnits().label+': <strong>'+v.value+'</strong> '+currentUnit+' · '+v.thickness+'µm · '+condTemp+'°C/'+condHum+'%'+tmLabel+'</span>';
     }
 
     var shareLabel = m.firebaseDocId ? '🔄 Update community' : '🌍 Share with community';
@@ -649,20 +652,58 @@ function showMatModal(editId) {
         '<input type="text" class="form-input" id="mf-testmethod-custom" value="'+(isCustomTM?currentTM:'')+'" placeholder="Enter custom method..." style="display:'+(isCustomTM?'block':'none')+';margin-top:0.3rem"'+RO+'>' +
         '</div>';
 
+    // Build test-method options for per-row dropdown
+    var ctmWVTR_row = ['','ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'];
+    var ctmOTR_row  = ['','ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'];
+    var ctmRow = currentMode === 'wvtr' ? ctmWVTR_row : ctmOTR_row;
+
+    function buildTmOpts(selectedVal) {
+        var o = '<option value="">— test method —</option>';
+        for (var ti = 0; ti < ctmRow.length; ti++) {
+            if (!ctmRow[ti]) continue;
+            var s = (selectedVal && selectedVal === ctmRow[ti]) ? ' selected' : '';
+            o += '<option value="' + ctmRow[ti] + '"' + s + '>' + ctmRow[ti] + '</option>';
+        }
+        return o;
+    }
+
     var rowsHTML = '';
     for(var r=0; r<currentValues.length; r++){
         var v = currentValues[r] || {value:'',thickness:''};
-        var c = conds[r] || {temperature:'',humidity:''};
-        var rowRO = isReadOnly ? ' disabled readonly style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
+        // Condition: prefer embedded in value (new schema), fallback to validConditions[r]
+        var condTemp = (v.temperature != null) ? v.temperature : ((conds[r] && conds[r].temperature != null) ? conds[r].temperature : '');
+        var condHum  = (v.humidity    != null) ? v.humidity    : ((conds[r] && conds[r].humidity    != null) ? conds[r].humidity    : '');
+        var condTM   = v.testMethod || '';
+        var rowRO    = isReadOnly ? ' disabled readonly style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
+        var rowROsel = isReadOnly ? ' disabled style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
+        var rowBg    = isReadOnly ? 'background:#f8fafc;border-radius:6px;padding:0.4rem 0.5rem;border:1px solid #e2e8f0;' : '';
         rowsHTML +=
-            '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr;'+(isReadOnly?'background:#f8fafc;border-radius:6px;padding:0.3rem 0.5rem;border:1px solid #e2e8f0;':'')+'">'+
-            '<div style="display:flex;gap:0.4rem">' +
-            '<div class="form-group" style="margin:0;flex:1"><label>'+currentLabel+' Value</label><input type="number" step="any" class="form-input mf-val"   value="'+(v.value||'')+'"       placeholder="0"  '+rowRO+'></div>' +
-            '<div class="form-group" style="margin:0;flex:1"><label>Thickness (µm)</label>     <input type="number" step="any" class="form-input mf-thick" value="'+(v.thickness||'')+'"   placeholder="0"  '+rowRO+'></div>' +
+            '<div class="wvtr-row-form" style="' + rowBg + 'margin-bottom:0.5rem">' +
+            // Row 1: value + thickness + testMethod (compact, 3 cols)
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0.35rem;margin-bottom:0.35rem">' +
+                '<div class="form-group" style="margin:0">' +
+                    '<label style="font-size:0.68rem">' + currentLabel + ' value</label>' +
+                    '<input type="number" step="any" class="form-input mf-val" value="' + (v.value||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '>' +
+                '</div>' +
+                '<div class="form-group" style="margin:0">' +
+                    '<label style="font-size:0.68rem">Thickness (µm)</label>' +
+                    '<input type="number" step="any" class="form-input mf-thick" value="' + (v.thickness||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '>' +
+                '</div>' +
+                '<div class="form-group" style="margin:0">' +
+                    '<label style="font-size:0.68rem">Test method</label>' +
+                    '<select class="form-input mf-rowmethod" style="font-size:0.75rem"' + rowROsel + '>' + buildTmOpts(condTM) + '</select>' +
+                '</div>' +
             '</div>' +
-            '<div style="display:flex;gap:0.4rem">' +
-            '<div class="form-group" style="margin:0;flex:1"><label>Temp (°C)</label>          <input type="number" step="any" class="form-input mf-temp"  value="'+(c.temperature||'')+'" placeholder="23" '+rowRO+'></div>' +
-            '<div class="form-group" style="margin:0;flex:1"><label>Humidity (%)</label>        <input type="number" step="any" class="form-input mf-hum"   value="'+(c.humidity||'')+'"   placeholder="50" '+rowRO+'></div>' +
+            // Row 2: temp + humidity (2 cols, narrower)
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.35rem">' +
+                '<div class="form-group" style="margin:0">' +
+                    '<label style="font-size:0.68rem">Temp (°C)</label>' +
+                    '<input type="number" step="any" class="form-input mf-temp" value="' + condTemp + '" placeholder="23" style="font-size:0.78rem"' + rowRO + '>' +
+                '</div>' +
+                '<div class="form-group" style="margin:0">' +
+                    '<label style="font-size:0.68rem">Humidity (%)</label>' +
+                    '<input type="number" step="any" class="form-input mf-hum" value="' + condHum + '" placeholder="50" style="font-size:0.78rem"' + rowRO + '>' +
+                '</div>' +
             '</div>' +
             '</div>';
     }
@@ -678,7 +719,7 @@ function showMatModal(editId) {
         '<div class="form-group"><label>Company Name</label><input type="text" class="form-input" id="mf-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>' +
         '<div class="form-group"><label>Contact Email <span style="font-size:0.68rem;color:var(--text-light);font-weight:400">(enables Contact Supplier button)</span></label><input type="email" class="form-input" id="mf-email" value="'+(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
         '<div class="form-group"><label>TDS Link (optional)</label><input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://..."'+RO+'></div>' +
-        metallizedHTML + hygroHTML + testMethodBlock +
+        metallizedHTML + hygroHTML +
         '<div style="margin:0.5rem 0;padding:0.4rem 0.6rem;background:var(--primary-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem"><span style="font-size:0.75rem;color:var(--text-light)"><strong>'+currentLabel+'</strong> • Unit: '+currentUnit+'</span></div>' +
         (isReadOnly && currentValues.length > 0 ? '<div style="font-size:0.72rem;font-weight:600;color:var(--text-light);letter-spacing:0.06em;text-transform:uppercase;margin:0.5rem 0 0.3rem 0">Existing data (read-only)</div>' : '') +
         '<div id="mf-rows">'+rowsHTML+'</div>' +
@@ -714,26 +755,36 @@ function showMatModal(editId) {
             var isMetallized = document.getElementById('mf-metallized') ? document.getElementById('mf-metallized').checked : false;
 
             // === RACCOLTA VALORI ===
-            var allValInputs = document.querySelectorAll('.mf-val');
-            var allThickInputs = document.querySelectorAll('.mf-thick');
-            var allTempInputs = document.querySelectorAll('.mf-temp');
-            var allHumInputs = document.querySelectorAll('.mf-hum');
+            var allValInputs    = document.querySelectorAll('.mf-val');
+            var allThickInputs  = document.querySelectorAll('.mf-thick');
+            var allTempInputs   = document.querySelectorAll('.mf-temp');
+            var allHumInputs    = document.querySelectorAll('.mf-hum');
+            var allMethodInputs = document.querySelectorAll('.mf-rowmethod');
             var existingCount = isReadOnly ? currentValues.length : 0;
             var valuesArray = [];
             var conditionsArray = [];
 
             for(var i=0; i<allValInputs.length; i++){
-                if(isReadOnly && i < existingCount){ valuesArray.push(currentValues[i]); conditionsArray.push(conds[i]); continue; }
-                var val = parseFloat(allValInputs[i].value);
+                if(isReadOnly && i < existingCount){
+                    // Keep existing rows as-is (already have embedded conditions)
+                    valuesArray.push(currentValues[i]);
+                    conditionsArray.push(conds[i] || {});
+                    continue;
+                }
+                var val   = parseFloat(allValInputs[i].value);
                 var thick = parseFloat(allThickInputs[i].value);
-                var temp = parseFloat(allTempInputs[i].value);
-                var hum = parseFloat(allHumInputs[i].value);
-                if(isNaN(val)||val<0){ alert(currentLabel+' value invalid in row '+(i+1)); return false; }
+                var temp  = parseFloat(allTempInputs[i].value);
+                var hum   = parseFloat(allHumInputs[i].value);
+                var tm    = allMethodInputs[i] ? allMethodInputs[i].value.trim() : '';
+                if(isNaN(val)||val<0){   alert(currentLabel+' value invalid in row '+(i+1)); return false; }
                 if(isNaN(thick)||thick<=0){ alert('Thickness must be > 0 in row '+(i+1)); return false; }
                 if(isNaN(temp)){ alert('Temperature required in row '+(i+1)); return false; }
-                if(isNaN(hum)){ alert('Humidity required in row '+(i+1)); return false; }
-                valuesArray.push({value:val,thickness:thick});
-                conditionsArray.push({temperature:temp,humidity:hum});
+                if(isNaN(hum)){  alert('Humidity required in row '+(i+1));    return false; }
+                // ── NEW SCHEMA: embed temperature, humidity, testMethod inside the value object
+                var valueObj = { value: val, thickness: thick, temperature: temp, humidity: hum };
+                if(tm) valueObj.testMethod = tm;
+                valuesArray.push(valueObj);
+                conditionsArray.push({ temperature: temp, humidity: hum });
             }
             if(isReadOnly && valuesArray.length === existingCount){
                 alert('ℹ️ No new conditions added. Use "+ Add New Condition" to extend this material.');
@@ -789,15 +840,30 @@ function onTestMethodSelectChange(select) {
 function addMatRow() {
     var currentMode  = State.mode;
     var currentLabel = currentMode === 'wvtr' ? 'WVTR' : 'OTR';
+    var ctmList = currentMode === 'wvtr'
+        ? ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122']
+        : ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'];
+    var tmOpts = '<option value="">— test method —</option>';
+    for (var ti = 0; ti < ctmList.length; ti++) {
+        tmOpts += '<option value="' + ctmList[ti] + '">' + ctmList[ti] + '</option>';
+    }
     document.getElementById('mf-rows').insertAdjacentHTML('beforeend',
-        '<div class="wvtr-row-form" style="grid-template-columns:1fr 1fr;animation:fadeIn 0.2s ease;">' +
-        '<div style="display:flex;gap:0.4rem">' +
-        '<div class="form-group" style="margin:0;flex:1"><label>'+currentLabel+' Value</label><input type="number" step="any" class="form-input mf-val"   placeholder="0"></div>' +
-        '<div class="form-group" style="margin:0;flex:1"><label>Thickness (µm)</label>     <input type="number" step="any" class="form-input mf-thick" placeholder="0"></div>' +
+        '<div class="wvtr-row-form" style="margin-bottom:0.5rem;animation:fadeIn 0.2s ease">' +
+        // Row 1: value + thickness + testMethod
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0.35rem;margin-bottom:0.35rem">' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">' + currentLabel + ' value</label>' +
+                '<input type="number" step="any" class="form-input mf-val" placeholder="0" style="font-size:0.78rem"></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Thickness (µm)</label>' +
+                '<input type="number" step="any" class="form-input mf-thick" placeholder="0" style="font-size:0.78rem"></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Test method</label>' +
+                '<select class="form-input mf-rowmethod" style="font-size:0.75rem">' + tmOpts + '</select></div>' +
         '</div>' +
-        '<div style="display:flex;gap:0.4rem">' +
-        '<div class="form-group" style="margin:0;flex:1"><label>Temp (°C)</label>          <input type="number" step="any" class="form-input mf-temp"  placeholder="23"></div>' +
-        '<div class="form-group" style="margin:0;flex:1"><label>Humidity (%)</label>        <input type="number" step="any" class="form-input mf-hum"   placeholder="50"></div>' +
+        // Row 2: temp + humidity
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.35rem">' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Temp (°C)</label>' +
+                '<input type="number" step="any" class="form-input mf-temp" placeholder="23" style="font-size:0.78rem"></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Humidity (%)</label>' +
+                '<input type="number" step="any" class="form-input mf-hum" placeholder="50" style="font-size:0.78rem"></div>' +
         '</div>' +
         '</div>');
 }
