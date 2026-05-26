@@ -571,12 +571,34 @@ async function initApp() {
           });
         }
         if (localMat) {
-          localMat.firebaseDocId    = fm.firebaseDocId || localMat.firebaseDocId;
-          localMat.isCommunity      = true;
-          localMat.reliabilityVotes = fm.reliabilityVotes || localMat.reliabilityVotes;
-          localMat.usageCount       = fm.usageCount       || localMat.usageCount;
-          localMat.author           = fm.author           || localMat.author;
-        } else {
+  localMat.firebaseDocId    = fm.firebaseDocId || localMat.firebaseDocId;
+  localMat.isCommunity      = true;
+  localMat.reliabilityVotes = fm.reliabilityVotes || localMat.reliabilityVotes;
+  localMat.usageCount       = fm.usageCount       || localMat.usageCount;
+  localMat.author           = fm.author           || localMat.author;
+
+  // FIX: aggiorna i dati barriera se Firebase ha più righe o dati embedded
+  var fbOtrCount   = (fm.otrValues   || []).length;
+  var fbWvtrCount  = (fm.wvtrValues  || []).length;
+  var locOtrCount  = (localMat.otrValues  || []).length;
+  var locWvtrCount = (localMat.wvtrValues || []).length;
+
+  // Firebase ha più dati OPPURE il primo elemento locale manca di
+  // temperatura/humidity embedded → prendi i dati da Firebase
+  var locOtrHasEmbedded  = locOtrCount  > 0 && localMat.otrValues[0].temperature  != null;
+  var locWvtrHasEmbedded = locWvtrCount > 0 && localMat.wvtrValues[0].temperature != null;
+
+  if (fbOtrCount > locOtrCount || (fbOtrCount > 0 && !locOtrHasEmbedded)) {
+    localMat.otrValues       = fm.otrValues;
+    localMat.validConditions = fm.validConditions || localMat.validConditions;
+    localMat.testMethodOTR   = fm.testMethodOTR   || localMat.testMethodOTR;
+  }
+  if (fbWvtrCount > locWvtrCount || (fbWvtrCount > 0 && !locWvtrHasEmbedded)) {
+    localMat.wvtrValues      = fm.wvtrValues;
+    localMat.validConditions = fm.validConditions || localMat.validConditions;
+    localMat.testMethodWVTR  = fm.testMethodWVTR  || localMat.testMethodWVTR;
+  }
+} else {
           DB.materials.push(Object.assign({}, fm, {
             id:          'fb_' + fm.firebaseDocId,
             isCommunity: true
