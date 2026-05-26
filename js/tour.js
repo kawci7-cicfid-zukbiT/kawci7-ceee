@@ -247,9 +247,11 @@
   ];
 
   // ── State ────────────────────────────────────────────────────────────
-  var currentStep = 0;
-  var isRunning   = false;
-  var _pollTimer  = null; // riferimento al timer di polling attivo
+  var currentStep     = 0;
+  var isRunning       = false;
+  var _pollTimer      = null;  // timer polling attivo
+  var _currentSpotSel = null;  // selettore dell'elemento evidenziato ora
+  var _scrollRAF      = null;  // rAF per aggiornamento scroll
 
   // ── DOM refs ─────────────────────────────────────────────────────────
   var overlay, highlight, bubble, arrow;
@@ -259,6 +261,22 @@
   // ── Helpers ──────────────────────────────────────────────────────────
   function _goHome() {
     try { if (typeof onGroupClick === 'function') onGroupClick('home'); } catch(e){}
+  }
+
+  // Ricalcola spotlight + bubble seguendo l'elemento anche dopo lo scroll
+  function _refreshPosition() {
+    if (!isRunning || !_currentSpotSel) return;
+    var el = document.querySelector(_currentSpotSel);
+    if (!el) return;
+    var rect = el.getBoundingClientRect();
+    _spotlight(rect);
+    _positionBubble(rect);
+  }
+
+  function _onScroll() {
+    if (!isRunning) return;
+    if (_scrollRAF) cancelAnimationFrame(_scrollRAF);
+    _scrollRAF = requestAnimationFrame(_refreshPosition);
   }
 
   function _injectCSS() {
@@ -352,7 +370,7 @@
     doneCard.id = 'tour-done-card';
     doneCard.innerHTML =
       '<div id="tour-done-inner">' +
-        '<span class="done-emoji">🎓</span>' +
+        '<span class="done-emoji"></span>' +
         '<h3>Tour complete!</h3>' +
         '<p>You\'ve seen all the main sections of the WVTR/OTR Calculator.<br>Time to run your first analysis!</p>' +
         '<button id="tour-done-go">Go to Calculator →</button>' +
@@ -520,6 +538,7 @@
       var spotEl = step.spotSelector ? document.querySelector(step.spotSelector) : null;
 
       if (spotEl) {
+        _currentSpotSel = step.spotSelector;  // traccia l'elemento per lo scroll
         spotEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setTimeout(function () {
           if (!isRunning) return;
@@ -528,6 +547,7 @@
           _positionBubble(rect);
         }, 80);
       } else {
+        _currentSpotSel = null;
         _spotlightNone();
         _positionBubble(null);
       }
@@ -544,6 +564,8 @@
       overlay.classList.remove('hidden');
       if (startBtn) startBtn.classList.add('hidden');
       _showStep(0);
+      window.addEventListener('scroll', _onScroll, { passive: true });
+      document.addEventListener('scroll', _onScroll, { passive: true, capture: true });
     },
 
     next: function () {
@@ -565,6 +587,10 @@
 
     stop: function () {
       isRunning = false;
+      _currentSpotSel = null;
+      if (_scrollRAF) { cancelAnimationFrame(_scrollRAF); _scrollRAF = null; }
+      window.removeEventListener('scroll', _onScroll);
+      document.removeEventListener('scroll', _onScroll, { capture: true });
       // Cancella polling eventualmente attivo
       if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
       // Nasconde tutto senza mai bloccare i click
