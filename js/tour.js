@@ -37,7 +37,7 @@
       border: 1px solid #e2e8f0;
       border-radius: 14px;
       box-shadow: 0 20px 60px rgba(0,0,0,.18), 0 4px 12px rgba(37,99,235,.12);
-      width: 320px;
+      width: 360px;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -79,8 +79,9 @@
       padding: .75rem 1.1rem;
       border-top: 1px solid #f1f5f9;
       display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+      flex-wrap: nowrap; min-height: 56px;
     }
-    #tour-progress-dots { display: flex; gap: .35rem; align-items: center; }
+    #tour-progress-dots { display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; max-width: 160px; }
     .tour-dot {
       width: 7px; height: 7px; border-radius: 50%;
       background: #e2e8f0; transition: background .25s, transform .25s;
@@ -88,7 +89,7 @@
     .tour-dot.active { background: #2563eb; transform: scale(1.3); }
     .tour-dot.done   { background: #93c5fd; }
 
-    #tour-bubble-actions { display: flex; gap: .45rem; }
+    #tour-bubble-actions { display: flex; gap: .45rem; flex-shrink: 0; }
     .tour-btn {
       border: none; border-radius: 7px; cursor: pointer;
       font-size: .78rem; font-weight: 600; padding: .4rem .85rem;
@@ -475,7 +476,7 @@
 
   // ── Bubble positioning ───────────────────────────────────────────────
   function _positionBubble(rect) {
-    var bw = 328; var bh = 260;
+    var bw = 368; var bh = 280;
     var W  = window.innerWidth; var H = window.innerHeight;
     var pad = 12;
     arrow.className = 'hidden';
