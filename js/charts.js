@@ -725,28 +725,94 @@ function drawSensitivityChart() {
   if (result.points.every(function(p) { return p.total === 0; })) { showSensitivityEmpty('All calculated values are zero'); return; }
 
   var ctx    = canvas.getContext('2d');
-  var labels = result.points.map(function(p) { return p.thickness.toFixed(0); });
-  var vals   = result.points.map(function(p) { return parseFloat(p.total.toFixed(6)); });
+  var prec   = getDisplayPrecision();
+
+  // Dataset 1: curva calcolata (linea continua)
+  var datasets = [{
+    label: label + ' modello (Layer ' + (layerIdx + 1) + ')',
+    data: result.points.map(function(p) { return { x: p.thickness, y: p.total }; }),
+    borderColor: '#3b82f6',
+    backgroundColor: 'rgba(59,130,246,0.08)',
+    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2,
+    type: 'line', order: 1
+  }];
+
+  // Dataset 2: punti misurati reali (se disponibili)
+  if (result.measuredPoints && result.measuredPoints.length > 0) {
+    datasets.push({
+      label: 'Misurazioni reali',
+      data: result.measuredPoints.map(function(p) { return { x: p.thickness, y: p.total }; }),
+      borderColor: '#ef4444',
+      backgroundColor: '#ef4444',
+      pointRadius: 7,
+      pointHoverRadius: 9,
+      pointStyle: 'circle',
+      borderWidth: 2,
+      showLine: false,
+      type: 'scatter',
+      order: 0
+    });
+  }
 
   chartInstances.sens = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{ label: label + ' vs Layer ' + (layerIdx + 1) + ' thickness',
-        data: vals, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)',
-        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 }]
-    },
+    data: { datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      plugins: {
+        legend: {
+          display: result.measuredPoints && result.measuredPoints.length > 0,
+          position: 'top',
+          labels: { boxWidth: 12, font: { size: 10 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              var pt = ctx.raw;
+              if (ctx.dataset.label && ctx.dataset.label.indexOf('reali') >= 0) {
+                // Punto misurato — mostra anche il valore raw del materiale
+                var mp = result.measuredPoints[ctx.dataIndex];
+                return [
+                  'Spessore: ' + pt.x + ' µm',
+                  label + ' laminato: ' + formatWithSigFigs(pt.y, prec) + ' ' + unit,
+                  label + ' materiale: ' + mp.value + ' ' + unit + (mp.method ? ' [' + mp.method + ']' : '')
+                ];
+              }
+              return label + ': ' + formatWithSigFigs(pt.y, prec) + ' ' + unit + ' @ ' + pt.x.toFixed(0) + ' µm';
+            }
+          }
+        }
+      },
       scales: {
-        x: { title: { display: true, text: 'Layer thickness (µm)' } },
-        y: { title: { display: true, text: 'Total ' + label + ' (' + unit + ')' },
-             beginAtZero: true,
-             ticks: { callback: function(v) { return v < 0.01 ? v.toExponential(2) : v.toFixed(4); } } }
+        x: {
+          type: 'linear',
+          title: { display: true, text: 'Layer thickness (µm)' },
+          ticks: { callback: function(v) { return v.toFixed(0); } }
+        },
+        y: {
+          title: { display: true, text: 'Total ' + label + ' (' + unit + ')' },
+          beginAtZero: true,
+          ticks: { callback: function(v) { return v < 0.01 ? v.toExponential(2) : v.toFixed(4); } }
+        }
       }
     }
   });
+
+  // Mostra quanti punti misurati sono stati usati per la regressione
+  var infoEl = document.getElementById('sens-points-info');
+  if (infoEl) {
+    if (result.measuredPoints && result.measuredPoints.length > 0) {
+      infoEl.innerHTML =
+        '<div style="font-size:0.72rem;color:var(--text-light);margin-top:0.4rem;display:flex;align-items:center;gap:0.4rem">' +
+        '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>' +
+        result.measuredPoints.length + ' punto/i misurato/i reale/i · ' +
+        '<span style="color:var(--primary)">regressione su ' + result.measuredPoints.length + ' spessori</span>' +
+        '</div>';
+    } else {
+      infoEl.innerHTML = '';
+    }
+  }
 }
 
 function showSensitivityEmpty(msg) {
