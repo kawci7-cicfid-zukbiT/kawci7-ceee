@@ -202,75 +202,75 @@
     {
       selector: '.mode-toggle',
       title: 'First step: choose the gas',
-      icon: '💧',
+      icon: '',
       text: 'Start by choosing what you want to measure: <strong>WVTR</strong> (water vapor) or <strong>OTR</strong> (oxygen). This choice affects all calculations across the app.',
-      tip: '💡 WVTR = moisture barrier · OTR = oxygen barrier',
+      tip: ' WVTR = moisture barrier · OTR = oxygen barrier',
       nav: function () { _goHome(); }
     },
     {
       selector: '#nav-tabs',
       title: 'Main navigation',
-      icon: '🗺️',
+      icon: '',
       text: 'The top bar has <strong>4 sections</strong>: <em>Home</em>, <em>Analysis</em>, <em>Community Database</em> and <em>Company Database</em>. Click each one to explore its tools.',
-      tip: '💡 Each section opens a sub-menu below with specific tools.',
+      tip: ' Each section opens a sub-menu below with specific tools.',
       nav: function () { _goHome(); }
     },
     {
       selector: '#nav-subtabs',
       title: 'Sub-menu: Analysis tools',
-      icon: '🔬',
+      icon: '',
       text: 'When you click <strong>Analysis</strong>, a second row appears with 5 tools: Calculator, Sensitivity, Shelf Life, Arrhenius and Compare.',
-      tip: '💡 Start from Calculator — it\'s the core of the app.',
+      tip: ' Start from Calculator — it\'s the core of the app.',
       nav: function () { onGroupClick('analysis'); }
     },
     {
-      selector: '#app-content',
+      selector: '.card',
       title: 'Calculator: build your laminate',
-      icon: '🧮',
+      icon: '',
       text: 'In <strong>Calculator</strong> you add one or more material layers, set their thickness, then click <em>Calculate</em>. The app computes the total WVTR/OTR of your laminate stack.',
-      tip: '💡 Each layer needs a material from the database + a thickness in µm.',
+      tip: ' Each layer needs a material from the database + a thickness in µm.',
       nav: function () { onSubTabClick('calc'); }
     },
     {
-      selector: '#app-content',
+      selector: '.card',
       title: 'Sensitivity analysis',
-      icon: '📊',
+      icon: '',
       text: '<strong>Sensitivity</strong> shows how the result changes as you vary thickness or conditions. Ideal for optimizing your laminate before going to the lab.',
       nav: function () { onSubTabClick('sensitivity'); }
     },
     {
-      selector: '#app-content',
+      selector: '.card',
       title: 'Shelf Life',
-      icon: '📦',
+      icon: '',
       text: 'Enter product weight, area, rate and storage conditions — the tool tells you the <strong>expected shelf life</strong> of your packaging.',
       nav: function () { onSubTabClick('shelflife'); }
     },
     {
       selector: '#nav-subtabs',
       title: 'Community Database',
-      icon: '🌐',
+      icon: '',
       text: 'The <strong>Community Database</strong> contains <em>Materials</em> and <em>Laminates</em> shared by all users. You can search, vote on reliability, and add your own data.',
-      tip: '💡 The green dot on Company Database means your company data is active.',
+      tip: ' The green dot on Company Database means your company data is active.',
       nav: function () { onGroupClick('community'); }
     },
     {
-      selector: '#app-content',
+      selector: '#mat-search',
       title: 'Search & explore materials',
-      icon: '🔍',
+      icon: '',
       text: 'Use the search bar to find any material by name. You can filter by family, test method and more. Click a material to see its data points and use it in calculations.',
       nav: function () { onSubTabClick('materials'); }
     },
     {
       selector: '#nav-subtabs',
       title: 'Company Database',
-      icon: '🏢',
+      icon: '',
       text: 'In <strong>Company Database</strong> you can upload and manage <em>private</em> materials and laminates — only visible to your team, not shared with the community.',
       nav: function () { onGroupClick('company'); }
     },
     {
       selector: null,
-      title: 'You\'re ready! 🎉',
-      icon: '🚀',
+      title: 'You\'re ready! ',
+      icon: '',
       text: 'Now you know all the main sections. Start with <strong>Calculator</strong> → add materials → run an analysis. You can restart this tour anytime from the button at the bottom right.',
       nav: function () { _goHome(); }
     }
@@ -507,37 +507,66 @@
     nextBtn.textContent   = idx === total - 1 ? 'Finish ✓' : 'Next →';
   }
 
+  // Polls until `selector` appears in DOM (or timeout), then calls back
+  function _waitForElement(selector, timeout, cb) {
+    if (!selector) { cb(null); return; }
+    var elapsed = 0;
+    var interval = 80;
+    var timer = setInterval(function () {
+      var el = document.querySelector(selector);
+      // Element must exist AND have a non-zero bounding box
+      if (el) {
+        var r = el.getBoundingClientRect();
+        if (r.width > 0 || r.height > 0) {
+          clearInterval(timer);
+          cb(el);
+          return;
+        }
+      }
+      elapsed += interval;
+      if (elapsed >= timeout) {
+        clearInterval(timer);
+        cb(null); // give up, show bubble centered
+      }
+    }, interval);
+  }
+
   // Show a step
   function _showStep(idx) {
     var step = STEPS[idx];
 
-    // Navigate if needed
+    // Render bubble content immediately so user sees something
+    _renderStep(idx);
+
+    // Trigger navigation first
     if (typeof step.nav === 'function') {
       try { step.nav(); } catch (e) { /* ignore */ }
     }
 
-    // Wait for nav/render to settle, then position
-    setTimeout(function () {
-      _renderStep(idx);
-
-      if (step.selector) {
-        var el = document.querySelector(step.selector);
+    if (step.selector) {
+      // Poll until the element is in the DOM and visible (up to 2 s)
+      _waitForElement(step.selector, 2000, function (el) {
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          // One extra tick to let scroll settle
           setTimeout(function () {
             var rect = el.getBoundingClientRect();
             _spotlight(rect, 6);
             _positionBubble(rect);
-          }, 200);
+          }, 80);
         } else {
+          // Element not found: show bubble centered, no spotlight
           _spotlightNone();
           _positionBubble(null);
         }
-      } else {
+      });
+    } else {
+      // Step has no target element (e.g. final step)
+      setTimeout(function () {
         _spotlightNone();
         _positionBubble(null);
-      }
-    }, 350);
+      }, 400);
+    }
   }
 
   // ── Public API ───────────────────────────────────────────────────────
