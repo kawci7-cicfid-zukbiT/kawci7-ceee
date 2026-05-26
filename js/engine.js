@@ -97,23 +97,36 @@ const Engine = {
     return null;
   },
 
-  // ── NEW: build the list of unique conditions available for the active gas
+  // ── NEW: build the list of unique conditions available for the active gas.
   //         Works with both new (embedded) and legacy (validConditions) schema.
+  //         Deduplicates by temperature + humidity + testMethod so that the same
+  //         temp/humidity measured with two different methods appears as two entries.
+  //         When State.selectedTestMethod is active, only matching rows are returned.
   _getAvailableConditions: function(mat) {
     var vals = this.getValues(mat);
     if (!vals || vals.length === 0) return [];
+    var activeMethod = (typeof State !== 'undefined' && State.selectedTestMethod) ? State.selectedTestMethod.trim().toLowerCase() : '';
     var result = [];
     for (var i = 0; i < vals.length; i++) {
       var c = this._getCondFromVal(vals[i], mat, i);
       if (!c) continue;
+      // Resolve testMethod for this row (same priority as calcLayerResistance)
+      var rowTM = (vals[i].testMethod) ||
+                  (mat.validConditions && mat.validConditions[i] && mat.validConditions[i].testMethod) ||
+                  (Engine.mode === 'wvtr' ? mat.testMethodWVTR : mat.testMethodOTR) ||
+                  (mat.testMethod) || '';
+      // If a test method filter is active, skip rows that don't match
+      if (activeMethod && rowTM && rowTM.trim().toLowerCase() !== activeMethod) continue;
+      // Deduplicate by temp + humidity + testMethod (all three must match to be a duplicate)
       var already = false;
       for (var j = 0; j < result.length; j++) {
         if (Math.abs(result[j].temperature - c.temperature) < 0.01 &&
-            Math.abs(result[j].humidity    - c.humidity)    < 0.01) { already = true; break; }
+            Math.abs(result[j].humidity    - c.humidity)    < 0.01 &&
+            (result[j].testMethod || '') === rowTM) { already = true; break; }
       }
       if (!already) {
         var condObj = { temperature: c.temperature, humidity: c.humidity };
-        if (vals[i].testMethod) condObj.testMethod = vals[i].testMethod;
+        if (rowTM) condObj.testMethod = rowTM;
         result.push(condObj);
       }
     }
@@ -182,9 +195,13 @@ const Engine = {
       var rowMethod = (vals[i] && vals[i].testMethod) ||
                       (material.validConditions && material.validConditions[i] &&
                        material.validConditions[i].testMethod) ||
-                      (Engine.mode === 'wvtr' ? material.testMethodWVTR : material.testMethodOTR) || null;
-      var methodMatch = !rowMethod || !State.selectedTestMethod ||
-                        rowMethod === State.selectedTestMethod;
+                      (Engine.mode === 'wvtr' ? material.testMethodWVTR : material.testMethodOTR) ||
+                      (material.testMethod) || null;
+      // methodMatch: if filter active → row must match; if no filter → accept any row
+      // If multiple rows match the same condition with different methods, prefer the one matching the filter
+      var methodMatch = !State.selectedTestMethod ||
+                        !rowMethod ||
+                        rowMethod.trim().toLowerCase() === State.selectedTestMethod.trim().toLowerCase();
       if (condMatch && methodMatch) { idx = i; break; }
     }
 
