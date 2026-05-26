@@ -2,7 +2,6 @@
 // 📊 CHARTS.JS - All chart drawing functions
 // ====================================================================
 
-
 // ====================================================================
 // 🏠 HOME DEMO CHARTS
 // ====================================================================
@@ -216,7 +215,8 @@ function drawLaminateCurveChart() {
     var vals  = Engine.getValues(mat);
     var grouped = {};
     for (var j = 0; j < vals.length; j++) {
-      var cond = mat.validConditions[j];
+      // FIX: use embedded condition first, fallback to validConditions (legacy)
+      var cond = Engine._getCondFromVal(vals[j], mat, j);
       if (!cond) continue;
       if (selectedHumidity !== null && cond.humidity !== selectedHumidity) continue;
       var key = cond.temperature + '|' + cond.humidity;
@@ -285,8 +285,10 @@ function drawLaminateCurveChart() {
         if (!mt) { valid = false; break; }
         var condIdx = -1;
         for (var ci = 0; ci < mt.validConditions.length; ci++) {
-          if (Math.abs(mt.validConditions[ci].temperature - t3) < 0.01 &&
-              (selectedHumidity === null || mt.validConditions[ci].humidity === selectedHumidity)) {
+          var ciCond = Engine._getCondFromVal(Engine.getValues(mt)[ci], mt, ci);
+          if (!ciCond) continue;
+          if (Math.abs(ciCond.temperature - t3) < 0.01 &&
+              (selectedHumidity === null || ciCond.humidity === selectedHumidity)) {
             condIdx = ci; break;
           }
         }
@@ -741,7 +743,7 @@ function drawSensitivityChart() {
   // Dataset 2: punti misurati reali (se disponibili)
   if (result.measuredPoints && result.measuredPoints.length > 0) {
     datasets.push({
-      label: 'Misurazioni reali',
+      label: 'Measured data points',
       data: result.measuredPoints.map(function(p) { return { x: p.thickness, y: p.total }; }),
       borderColor: '#ef4444',
       backgroundColor: '#ef4444',
@@ -771,13 +773,12 @@ function drawSensitivityChart() {
           callbacks: {
             label: function(ctx) {
               var pt = ctx.raw;
-              if (ctx.dataset.label && ctx.dataset.label.indexOf('reali') >= 0) {
-                // Punto misurato — mostra anche il valore raw del materiale
+              if (ctx.dataset.label && ctx.dataset.label.indexOf('Measured') >= 0) {
                 var mp = result.measuredPoints[ctx.dataIndex];
                 return [
-                  'Spessore: ' + pt.x + ' µm',
-                  label + ' laminato: ' + formatWithSigFigs(pt.y, prec) + ' ' + unit,
-                  label + ' materiale: ' + mp.value + ' ' + unit + (mp.method ? ' [' + mp.method + ']' : '')
+                  'Thickness: ' + pt.x + ' µm',
+                  label + ' laminate: ' + formatWithSigFigs(pt.y, prec) + ' ' + unit,
+                  label + ' material: ' + mp.value + ' ' + unit + (mp.method ? ' [' + mp.method + ']' : '')
                 ];
               }
               return label + ': ' + formatWithSigFigs(pt.y, prec) + ' ' + unit + ' @ ' + pt.x.toFixed(0) + ' µm';
@@ -807,8 +808,8 @@ function drawSensitivityChart() {
       infoEl.innerHTML =
         '<div style="font-size:0.72rem;color:var(--text-light);margin-top:0.4rem;display:flex;align-items:center;gap:0.4rem">' +
         '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>' +
-        result.measuredPoints.length + ' punto/i misurato/i reale/i · ' +
-        '<span style="color:var(--primary)">regressione su ' + result.measuredPoints.length + ' spessori</span>' +
+        result.measuredPoints.length + ' measured data point(s) · ' +
+        '<span style="color:var(--primary)">regression over ' + result.measuredPoints.length + ' thickness(es)</span>' +
         '</div>';
     } else {
       infoEl.innerHTML = '';
