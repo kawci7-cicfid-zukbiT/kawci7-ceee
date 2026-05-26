@@ -137,7 +137,17 @@ function renderCalc() {
         for(var j=0; j<displayMats.length; j++){
             var mat = displayMats[j];
             var label = mat.name;
-            var currentTM2 = State.mode === 'wvtr' ? (mat.testMethodWVTR || '') : (mat.testMethodOTR || '');
+            // Show test method label: prefer active filter, then top-level field, then first embedded value
+            var currentTM2 = '';
+            if(State.selectedTestMethod) {
+                currentTM2 = State.selectedTestMethod;
+            } else {
+                currentTM2 = State.mode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '');
+                if(!currentTM2) {
+                    var firstVals = State.mode === 'wvtr' ? (mat.wvtrValues || []) : (mat.otrValues || []);
+                    if(firstVals[0] && firstVals[0].testMethod) currentTM2 = firstVals[0].testMethod;
+                }
+            }
             if(currentTM2) label += ' ['+currentTM2+']';
             // FIX: compare as strings to support both numeric and string IDs
             var selected = (String(l.mid) === String(mat.id)) ? ' selected' : '';
