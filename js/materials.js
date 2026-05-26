@@ -659,10 +659,16 @@ function showMatModal(editId) {
 
     function buildTmOpts(selectedVal) {
         var o = '<option value="">— test method —</option>';
+        var found = false;
         for (var ti = 0; ti < ctmRow.length; ti++) {
             if (!ctmRow[ti]) continue;
             var s = (selectedVal && selectedVal === ctmRow[ti]) ? ' selected' : '';
+            if (s) found = true;
             o += '<option value="' + ctmRow[ti] + '"' + s + '>' + ctmRow[ti] + '</option>';
+        }
+        // If selectedVal exists but is not in the standard list, add it dynamically
+        if (selectedVal && !found) {
+            o += '<option value="' + selectedVal + '" selected>' + selectedVal + '</option>';
         }
         return o;
     }
@@ -673,7 +679,8 @@ function showMatModal(editId) {
         // Condition: prefer embedded in value (new schema), fallback to validConditions[r]
         var condTemp = (v.temperature != null) ? v.temperature : ((conds[r] && conds[r].temperature != null) ? conds[r].temperature : '');
         var condHum  = (v.humidity    != null) ? v.humidity    : ((conds[r] && conds[r].humidity    != null) ? conds[r].humidity    : '');
-        var condTM   = v.testMethod || '';
+        // testMethod: new schema → embedded in value; legacy → top-level mat field
+        var condTM   = v.testMethod || (currentMode === 'wvtr' ? (mat && mat.testMethodWVTR || '') : (mat && mat.testMethodOTR || ''));
         var rowRO    = isReadOnly ? ' disabled readonly style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowROsel = isReadOnly ? ' disabled style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowBg    = isReadOnly ? 'background:#f8fafc;border-radius:6px;padding:0.4rem 0.5rem;border:1px solid #e2e8f0;' : '';
