@@ -159,92 +159,154 @@
   // IMPORTANTE: ogni step con `nav` aspetta che `waitSelector` compaia nel DOM
   // dopo la navigazione, così il polling non trova mai l'elemento sbagliato.
   var STEPS = [
+    // ── STEP 0: Home ─────────────────────────────────────────────────────
     {
       nav: function () { _goHome(); },
-      waitSelector: '#nav-tabs',        // presente nella home
+      waitSelector: '#nav-tabs',
       spotSelector: '.mode-toggle',
-      title: 'Step 1: choose the gas',
+      title: 'Choose the gas to measure',
       icon: '',
-      text: 'Start by choosing what you want to measure: <strong>WVTR</strong> (water vapor) or <strong>OTR</strong> (oxygen). This choice affects all calculations.',
+      text: 'Before anything else, select <strong>WVTR</strong> (water vapor) or <strong>OTR</strong> (oxygen). This choice affects every calculation and database filter in the app.',
       tip: ' WVTR = moisture barrier · OTR = oxygen barrier'
     },
+    // ── STEP 1: Main nav ─────────────────────────────────────────────────
     {
       nav: function () { _goHome(); },
       waitSelector: '#nav-tabs',
       spotSelector: '#nav-tabs',
       title: 'Main navigation',
       icon: '',
-      text: 'The top bar has <strong>4 sections</strong>: Home, Analysis, Community Database and Company Database. Click one to explore.',
-      tip: ' Each section reveals a sub-menu below with specific tools.'
+      text: 'The top bar has <strong>4 sections</strong>: Home, Analysis, Community Database and Company Database. Click one to explore its tools.',
+      tip: ' Each section reveals a sub-menu below.'
     },
-    {
-      nav: function () { onGroupClick('analysis'); },
-      waitSelector: '#nav-subtabs',     // appare solo dopo onGroupClick('analysis')
-      spotSelector: '#nav-subtabs',
-      title: 'Sub-menu: Analysis tools',
-      icon: '',
-      text: 'When you click <strong>Analysis</strong>, a second row appears with 5 tools: Calculator, Sensitivity, Shelf Life, Arrhenius and Compare.',
-      tip: ' Start from Calculator — it\'s the core of the app.'
-    },
+    // ── STEP 2: Open Calculator ───────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
-      waitSelector: '#filter-matsource', // id univoco dentro renderCalc()
-      spotSelector: '#filter-matsource',
-      title: 'Calculator: build your laminate',
+      waitSelector: '#filter-matsource',
+      spotSelector: '#nav-subtabs',
+      title: 'Open the Calculator',
       icon: '',
-      text: 'Add one or more material layers, set their thickness, pick test conditions and click <em>Calculate</em>. The app computes the total WVTR/OTR of your laminate stack.',
-      tip: ' Each layer needs a material from the database + a thickness in µm.'
+      text: 'Click <strong>Analysis → Calculator</strong> in the sub-menu. This is the main tool: you build a laminate layer by layer and the app computes its total barrier performance.',
     },
+    // ── STEP 3: Materials Source ──────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '#filter-matsource',
+      title: 'Step 1 — Choose the database',
+      icon: '',
+      text: 'Select the <strong>Materials Source</strong>: use the <em>General Database</em> (community materials) or your private <em>Company DB</em> if your company is connected.',
+      tip: ' Most users start with General Database.'
+    },
+    // ── STEP 4: Test Method filter ────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-testmethod',
+      spotSelector: '#filter-testmethod',
+      title: 'Step 2 — Filter by test method',
+      icon: '',
+      text: 'Select a <strong>test standard</strong> (e.g. ASTM F1249, ISO 15106) to show only materials tested with the same method — this ensures your results are comparable.',
+      tip: ' Leave "All test methods" if you want the full list.'
+    },
+    // ── STEP 5: Layer material ────────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '.layer-card',
+      title: 'Step 3 — Select a material for each layer',
+      icon: '',
+      text: 'In the <strong>Layer 1</strong> row, open the Material dropdown and pick a film (e.g. PET, PE, EVOH). You can add as many layers as you need to model your laminate stack.',
+      tip: ' The dropdown shows only materials compatible with already-selected layers.'
+    },
+    // ── STEP 6: Thickness ─────────────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '.layer-card',
+      title: 'Step 4 — Enter thickness (µm)',
+      icon: '',
+      text: 'Next to the material, type the <strong>thickness in micrometres (µm)</strong>. This is critical: barrier performance scales with thickness.',
+      tip: ' Typical films range from 10 µm (thin coating) to 200 µm (rigid sheet).'
+    },
+    // ── STEP 7: Add layer ─────────────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '.btn-full',
+      title: 'Step 5 — Add more layers',
+      icon: '',
+      text: 'Click <strong>+ Add Layer</strong> to add a second (or third…) film to your laminate. Real packaging usually has 2–5 layers: e.g. PET / adhesive / PE.',
+      tip: ' The button is disabled until the current layer is fully configured.'
+    },
+    // ── STEP 8: Test conditions ───────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '.card:nth-child(2)',
+      title: 'Step 6 — Select test conditions',
+      icon: '',
+      text: 'In the <strong>Test Conditions</strong> panel, choose the temperature and humidity at which you want to evaluate barrier performance (e.g. 23°C / 50% RH).',
+      tip: ' Only conditions available for ALL selected materials appear here.'
+    },
+    // ── STEP 9: Calculate ────────────────────────────────────────────────
+    {
+      nav: function () { onSubTabClick('calc'); },
+      waitSelector: '#filter-matsource',
+      spotSelector: '.btn-danger',
+      title: 'Step 7 — Calculate!',
+      icon: '',
+      text: 'Click <strong>Calculate</strong> to run the barrier model. The Result panel on the right shows the total WVTR/OTR of your laminate, plus the resistance contribution of each layer.',
+      tip: ' Enable Auto-calculate to recompute instantly every time you change a value.'
+    },
+    // ── STEP 10: Sensitivity ─────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('sensitivity'); },
-      waitSelector: '#sens-layer',       // id univoco in renderSensitivity()
+      waitSelector: '#sens-layer',
       spotSelector: '#app-content',
-      title: 'Sensitivity analysis',
+      title: 'Optimize with Sensitivity',
       icon: '',
-      text: '<strong>Sensitivity</strong> shows how the result changes as you vary thickness or conditions. Ideal for optimizing your laminate before going to the lab.'
+      text: '<strong>Sensitivity</strong> sweeps thickness across a range and plots how the total barrier changes — perfect for finding the minimum thickness that meets your target.',
     },
+    // ── STEP 11: Shelf Life ───────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('shelflife'); },
-      waitSelector: '#sl-weight',        // id univoco in renderShelfLife()
+      waitSelector: '#sl-weight',
       spotSelector: '#app-content',
-      title: 'Shelf Life',
+      title: 'Shelf Life calculator',
       icon: '',
-      text: 'Enter product weight, area, rate and storage conditions — the tool tells you the <strong>expected shelf life</strong> of your packaging.'
+      text: 'Enter product weight, packaging area, critical moisture gain rate and storage conditions — the tool computes the <strong>expected shelf life</strong> of your product.',
     },
+    // ── STEP 12: Community DB ─────────────────────────────────────────────
     {
       nav: function () { onGroupClick('community'); },
       waitSelector: '#nav-subtabs',
       spotSelector: '#nav-subtabs',
       title: 'Community Database',
       icon: '',
-      text: 'The <strong>Community Database</strong> contains Materials and Laminates shared by all users. You can search, vote on reliability, and add your own data.',
+      text: 'Browse and search <strong>materials & laminates</strong> shared by the community. You can vote on reliability and contribute your own data.',
       tip: ' The green dot on Company Database means your company data is active.'
     },
+    // ── STEP 13: Materials search ─────────────────────────────────────────
     {
       nav: function () { onSubTabClick('materials'); },
-      waitSelector: '#mat-search',       // id della barra di ricerca materiali
+      waitSelector: '#mat-search',
       spotSelector: '#mat-search',
-      title: 'Search & explore materials',
+      title: 'Search materials',
       icon: '',
-      text: 'Use the search bar to find any material by name. Filter by family or test method. Click a material to see its data and use it in calculations.'
+      text: 'Type a material name to filter instantly. Click any row to see all its data points, reliability votes, and a link to the original TDS datasheet.',
     },
-    {
-      nav: function () { onGroupClick('company'); },
-      waitSelector: '#nav-subtabs',
-      spotSelector: '#nav-subtabs',
-      title: 'Company Database',
-      icon: '',
-      text: 'In <strong>Company Database</strong> you can manage <em>private</em> materials and laminates — only visible to your team, never shared with the community.'
-    },
+    // ── STEP 14: Done ─────────────────────────────────────────────────────
     {
       nav: function () { _goHome(); },
-      waitSelector: null,               // step finale: nessun elemento da aspettare
+      waitSelector: null,
       spotSelector: null,
-      title: 'You\'re ready! ',
+      title: "You're ready! ",
       icon: '',
-      text: 'You\'ve seen all the main sections. Start with <strong>Calculator</strong> → add materials → run your first analysis. You can restart this tour anytime from the button at the bottom right.'
+      text: 'You know the full workflow: choose gas → pick database → add layers + thickness → set conditions → Calculate. Restart this tour anytime from the button at the bottom right.'
     }
   ];
+
+  // ── State
 
   // ── State ────────────────────────────────────────────────────────────
   var currentStep     = 0;
