@@ -1,5 +1,3 @@
-
-
 // ====================================================================
 // 📊 CHARTS.JS - All chart drawing functions
 // ====================================================================
@@ -131,6 +129,9 @@ function initCountUp() {
 // 📐 CALC - BAR CHART (resistance contribution)
 // ====================================================================
 function drawBarChart() {
+  // FIX: sync Engine.mode before reading units
+  Engine.mode = State.mode;
+
   var canvas = document.getElementById('barChart');
   if (!canvas || !State.calcResult || !State.calcResult.layers) return;
   destroyChart('bar');
@@ -187,11 +188,16 @@ function drawBarChart() {
 // 🌡️ CALC - LAMINATE CURVE CHART (WVTR/OTR vs Temperature)
 // ====================================================================
 function drawLaminateCurveChart() {
+  // FIX: sync Engine.mode FIRST so getUnit()/getLabel() return correct values
+  Engine.mode = State.mode;
+
   var canvas = document.getElementById('lamCurveChart');
   if (!canvas || !State.calcResult) return;
   destroyChart('lamCurve');
 
+  // Read unit/label AFTER mode sync
   var unit             = getUnit();
+  var label            = getLabel();
   var datasets         = [];
   var allTemps         = [];
   var selectedHumidity = State.selCond ? State.selCond.humidity : null;
@@ -309,13 +315,9 @@ function drawLaminateCurveChart() {
       borderWidth: 2.5, pointRadius: 0, type: 'line', fill: false, order: 0 });
   }
 
-  if (State.selCond && State.calcResult && State.calcResult.total > 0 && !State.calcResult.isBarrier) {
-    datasets.push({ label: '▶ Calculated @ ' + State.selCond.temperature + '°C',
-      data: [{ x: State.selCond.temperature, y: State.calcResult.total }],
-      borderColor: '#dc2626', backgroundColor: '#dc2626', borderWidth: 3,
-      pointRadius: 8, pointHoverRadius: 10, pointBackgroundColor: '#fff',
-      pointBorderColor: '#dc2626', type: 'scatter', showLine: false, order: -1 });
-  }
+  // FIX: removed the redundant "Calculated @ T°C" scatter point — the result
+  // is already shown in the Result panel and it overlapped the measured data
+  // point causing two markers at the same X coordinate.
 
   if (datasets.length === 0) return;
 
@@ -329,7 +331,6 @@ function drawLaminateCurveChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
-          filter: function(item) { return !item.dataset.label.includes('Calculated'); },
           callbacks: {
             label: function(ctx) {
               var lbl  = ctx.dataset.label || '';
@@ -344,7 +345,7 @@ function drawLaminateCurveChart() {
       scales: {
         x: { type: 'linear', title: { display: true, text: 'Temperature (°C)', font: { size: 10, weight: '600' } },
              grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 9 } } },
-        y: { title: { display: true, text: getLabel() + ' (' + unit + ')', font: { size: 10, weight: '600' } },
+        y: { title: { display: true, text: label + ' (' + unit + ')', font: { size: 10, weight: '600' } },
              beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' },
              ticks: { font: { size: 9 }, callback: function(v) { return formatWithSigFigs(v, getDisplayPrecision()); } } }
       }
@@ -357,7 +358,7 @@ function drawLaminateCurveChart() {
     for (var d = 0; d < datasets.length; d++) {
       var ds  = datasets[d];
       var txt = ds.label || '';
-      if (txt.indexOf('Calculated') >= 0 || txt.indexOf('(Fit)') >= 0) continue;
+      if (txt.indexOf('(Fit)') >= 0) continue;
       var col = ds.borderColor || ds.backgroundColor;
       if (!txt || !col) continue;
       html += '<div style="display:flex;align-items:center;gap:0.4rem;background:#fff;padding:0.35rem 0.6rem;border-radius:6px;border:1px solid var(--border);font-size:0.75rem;font-weight:500;color:var(--text);">' +
@@ -373,6 +374,9 @@ function drawLaminateCurveChart() {
 // 💧 CALC - HYGROSCOPIC TIME CHART
 // ====================================================================
 function drawHygroscopicTimeChart() {
+  // FIX: sync Engine.mode
+  Engine.mode = State.mode;
+
   var canvas    = document.getElementById('hygroTimeChart');
   var hygroCard = document.getElementById('hygro-card');
   if (!canvas) return;
@@ -489,9 +493,11 @@ function drawHygroscopicTimeChart() {
 
   var initialWVTR  = wvtrPoints[0];
   var finalWVTR    = wvtrPoints[wvtrPoints.length - 1];
-  var increasePct  = initialWVTR > 0 ? ((finalWVTR - initialWVTR) / initialWVTR * 100).toFixed(1) : 0;
   var yMax         = Math.max(initialWVTR, finalWVTR) * 1.5;
   if (yMax < 0.1) yMax = 0.1;
+
+  var unit  = getUnit();
+  var label = getLabel();
 
   var ctx = canvas.getContext('2d');
   chartInstances.hygroTime = new Chart(ctx, {
@@ -499,7 +505,7 @@ function drawHygroscopicTimeChart() {
     data: {
       labels: timePoints,
       datasets: [
-        { label: 'Effective ' + getLabel() + ' (hygroscopic)',
+        { label: 'Effective ' + label + ' (hygroscopic)',
           data: wvtrPoints, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
           fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 },
         { label: 'Initial (t=0)',
@@ -522,7 +528,7 @@ function drawHygroscopicTimeChart() {
       },
       scales: {
         x: { title: { display: true, text: 'Days', font: { size: 10 } }, grid: { display: false } },
-        y: { title: { display: true, text: getLabel() + ' (' + getUnit() + ')', font: { size: 10 } },
+        y: { title: { display: true, text: label + ' (' + unit + ')', font: { size: 10 } },
              beginAtZero: true, suggestedMax: yMax,
              ticks: { callback: function(v) { return formatWithSigFigs(v, getDisplayPrecision()); } } }
       }
@@ -534,10 +540,15 @@ function drawHygroscopicTimeChart() {
 // 🧪 ARRHENIUS - TEMPERATURE CHART
 // ====================================================================
 function drawArrTempChart(mat, r, isCustomEa) {
+  // FIX: sync Engine.mode
+  Engine.mode = State.mode;
+
   destroyChart('arrTemp');
   var canvas = document.getElementById('arrTempCanvas');
   if (!canvas || typeof Chart === 'undefined') return;
 
+  var unit  = getUnit();
+  var label = getLabel();
   var ctx    = canvas.getContext('2d');
   var vals   = Engine.getValues(mat);
   var dataPoints = [];
@@ -583,15 +594,15 @@ function drawArrTempChart(mat, r, isCustomEa) {
       plugins: {
         legend: { position: 'bottom', labels: { boxWidth: isMobile ? 10 : 12, font: { size: isMobile ? 9 : 10 }, padding: isMobile ? 8 : 12 } },
         tooltip: { callbacks: { label: function(context) {
-          var label = (context.dataset.label || '') + ': ';
-          if (context.parsed.y !== null) label += context.parsed.y.toFixed(4) + ' ' + getUnit();
-          return label;
+          var lbl = (context.dataset.label || '') + ': ';
+          if (context.parsed.y !== null) lbl += context.parsed.y.toFixed(4) + ' ' + getUnit();
+          return lbl;
         }}}
       },
       scales: {
         x: { type: 'linear', title: { display: true, text: 'Temperature (°C)', font: { size: isMobile ? 10 : 11 } },
              ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: !isMobile } },
-        y: { title: { display: true, text: getLabel() + ' (' + getUnit() + ')', font: { size: isMobile ? 10 : 11 } },
+        y: { title: { display: true, text: label + ' (' + unit + ')', font: { size: isMobile ? 10 : 11 } },
              beginAtZero: true, ticks: { font: { size: isMobile ? 9 : 10 }, callback: function(v) { return v.toFixed(3); } },
              grid: { display: !isMobile } }
       }
@@ -603,10 +614,15 @@ function drawArrTempChart(mat, r, isCustomEa) {
 // 📉 ARRHENIUS - LINEAR PLOT (ln vs 1/T)
 // ====================================================================
 function drawArrLinChart(mat, r, isCustomEa) {
+  // FIX: sync Engine.mode
+  Engine.mode = State.mode;
+
   destroyChart('arrLin');
   var canvas = document.getElementById('arrLinCanvas');
   if (!canvas || typeof Chart === 'undefined') return;
   var ctx = canvas.getContext('2d');
+
+  var label = getLabel();
 
   if (!r || !r.dataPoints || r.dataPoints.length < 2 || !r.A || !r.Ea) {
     ctx.fillStyle = '#94a3b8'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
@@ -656,7 +672,7 @@ function drawArrLinChart(mat, r, isCustomEa) {
       scales: {
         x: { type: 'linear', title: { display: true, text: '1/T (K⁻¹)', font: { size: isMobile ? 10 : 11 } },
              ticks: { font: { size: isMobile ? 9 : 10 }, maxRotation: isMobile ? 45 : 0 }, grid: { display: !isMobile } },
-        y: { title: { display: true, text: 'ln(' + getLabel() + ')', font: { size: isMobile ? 10 : 11 } },
+        y: { title: { display: true, text: 'ln(' + label + ')', font: { size: isMobile ? 10 : 11 } },
              ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: !isMobile } }
       }
     }
@@ -683,9 +699,15 @@ function clearArrCanvas(id) {
 // 📏 SENSITIVITY CHART
 // ====================================================================
 function drawSensitivityChart() {
+  // FIX: sync Engine.mode
+  Engine.mode = State.mode;
+
   var canvas = document.getElementById('sensChart');
   if (!canvas) return;
   destroyChart('sens');
+
+  var unit  = getUnit();
+  var label = getLabel();
 
   var layerIdx = State.sensLayerIdx;
   var tMin     = parseFloat(document.getElementById('sens-tmin') ? document.getElementById('sens-tmin').value : '10');
@@ -710,7 +732,7 @@ function drawSensitivityChart() {
     type: 'line',
     data: {
       labels: labels,
-      datasets: [{ label: getLabel() + ' vs Layer ' + (layerIdx + 1) + ' thickness',
+      datasets: [{ label: label + ' vs Layer ' + (layerIdx + 1) + ' thickness',
         data: vals, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)',
         fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 }]
     },
@@ -719,7 +741,7 @@ function drawSensitivityChart() {
       plugins: { legend: { display: false } },
       scales: {
         x: { title: { display: true, text: 'Layer thickness (µm)' } },
-        y: { title: { display: true, text: 'Total ' + getLabel() + ' (' + getUnit() + ')' },
+        y: { title: { display: true, text: 'Total ' + label + ' (' + unit + ')' },
              beginAtZero: true,
              ticks: { callback: function(v) { return v < 0.01 ? v.toExponential(2) : v.toFixed(4); } } }
       }
@@ -744,9 +766,16 @@ function showSensitivityEmpty(msg) {
 // 📚 LAMINATES DB CHART
 // ====================================================================
 function drawLamChart() {
+  // FIX: sync Engine.mode
+  Engine.mode = State.mode;
+
   if (DB.laminates.length < 2) return;
   var canvas = document.getElementById('lamChart'); if (!canvas) return;
   destroyChart('lam');
+
+  var unit  = getUnit();
+  var label = getLabel();
+
   var ctx    = canvas.getContext('2d');
   var labels = [], vals = [], colors = [];
   for (var i = 0; i < DB.laminates.length; i++) {
@@ -759,7 +788,7 @@ function drawLamChart() {
     data: { labels: labels, datasets: [{ label: (DB.laminates[0].mode || State.mode).toUpperCase(),
               data: vals, backgroundColor: colors, borderRadius: 6 }] },
     options: { responsive: true, plugins: { legend: { display: false } },
-               scales: { y: { beginAtZero: true, title: { display: true, text: getUnit() } },
+               scales: { y: { beginAtZero: true, title: { display: true, text: unit } },
                          x: { title: { display: true, text: 'Laminates' } } } }
   });
 }
