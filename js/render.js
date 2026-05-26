@@ -512,7 +512,7 @@ function renderSensitivity() {
         (!hasMats ? '<div class="alert alert-info">Configure layers in Calculator first</div>' :
         '<div class="grid grid-2"><div class="form-group"><label>Layer to vary</label><select class="form-input" id="sens-layer" onchange="onSensChange()">'+layerOpts+'</select></div>' +
         '<div class="form-group"><label>Thickness range (um)</label><div style="display:flex;gap:.5rem"><input type="number" step="any" class="form-input" id="sens-tmin" value="10" onchange="onSensChange()"><input type="number" step="any" class="form-input" id="sens-tmax" value="500" onchange="onSensChange()"></div></div></div></div>') +
-        '<div class="card"><h2>'+label+' vs Thickness</h2><div class="chart-container"><canvas id="sensChart"></canvas></div></div>' +
+        '<div class="card"><h2>'+label+' vs Thickness</h2><div class="chart-container"><canvas id="sensChart"></canvas></div><div id="sens-points-info"></div></div>' +
         '</div>' +
         '<div class="card"><h2>Cost-Saving Optimizer</h2>' +
         '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">Find minimum barrier layer thickness to meet target</p>' +
