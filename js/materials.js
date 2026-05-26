@@ -679,8 +679,12 @@ function showMatModal(editId) {
         // Condition: prefer embedded in value (new schema), fallback to validConditions[r]
         var condTemp = (v.temperature != null) ? v.temperature : ((conds[r] && conds[r].temperature != null) ? conds[r].temperature : '');
         var condHum  = (v.humidity    != null) ? v.humidity    : ((conds[r] && conds[r].humidity    != null) ? conds[r].humidity    : '');
-        // testMethod: new schema → embedded in value; legacy → top-level mat field
-        var condTM   = v.testMethod || (currentMode === 'wvtr' ? (mat && mat.testMethodWVTR || '') : (mat && mat.testMethodOTR || ''));
+        // testMethod resolution (priority order):
+        // 1. embedded in value object (new schema)
+        // 2. top-level testMethodWVTR / testMethodOTR (split schema)
+        // 3. top-level testMethod (legacy unified field, pre-split)
+        var _matTM = mat ? (currentMode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '')) : '';
+        var condTM = v.testMethod || _matTM;
         var rowRO    = isReadOnly ? ' disabled readonly style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowROsel = isReadOnly ? ' disabled style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowBg    = isReadOnly ? 'background:#f8fafc;border-radius:6px;padding:0.4rem 0.5rem;border:1px solid #e2e8f0;' : '';
