@@ -55,9 +55,23 @@ const Engine = {
     var errs = [];
     var vals = this.mode === 'wvtr' ? mat.wvtrValues : mat.otrValues;
     if (!vals || vals.length === 0) errs.push('No ' + (this.mode === 'wvtr' ? 'WVTR' : 'OTR') + ' data');
-    if (!mat.validConditions || mat.validConditions.length === 0) errs.push('No test conditions');
-    if (vals && mat.validConditions && vals.length !== mat.validConditions.length)
-      errs.push('Data count != conditions count');
+
+    // Condition check: at least one resolvable condition must exist
+    // (either embedded in values or in the legacy validConditions array)
+    if (vals && vals.length > 0) {
+      var hasAnyCond = false;
+      for (var ci = 0; ci < vals.length; ci++) {
+        var c = Engine._getCondFromVal(vals[ci], mat, ci);
+        if (c) { hasAnyCond = true; break; }
+      }
+      if (!hasAnyCond) errs.push('No test conditions');
+    } else if (!mat.validConditions || mat.validConditions.length === 0) {
+      errs.push('No test conditions');
+    }
+
+    // NOTE: we no longer require vals.length === validConditions.length
+    // because the new schema embeds conditions inside each value row.
+
     for (var i = 0; i < (vals || []).length; i++) {
       var w = vals[i];
       if (!w || w.value == null || isNaN(w.value)) errs.push('Row ' + (i + 1) + ': value null/NaN');
@@ -69,6 +83,38 @@ const Engine = {
   },
 
   getValues: function(mat) { return this.mode === 'wvtr' ? mat.wvtrValues : mat.otrValues; },
+
+  // ── NEW: extract condition from a value row (new schema) or fall back
+  //         to validConditions[idx] (legacy schema).
+  // Returns { temperature, humidity } or null.
+  _getCondFromVal: function(val, mat, idx) {
+    // New schema: condition embedded in the value object
+    if (val && val.temperature != null && val.humidity != null)
+      return { temperature: val.temperature, humidity: val.humidity };
+    // Legacy schema: parallel validConditions array
+    if (mat.validConditions && mat.validConditions[idx] != null)
+      return mat.validConditions[idx];
+    return null;
+  },
+
+  // ── NEW: build the list of unique conditions available for the active gas
+  //         Works with both new (embedded) and legacy (validConditions) schema.
+  _getAvailableConditions: function(mat) {
+    var vals = this.getValues(mat);
+    if (!vals || vals.length === 0) return [];
+    var result = [];
+    for (var i = 0; i < vals.length; i++) {
+      var c = this._getCondFromVal(vals[i], mat, i);
+      if (!c) continue;
+      var already = false;
+      for (var j = 0; j < result.length; j++) {
+        if (Math.abs(result[j].temperature - c.temperature) < 0.01 &&
+            Math.abs(result[j].humidity    - c.humidity)    < 0.01) { already = true; break; }
+      }
+      if (!already) result.push({ temperature: c.temperature, humidity: c.humidity });
+    }
+    return result;
+  },
 
   getUnits: function() {
     return this.mode === 'wvtr'
@@ -90,13 +136,13 @@ const Engine = {
     }
     if (allE.length > 0) return { conditions: [], error: allE.join('. '), warning: null, matInfo: null };
 
-    var common = [].concat(mats[0].validConditions);
+    // ── NEW: derive available conditions from the active gas values
+    //         (_getAvailableConditions handles both new and legacy schema)
+    var common = Engine._getAvailableConditions(mats[0]);
     for (var i = 1; i < mats.length; i++) {
-      var nc = mats[i].validConditions;
+      var nc = Engine._getAvailableConditions(mats[i]);
       common = common.filter(function(c) {
-        if (testMethodFilter && c.testMethod && c.testMethod !== testMethodFilter) return false;
         return nc.some(function(n) {
-          if (testMethodFilter && n.testMethod && n.testMethod !== testMethodFilter) return false;
           return Math.abs(n.temperature - c.temperature) < 0.01 &&
                  Math.abs(n.humidity    - c.humidity)    < 0.01;
         });
@@ -104,9 +150,10 @@ const Engine = {
     }
 
     var matInfo = mats.map(function(m) {
+      var conds = Engine._getAvailableConditions(m);
       return {
         name:       m.name,
-        conditions: m.validConditions.map(function(c) { return c.temperature + '°C/' + c.humidity + '%'; })
+        conditions: conds.map(function(c) { return c.temperature + '°C/' + c.humidity + '%'; })
       };
     });
     if (common.length === 0)
@@ -118,14 +165,20 @@ const Engine = {
     var vals = this.getValues(material);
     var idx  = -1;
 
-    for (var i = 0; i < material.validConditions.length; i++) {
+    // ── NEW: search condition embedded in each value row first,
+    //         then fall back to parallel validConditions array (legacy).
+    for (var i = 0; i < vals.length; i++) {
+      var c = Engine._getCondFromVal(vals[i], material, i);
+      if (!c) continue;
       var condMatch =
-        Math.abs(material.validConditions[i].temperature - condition.temperature) < 0.01 &&
-        Math.abs(material.validConditions[i].humidity    - condition.humidity)    < 0.01;
-      var methodMatch =
-        !material.validConditions[i].testMethod ||
-        !State.selectedTestMethod ||
-        material.validConditions[i].testMethod === State.selectedTestMethod;
+        Math.abs(c.temperature - condition.temperature) < 0.01 &&
+        Math.abs(c.humidity    - condition.humidity)    < 0.01;
+      // test-method filter (optional, stored on condition or on validConditions row)
+      var rowMethod = (vals[i] && vals[i].testMethod) ||
+                      (material.validConditions && material.validConditions[i] &&
+                       material.validConditions[i].testMethod) || null;
+      var methodMatch = !rowMethod || !State.selectedTestMethod ||
+                        rowMethod === State.selectedTestMethod;
       if (condMatch && methodMatch) { idx = i; break; }
     }
 
@@ -204,10 +257,12 @@ const Engine = {
     var e    = this.validateData(mat);
     if (e.length > 0) return { valid: false, error: e.join('. ') };
     if (vals.length < 2) return { valid: false, error: 'Need 2+ data points' };
+    // ── NEW: use _getAvailableConditions so embedded conditions are found too
+    var availConds = Engine._getAvailableConditions(mat);
     var temps = {};
-    for (var i = 0; i < mat.validConditions.length; i++) temps[mat.validConditions[i].temperature] = true;
+    for (var i = 0; i < availConds.length; i++) temps[availConds[i].temperature] = true;
     if (Object.keys(temps).length < 2) return { valid: false, error: 'Need 2+ different temperatures' };
-    var hums = mat.validConditions.map(function(c) { return c.humidity; });
+    var hums = availConds.map(function(c) { return c.humidity; });
     if (Math.max.apply(null, hums) - Math.min.apply(null, hums) > 5)
       return { valid: false, error: 'Humidity must be same (max 5% diff)' };
     for (var w = 0; w < vals.length; w++)
@@ -221,8 +276,10 @@ const Engine = {
     var vals = this.getValues(mat);
     var R    = Engine.R_GAS;
     var dps  = [];
-    for (var i = 0; i < mat.validConditions.length; i++) {
-      var tk = mat.validConditions[i].temperature + 273.15;
+    for (var i = 0; i < vals.length; i++) {
+      var c2 = Engine._getCondFromVal(vals[i], mat, i);
+      if (!c2) continue;
+      var tk = c2.temperature + 273.15;
       if (vals[i].value > 0) dps.push({ T_K: tk, trans: vals[i].value });
     }
     if (dps.length < 2) return { valid: false, error: 'Need 2+ valid points' };
@@ -298,9 +355,12 @@ const Engine = {
     if (!mat) return { error: 'Material not found' };
     var vals    = this.getValues(mat);
     var condIdx = -1;
-    for (var i = 0; i < mat.validConditions.length; i++) {
-      if (Math.abs(mat.validConditions[i].temperature - condition.temperature) < 0.01 &&
-          Math.abs(mat.validConditions[i].humidity    - condition.humidity)    < 0.01) {
+    // ── NEW: search inside embedded conditions first, then legacy array
+    for (var i = 0; i < vals.length; i++) {
+      var cv = Engine._getCondFromVal(vals[i], mat, i);
+      if (!cv) continue;
+      if (Math.abs(cv.temperature - condition.temperature) < 0.01 &&
+          Math.abs(cv.humidity    - condition.humidity)    < 0.01) {
         condIdx = i; break;
       }
     }
