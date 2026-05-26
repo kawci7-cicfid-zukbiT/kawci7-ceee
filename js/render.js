@@ -10,6 +10,12 @@
 // CALCULATOR
 // ====================================================================
 function renderCalc() {
+    // FIX: sync Engine.mode FIRST so getUnit()/getLabel() return correct values
+    Engine.mode = State.mode;
+
+    var unit  = getUnit();
+    var label = getLabel();
+
     var common = Engine.findCommonConditions(State.layers, DB.materials);
     var hasMats = State.layers.some(function(l){ return l.mid !== null; });
 
@@ -21,10 +27,8 @@ function renderCalc() {
     var testMethods = {};
     for(var i=0; i<DB.materials.length; i++){
         var m = DB.materials[i];
-        // Top-level field (legacy schema)
         var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR || m.testMethod || '') : (m.testMethodOTR || m.testMethod || '');
         if(currentTM && currentTM.trim() !== '') testMethods[currentTM.trim()] = true;
-        // Embedded testMethod in value rows (new schema)
         var mVals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
         for(var vi=0; vi<mVals.length; vi++){
             if(mVals[vi] && mVals[vi].testMethod && mVals[vi].testMethod.trim() !== '')
@@ -89,7 +93,6 @@ function renderCalc() {
     var layersHTML = '';
     for(var li=0; li<State.layers.length; li++){
         var l = State.layers[li];
-        // FIX: safe access to calcResult.layers[li]
         var res = (State.calcResult && State.calcResult.layers && State.calcResult.layers[li]) ? State.calcResult.layers[li] : null;
 
         var filteredMats = DB.materials.filter(function(mat){
@@ -99,7 +102,6 @@ function renderCalc() {
         filteredMats.sort(function(a, b){ return a.name.localeCompare(b.name, 'en', {sensitivity: 'base'}); });
 
         var otherMats = [];
-        // FIX: use separate loop variable to avoid collision with outer li
         for(var k=0; k<State.layers.length; k++){
             if(k !== li && State.layers[k].mid !== null){
                 var matOther = findMaterialById(State.layers[k].mid);
@@ -108,7 +110,6 @@ function renderCalc() {
         }
         var reqConds = [];
         if(otherMats.length > 0){
-            // Use Engine._getAvailableConditions so new-schema materials (embedded conditions) work too
             reqConds = Engine._getAvailableConditions(otherMats[0]).slice();
             for(var om=1; om<otherMats.length; om++){
                 var omConds = Engine._getAvailableConditions(otherMats[om]);
@@ -122,7 +123,6 @@ function renderCalc() {
         var displayMats = filteredMats;
         if(reqConds.length > 0){
             displayMats = filteredMats.filter(function(mat){
-                // Use Engine._getAvailableConditions for compatibility with both schema types
                 var vc = Engine._getAvailableConditions(mat);
                 return vc.some(function(v){
                     return reqConds.some(function(r){
@@ -136,8 +136,7 @@ function renderCalc() {
         var matOpts = '<option value="">Select...</option>';
         for(var j=0; j<displayMats.length; j++){
             var mat = displayMats[j];
-            var label = mat.name;
-            // Show test method label: prefer active filter, then top-level field, then first embedded value
+            var matLabel = mat.name;
             var currentTM2 = '';
             if(State.selectedTestMethod) {
                 currentTM2 = State.selectedTestMethod;
@@ -148,10 +147,9 @@ function renderCalc() {
                     if(firstVals[0] && firstVals[0].testMethod) currentTM2 = firstVals[0].testMethod;
                 }
             }
-            if(currentTM2) label += ' ['+currentTM2+']';
-            // FIX: compare as strings to support both numeric and string IDs
+            if(currentTM2) matLabel += ' ['+currentTM2+']';
             var selected = (String(l.mid) === String(mat.id)) ? ' selected' : '';
-            matOpts += '<option value="'+mat.id+'"'+selected+'>'+label+'</option>';
+            matOpts += '<option value="'+mat.id+'"'+selected+'>'+matLabel+'</option>';
         }
 
         layersHTML += '<div class="layer-card"><span class="layer-badge">LAYER '+(li+1)+'</span>' +
@@ -170,7 +168,6 @@ function renderCalc() {
     var canCalc = !!selectedCond && State.layers.every(function(l){ return l.mid !== null && l.thick > 0; });
     var hasResult = State.calcResult && !State.calcResult.error && State.calcResult.total > 0;
 
-    // FIX: guard against empty State.layers before accessing last element
     var lastLayerEmpty = State.layers.length > 0 && State.layers[State.layers.length-1].mid === null;
 
     var resultHTML = '';
@@ -178,12 +175,12 @@ function renderCalc() {
         resultHTML = '<div class="alert alert-error">'+State.calcError+'</div>';
     } else if(hasResult){
         var prec = getDisplayPrecision();
-        resultHTML = '<div class="result-card fade-in"><div class="result-value">'+formatWithSigFigs(State.calcResult.total, prec)+'</div><div class="result-unit">'+getUnit()+'</div></div>';
+        resultHTML = '<div class="result-card fade-in"><div class="result-value">'+formatWithSigFigs(State.calcResult.total, prec)+'</div><div class="result-unit">'+unit+'</div></div>';
         var detail = '';
         for(var r=0; r<State.calcResult.layers.length; r++){
             var rl = State.calcResult.layers[r];
             var prec2 = getDisplayPrecision();
-            detail += '<div><strong>'+rl.materialName+'</strong> ('+rl.thickness+'um): '+getLabel()+' = '+formatWithSigFigs(rl.transmissionAtThickness, prec2)+' '+getUnit()+' R='+formatWithSigFigs(rl.resistance, prec2)+' '+rl.resistancePct.toFixed(1)+'%</div>';
+            detail += '<div><strong>'+rl.materialName+'</strong> ('+rl.thickness+'um): '+label+' = '+formatWithSigFigs(rl.transmissionAtThickness, prec2)+' '+unit+' R='+formatWithSigFigs(rl.resistance, prec2)+' '+rl.resistancePct.toFixed(1)+'%</div>';
         }
         detail += '<div style="padding-top:.25rem;border-top:2px solid #93c5fd;margin-top:.25rem"><strong>Total R:</strong> '+rStr(State.calcResult.totalResistance)+'</div>';
         resultHTML += '<div class="result-detail">'+detail+'</div>';
@@ -213,10 +210,10 @@ function renderCalc() {
         '<div style="display:flex;align-items:center;gap:.4rem;margin:.5rem 0">'+
         '<div onclick="toggleAutoCalc()" style="width:36px;height:20px;background:'+(State.autoCalc?'var(--primary)':'var(--border)')+';border-radius:10px;position:relative;cursor:pointer"><div style="position:absolute;top:2px;'+(State.autoCalc?'right:2px':'left:2px')+';width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s"></div></div>'+
         '<span style="font-size:.75rem;color:var(--text-light)">Auto-calculate</span></div>'+
-        '<button class="btn btn-danger btn-full" onclick="doCalc()"'+(canCalc?'':' disabled')+'>Calculate '+getLabel()+'</button></div></div>'+
+        '<button class="btn btn-danger btn-full" onclick="doCalc()"'+(canCalc?'':' disabled')+'>Calculate '+label+'</button></div></div>'+
         '<div><div class="card"><h2>Result</h2>'+(resultHTML||'<p style="color:var(--text-light);font-size:.8rem;text-align:center;padding:1.5rem">Configure layers and calculate</p>')+'</div>'+
         (hasResult ? '<div class="card" id="hygro-card" style="display:none"><h2>Time-Dependent barrier integrity</h2><div class="chart-container" style="min-height:280px"><canvas id="hygroTimeChart"></canvas></div></div>' : '')+
-        (hasResult ? '<div class="card"><h2>'+getLabel()+' vs Temperature</h2><div class="chart-container"><canvas id="lamCurveChart"></canvas></div><div id="lamCurveLegend" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;justify-content:center"></div></div>'+
+        (hasResult ? '<div class="card"><h2>'+label+' vs Temperature</h2><div class="chart-container"><canvas id="lamCurveChart"></canvas></div><div id="lamCurveLegend" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;justify-content:center"></div></div>'+
         '<div class="card"><h2>Save Laminate</h2>' +
         '<div class="form-group"><label>Name</label><input type="text" class="form-input" id="lam-name" value="'+State.laminateName+'" placeholder="e.g. Coffee pouch structure..." oninput="State.laminateName=this.value;updateSaveBtn()"></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">' +
@@ -340,6 +337,12 @@ Corrected Permeability = Permeability<sub>base</sub> × e<sup>&beta; × (&Delta;
 // ARRHENIUS
 // ====================================================================
 function renderArrhenius() {
+    // FIX: sync Engine.mode
+    Engine.mode = State.mode;
+
+    var unit  = getUnit();
+    var label = getLabel();
+
     var validCount = 0;
     var opts = '<option value="">Select a multi-temp material...</option>';
     for(var i = 0; i < DB.materials.length; i++) {
@@ -354,7 +357,7 @@ function renderArrhenius() {
     }
     var infoText = validCount > 0 ? validCount + ' materials available for prediction' : 'No materials with multi-temperature data found';
     var html = '<div class="card"><h2>Arrhenius Analysis</h2>' +
-        '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">Predict ' + getLabel() + ' at unmeasured temperatures. <span style="color:' + (validCount > 0 ? 'var(--success)' : 'var(--danger)') + ';font-weight:600">' + infoText + '</span></p>' +
+        '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">Predict ' + label + ' at unmeasured temperatures. <span style="color:' + (validCount > 0 ? 'var(--success)' : 'var(--danger)') + ';font-weight:600">' + infoText + '</span></p>' +
         '<div class="grid grid-2">' +
             '<div class="form-group"><label>Material (multi-temp only)</label><select class="form-input" id="arr-mat" onchange="onArrChange()">' + opts + '</select></div>' +
             '<div class="form-group"><label>Target Temperature (C)</label><input type="number" step="any" class="form-input" id="arr-temp" value="25" oninput="onArrChange()"></div>' +
@@ -366,7 +369,7 @@ function renderArrhenius() {
         '</div>' +
         '<div id="arr-result"></div></div>' +
         '<div class="grid grid-2">' +
-            '<div class="card"><h2>' + getLabel() + ' vs Temperature</h2><div class="chart-container"><canvas id="arrTempCanvas"></canvas></div></div>' +
+            '<div class="card"><h2>' + label + ' vs Temperature</h2><div class="chart-container"><canvas id="arrTempCanvas"></canvas></div></div>' +
             '<div class="card"><h2>Arrhenius Plot (ln vs 1/T)</h2><div class="chart-container"><canvas id="arrLinCanvas"></canvas></div></div>' +
         '</div>' +
         '</div>' +
@@ -486,6 +489,12 @@ function renderArrheniusMethodology() {
 // SENSITIVITY
 // ====================================================================
 function renderSensitivity() {
+    // FIX: sync Engine.mode
+    Engine.mode = State.mode;
+
+    var unit  = getUnit();
+    var label = getLabel();
+
     var hasMats = State.layers.some(function(l){ return l.mid !== null; });
     var layerOpts = '';
     for(var i=0; i<State.layers.length; i++){
@@ -499,16 +508,16 @@ function renderSensitivity() {
     }
     var html = '<div class="grid grid-2">' +
         '<div class="card"><h2>Sensitivity Analysis</h2>' +
-        '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">See how '+getLabel()+' changes when varying one layer thickness</p>' +
+        '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">See how '+label+' changes when varying one layer thickness</p>' +
         (!hasMats ? '<div class="alert alert-info">Configure layers in Calculator first</div>' :
         '<div class="grid grid-2"><div class="form-group"><label>Layer to vary</label><select class="form-input" id="sens-layer" onchange="onSensChange()">'+layerOpts+'</select></div>' +
         '<div class="form-group"><label>Thickness range (um)</label><div style="display:flex;gap:.5rem"><input type="number" step="any" class="form-input" id="sens-tmin" value="10" onchange="onSensChange()"><input type="number" step="any" class="form-input" id="sens-tmax" value="500" onchange="onSensChange()"></div></div></div></div>') +
-        '<div class="card"><h2>'+getLabel()+' vs Thickness</h2><div class="chart-container"><canvas id="sensChart"></canvas></div></div>' +
+        '<div class="card"><h2>'+label+' vs Thickness</h2><div class="chart-container"><canvas id="sensChart"></canvas></div></div>' +
         '</div>' +
         '<div class="card"><h2>Cost-Saving Optimizer</h2>' +
         '<p style="font-size:.78rem;color:var(--text-light);margin-bottom:.75rem">Find minimum barrier layer thickness to meet target</p>' +
         '<div class="grid grid-2">' +
-        '<div class="form-group"><label>Target '+getLabel()+' ('+getUnit()+')</label><input type="number" step="any" class="form-input" id="opt-target" value="'+State.targetValue+'" onchange="doOptimize()"></div>' +
+        '<div class="form-group"><label>Target '+label+' ('+unit+')</label><input type="number" step="any" class="form-input" id="opt-target" value="'+State.targetValue+'" onchange="doOptimize()"></div>' +
         '<div class="form-group"><label>Barrier layer</label><select class="form-input" id="opt-layer" onchange="doOptimize()">'+barrierOpts+'</select></div></div>' +
         '<div id="opt-result"></div></div>' +
         renderSensitivityMethodology();
@@ -615,13 +624,12 @@ function renderCompare() {
 // ====================================================================
 function renderLaminates() {
     var unit = getUnit();
-    // DOPO:
-var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
-if(!filteredLams.length) return '<div class="card"><div class="empty-state"><p>No ' + State.mode.toUpperCase() + ' laminates saved yet</p></div></div>';
-var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
-var html = '<div class="card"><h2>Laminates <span class="badge badge-purple">'+filteredLams.length+'</span></h2><div class="grid grid-2">';
-for(var i=0; i<filteredLams.length; i++){
-    var l = filteredLams[i];
+    var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
+    if(!filteredLams.length) return '<div class="card"><div class="empty-state"><p>No ' + State.mode.toUpperCase() + ' laminates saved yet</p></div></div>';
+    var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+    var html = '<div class="card"><h2>Laminates <span class="badge badge-purple">'+filteredLams.length+'</span></h2><div class="grid grid-2">';
+    for(var i=0; i<filteredLams.length; i++){
+        var l = filteredLams[i];
         html += '<div style="border:1.5px solid var(--border);border-radius:10px;padding:.85rem;border-top:4px solid '+colors[i%colors.length]+'">' +
             '<div style="font-weight:600;font-size:.85rem;margin-bottom:.35rem">'+l.name+'</div>' +
             '<div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">' +
@@ -632,7 +640,7 @@ for(var i=0; i<filteredLams.length; i++){
             '</div><div style="margin-top:.45rem;text-align:right"><button class="btn btn-sm btn-danger" onclick="DB.deleteLam('+l.id+');render()">Delete</button></div></div>';
     }
     html += '</div></div>';
-    if(filteredLams.length >= 2) html += '<div class="card"><h2>WVTR Comparison</h2><div class="chart-container"><canvas id="lamChart"></canvas></div></div>';
+    if(filteredLams.length >= 2) html += '<div class="card"><h2>Comparison</h2><div class="chart-container"><canvas id="lamChart"></canvas></div></div>';
     return html;
 }
 
@@ -670,10 +678,8 @@ function onCondSelect() {
 function passesTestMethodFilter(mat) {
     if(!State.selectedTestMethod) return true;
     var filter = State.selectedTestMethod.trim().toLowerCase();
-    // 1. Check top-level field (legacy schema)
     var topTM = State.mode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '');
     if(topTM && topTM.trim().toLowerCase() === filter) return true;
-    // 2. Check testMethod embedded in each value row (new schema)
     var vals = State.mode === 'wvtr' ? (mat.wvtrValues || []) : (mat.otrValues || []);
     for(var i = 0; i < vals.length; i++) {
         if(vals[i] && vals[i].testMethod && vals[i].testMethod.trim().toLowerCase() === filter) return true;
@@ -704,8 +710,6 @@ function onMatSourceChange(val) {
 function onLayerChange(i, field, val) {
     if(field === 'mid') {
         if(val !== '') {
-            // FIX: store as-is (string or number) to support both ID types;
-            // use string comparison everywhere for consistency
             var numVal = parseFloat(val);
             State.layers[i].mid = isNaN(numVal) ? val : numVal;
             recordMaterialUsage(val);
@@ -741,7 +745,6 @@ function doCalcSilent() {
     var common = Engine.findCommonConditions(State.layers, DB.materials);
     if(common.error) return;
     var result = Engine.calcTotal(State.layers, DB.materials, State.selCond);
-    // FIX: always clear calcError on silent success so stale errors don't persist
     if(!result.error){ State.calcResult=result; State.calcError=null; renderContent(); setTimeout(postCalcRender, 150); }
 }
 
@@ -780,6 +783,9 @@ function postArrheniusRender() {
 }
 
 function onArrChange() {
+    // FIX: sync Engine.mode
+    Engine.mode = State.mode;
+
     var selMat = document.getElementById('arr-mat');
     var selTemp = document.getElementById('arr-temp');
     var selEa = document.getElementById('arr-ea');
@@ -798,14 +804,16 @@ function onArrChange() {
         if(selEa) selEa.value = '';
         return;
     }
-    // FIX: use string comparison for ID lookup, don't parseFloat the ID
     var mat = findMaterialById(matId);
     if(!mat) return;
-    // FIX: guard validConditions existence before proceeding
     if(!mat.validConditions || mat.validConditions.length === 0) {
         if(resEl) resEl.innerHTML = '<div class="alert alert-error">No valid conditions found for this material.</div>';
         return;
     }
+
+    var unit  = getUnit();
+    var label = getLabel();
+
     var A, EaUsed, rSquared = 1, warn = '', relClass = 'reliability-medium';
     if(isNaN(customEa) || customEa <= 0) {
         var v = Engine.validateArrhenius(mat);
@@ -842,7 +850,7 @@ function onArrChange() {
             '<div class="grid grid-3" style="margin-top:.4rem">' +
             '<div><div style="font-size:.65rem;color:var(--text-light)">Activation Energy</div><div style="font-weight:700">'+(EaUsed/1000).toFixed(2)+' kJ/mol</div></div>' +
             '<div><div style="font-size:.65rem;color:var(--text-light)">Pre-exponential A</div><div style="font-weight:700">'+A.toExponential(3)+'</div></div>' +
-            '<div><div style="font-size:.65rem;color:var(--text-light)">Predicted at '+targetTemp+'C</div><div style="font-size:1rem;font-weight:700;color:var(--primary)">'+pred.toFixed(6)+'</div></div>' +
+            '<div><div style="font-size:.65rem;color:var(--text-light)">Predicted at '+targetTemp+'°C</div><div style="font-size:1rem;font-weight:700;color:var(--primary)">'+pred.toFixed(6)+' '+unit+'</div></div>' +
             '</div>';
     }
     var dataPoints = [];
@@ -867,10 +875,12 @@ function postSensitivityRender() {
 }
 
 function doOptimize() {
+    // FIX: sync Engine.mode
+    Engine.mode = State.mode;
+
     var target = parseFloat(document.getElementById('opt-target') ? document.getElementById('opt-target').value : '0.5');
     var barrierIdx = parseInt(document.getElementById('opt-layer') ? document.getElementById('opt-layer').value : '0');
     var resEl = document.getElementById('opt-result'); if(!resEl) return;
-    // FIX: bounds check on barrierIdx before accessing State.layers
     if(barrierIdx < 0 || barrierIdx >= State.layers.length) {
         resEl.innerHTML = '<div class="alert alert-warning">Invalid layer selection.</div>';
         return;
@@ -890,10 +900,12 @@ function doOptimize() {
     if(result.error){ resEl.innerHTML='<div class="alert alert-warning">'+result.error+'</div>'; return; }
     var mat = findMaterialById(State.layers[barrierIdx].mid);
     var current = State.layers[barrierIdx].thick;
+    var unit = getUnit();
+    var label = getLabel();
     resEl.innerHTML = '<div class="alert alert-success">' +
-        'To achieve target '+getLabel()+' <= '+target+' '+getUnit()+' @ '+condition.temperature+'C/'+condition.humidity+'%: ' +
+        'To achieve target '+label+' <= '+target+' '+unit+' @ '+condition.temperature+'°C/'+condition.humidity+'%: ' +
         '<strong>'+((mat)?mat.name:'Layer '+(barrierIdx+1))+'</strong> min: <span style="color:var(--primary);font-weight:700">'+result.thickness.toFixed(1)+' um</span>' +
-        ' ('+current+' to '+result.thickness.toFixed(1)+'um, '+(result.thickness<current?'Savings':'Increase needed')+')' +
+        ' ('+current+' → '+result.thickness.toFixed(1)+'um, '+(result.thickness<current?'✓ Savings':'⚠ Increase needed')+')' +
         '</div>';
 }
 
@@ -909,7 +921,6 @@ function toggleCompare(id) {
 
 function postCompareRender() {
     if(State.compareIds.length < 1) return;
-    // Reset compareIds che appartengono a mode diverso
     var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
     State.compareIds = State.compareIds.filter(function(id){
         return filteredLams.some(function(l){ return l.id === id; });
@@ -922,7 +933,6 @@ function postCompareRender() {
     if(tableEl && selected.length > 0){
         var modeLabel = (selected[0].mode || State.mode).toUpperCase();
         var th = '<thead><tr><th>Parameter</th>';
-        // FIX: use separate loop variable to avoid var collision
         for(var j=0; j<selected.length; j++) th+='<th>'+selected[j].name+'</th>';
         th+='</tr></thead>';
         var body = '<tbody>';
@@ -933,7 +943,7 @@ function postCompareRender() {
         for(var j3=0; j3<selected.length; j3++) body+='<td>'+selected[j3].totalThickness.toFixed(0)+' um</td>';
         body+='</tr>';
         body += '<tr><td><strong>Conditions</strong></td>';
-        for(var j4=0; j4<selected.length; j4++) body+='<td>'+selected[j4].temperature+'C / '+selected[j4].humidity+'%</td>';
+        for(var j4=0; j4<selected.length; j4++) body+='<td>'+selected[j4].temperature+'°C / '+selected[j4].humidity+'%</td>';
         body+='</tr>';
         body += '<tr><td><strong>Recyclable</strong></td>';
         for(var j5=0; j5<selected.length; j5++) body+='<td><span class="sustainability-flag '+((selected[j5].recyclable)?'yes':'no')+'">'+(selected[j5].recyclable?'Yes':'No')+'</span></td>';
@@ -955,14 +965,6 @@ function postCompareRender() {
 // ====================================================================
 // MISC HELPERS
 // ====================================================================
-
-/**
- * FIX: Centralized material lookup using string comparison.
- * Replaces scattered DB.materials.find() calls that break when IDs are
- * non-numeric strings (e.g. Firebase-style keys like 'fb_abc123').
- * Also avoids relying on Array.prototype.find which may be absent in
- * older environments — uses a plain for-loop instead.
- */
 function findMaterialById(id) {
     if(id === null || id === undefined) return null;
     var sid = String(id);
@@ -985,7 +987,6 @@ function searchMaterialWeb(matName) {
 }
 
 function getCommunityCount() {
-    // FIX: replace .startsWith() with indexOf() for broader compatibility
     return DB.materials.filter(function(m){
         return m.isCommunity || String(m.id).indexOf('fb_') === 0;
     }).length;
