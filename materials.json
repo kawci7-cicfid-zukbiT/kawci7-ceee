@@ -30419,7 +30419,7 @@
       "usageCount": 0,
       "lastUsageMonth": "2026-05"
     },
-  {
+ {
     "id": 901,
     "name": "FILMON BX",
     "family": "PA",
@@ -30431,21 +30431,58 @@
     "systemId": "fb_filmon_bx",
     "author": "System",
     "wvtrValues": [
-      { "value": 320, "thickness": 12 },
-      { "value": 280, "thickness": 15 },
-      { "value": 210, "thickness": 20 },
-      { "value": 165, "thickness": 25 }
+      {
+        "value": 320,
+        "thickness": 12,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 280,
+        "thickness": 15,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 210,
+        "thickness": 20,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 165,
+        "thickness": 25,
+        "temperature": 38,
+        "humidity": 90
+      }
     ],
     "otrValues": [
-      { "value": 44, "thickness": 12 },
-      { "value": 35, "thickness": 15 },
-      { "value": 26, "thickness": 20 },
-      { "value": 21, "thickness": 25 }
+      {
+        "value": 44,
+        "thickness": 12,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 35,
+        "thickness": 15,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 26,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 21,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 65
+      }
     ],
-    "validConditions": [
-      { "temperature": 38, "humidity": 90 },
-      { "temperature": 23, "humidity": 65 }
-    ],
+    "validConditions": [],
     "testMethodWVTR": "ASTM F1249",
     "testMethodOTR": "ASTM D1927",
     "hygroscopicBetaWVTR": 0,
@@ -30453,7 +30490,10 @@
     "hygroscopicBetaOTR": 0,
     "hygroscopicRefRHOTR": 50,
     "isHygroscopic": false,
-    "reliabilityVotes": { "up": 0, "down": 0 },
+    "reliabilityVotes": {
+      "up": 0,
+      "down": 0
+    },
     "usageCount": 0,
     "lastUsageMonth": "2026-05"
   },
@@ -30469,21 +30509,58 @@
     "systemId": "fb_filmon_bxb",
     "author": "System",
     "wvtrValues": [
-      { "value": 320, "thickness": 12 },
-      { "value": 280, "thickness": 15 },
-      { "value": 210, "thickness": 20 },
-      { "value": 165, "thickness": 25 }
+      {
+        "value": 320,
+        "thickness": 12,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 280,
+        "thickness": 15,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 210,
+        "thickness": 20,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 165,
+        "thickness": 25,
+        "temperature": 38,
+        "humidity": 90
+      }
     ],
     "otrValues": [
-      { "value": 44, "thickness": 12 },
-      { "value": 35, "thickness": 15 },
-      { "value": 26, "thickness": 20 },
-      { "value": 21, "thickness": 25 }
+      {
+        "value": 44,
+        "thickness": 12,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 35,
+        "thickness": 15,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 26,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 21,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 65
+      }
     ],
-    "validConditions": [
-      { "temperature": 38, "humidity": 90 },
-      { "temperature": 23, "humidity": 65 }
-    ],
+    "validConditions": [],
     "testMethodWVTR": "ASTM F1249",
     "testMethodOTR": "ASTM D1927",
     "hygroscopicBetaWVTR": 0,
@@ -30491,7 +30568,10 @@
     "hygroscopicBetaOTR": 0,
     "hygroscopicRefRHOTR": 50,
     "isHygroscopic": false,
-    "reliabilityVotes": { "up": 0, "down": 0 },
+    "reliabilityVotes": {
+      "up": 0,
+      "down": 0
+    },
     "usageCount": 0,
     "lastUsageMonth": "2026-05"
   },
@@ -30507,35 +30587,142 @@
     "systemId": "fb_filmon_cs",
     "author": "System",
     "wvtrValues": [
-      { "value": 285, "thickness": 20 },
-      { "value": 238, "thickness": 25 },
-      { "value": 190, "thickness": 30 },
-      { "value": 143, "thickness": 40 },
-      { "value": 115, "thickness": 50 },
-      { "value": 95,  "thickness": 60 },
-      { "value": 80,  "thickness": 70 },
-      { "value": 75,  "thickness": 75 },
-      { "value": 70,  "thickness": 80 },
-      { "value": 63,  "thickness": 90 },
-      { "value": 55,  "thickness": 100 }
+      {
+        "value": 285,
+        "thickness": 20,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 238,
+        "thickness": 25,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 190,
+        "thickness": 30,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 143,
+        "thickness": 40,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 115,
+        "thickness": 50,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 95,
+        "thickness": 60,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 80,
+        "thickness": 70,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 75,
+        "thickness": 75,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 70,
+        "thickness": 80,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 63,
+        "thickness": 90,
+        "temperature": 38,
+        "humidity": 90
+      },
+      {
+        "value": 55,
+        "thickness": 100,
+        "temperature": 38,
+        "humidity": 90
+      }
     ],
     "otrValues": [
-      { "value": 34, "thickness": 20 },
-      { "value": 29, "thickness": 25 },
-      { "value": 23, "thickness": 30 },
-      { "value": 17, "thickness": 40 },
-      { "value": 11, "thickness": 50 },
-      { "value": 10, "thickness": 60 },
-      { "value": 9,  "thickness": 70 },
-      { "value": 9,  "thickness": 75 },
-      { "value": 8,  "thickness": 80 },
-      { "value": 8,  "thickness": 90 },
-      { "value": 7,  "thickness": 100 }
+      {
+        "value": 34,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 29,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 23,
+        "thickness": 30,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 17,
+        "thickness": 40,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 11,
+        "thickness": 50,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 10,
+        "thickness": 60,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 9,
+        "thickness": 70,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 9,
+        "thickness": 75,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 8,
+        "thickness": 80,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 8,
+        "thickness": 90,
+        "temperature": 23,
+        "humidity": 65
+      },
+      {
+        "value": 7,
+        "thickness": 100,
+        "temperature": 23,
+        "humidity": 65
+      }
     ],
-    "validConditions": [
-      { "temperature": 38, "humidity": 90 },
-      { "temperature": 23, "humidity": 65 }
-    ],
+    "validConditions": [],
     "testMethodWVTR": "ASTM F1249",
     "testMethodOTR": "ASTM D1927",
     "hygroscopicBetaWVTR": 0,
@@ -30543,7 +30730,10 @@
     "hygroscopicBetaOTR": 0,
     "hygroscopicRefRHOTR": 50,
     "isHygroscopic": false,
-    "reliabilityVotes": { "up": 0, "down": 0 },
+    "reliabilityVotes": {
+      "up": 0,
+      "down": 0
+    },
     "usageCount": 0,
     "lastUsageMonth": "2026-05"
   }
