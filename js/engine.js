@@ -180,65 +180,80 @@ const Engine = {
 
   calcLayerResistance: function(layer, material, condition) {
     var vals = this.getValues(material);
-    var idx  = -1;
-
-    // ── NEW: search condition embedded in each value row first,
-    //         then fall back to parallel validConditions array (legacy).
+    
+    // Raccoglie TUTTI i punti che matchano condizione + testMethod
+    var matchingPoints = [];
     for (var i = 0; i < vals.length; i++) {
-      var c = Engine._getCondFromVal(vals[i], material, i);
-      if (!c) continue;
-      var condMatch =
-        Math.abs(c.temperature - condition.temperature) < 0.01 &&
-        Math.abs(c.humidity    - condition.humidity)    < 0.01;
-      // test-method filter (optional, stored on condition or on validConditions row)
-      // testMethod: prefer embedded in value row, then validConditions[i], then top-level material fields
-      var rowMethod = (vals[i] && vals[i].testMethod) ||
-                      (material.validConditions && material.validConditions[i] &&
-                       material.validConditions[i].testMethod) ||
-                      (Engine.mode === 'wvtr' ? material.testMethodWVTR : material.testMethodOTR) ||
-                      (material.testMethod) || null;
-      // methodMatch: if filter active → row must match; if no filter → accept any row
-      // If multiple rows match the same condition with different methods, prefer the one matching the filter
-      var methodMatch = !State.selectedTestMethod ||
-                        !rowMethod ||
-                        rowMethod.trim().toLowerCase() === State.selectedTestMethod.trim().toLowerCase();
-      if (condMatch && methodMatch) { idx = i; break; }
+        var c = Engine._getCondFromVal(vals[i], material, i);
+        if (!c) continue;
+        var condMatch =
+            Math.abs(c.temperature - condition.temperature) < 0.01 &&
+            Math.abs(c.humidity    - condition.humidity)    < 0.01;
+        var rowMethod = (vals[i] && vals[i].testMethod) ||
+                        (material.validConditions && material.validConditions[i] &&
+                         material.validConditions[i].testMethod) ||
+                        (Engine.mode === 'wvtr' ? material.testMethodWVTR : material.testMethodOTR) ||
+                        (material.testMethod) || null;
+        var methodMatch = !State.selectedTestMethod ||
+                          !rowMethod ||
+                          rowMethod.trim().toLowerCase() === State.selectedTestMethod.trim().toLowerCase();
+        if (condMatch && methodMatch && vals[i].value != null && vals[i].thickness > 0) {
+            matchingPoints.push({ value: vals[i].value, thickness: vals[i].thickness });
+        }
     }
 
-    if (idx < 0) return { resistance: null, error: 'Condition or test method not found' };
+    if (matchingPoints.length === 0) 
+        return { resistance: null, error: 'Condition or test method not found' };
 
-    var wd = vals[idx];
-    if (!wd || wd.value == null || wd.thickness == null)
-      return { resistance: null, error: 'Missing data' };
-    if (wd.value <= 0.00001)
-      return { resistance: Infinity, transmissionAtThickness: 0, isBarrier: true, hygroCorrection: null };
+    // UN solo punto → comportamento originale
+    // PIÙ punti → regressione lineare per trovare il coefficiente ottimale
+    var permeabilityCoeff;
+    if (matchingPoints.length === 1) {
+        permeabilityCoeff = matchingPoints[0].value * matchingPoints[0].thickness;
+    } else {
+        // Regressione lineare: value = P / thickness → P = value × thickness
+        // Forza passaggio per origine: P = sum(value_i × thickness_i) / n
+        // Metodo OLS con intercetta zero: P = sum(t_i × v_i × t_i) / sum(t_i²)
+        // ovvero stima pesata per thickness (più affidabile)
+        var sumNum = 0, sumDen = 0;
+        for (var j = 0; j < matchingPoints.length; j++) {
+            var t = matchingPoints[j].thickness;
+            var v = matchingPoints[j].value;
+            sumNum += v * t * t;  // v_i * t_i^2
+            sumDen += t * t;      // t_i^2
+        }
+        permeabilityCoeff = sumNum / sumDen;
+    }
+
+    if (permeabilityCoeff <= 0.00001)
+        return { resistance: Infinity, transmissionAtThickness: 0, isBarrier: true, hygroCorrection: null };
 
     if (material.isMetallized) {
-      var surfacePermeability = wd.value;
-      return {
-        resistance:              1 / surfacePermeability,
-        transmissionAtThickness: surfacePermeability,
-        isBarrier:               surfacePermeability < 0.1,
-        isMetallized:            true,
-        hygroCorrection:         null
-      };
+        var surfacePermeability = permeabilityCoeff;
+        return {
+            resistance:              1 / surfacePermeability,
+            transmissionAtThickness: surfacePermeability,
+            isBarrier:               surfacePermeability < 0.1,
+            isMetallized:            true,
+            hygroCorrection:         null
+        };
     }
 
-    var product          = wd.value * wd.thickness;
-    var baseResistance   = layer.thick / product;
+    var baseResistance   = layer.thick / permeabilityCoeff;
     var baseTransmission = 1 / baseResistance;
     var hygro            = Engine.calcHygroscopicCorrection(material, condition, Engine.mode);
     var finalTransmission = baseTransmission * hygro.factor;
     var finalResistance   = finalTransmission > 0 ? 1 / finalTransmission : Infinity;
 
     return {
-      resistance:              finalResistance,
-      transmissionAtThickness: finalTransmission,
-      baseTransmission:        baseTransmission,
-      isBarrier:               finalTransmission < 0.1,
-      hygroCorrection:         hygro.factor !== 1 ? hygro : null
+        resistance:              finalResistance,
+        transmissionAtThickness: finalTransmission,
+        baseTransmission:        baseTransmission,
+        isBarrier:               finalTransmission < 0.1,
+        hygroCorrection:         hygro.factor !== 1 ? hygro : null,
+        pointsUsed:              matchingPoints.length  // utile per debug
     };
-  },
+},
 
   calcTotal: function(layers, materials, condition) {
     var results = [];
