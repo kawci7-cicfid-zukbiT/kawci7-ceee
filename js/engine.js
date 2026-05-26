@@ -111,7 +111,11 @@ const Engine = {
         if (Math.abs(result[j].temperature - c.temperature) < 0.01 &&
             Math.abs(result[j].humidity    - c.humidity)    < 0.01) { already = true; break; }
       }
-      if (!already) result.push({ temperature: c.temperature, humidity: c.humidity });
+      if (!already) {
+        var condObj = { temperature: c.temperature, humidity: c.humidity };
+        if (vals[i].testMethod) condObj.testMethod = vals[i].testMethod;
+        result.push(condObj);
+      }
     }
     return result;
   },
@@ -174,9 +178,11 @@ const Engine = {
         Math.abs(c.temperature - condition.temperature) < 0.01 &&
         Math.abs(c.humidity    - condition.humidity)    < 0.01;
       // test-method filter (optional, stored on condition or on validConditions row)
+      // testMethod: prefer embedded in value row, then validConditions[i], then top-level material fields
       var rowMethod = (vals[i] && vals[i].testMethod) ||
                       (material.validConditions && material.validConditions[i] &&
-                       material.validConditions[i].testMethod) || null;
+                       material.validConditions[i].testMethod) ||
+                      (Engine.mode === 'wvtr' ? material.testMethodWVTR : material.testMethodOTR) || null;
       var methodMatch = !rowMethod || !State.selectedTestMethod ||
                         rowMethod === State.selectedTestMethod;
       if (condMatch && methodMatch) { idx = i; break; }
