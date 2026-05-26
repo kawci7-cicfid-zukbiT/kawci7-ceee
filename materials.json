@@ -30488,6 +30488,34 @@
         "temperature": 23,
         "humidity": 65,
         "testMethod": "ASTM D1927"
+      },
+      {
+        "value": 69,
+        "thickness": 12,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 55,
+        "thickness": 15,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 41,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 33,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
       }
     ],
     "validConditions": [],
@@ -30574,6 +30602,34 @@
         "temperature": 23,
         "humidity": 65,
         "testMethod": "ASTM D1927"
+      },
+      {
+        "value": 69,
+        "thickness": 12,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 55,
+        "thickness": 15,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 41,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 33,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
       }
     ],
     "validConditions": [],
@@ -30758,6 +30814,83 @@
         "temperature": 23,
         "humidity": 65,
         "testMethod": "ASTM D1927"
+      },
+      {
+        "value": 54,
+        "thickness": 20,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 45,
+        "thickness": 25,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 36,
+        "thickness": 30,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 27,
+        "thickness": 40,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 21,
+        "thickness": 50,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 18,
+        "thickness": 60,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 15,
+        "thickness": 70,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 14,
+        "thickness": 75,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 13,
+        "thickness": 80,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 12,
+        "thickness": 90,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
+      },
+      {
+        "value": 11,
+        "thickness": 100,
+        "temperature": 23,
+        "humidity": 0,
+        "testMethod": "ASTM D3985"
       }
     ],
     "validConditions": [],
