@@ -1,6 +1,9 @@
 // ====================================================================
 // carbonfp.js  v4  —  Carbon Footprint Estimator
 // Renders into #app-content
+// MODIFICHE: 
+// - Invertito ordine: Layer Breakdown prima di Area Sensitivity
+// - Rimossa funzionalità di salvataggio valori
 // ====================================================================
 
 var CFP_DEFAULTS = [
@@ -242,27 +245,7 @@ function cfpAreaInput(v) {
   _cfpUpdateAll();
 }
 
-function cfpSave(idx) {
-  var dEl=document.getElementById('cfp-d-'+idx), gEl=document.getElementById('cfp-g-'+idx);
-  if (!dEl||!gEl) return;
-  var density=parseFloat(dEl.value), gwp=parseFloat(gEl.value);
-  if (!(density>0)) { alert('Enter a valid density (kg/m³)'); return; }
-  if (!(gwp>0))     { alert('Enter a valid GWP (kg CO₂eq/kg)'); return; }
-  var layers=(typeof State!=='undefined'&&State.layers)?State.layers:[];
-  var allMats=(typeof DB!=='undefined')?DB.materials:[];
-  var l=layers[idx]; if (!l) return;
-  for (var i=0;i<allMats.length;i++) {
-    if (String(allMats[i].id)===String(l.mid)) { allMats[i].density=density; allMats[i].gwp=gwp; break; }
-  }
-  if (typeof DB!=='undefined'&&typeof DB.save==='function') DB.save();
-  if (window._cfpEdit) delete window._cfpEdit[idx];
-  if (dEl) dEl.style.borderColor='#86efac';
-  if (gEl) gEl.style.borderColor='#86efac';
-  var badge=document.getElementById('cfp-est-'+idx); if(badge) badge.style.display='none';
-  var btn=document.getElementById('cfp-savebtn-'+idx);
-  if(btn){btn.textContent='✓ Saved';btn.disabled=true;btn.style.background='#16a34a';}
-  _cfpUpdateAll();
-}
+// Funzione cfpSave rimossa - salvataggio disabilitato
 
 // ── Main render ──────────────────────────────────────────────────────
 function renderCarbonFootprint() {
@@ -311,24 +294,7 @@ function renderCarbonFootprint() {
 
   html+='</div>'; // end KPI row
 
-  // ── Area sensitivity section ─────────────────────────────────────
-  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
-  html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">';
-  html+='<div>';
-  html+='<div style="font-size:0.85rem;font-weight:700;color:var(--text)">CO₂eq per unit vs. Package Surface Area</div>';
-  html+='<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.15rem">Move the slider to see how the per-unit footprint changes with package size. The per-m² value above is unaffected.</div>';
-  html+='</div>';
-  html+='<div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0">';
-  html+='<label style="font-size:0.75rem;font-weight:600;color:var(--text-light)">Area</label>';
-  html+='<input id="cfp-area-slider" type="range" min="50" max="2000" step="10" value="'+area+'" oninput="cfpAreaSlider(this.value)" style="width:160px;accent-color:var(--primary);cursor:pointer">';
-  html+='<input id="cfp-area-num" type="number" min="10" max="5000" step="10" value="'+area+'" oninput="cfpAreaInput(this.value)" style="width:72px;padding:0.3rem 0.45rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.82rem;font-weight:600;text-align:right;outline:none" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
-  html+='<span style="font-size:0.75rem;color:var(--text-light)">cm²</span>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div style="height:200px"><canvas id="cfp-sens-chart"></canvas></div>';
-  html+='</div>';
-
-  // ── Layer breakdown (table left) + donut (right) ──────────────────
+  // ── Layer breakdown (table left) + donut (right) — ORA PRIMA ──────────────────
   html+='<div style="display:grid;grid-template-columns:1.15fr 1fr;gap:1rem;margin-bottom:1.25rem">';
 
   // LEFT — table
@@ -338,15 +304,15 @@ function renderCarbonFootprint() {
   html+='<div style="font-size:0.85rem;font-weight:700;color:var(--text)">Layer Breakdown</div>';
   html+='<div style="font-size:0.72rem;color:var(--text-light);margin-top:0.1rem">Edit Density and GWP to override EPD defaults</div>';
   html+='</div>';
+  // Legend semplificata: solo "Estimated default", rimosso "Saved value"
   html+='<div style="display:flex;align-items:center;gap:0.6rem;font-size:0.7rem;color:var(--text-light)">';
   html+='<span style="display:inline-flex;align-items:center;gap:0.25rem"><span style="width:10px;height:10px;border-radius:2px;background:#fef3c7;border:1px solid #fcd34d;display:inline-block"></span>Estimated default</span>';
-  html+='<span style="display:inline-flex;align-items:center;gap:0.25rem"><span style="width:10px;height:10px;border-radius:2px;background:#f0fdf4;border:1px solid #86efac;display:inline-block"></span>Saved value</span>';
   html+='</div>';
   html+='</div>';
 
-  // Table — wider layout, no squished columns
+  // Table — wider layout, no squished columns (COLONNA SAVE RIMOSSA)
   html+='<div style="overflow-x:auto">';
-  html+='<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:580px">';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:500px">';
   html+='<thead><tr style="background:#f8fafc">';
   var cols=[
     {label:'Material',     align:'left',   color:'var(--text)',       w:'auto'},
@@ -355,8 +321,8 @@ function renderCarbonFootprint() {
     {label:'GWP (kg CO₂eq/kg)', align:'center', color:'#2563eb',    w:'120px'},
     {label:'Mass (g/m²)', align:'right',  color:'var(--text-light)', w:'80px'},
     {label:'CO₂eq (g/m²)',align:'right',  color:'#7c3aed',           w:'90px'},
-    {label:'Share',        align:'right',  color:'var(--text-light)', w:'55px'},
-    {label:'',             align:'center', color:'',                  w:'72px'}
+    {label:'Share',        align:'right',  color:'var(--text-light)', w:'55px'}
+    // Colonna Save rimossa
   ];
   for (var ci=0;ci<cols.length;ci++) {
     var co=cols[ci];
@@ -404,21 +370,14 @@ function renderCarbonFootprint() {
     // Share %
     html+='<td style="padding:0.6rem 0.5rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums"><span id="cfp-pct-'+ri+'">'+pct+'%</span></td>';
 
-    // Save button
-    var saved=!r.isDefault;
-    html+='<td style="padding:0.4rem 0.5rem;text-align:center;vertical-align:middle">';
-    if (saved) {
-      html+='<button id="cfp-savebtn-'+ri+'" disabled style="background:#16a34a;color:#fff;border:none;border-radius:5px;padding:0.28rem 0.55rem;font-size:0.68rem;font-weight:600;opacity:0.7;cursor:default;white-space:nowrap">✓ Saved</button>';
-    } else {
-      html+='<button id="cfp-savebtn-'+ri+'" onclick="cfpSave('+ri+')" style="background:var(--primary);color:#fff;border:none;border-radius:5px;padding:0.28rem 0.55rem;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity 0.15s" onmouseover="this.style.opacity=\'0.8\'" onmouseout="this.style.opacity=\'1\'">Save to DB</button>';
-    }
-    html+='</td>';
+    // Colonna Save RIMOSSA
+
     html+='</tr>';
   }
 
-  // Footer total
+  // Footer total (colspan aggiornato: da 7 a 6 colonne totali)
   html+='<tr style="background:var(--primary)">';
-  html+='<td colspan="5" style="padding:0.55rem 1rem;text-align:right;color:rgba(255,255,255,0.7);font-weight:600;font-size:0.72rem">TOTAL</td>';
+  html+='<td colspan="4" style="padding:0.55rem 1rem;text-align:right;color:rgba(255,255,255,0.7);font-weight:600;font-size:0.72rem">TOTAL</td>';
   html+='<td style="padding:0.55rem 0.5rem;text-align:right;color:#fff;font-weight:800;font-size:0.88rem;font-variant-numeric:tabular-nums"><span id="cfp-total-footer">'+(totalPerM2*1000).toFixed(3)+'</span></td>';
   html+='<td colspan="2" style="padding:0.55rem 0.5rem;text-align:right;color:rgba(255,255,255,0.6);font-size:0.7rem">g CO₂eq/m²</td>';
   html+='</tr>';
@@ -433,6 +392,23 @@ function renderCarbonFootprint() {
   html+='</div>';
 
   html+='</div>'; // end 2-col grid
+
+  // ── Area sensitivity section — ORA DOPO ─────────────────────────────────────
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">';
+  html+='<div>';
+  html+='<div style="font-size:0.85rem;font-weight:700;color:var(--text)">CO₂eq per unit vs. Package Surface Area</div>';
+  html+='<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.15rem">Move the slider to see how the per-unit footprint changes with package size. The per-m² value above is unaffected.</div>';
+  html+='</div>';
+  html+='<div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0">';
+  html+='<label style="font-size:0.75rem;font-weight:600;color:var(--text-light)">Area</label>';
+  html+='<input id="cfp-area-slider" type="range" min="50" max="2000" step="10" value="'+area+'" oninput="cfpAreaSlider(this.value)" style="width:160px;accent-color:var(--primary);cursor:pointer">';
+  html+='<input id="cfp-area-num" type="number" min="10" max="5000" step="10" value="'+area+'" oninput="cfpAreaInput(this.value)" style="width:72px;padding:0.3rem 0.45rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.82rem;font-weight:600;text-align:right;outline:none" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
+  html+='<span style="font-size:0.75rem;color:var(--text-light)">cm²</span>';
+  html+='</div>';
+  html+='</div>';
+  html+='<div style="height:200px"><canvas id="cfp-sens-chart"></canvas></div>';
+  html+='</div>';
 
   // ── Disclaimer ────────────────────────────────────────────────────
   html+=_cfpMethodologyHTML();
@@ -457,7 +433,7 @@ function _cfpMethodologyHTML() {
       'CO₂eq (kg/m²) = mass &times; GWP (kg CO₂eq / kg material)<br><br>' +
       'Total = &Sigma; CO₂eq_layer &nbsp;&nbsp;|&nbsp;&nbsp; Per unit = Total &times; package area (m²)' +
     '</div>' +
-    '<p><strong>Default values:</strong> When a material record does not carry explicit density and GWP fields, the calculator resolves them from a keyword lookup table derived from PlasticsEurope Eco-profiles and Ecoinvent 3.x (European-average production). These rows are flagged <em>est.</em>. To improve accuracy, type the supplier-specific values directly in the table — results update live — then click <em>Save to DB</em> to persist them permanently in the material record.</p>' +
+    '<p><strong>Default values:</strong> When a material record does not carry explicit density and GWP fields, the calculator resolves them from a keyword lookup table derived from PlasticsEurope Eco-profiles and Ecoinvent 3.x (European-average production). These rows are flagged <em>est.</em>. To improve accuracy, type the supplier-specific values directly in the table — results update live.</p>' +
     '<p><strong>Per-unit vs. per-m² results:</strong> The per-m² figure characterises the material combination itself and is independent of package size. The per-unit figure is the product of the per-m² value and the selected surface area, and scales linearly with it.</p>' +
     '<p><strong>Scope:</strong> Cradle-to-gate only. The model excludes conversion processes (printing, lamination, form-fill-seal), transport, retail, consumer use, and end-of-life treatment. A full product-level LCA covering all life-cycle stages requires ISO 14040/14044-compliant software with certified background datasets.</p>' +
     '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.7rem 0.9rem;margin-top:0.85rem;font-family:sans-serif;font-size:0.8rem;color:var(--text-light)">' +
