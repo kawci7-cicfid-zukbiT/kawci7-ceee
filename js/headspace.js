@@ -859,7 +859,7 @@ const HS = {
         pdf.setFontSize(7);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(...C.white);
-        pdf.text('Headspace O₂ Calculator  |  wvtr-otr-calculator.com  |  For R&D use only', ML, PH - 3.5);
+        pdf.text('MAP / O₂ Evolution  |  wvtr-otr-calculator.com  |  For R&D use only', ML, PH - 3.5);
         pdf.text('Page ' + pdf.internal.getNumberOfPages(), PW - MR, PH - 3.5, { align: 'right' });
         pdf.setTextColor(...C.black);
       };
@@ -1169,7 +1169,7 @@ function renderHeadspace() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
           </svg>
-          Headspace O₂ Calculator
+          Modified Atmosphere
         </h2>
       </div>
 
