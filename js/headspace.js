@@ -1652,3 +1652,30 @@ HS.onCompanyLaminatePick = async function(val) {
     console.warn('Company laminate pick error:', e);
   }
 };
+// ====================================================================
+// 🔧 GLOBAL EXPOSURE & DEBUG FALLBACK (temporaneo)
+// ====================================================================
+
+// Forza esposizione globale esplicita (per sicurezza)
+if (typeof window !== 'undefined') {
+  window.HS = HS;
+  window.renderHeadspace = renderHeadspace;
+  window.renderHeadspaceMethodology = renderHeadspaceMethodology;
+  window.HS_PRESETS = HS_PRESETS;
+}
+
+// Debug: se State.tab è 'headspace' ma il renderer non è stato chiamato, forza manualmente
+(function() {
+  if (typeof State !== 'undefined' && State.tab === 'headspace') {
+    setTimeout(function() {
+      var content = document.getElementById('app-content');
+      // Se il contenuto non contiene elementi specifici di headspace, forza re-render
+      if (content && !content.querySelector('#hs-product') && !content.querySelector('#hs-result-panel')) {
+        console.log('🔄 Headspace tab active but renderer not called — forcing renderHeadspace()');
+        if (typeof renderHeadspace === 'function') {
+          renderHeadspace();
+        }
+      }
+    }, 200);
+  }
+})();
