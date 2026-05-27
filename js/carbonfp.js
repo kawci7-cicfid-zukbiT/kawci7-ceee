@@ -1,5 +1,6 @@
 // ====================================================================
-// carbonfp.js  v4.1  —  Carbon Footprint Estimator (FIXED)
+// carbonfp.js  v4.2  —  Carbon Footprint Estimator
+// Layout: verticale - Layer Breakdown (full width) → Donut chart (sotto)
 // ====================================================================
 
 var CFP_DEFAULTS = [
@@ -23,9 +24,7 @@ var CFP_DEFAULTS = [
   { key:'PAPER',      density: 700, gwp:0.90 },
   { key:'KRAFT',      density: 700, gwp:0.90 },
   { key:'PLA',        density:1240, gwp:0.50 },
-  { key:'CELLOPHANE', density:1420, gwp:2.80 },
-  { key:'PTFE',       density:2200, gwp:5.50 },
-  { key:'TEFLON',     density:2200, gwp:5.50 }
+  { key:'CELLOPHANE', density:1420, gwp:2.80 }
 ];
 
 var CFP_PALETTE = [
@@ -120,12 +119,6 @@ function _cfpDrawDonut(rows, totalPerM2) {
   if (!rows.length || totalPerM2<=0) return;
 
   var dataValues = rows.map(function(r){ return +(r.co2PerM2*1000).toFixed(4); });
-  var total = dataValues.reduce(function(a,b){return a+b;},0);
-  
-  // Se c'è un solo layer o valori uguali, mostra comunque correttamente
-  if (rows.length === 1) {
-    dataValues = [dataValues[0], 0.0001]; // Aggiungi valore minimo per visualizzazione
-  }
 
   window._cfpDonutChart = new Chart(canvas.getContext('2d'), {
     type: 'doughnut',
@@ -133,7 +126,7 @@ function _cfpDrawDonut(rows, totalPerM2) {
       labels: rows.map(function(r){ return r.name; }),
       datasets: [{
         data: dataValues,
-        backgroundColor: rows.length === 1 ? ['#2563eb', '#e5e7eb'] : CFP_PALETTE.slice(0,rows.length),
+        backgroundColor: CFP_PALETTE.slice(0,rows.length),
         borderColor: '#fff', borderWidth: 2, hoverOffset: 6
       }]
     },
@@ -143,7 +136,7 @@ function _cfpDrawDonut(rows, totalPerM2) {
         legend: {
           position:'bottom',
           labels: {
-            boxWidth:12, padding:10, font:{ size:11 },
+            boxWidth:12, padding:12, font:{ size:11 },
             generateLabels: function(chart) {
               var ds=chart.data.datasets[0];
               var total=ds.data.reduce(function(a,b){return a+b;},0);
@@ -189,9 +182,9 @@ function renderCarbonFootprint() {
   var totalUnit=totalPerM2*area/1e4;
   var hasRows=rows.length>0;
 
-  var html='<div style="max-width:1200px;margin:0 auto;padding:1.5rem">';
+  var html='<div style="max-width:1100px;margin:0 auto;padding:1.5rem">';
 
-  // Page title
+  // ── Page title ────────────────────────────────────────────────────
   html+='<div style="margin-bottom:1.5rem">';
   html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.3rem">Food Analysis</div>';
   html+='<h1 style="font-size:1.4rem;font-weight:800;color:var(--text);margin:0 0 0.35rem;letter-spacing:-0.01em">Carbon Footprint Estimator</h1>';
@@ -203,58 +196,58 @@ function renderCarbonFootprint() {
     html+='</div>'; c.innerHTML=html; return;
   }
 
-  // Two main KPIs
-  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1rem;margin-bottom:1.5rem">';
+  // ── Two main KPIs ──────────────────────────────────────────────────
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;margin-bottom:1.5rem">';
 
-  // KPI 1
-  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem">';
-  html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">Total CO₂eq per m²</div>';
-  html+='<div style="font-size:2.8rem;font-weight:800;color:var(--primary);line-height:1;margin-bottom:0.5rem" id="cfp-kpi-m2">'+(totalPerM2*1000).toFixed(2)+'</div>';
-  html+='<div style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.75rem">g CO₂eq / m² of laminate</div>';
-  html+='<div style="font-size:0.75rem;color:var(--text-light);padding-top:0.75rem;border-top:1px solid var(--border)">This value is independent of package size — it characterises the material combination itself.</div>';
+  // KPI 1: per m²
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem">';
+  html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.4rem">Total CO₂eq per m²</div>';
+  html+='<div style="font-size:2.4rem;font-weight:800;color:var(--primary);line-height:1;margin-bottom:0.4rem" id="cfp-kpi-m2">'+(totalPerM2*1000).toFixed(2)+'</div>';
+  html+='<div style="font-size:0.8rem;color:var(--text-light);margin-bottom:0.6rem">g CO₂eq / m² of laminate</div>';
+  html+='<div style="font-size:0.72rem;color:var(--text-light);padding-top:0.6rem;border-top:1px solid var(--border)">Independent of package size.</div>';
   html+='</div>';
 
-  // KPI 2
-  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem">';
-  html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">Total CO₂eq per unit</div>';
-  html+='<div style="font-size:2.8rem;font-weight:800;color:#7c3aed;line-height:1;margin-bottom:0.5rem" id="cfp-kpi-unit">'+(totalUnit*1000).toFixed(2)+'</div>';
-  html+='<div style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.75rem" id="cfp-unit-area-lbl">g CO₂eq / unit ('+area+' cm²)</div>';
-  html+='<div style="font-size:0.75rem;color:var(--text-light);padding-top:0.75rem;border-top:1px solid var(--border)">Based on current package surface area.</div>';
+  // KPI 2: per unit
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem">';
+  html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.4rem">Total CO₂eq per unit</div>';
+  html+='<div style="font-size:2.4rem;font-weight:800;color:#7c3aed;line-height:1;margin-bottom:0.4rem" id="cfp-kpi-unit">'+(totalUnit*1000).toFixed(2)+'</div>';
+  html+='<div style="font-size:0.8rem;color:var(--text-light);margin-bottom:0.6rem" id="cfp-unit-area-lbl">g CO₂eq / unit ('+area+' cm²)</div>';
+  html+='<div style="font-size:0.72rem;color:var(--text-light);padding-top:0.6rem;border-top:1px solid var(--border)">Based on current surface area.</div>';
   html+='</div>';
 
   html+='</div>';
 
-  // Layer breakdown + donut
-  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(500px, 1fr));gap:1rem;margin-bottom:1.5rem">';
-
-  // LEFT — table
+  // ── LAYER BREAKDOWN (FULL WIDTH - TOP) ────────────────────────────
+  html+='<div style="margin-bottom:1.25rem">';
   html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
-  html+='<div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem">';
+  
+  // Header
+  html+='<div style="padding:0.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem">';
   html+='<div>';
   html+='<div style="font-size:0.9rem;font-weight:700;color:var(--text)">Layer Breakdown</div>';
-  html+='<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.15rem">Edit Density and GWP to override EPD defaults</div>';
+  html+='<div style="font-size:0.72rem;color:var(--text-light);margin-top:0.1rem">Edit Density and GWP to override EPD defaults</div>';
   html+='</div>';
-  html+='<div style="display:flex;align-items:center;gap:0.75rem;font-size:0.72rem;color:var(--text-light)">';
-  html+='<span style="display:inline-flex;align-items:center;gap:0.35rem"><span style="width:12px;height:12px;border-radius:3px;background:#fef3c7;border:1px solid #fcd34d;display:inline-block"></span>Estimated default</span>';
+  html+='<div style="display:flex;align-items:center;gap:0.6rem;font-size:0.7rem;color:var(--text-light)">';
+  html+='<span style="display:inline-flex;align-items:center;gap:0.3rem"><span style="width:10px;height:10px;border-radius:2px;background:#fef3c7;border:1px solid #fcd34d;display:inline-block"></span>Estimated default</span>';
   html+='</div>';
   html+='</div>';
 
-  // Table con scroll orizzontale garantito
-  html+='<div style="overflow-x:auto;overflow-y:hidden">';
-  html+='<table style="width:100%;border-collapse:collapse;font-size:0.8rem;min-width:750px">';
+  // Table - COLONNE COMPATTE CON PERCENTUALI (NESSUNO SCROLL ORIZZONTALE)
+  html+='<div style="overflow-x:auto">';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:0.75rem">';
   html+='<thead><tr style="background:#f8fafc;border-bottom:2px solid var(--border)">';
   var cols=[
-    {label:'Material',     align:'left',   color:'var(--text)',       w:'180px'},
-    {label:'µm',           align:'center', color:'var(--text-light)', w:'60px'},
-    {label:'Density (kg/m³)', align:'center', color:'#2563eb',       w:'120px'},
-    {label:'GWP (kg CO₂eq/kg)', align:'center', color:'#2563eb',    w:'140px'},
-    {label:'Mass (g/m²)', align:'right',  color:'var(--text-light)', w:'100px'},
-    {label:'CO₂eq (g/m²)',align:'right',  color:'#7c3aed',           w:'110px'},
-    {label:'Share',        align:'right',  color:'var(--text-light)', w:'70px'}
+    {label:'Material',     align:'left',   color:'var(--text)',       w:'38%'},
+    {label:'µm',           align:'center', color:'var(--text-light)', w:'7%'},
+    {label:'Density',      align:'center', color:'#2563eb',           w:'13%'},
+    {label:'GWP',          align:'center', color:'#2563eb',           w:'13%'},
+    {label:'Mass',         align:'right',  color:'var(--text-light)', w:'10%'},
+    {label:'CO₂eq',        align:'right',  color:'#7c3aed',           w:'11%'},
+    {label:'Share',        align:'right',  color:'var(--text-light)', w:'8%'}
   ];
   for (var ci=0;ci<cols.length;ci++) {
     var co=cols[ci];
-    html+='<th style="padding:0.75rem 0.75rem;text-align:'+co.align+';font-weight:700;color:'+co.color+';white-space:nowrap;width:'+co.w+'">'+co.label+'</th>';
+    html+='<th style="padding:0.65rem 0.5rem;text-align:'+co.align+';font-weight:700;color:'+co.color+';white-space:nowrap;width:'+co.w+';font-size:0.72rem">'+co.label+'</th>';
   }
   html+='</tr></thead><tbody>';
 
@@ -268,57 +261,56 @@ function renderCarbonFootprint() {
     html+='<tr style="border-bottom:1px solid #f1f5f9;transition:background 0.15s" onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'transparent\'">';
 
     // Material name
-    html+='<td style="padding:0.85rem 0.75rem;vertical-align:middle">';
-    html+='<div style="display:flex;align-items:center;gap:0.6rem">';
-    html+='<span style="width:10px;height:10px;border-radius:50%;background:'+clr+';flex-shrink:0"></span>';
-    html+='<span style="font-weight:600;color:var(--text);line-height:1.3">'+r.name+'</span>';
-    html+='<span id="cfp-est-'+ri+'" style="display:'+(r.isDefault?'inline':'none')+';background:#fef3c7;color:#d97706;padding:2px 6px;border-radius:4px;font-size:0.65rem;font-weight:700;flex-shrink:0">est.</span>';
+    html+='<td style="padding:0.7rem 0.5rem;vertical-align:middle">';
+    html+='<div style="display:flex;align-items:center;gap:0.45rem">';
+    html+='<span style="width:8px;height:8px;border-radius:50%;background:'+clr+';flex-shrink:0"></span>';
+    html+='<span style="font-weight:600;color:var(--text);line-height:1.2;font-size:0.78rem">'+r.name+'</span>';
+    html+='<span id="cfp-est-'+ri+'" style="display:'+(r.isDefault?'inline':'none')+';background:#fef3c7;color:#d97706;padding:1px 4px;border-radius:3px;font-size:0.58rem;font-weight:700;flex-shrink:0">est.</span>';
     html+='</div></td>';
 
     // Thickness
-    html+='<td style="padding:0.85rem 0.75rem;text-align:center;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:500">'+r.thickness+'</td>';
+    html+='<td style="padding:0.7rem 0.5rem;text-align:center;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:500;font-size:0.78rem">'+r.thickness+'</td>';
 
     // Density input
-    var inputStyle='width:100%;padding:0.4rem 0.5rem;border-radius:6px;font-size:0.8rem;text-align:center;border:1.5px solid '+iBorder+';background:'+iBg+';outline:none;transition:all 0.15s;box-sizing:border-box;font-weight:500';
-    html+='<td style="padding:0.6rem 0.75rem;vertical-align:middle">';
+    var inputStyle='width:100%;padding:0.3rem 0.35rem;border-radius:5px;font-size:0.73rem;text-align:center;border:1.5px solid '+iBorder+';background:'+iBg+';outline:none;transition:all 0.15s;box-sizing:border-box;font-weight:500';
+    html+='<td style="padding:0.45rem 0.5rem;vertical-align:middle">';
     html+='<input type="number" id="cfp-d-'+ri+'" value="'+r.density+'" min="1" step="1" oninput="cfpCellChange('+ri+')" style="'+inputStyle+'" onfocus="this.style.borderColor=\'var(--primary)\';this.style.background=\'#fff\'" onblur="this.style.borderColor=\''+iBorder+'\';this.style.background=\''+iBg+'\'">';
     html+='</td>';
 
     // GWP input
-    html+='<td style="padding:0.6rem 0.75rem;vertical-align:middle">';
+    html+='<td style="padding:0.45rem 0.5rem;vertical-align:middle">';
     html+='<input type="number" id="cfp-g-'+ri+'" value="'+r.gwp.toFixed(2)+'" min="0" step="0.01" oninput="cfpCellChange('+ri+')" style="'+inputStyle+'" onfocus="this.style.borderColor=\'var(--primary)\';this.style.background=\'#fff\'" onblur="this.style.borderColor=\''+iBorder+'\';this.style.background=\''+iBg+'\'">';
     html+='</td>';
 
     // Mass
-    html+='<td style="padding:0.85rem 0.75rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:500"><span id="cfp-mass-'+ri+'">'+(r.massPerM2*1000).toFixed(2)+'</span></td>';
+    html+='<td style="padding:0.7rem 0.5rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:500;font-size:0.78rem"><span id="cfp-mass-'+ri+'">'+(r.massPerM2*1000).toFixed(2)+'</span></td>';
 
     // CO2
-    html+='<td style="padding:0.85rem 0.75rem;text-align:right;font-weight:700;color:'+clr+';vertical-align:middle;font-variant-numeric:tabular-nums"><span id="cfp-co2-'+ri+'">'+(r.co2PerM2*1000).toFixed(3)+'</span></td>';
+    html+='<td style="padding:0.7rem 0.5rem;text-align:right;font-weight:700;color:'+clr+';vertical-align:middle;font-variant-numeric:tabular-nums;font-size:0.78rem"><span id="cfp-co2-'+ri+'">'+(r.co2PerM2*1000).toFixed(3)+'</span></td>';
 
     // Share %
-    html+='<td style="padding:0.85rem 0.75rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:600"><span id="cfp-pct-'+ri+'">'+pct+'%</span></td>';
+    html+='<td style="padding:0.7rem 0.5rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums;font-weight:600;font-size:0.78rem"><span id="cfp-pct-'+ri+'">'+pct+'%</span></td>';
 
     html+='</tr>';
   }
 
   // Footer total
   html+='<tr style="background:var(--primary);font-weight:700">';
-  html+='<td colspan="4" style="padding:0.75rem 0.75rem;text-align:right;color:rgba(255,255,255,0.9);font-size:0.85rem">TOTAL</td>';
-  html+='<td colspan="3" style="padding:0.75rem 0.75rem;text-align:right;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums"><span id="cfp-total-footer">'+(totalPerM2*1000).toFixed(3)+'</span> <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);font-weight:500">g CO₂eq/m²</span></td>';
+  html+='<td colspan="4" style="padding:0.65rem 0.5rem;text-align:right;color:rgba(255,255,255,0.9);font-size:0.78rem">TOTAL</td>';
+  html+='<td colspan="3" style="padding:0.65rem 0.5rem;text-align:right;color:#fff;font-size:0.9rem;font-variant-numeric:tabular-nums"><span id="cfp-total-footer">'+(totalPerM2*1000).toFixed(3)+'</span> <span style="font-size:0.68rem;color:rgba(255,255,255,0.85);font-weight:500">g CO₂eq/m²</span></td>';
   html+='</tr>';
 
-  html+='</tbody></table></div></div>';
+  html+='</tbody></table></div></div></div>';
 
-  // RIGHT — donut
-  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem">';
-  html+='<div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.35rem">CO₂eq Distribution</div>';
-  html+='<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:1rem">Relative contribution by material layer</div>';
-  html+='<div style="height:300px;position:relative"><canvas id="cfp-donut"></canvas></div>';
-  html+='</div>';
+  // ── CO₂eq DISTRIBUTION CHART (FULL WIDTH - BELOW) ─────────────────
+  html+='<div style="margin-bottom:1.25rem">';
+  html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem">';
+  html+='<div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;text-align:center">CO₂eq Distribution</div>';
+  html+='<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.9rem;text-align:center">Relative contribution by material layer</div>';
+  html+='<div style="height:300px;position:relative;max-width:500px;margin:0 auto"><canvas id="cfp-donut"></canvas></div>';
+  html+='</div></div>';
 
-  html+='</div>';
-
-  // Methodology
+  // ── Disclaimer / Methodology ─────────────────────────────────────
   html+=_cfpMethodologyHTML();
   html+='</div>';
   
@@ -332,20 +324,20 @@ function renderCarbonFootprint() {
 
 function _cfpMethodologyHTML() {
   return '<div class="card" style="margin-top:1rem;border-left:4px solid var(--primary);background:var(--card);border-radius:12px">' +
-    '<div style="padding:1.25rem 1.5rem">' +
-    '<h2 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1.1rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.5rem;margin-bottom:1rem">Methodology &amp; Scope</h2>' +
-    '<div style="font-size:0.85rem;line-height:1.7;color:#334155;font-family:Georgia,\'Times New Roman\',serif">' +
+    '<div style="padding:1.1rem 1.3rem">' +
+    '<h2 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1.05rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.45rem;margin-bottom:0.9rem">Methodology &amp; Scope</h2>' +
+    '<div style="font-size:0.83rem;line-height:1.65;color:#334155;font-family:Georgia,\'Times New Roman\',serif">' +
     '<p>The calculation follows a cradle-to-gate mass-balance model. For each layer:</p>' +
-    '<div style="background:#f8fafc;padding:1rem 1.25rem;border-radius:8px;font-family:monospace;font-size:0.8rem;border:1px dashed var(--border);margin:0.85rem 0;text-align:center;color:#0f172a;line-height:1.8">' +
-      '<strong>Mass (kg/m²)</strong> = density (kg/m³) × thickness (µm) × 10⁻⁶<br>' +
-      '<strong>CO₂eq (kg/m²)</strong> = mass × GWP (kg CO₂eq / kg material)<br>' +
-      '<strong>Total</strong> = Σ CO₂eq_layer &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Per unit</strong> = Total × package area (m²)' +
+    '<div style="background:#f8fafc;padding:0.9rem 1.1rem;border-radius:7px;font-family:monospace;font-size:0.78rem;border:1px dashed var(--border);margin:0.75rem 0;text-align:center;color:#0f172a;line-height:1.75">' +
+      '<strong>Mass (kg/m²)</strong> = density × thickness (µm) × 10⁻⁶<br>' +
+      '<strong>CO₂eq (kg/m²)</strong> = mass × GWP<br>' +
+      '<strong>Total</strong> = Σ CO₂eq_layer &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Per unit</strong> = Total × area (m²)' +
     '</div>' +
-    '<p><strong>Default values:</strong> When a material record does not carry explicit density and GWP fields, the calculator resolves them from a keyword lookup table derived from PlasticsEurope Eco-profiles and Ecoinvent 3.x (European-average production). These rows are flagged <em>est.</em>. To improve accuracy, type the supplier-specific values directly in the table — results update live.</p>' +
-    '<p><strong>Per-unit vs. per-m² results:</strong> The per-m² figure characterises the material combination itself and is independent of package size. The per-unit figure is the product of the per-m² value and the selected surface area, and scales linearly with it.</p>' +
-    '<p><strong>Scope:</strong> Cradle-to-gate only. The model excludes conversion processes (printing, lamination, form-fill-seal), transport, retail, consumer use, and end-of-life treatment. A full product-level LCA covering all life-cycle stages requires ISO 14040/14044-compliant software with certified background datasets.</p>' +
-    '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:0.85rem 1rem;margin-top:1rem;font-family:sans-serif;font-size:0.8rem;color:var(--text-light);line-height:1.6">' +
-      '<strong>Disclaimer:</strong> Results are indicative estimates intended for early-stage design screening and internal comparison only. They must not be used as the basis for public environmental claims, carbon offsetting, or regulatory submissions without independent verification against ISO 14067 or equivalent standards.' +
+    '<p><strong>Default values:</strong> When a material record does not carry explicit density and GWP fields, the calculator resolves them from a keyword lookup table derived from PlasticsEurope Eco-profiles and Ecoinvent 3.x. These rows are flagged <em>est.</em>. Edit values directly in the table — results update live.</p>' +
+    '<p><strong>Per-unit vs. per-m²:</strong> The per-m² figure characterises the material combination itself. The per-unit figure scales linearly with the selected surface area.</p>' +
+    '<p><strong>Scope:</strong> Cradle-to-gate only. Excludes conversion, transport, retail, use, and end-of-life. Full LCA requires ISO 14040/14044-compliant software.</p>' +
+    '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:0.75rem 0.9rem;margin-top:0.9rem;font-family:sans-serif;font-size:0.78rem;color:var(--text-light);line-height:1.55">' +
+      '<strong>Disclaimer:</strong> Results are indicative estimates for early-stage design screening only. Not for public environmental claims or regulatory submissions without ISO 14067 verification.' +
     '</div>' +
     '</div></div></div>';
 }
