@@ -15,7 +15,6 @@
 //   W           g         —  drug content per unit
 //   ΔM_crit     %         —  allowable moisture gain (% of W)
 // ====================================================================
-
 // ------------------------------------------------------------------
 // ICH zones reused from pharma_mvtr.js
 // (included there; reference only if loaded separately)
