@@ -45,12 +45,12 @@
   // ── Coming Soon page ─────────────────────────────────────────────
   var COMING_SOON_META = {
     'pharma-mvtr': {
-      icon: '⚕️',
+      icon: '',
       title: 'MVTR at ICH Conditions',
       desc:  'Effective moisture vapor transmission rate across all ICH Q1A(R2) climatic zones, with Arrhenius correction and per-cavity ingress calculation.'
     },
     'pharma-uptake': {
-      icon: '💊',
+      icon: '',
       title: 'Drug Moisture Uptake',
       desc:  'Moisture content evolution inside a blister cavity over time, shelf life limited by critical moisture gain or first-order chemical degradation.'
     }
@@ -65,7 +65,7 @@
       'background:#fef3c7;color:#d97706;border:1px solid #fde68a;' +
       'border-radius:20px;padding:0.3rem 0.9rem;font-size:0.72rem;' +
       'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
-      'margin-bottom:1.5rem">⏳ Coming Soon</div>' +
+      'margin-bottom:1.5rem"> Coming Soon</div>' +
 
       // Icon
       '<div style="font-size:3rem;margin-bottom:1rem;line-height:1">' + meta.icon + '</div>' +
