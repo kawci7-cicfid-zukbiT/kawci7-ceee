@@ -28,7 +28,7 @@ var NAV_GROUPS = [
     tabs: [
       { id: 'shelflife',   label: 'Shelf Life'               },
       { id: 'carbonfp',    label: 'Carbon Footprint'         },
-      { id: 'headspace',   label: 'Headspace Calculator'     }
+      { id: 'headspace', label: 'MAP / O₂ Evolution' },
     ]
   },
   {
