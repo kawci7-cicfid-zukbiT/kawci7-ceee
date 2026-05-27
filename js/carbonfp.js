@@ -431,16 +431,16 @@ function renderCarbonFootprint() {
   }
 
   html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.85rem;margin-bottom:1.1rem">';
-  html += kpiCard('cfp-kpi-m2',   '📐', 'per m²',    (tots.totalPerM2   * 1000).toFixed(1),  'g CO₂eq / m²',   '#2563eb');
-  html += kpiCard('cfp-kpi-unit', '📦', 'per unit',  (tots.totalPerUnit * 1000).toFixed(2), 'g CO₂eq / unit', '#7c3aed');
-  html += kpiCard('cfp-eq-car',   '🚗', 'car equiv.',(tots.totalPerUnit * 1000 / 170).toFixed(3) + ' km', 'km driven', '#16a34a');
-  html += kpiCard('cfp-eq-phone', '📱', 'phone equiv.',(tots.totalPerUnit * 1000 / 21).toFixed(2) + ' charges', 'smartphone charges', '#d97706');
+  html += kpiCard('cfp-kpi-m2',   '', 'per m²',    (tots.totalPerM2   * 1000).toFixed(1),  'g CO₂eq / m²',   '#2563eb');
+  html += kpiCard('cfp-kpi-unit', '', 'per unit',  (tots.totalPerUnit * 1000).toFixed(2), 'g CO₂eq / unit', '#7c3aed');
+  html += kpiCard('cfp-eq-car',   '', 'car equiv.',(tots.totalPerUnit * 1000 / 170).toFixed(3) + ' km', 'km driven', '#16a34a');
+  html += kpiCard('cfp-eq-phone', '', 'phone equiv.',(tots.totalPerUnit * 1000 / 21).toFixed(2) + ' charges', 'smartphone charges', '#d97706');
   html += '</div>';
 
   // ── Area slider bar ─────────────────────────────────────────────
   html += '<div style="background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:1rem 1.25rem;margin-bottom:1.1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">';
   html += '<div style="display:flex;align-items:center;gap:0.4rem;flex-shrink:0">';
-  html += '<span style="font-size:1rem">📦</span>';
+  html += '<span style="font-size:1rem"></span>';
   html += '<span style="font-size:0.78rem;font-weight:700;color:#0f172a">Package surface area</span>';
   html += '</div>';
   html += '<input id="cfp-area-slider" type="range" min="50" max="2000" step="10" value="' + area + '" oninput="cfpAreaSlider(this.value)" style="flex:1;min-width:120px;accent-color:#2563eb;cursor:pointer">';
