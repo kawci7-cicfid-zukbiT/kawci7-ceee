@@ -1,17 +1,22 @@
 // ====================================================================
-// render_patch.js  v3 — routes new tabs to their dedicated renderers
-// carbonfp → renderCarbonFootprint()  is now in carbonfp.js
-// headspace / pharma-mvtr / pharma-uptake are handled here
-// All renderers write into #app-content (the real app container)
+// render_patch.js  v4 — routes new tabs to their dedicated renderers
+// MODIFICA: headspace ora usa renderHeadspace() da headspace.js (se disponibile)
+// Fallback: mantiene _renderHeadspace() legacy per compatibilità
 // ====================================================================
 (function () {
 
   var _orig = window.renderContent;
 
   // ──────────────────────────────────────────────────────────────────
-  // HEADSPACE
+  // HEADSPACE — Prefer new renderHeadspace() if available
   // ──────────────────────────────────────────────────────────────────
   function _renderHeadspace() {
+    // Se esiste il nuovo renderer con layout shelflife-style, usalo
+    if (typeof renderHeadspace === 'function' && typeof HS !== 'undefined') {
+      return renderHeadspace();
+    }
+
+    // Fallback legacy (codice originale)
     var c = document.getElementById('app-content'); if (!c) return;
     var hs = (typeof State !== 'undefined' && State.headspace) ? State.headspace : {
       preset:'coffee', otr_film:1.0, area_cm2:600, headspace_ml:200,
@@ -59,7 +64,12 @@
     setTimeout(hsCalc, 100);
   }
 
+  // Legacy wrapper functions (only if new HS object not available)
   window.hsPresetChange = function () {
+    if (typeof HS !== 'undefined' && typeof HS.onProductChange === 'function') {
+      return HS.onProductChange();
+    }
+    // Fallback legacy
     var k  = document.getElementById('hs-preset') ? document.getElementById('hs-preset').value : '';
     var p  = (typeof HS_PRESETS !== 'undefined') ? HS_PRESETS[k] : null;
     if (!p) return;
@@ -69,6 +79,10 @@
   };
 
   window.hsCalc = function () {
+    if (typeof HS !== 'undefined' && typeof HS.calculate === 'function') {
+      return HS.calculate();
+    }
+    // Fallback legacy
     if (typeof calcHeadspace !== 'function') return;
     var g = function (id) { var e = document.getElementById(id); return e ? (parseFloat(e.value) || 0) : 0; };
     var p = {
@@ -110,7 +124,7 @@
   }
 
   // ──────────────────────────────────────────────────────────────────
-  // PHARMA MVTR
+  // PHARMA MVTR (unchanged)
   // ──────────────────────────────────────────────────────────────────
   function _renderPharmaMVTR() {
     var c = document.getElementById('app-content'); if (!c) return;
@@ -183,7 +197,7 @@
   }
 
   // ──────────────────────────────────────────────────────────────────
-  // PHARMA UPTAKE
+  // PHARMA UPTAKE (unchanged)
   // ──────────────────────────────────────────────────────────────────
   function _renderPharmaUptake() {
     var c = document.getElementById('app-content'); if (!c) return;
@@ -271,13 +285,38 @@
   }
 
   // ──────────────────────────────────────────────────────────────────
-  // ROUTER
+  // ROUTER — Updated to prefer new renderers when available
   // ──────────────────────────────────────────────────────────────────
   var ROUTES = {
-    'carbonfp':      function () { if (typeof renderCarbonFootprint === 'function') renderCarbonFootprint(); },
-    'headspace':     _renderHeadspace,
-    'pharma-mvtr':   _renderPharmaMVTR,
-    'pharma-uptake': _renderPharmaUptake
+    'carbonfp': function () {
+      if (typeof renderCarbonFootprint === 'function') {
+        renderCarbonFootprint();
+      } else if (typeof _orig === 'function') {
+        _orig();
+      }
+    },
+    'headspace': function () {
+      // Prefer new shelflife-style renderer if available
+      if (typeof renderHeadspace === 'function' && typeof HS !== 'undefined') {
+        renderHeadspace();
+      } else {
+        _renderHeadspace(); // Fallback legacy
+      }
+    },
+    'pharma-mvtr': function () {
+      if (typeof renderPharmaMVTR === 'function') {
+        renderPharmaMVTR();
+      } else {
+        _renderPharmaMVTR();
+      }
+    },
+    'pharma-uptake': function () {
+      if (typeof renderPharmaUptake === 'function') {
+        renderPharmaUptake();
+      } else {
+        _renderPharmaUptake();
+      }
+    }
   };
 
   window.renderContent = function () {
