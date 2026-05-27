@@ -1532,7 +1532,7 @@ function renderHeadspaceMethodology() {
         dO₂/dt = (O₂ ingress through film) − (O₂ consumption by product)
       </div>
 
-      <p>The ingress term depends on the film's oxygen transmission rate (OTR), the package surface area, and—critically—the driving force created by the difference in oxygen partial pressure between the external atmosphere and the headspace itself. As the internal O₂ concentration changes, so does this driving force, making the system inherently non-linear.</p>
+      <p>The ingress term depends on the film's oxygen transmission rate (OTR), the package surface area, and critically the driving force created by the difference in oxygen partial pressure between the external atmosphere and the headspace itself. As the internal O₂ concentration changes, so does this driving force, making the system inherently non-linear.</p>
 
       <div style="background:#f8fafc; padding:1rem 1.2rem; border-radius:6px; font-family:monospace; font-size:0.9rem; text-align:center; border:1px dashed var(--border); margin:1rem 0; color:#0f172a; line-height:1.7;">
         OTR<sub>eff</sub> = OTR<sub>film</sub> × A × (pO₂<sub>ext</sub> − pO₂<sub>int</sub>) / pO₂<sub>ext</sub>
@@ -1541,7 +1541,7 @@ function renderHeadspaceMethodology() {
       <p>The consumption term reflects the product's respiration or oxidative activity. Two kinetic models are supported:</p>
 
       <ul style="margin:0.6rem 0 1rem 1.5rem; padding-left:0.5rem;">
-        <li><strong>Zero-order:</strong> Consumption rate is constant, independent of O₂ concentration. Typical for fresh meats or products with enzyme-limited respiration.</li>
+        <li><strong>Zero-order:</strong> Consumption rate is constant, independent of O₂ concentration. Typical for fresh meats or products with enzyme limited respiration.</li>
         <li><strong>First-order:</strong> Consumption rate is proportional to the current O₂ concentration. Typical for fresh produce, where respiration slows as O₂ becomes limiting.</li>
       </ul>
 
@@ -1565,7 +1565,7 @@ function renderHeadspaceMethodology() {
       </div>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Temperature Effects: Arrhenius & Q₁₀</h3>
-      <p>Both film permeability and product respiration are temperature-dependent. The calculator supports two widely used models for thermal acceleration:</p>
+      <p>Both film permeability and product respiration are temperature dependent. The calculator supports two widely used models for thermal acceleration:</p>
 
       <table style="width:100%; border-collapse:collapse; margin:1rem 0; font-family:sans-serif; font-size:0.88rem;">
         <thead>
@@ -1592,7 +1592,7 @@ function renderHeadspaceMethodology() {
       <p>When you enter a value for Eₐ, the Q₁₀ field is automatically disabled (and vice versa), ensuring a single, unambiguous thermal model is applied.</p>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Logistics Chain Mode</h3>
-      <p>Real-world supply chains expose packages to varying temperature and humidity conditions. The Logistics Chain mode allows you to define multiple sequential steps—each with its own duration, temperature, and relative humidity—and computes a weighted-average storage condition for the simulation.</p>
+      <p>Real-world supply chains expose packages to varying temperature and humidity conditions. The Logistics Chain mode allows you to define multiple sequential steps each with its own duration, temperature, and relative humidity and computes a weighted-average storage condition for the simulation.</p>
 
       <div style="background:var(--warning-light); padding:0.85rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:1rem 0; font-family:sans-serif; font-size:0.9rem; line-height:1.6;">
         <strong>⚠️ Important note:</strong> The current implementation uses a time-weighted average of temperature and RH across all chain steps. For more advanced modeling (e.g., stepwise simulation with dynamic OTR changes), a full transient solver would be required.
