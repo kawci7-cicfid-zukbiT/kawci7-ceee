@@ -1,6 +1,7 @@
 // ====================================================================
 // carbonfp.js  v4.2  —  Carbon Footprint Estimator
 // Layout: verticale - Layer Breakdown (full width) → Donut chart (sotto)
+// Methodology: stile allineato a shelflife.js
 // ====================================================================
 
 var CFP_DEFAULTS = [
@@ -232,7 +233,7 @@ function renderCarbonFootprint() {
   html+='</div>';
   html+='</div>';
 
-  // Table - COLONNE COMPATTE CON PERCENTUALI (NESSUNO SCROLL ORIZZONTALE)
+  // Table - COLONNE COMPATTE CON PERCENTUALI
   html+='<div style="overflow-x:auto">';
   html+='<table style="width:100%;border-collapse:collapse;font-size:0.75rem">';
   html+='<thead><tr style="background:#f8fafc;border-bottom:2px solid var(--border)">';
@@ -310,7 +311,7 @@ function renderCarbonFootprint() {
   html+='<div style="height:300px;position:relative;max-width:500px;margin:0 auto"><canvas id="cfp-donut"></canvas></div>';
   html+='</div></div>';
 
-  // ── Disclaimer / Methodology ─────────────────────────────────────
+  // ── Methodology (stile shelflife.js) ─────────────────────────────
   html+=_cfpMethodologyHTML();
   html+='</div>';
   
@@ -322,24 +323,115 @@ function renderCarbonFootprint() {
   },100);
 }
 
+// ── Methodology HTML (STILE ALLINEATO A SHELFLIFE.JS) ───────────────
 function _cfpMethodologyHTML() {
-  return '<div class="card" style="margin-top:1rem;border-left:4px solid var(--primary);background:var(--card);border-radius:12px">' +
-    '<div style="padding:1.1rem 1.3rem">' +
-    '<h2 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1.05rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.45rem;margin-bottom:0.9rem">Methodology &amp; Scope</h2>' +
-    '<div style="font-size:0.83rem;line-height:1.65;color:#334155;font-family:Georgia,\'Times New Roman\',serif">' +
-    '<p>The calculation follows a cradle-to-gate mass-balance model. For each layer:</p>' +
-    '<div style="background:#f8fafc;padding:0.9rem 1.1rem;border-radius:7px;font-family:monospace;font-size:0.78rem;border:1px dashed var(--border);margin:0.75rem 0;text-align:center;color:#0f172a;line-height:1.75">' +
-      '<strong>Mass (kg/m²)</strong> = density × thickness (µm) × 10⁻⁶<br>' +
-      '<strong>CO₂eq (kg/m²)</strong> = mass × GWP<br>' +
-      '<strong>Total</strong> = Σ CO₂eq_layer &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Per unit</strong> = Total × area (m²)' +
-    '</div>' +
-    '<p><strong>Default values:</strong> When a material record does not carry explicit density and GWP fields, the calculator resolves them from a keyword lookup table derived from PlasticsEurope Eco-profiles and Ecoinvent 3.x. These rows are flagged <em>est.</em>. Edit values directly in the table — results update live.</p>' +
-    '<p><strong>Per-unit vs. per-m²:</strong> The per-m² figure characterises the material combination itself. The per-unit figure scales linearly with the selected surface area.</p>' +
-    '<p><strong>Scope:</strong> Cradle-to-gate only. Excludes conversion, transport, retail, use, and end-of-life. Full LCA requires ISO 14040/14044-compliant software.</p>' +
-    '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:0.75rem 0.9rem;margin-top:0.9rem;font-family:sans-serif;font-size:0.78rem;color:var(--text-light);line-height:1.55">' +
-      '<strong>Disclaimer:</strong> Results are indicative estimates for early-stage design screening only. Not for public environmental claims or regulatory submissions without ISO 14067 verification.' +
-    '</div>' +
-    '</div></div></div>';
+  return `
+<div class="card" style="margin-top:1rem; border-left:4px solid var(--primary); background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+  <div style="padding:1.2rem 1.5rem;">
+    <h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.3rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1.2rem;">
+      Carbon Footprint: Methodology &amp; Scope
+    </h2>
+    <div style="font-size:0.95rem; line-height:1.8; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
+
+      <p>Estimating the carbon footprint of flexible packaging requires a systematic approach that balances scientific rigor with practical usability. This calculator implements a cradle-to-gate mass-balance model aligned with ISO 14040/14044 principles, designed for early-stage packaging design and material comparison.</p>
+
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:1.5rem; font-weight:700;">Core Calculation Model</h3>
+      <p>For each layer in the laminate structure, the carbon footprint is computed through a two-step mass-balance equation:</p>
+
+      <div style="background:var(--primary-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--primary); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+        <strong>Step 1 — Mass per unit area:</strong><br>
+        Mass (kg/m²) = density (kg/m³) × thickness (µm) × 10⁻⁶
+      </div>
+
+      <div style="background:var(--primary-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--primary); margin:0.5rem 0 1rem 0; font-family:sans-serif; font-size:0.9rem;">
+        <strong>Step 2 — CO₂eq contribution:</strong><br>
+        CO₂eq (kg/m²) = Mass × GWP (kg CO₂eq / kg material)
+      </div>
+
+      <p>The total footprint per square meter is the sum of all layer contributions. To obtain the per-unit value, multiply by the package surface area:</p>
+
+      <div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin:1rem 0; color:#0f172a;">
+        Total CO₂eq/unit = Σ(CO₂eq_layer) × package area (m²)
+      </div>
+
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Data Sources &amp; Default Values</h3>
+      <p>When a material record does not include explicit density or Global Warming Potential (GWP) fields, the calculator resolves them from a curated keyword lookup table derived from:</p>
+
+      <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem;">
+        <li><strong>PlasticsEurope Eco-profiles:</strong> Industry-average LCA data for polymer production in Europe, covering extraction, polymerization, and compounding stages.</li>
+        <li><strong>Ecoinvent 3.x:</strong> Peer-reviewed background datasets for energy, transport, and upstream processes, ensuring methodological consistency across the supply chain.</li>
+      </ul>
+
+      <div style="background:var(--warning-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+        <strong>⚠️ Estimated values:</strong> Rows flagged with <em>est.</em> use database defaults. For supplier-specific accuracy, enter verified density and GWP values directly in the table — results update live.
+      </div>
+
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Per-m² vs. Per-unit Results</h3>
+      <p>Understanding the distinction between these two metrics is essential for correct interpretation:</p>
+
+      <table style="width:100%; border-collapse:collapse; margin:1rem 0; font-family:sans-serif; font-size:0.88rem;">
+        <thead>
+          <tr style="background:#f1f5f9; border-bottom:2px solid var(--border);">
+            <th style="padding:0.6rem; text-align:left; width:30%;">Metric</th>
+            <th style="padding:0.6rem; text-align:left; width:70%;">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem; font-weight:bold; color:var(--primary-dark);">CO₂eq / m²</td>
+            <td>Characterizes the material combination itself. Independent of package geometry. Use this to compare laminate structures.</td>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem; font-weight:bold; color:var(--purple);">CO₂eq / unit</td>
+            <td>Represents the footprint of one finished package. Scales linearly with surface area. Use this for product-level comparisons.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">System Boundaries &amp; Exclusions</h3>
+      <p>This calculator adopts a <strong>cradle-to-gate</strong> scope, covering:</p>
+      <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem;">
+        <li>✓ Raw material extraction (fossil feedstocks, biomass, minerals)</li>
+        <li>✓ Polymer production and compounding</li>
+        <li>✓ Film extrusion and metallization (where applicable)</li>
+      </ul>
+
+      <p>The following stages are <strong>explicitly excluded</strong> and must be assessed separately for a full product LCA:</p>
+      <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem; color:var(--text-light);">
+        <li>✗ Conversion processes: printing, lamination, pouch forming</li>
+        <li>✗ Distribution: transport, warehousing, retail logistics</li>
+        <li>✗ Use phase: consumer handling, storage conditions</li>
+        <li>✗ End-of-life: collection, recycling, incineration, landfill</li>
+      </ul>
+
+      <div style="background:#f0fdf4; padding:1rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.9rem;">
+        <strong style="color:#16a34a; font-size:0.95rem;">💡 Practical Example:</strong><br>
+        A 3-layer pouch (PET 12µm / Alu 9µm / PE 50µm) with total area 0.04 m²:
+        <ul style="margin-top:0.5rem; margin-left:1rem;">
+          <li>PET: 1380 kg/m³ × 12µm × 2.15 GWP = 0.036 kg CO₂eq/m²</li>
+          <li>Alu: 2700 kg/m³ × 9µm × 8.10 GWP = 0.197 kg CO₂eq/m²</li>
+          <li>PE: 950 kg/m³ × 50µm × 1.90 GWP = 0.090 kg CO₂eq/m²</li>
+          <li><strong>Total:</strong> 0.323 kg CO₂eq/m² × 0.04 m² = <strong>12.9 g CO₂eq per pouch</strong></li>
+        </ul>
+      </div>
+
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Standards Alignment</h3>
+      <p>The methodology and reporting structure align with international frameworks:</p>
+      <p style="margin-left:1.2rem; color:var(--text-light); font-size:0.88rem; font-family:sans-serif;">
+        • <strong>ISO 14040/14044:</strong> Life Cycle Assessment — Principles and Framework<br>
+        • <strong>ISO 14067:</strong> Carbon Footprint of Products — Requirements and Guidelines<br>
+        • <strong>GHG Protocol Product Standard:</strong> Corporate accounting for product emissions<br>
+        • <strong>EN 15804+A2:</strong> Sustainability of construction works — EPD core rules (for material-level data)
+      </p>
+
+      <div style="margin-top:2rem; padding:0.9rem; background:var(--bg); border-radius:8px; font-size:0.88rem; color:var(--text-light); border-left:4px solid var(--primary); font-family:sans-serif;">
+        <strong>Disclaimer:</strong> Results are indicative estimates intended for early-stage design screening and internal comparison only. They must not be used as the basis for public environmental claims, carbon offsetting, or regulatory submissions without independent verification against ISO 14067 or equivalent standards. Supplier-specific data and full life-cycle boundaries are required for compliance-grade declarations.
+      </div>
+
+    </div>
+  </div>
+</div>
+`;
 }
 
 function onCfpAreaChange() {
