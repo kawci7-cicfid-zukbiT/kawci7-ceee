@@ -189,7 +189,7 @@ function renderCarbonFootprint() {
   html+='<div style="margin-bottom:1.5rem">';
   html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.3rem">Food Analysis</div>';
   html+='<h1 style="font-size:1.4rem;font-weight:800;color:var(--text);margin:0 0 0.35rem;letter-spacing:-0.01em">Carbon Footprint Estimator</h1>';
-  html+='<p style="font-size:0.82rem;color:var(--text-light);margin:0;line-height:1.5;max-width:700px">Cradle-to-gate CO₂eq for the current laminate structure, based on EPD values (PlasticsEurope / Ecoinvent 3.x).</p>';
+  html+='<p style="font-size:0.82rem;color:var(--text-light);margin:0;line-height:1.5;max-width:700px">Cradle to gate CO₂eq for the current laminate structure, based on EPD values (PlasticsEurope / Ecoinvent 3.x).</p>';
   html+='</div>';
 
   if (!hasRows) {
@@ -329,14 +329,14 @@ function _cfpMethodologyHTML() {
 <div class="card" style="margin-top:1rem; border-left:4px solid var(--primary); background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
   <div style="padding:1.2rem 1.5rem;">
     <h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.3rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1.2rem;">
-      Understanding Carbon Footprint in Flexible Packaging
+      Carbon Footprint in Flexible Packaging
     </h2>
     <div style="font-size:0.95rem; line-height:1.8; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
 
-      <p>When we speak of the carbon footprint of a packaging material, we are referring to the total amount of greenhouse gases—expressed as carbon dioxide equivalents, or CO₂eq—that are emitted into the atmosphere during its production. For flexible packaging, which typically consists of multiple thin layers of polymers, metals, or paper, this calculation is not a simple sum of parts. Rather, it is a careful accounting of how each material contributes to the overall environmental burden, weighted by both its physical presence in the structure and its intrinsic climate impact.</p>
+      <p>When we speak of the carbon footprint of a packaging material, we are referring to the total amount of greenhouse gases—expressed as carbon dioxide equivalents, or CO₂eq that are emitted into the atmosphere during its production. For flexible packaging, which typically consists of multiple thin layers of polymers, metals, or paper, this calculation is not a simple sum of parts. Rather, it is a careful accounting of how each material contributes to the overall environmental burden, weighted by both its physical presence in the structure and its intrinsic climate impact.</p>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:1.5rem; font-weight:700;">The Physical Foundation: From Thickness to Mass</h3>
-      <p>Every layer in a laminate begins its environmental story with a simple physical property: its thickness. A film that is 12 micrometres thick occupies a certain volume per square metre of surface area. When we multiply this volume by the material's density—the mass contained in each cubic metre—we obtain the mass of that layer per unit area. This step is fundamental, because greenhouse gas emissions are ultimately tied to the quantity of material processed, not merely to its geometric dimensions.</p>
+      <p>Every layer in a laminate begins its environmental story with a simple physical property: its thickness. A film that is 12 micrometres thick occupies a certain volume per square metre of surface area. When we multiply this volume by the material's density the mass contained in each cubic metre—we obtain the mass of that layer per unit area. This step is fundamental, because greenhouse gas emissions are ultimately tied to the quantity of material processed, not merely to its geometric dimensions.</p>
 
       <div style="background:var(--primary-light); padding:0.9rem 1.1rem; border-radius:8px; border-left:3px solid var(--primary); margin:1rem 0; font-family:sans-serif; font-size:0.92rem; line-height:1.6;">
         <strong>In practical terms:</strong><br>
@@ -347,7 +347,7 @@ function _cfpMethodologyHTML() {
       </div>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">From Mass to Climate Impact: The Role of GWP</h3>
-      <p>Knowing how much material is present is only half the story. The other half lies in understanding how climate-intensive the production of that material is. This is where the Global Warming Potential, or GWP, enters the calculation. GWP is a metric that expresses how much heat a given mass of greenhouse gas traps in the atmosphere over a specific time horizon—usually 100 years—relative to the same mass of carbon dioxide. For packaging materials, GWP values represent the cradle-to-gate emissions associated with producing one kilogram of that material, including feedstock extraction, chemical synthesis, energy consumption, and process emissions.</p>
+      <p>Knowing how much material is present is only half the story. The other half lies in understanding how climate intensive the production of that material is. This is where the Global Warming Potential, or GWP, enters the calculation. GWP is a metric that expresses how much heat a given mass of greenhouse gas traps in the atmosphere over a specific time, horizon usually 100 years, relative to the same mass of carbon dioxide. For packaging materials, GWP values represent the cradle to gate emissions associated with producing one kilogram of that material, including feedstock extraction, chemical synthesis, energy consumption, and process emissions.</p>
 
       <p>When we multiply the mass of a layer by its GWP, we translate a physical quantity into an environmental one: the contribution of that layer to climate change, expressed in kilograms of CO₂ equivalent per square metre of laminate.</p>
 
@@ -362,12 +362,12 @@ function _cfpMethodologyHTML() {
 
       <ul style="margin:0.6rem 0 1rem 1.5rem; padding-left:0.5rem;">
         <li><strong>PlasticsEurope Eco-profiles:</strong> These are industry-developed, peer-reviewed life-cycle inventories that report average European production data for major polymers. They follow ISO 14040/14044 standards and cover the full cradle-to-gate boundary, making them suitable for comparative material assessments.</li>
-        <li><strong>Ecoinvent 3.x:</strong> A comprehensive, academically curated database of life-cycle inventory data, widely used in research and industry. Its background processes—such as electricity generation, transport, and chemical feedstocks—provide the upstream context that ensures methodological consistency across different materials.</li>
+        <li><strong>Ecoinvent 3.x:</strong> A comprehensive, academically curated database of life-cycle inventory data, widely used in research and industry. Its background processes such as electricity generation, transport, and chemical feedstocks provide the upstream context that ensures methodological consistency across different materials.</li>
       </ul>
 
       <div style="background:var(--warning-light); padding:0.85rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:1rem 0; font-family:sans-serif; font-size:0.9rem; line-height:1.6;">
         <strong>⚠️ A note on estimated values:</strong><br>
-        When a material in your laminate does not have supplier-specific density or GWP data entered, the calculator applies a keyword-based lookup to assign default values from the sources above. These rows are marked with an <em>est.</em> badge to remind you that they represent industry averages, not your specific supply chain. For the most accurate results, we encourage you to replace defaults with verified data from your material suppliers—simply type the values into the table, and all results update instantly.
+        When a material in your laminate does not have supplier-specific density or GWP data entered, the calculator applies a keyword-based lookup to assign default values from the sources above. These rows are marked with an <em>est.</em> badge to remind you that they represent industry averages, not your specific supply chain. For the most accurate results, we encourage you to replace defaults with verified data from your material suppliers simply type the values into the table, and all results update instantly.
       </div>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Two Ways to Read the Results</h3>
@@ -375,10 +375,10 @@ function _cfpMethodologyHTML() {
 
       <p><strong>Per square metre (g CO₂eq/m²):</strong> This metric characterises the laminate structure itself, independent of package size. It answers the question: "How climate-intensive is this combination of materials, per unit of surface area?" Use this value when comparing alternative laminate designs, evaluating material substitutions, or benchmarking against industry references.</p>
 
-      <p><strong>Per finished package (g CO₂eq/unit):</strong> This metric scales the per-m² value by the actual surface area of your package. It answers the question: "What is the carbon footprint of one complete unit of my product?" Use this value for product-level environmental reporting, eco-design targets, or communication with sustainability teams.</p>
+      <p><strong>Per finished package (g CO₂eq/unit):</strong> This metric scales the per m² value by the actual surface area of your package. It answers the question: "What is the carbon footprint of one complete unit of my product?" Use this value for product-level environmental reporting, eco-design targets, or communication with sustainability teams.</p>
 
       <div style="background:#f0fdf4; padding:1rem 1.2rem; border-radius:8px; border-left:3px solid var(--success); margin:1.2rem 0; font-family:sans-serif; font-size:0.92rem; line-height:1.6;">
-        <strong style="color:#16a34a; font-size:0.95rem;">💡 Illustrative example:</strong><br>
+        <strong style="color:#16a34a; font-size:0.95rem;"> Illustrative example:</strong><br>
         Consider a simple three-layer pouch for dry food: PET (12 µm) / Aluminium (9 µm) / PE (50 µm), with a total surface area of 0.04 m².
         <ul style="margin-top:0.5rem; margin-left:1rem; padding-left:0.5rem;">
           <li>PET: 1380 kg/m³ × 12 µm × 2.15 GWP ≈ 0.036 kg CO₂eq/m²</li>
@@ -387,24 +387,24 @@ function _cfpMethodologyHTML() {
           <li><strong>Total per m²:</strong> ≈ 0.323 kg CO₂eq/m² → <strong>323 g CO₂eq/m²</strong></li>
           <li><strong>Total per pouch:</strong> 323 g/m² × 0.04 m² ≈ <strong>12.9 g CO₂eq per unit</strong></li>
         </ul>
-        This example shows how a relatively small package can still carry a measurable climate impact—and how the aluminium layer, despite being the thinnest, dominates the footprint due to its high GWP.
+        This example shows how a relatively small package can still carry a measurable climate impact and how the aluminium layer, despite being the thinnest, dominates the footprint due to its high GWP.
       </div>
 
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">What This Model Includes—and What It Does Not</h3>
+      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">What This Model Includes and What It Does Not</h3>
       <p>This calculator adopts a <strong>cradle-to-gate</strong> system boundary, which means it accounts for all greenhouse gas emissions from the extraction of raw materials up to the point where the finished laminate leaves the production facility. Specifically, it includes:</p>
       <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem;">
-        <li>✓ Extraction and refining of fossil or bio-based feedstocks</li>
-        <li>✓ Polymerisation, compounding, and additive incorporation</li>
-        <li>✓ Film extrusion, metallisation, and coating processes</li>
-        <li>✓ Energy consumption and process emissions at each stage</li>
+        <li>- Extraction and refining of fossil or bio-based feedstocks</li>
+        <li>- Polymerisation, compounding, and additive incorporation</li>
+        <li>- Film extrusion, metallisation, and coating processes</li>
+        <li>- Energy consumption and process emissions at each stage</li>
       </ul>
 
       <p>However, a complete environmental assessment of a packaged product requires looking beyond the laminate itself. The following stages are <strong>not included</strong> in this calculator and must be evaluated separately for a full product life-cycle analysis:</p>
       <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem; color:var(--text-light);">
-        <li>✗ Conversion processes: printing, adhesive lamination, pouch forming, sealing</li>
-        <li>✗ Distribution: transport of materials and finished goods, warehousing, retail logistics</li>
-        <li>✗ Use phase: consumer storage conditions, product protection performance</li>
-        <li>✗ End-of-life: collection systems, mechanical or chemical recycling, incineration, landfill</li>
+        <li>- Conversion processes: printing, adhesive lamination, pouch forming, sealing</li>
+        <li>- Distribution: transport of materials and finished goods, warehousing, retail logistics</li>
+        <li>- Use phase: consumer storage conditions, product protection performance</li>
+        <li>- End-of-life: collection systems, mechanical or chemical recycling, incineration, landfill</li>
       </ul>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Alignment with International Standards</h3>
