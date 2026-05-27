@@ -4,11 +4,11 @@
 //   <script src="js/tour.js"></script>
 // ====================================================================
 
-??(function () {
+//(function () {
   'use strict';
 
   // ── Styles ──────────────────────────────────────────────────────────
-  var CSS = `
+ // var CSS = `
     #tour-overlay {
       position: fixed; inset: 0; z-index: 9000;
       pointer-events: none;
