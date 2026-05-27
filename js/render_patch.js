@@ -1,5 +1,10 @@
 // ====================================================================
-// render_patch.js  v6  —  Clean router, no legacy fallbacks
+// render_patch.js  v7  —  Clean router
+// Handles both patterns:
+//   - renderCarbonFootprint()  → writes directly to #app-content (void)
+//   - renderHeadspace()        → returns HTML string
+//   - renderPharmaMVTR()       → returns HTML string
+//   - renderPharmaUptake()     → returns HTML string
 // Load LAST in index.html, after all feature files and nav.js
 // ====================================================================
 (function () {
@@ -12,33 +17,35 @@
 
     switch (tab) {
 
-      // ── Food Analysis ──────────────────────────────────────────
+      // ── Food Analysis ────────────────────────────────────────────
       case 'carbonfp':
-        if (c && typeof renderCarbonFootprintPage === 'function') {
-          c.innerHTML = renderCarbonFootprintPage();
+        // renderCarbonFootprint() writes directly to #app-content
+        if (typeof window.renderCarbonFootprint === 'function') {
+          window.renderCarbonFootprint();
         }
         break;
 
       case 'headspace':
-        if (c && typeof renderHeadspace === 'function') {
-          c.innerHTML = renderHeadspace();
+        // renderHeadspace() returns an HTML string
+        if (c && typeof window.renderHeadspace === 'function') {
+          c.innerHTML = window.renderHeadspace();
         }
         break;
 
-      // ── Biomedical Analysis ────────────────────────────────────
+      // ── Biomedical Analysis ──────────────────────────────────────
       case 'pharma-mvtr':
-        if (c && typeof renderPharmaMVTR === 'function') {
-          c.innerHTML = renderPharmaMVTR();
+        if (c && typeof window.renderPharmaMVTR === 'function') {
+          c.innerHTML = window.renderPharmaMVTR();
         }
         break;
 
       case 'pharma-uptake':
-        if (c && typeof renderPharmaUptake === 'function') {
-          c.innerHTML = renderPharmaUptake();
+        if (c && typeof window.renderPharmaUptake === 'function') {
+          c.innerHTML = window.renderPharmaUptake();
         }
         break;
 
-      // ── All existing tabs → original handler ───────────────────
+      // ── All existing tabs → original handler ─────────────────────
       default:
         if (typeof _orig === 'function') _orig();
         break;
