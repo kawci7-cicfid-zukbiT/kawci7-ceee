@@ -188,7 +188,7 @@ function renderCarbonFootprint() {
   html+='<div style="margin-bottom:1.5rem">';
   html+='<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.3rem">Food Analysis</div>';
   html+='<h1 style="font-size:1.4rem;font-weight:800;color:var(--text);margin:0 0 0.35rem;letter-spacing:-0.01em">Carbon Footprint Estimator</h1>';
-  html+='<p style="font-size:0.82rem;color:var(--text-light);margin:0;line-height:1.5;max-width:700px">Cradle-to-gate CO₂eq for the current laminate structure, based on EPD values (PlasticsEurope / Ecoinvent 3.x). Edit Density and GWP cells directly to override defaults — all results update live.</p>';
+  html+='<p style="font-size:0.82rem;color:var(--text-light);margin:0;line-height:1.5;max-width:700px">Cradle-to-gate CO₂eq for the current laminate structure, based on EPD values (PlasticsEurope / Ecoinvent 3.x).</p>';
   html+='</div>';
 
   if (!hasRows) {
