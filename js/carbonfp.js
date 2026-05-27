@@ -1,9 +1,10 @@
 // ====================================================================
 // carbonfp.js  v4  —  Carbon Footprint Estimator
 // Renders into #app-content
-// MODIFICHE: 
-// - Invertito ordine: Layer Breakdown prima di Area Sensitivity
-// - Rimossa funzionalità di salvataggio valori
+// MODIFICHE APPLICATE:
+// - Rimossa sezione "CO₂eq per unit vs. Package Surface Area" (slider + grafico)
+// - Rimossa funzionalità di salvataggio (pulsanti, logica, indicatori)
+// - Layout ottimizzato per visibilità completa delle informazioni
 // ====================================================================
 
 var CFP_DEFAULTS = [
@@ -117,7 +118,7 @@ function _cfpUpdateAll() {
   if (uLbl) uLbl.textContent = 'g CO₂eq / unit (' + areaCm2 + ' cm²)';
 
   _cfpDrawDonut(rows, totalPerM2);
-  _cfpDrawSensitivity(rows, totalPerM2);
+  // Sensitivity chart removed
 }
 
 function _cfpSet(id, v) { var e=document.getElementById(id); if(e) e.textContent=v; }
@@ -172,57 +173,6 @@ function _cfpDrawDonut(rows, totalPerM2) {
   });
 }
 
-// ── Sensitivity chart ────────────────────────────────────────────────
-function _cfpDrawSensitivity(rows, totalPerM2) {
-  var canvas=document.getElementById('cfp-sens-chart');
-  if (!canvas || typeof Chart==='undefined') return;
-  if (window._cfpSensChart) { window._cfpSensChart.destroy(); window._cfpSensChart=null; }
-  if (!rows.length) return;
-
-  var areas=[], vals=[];
-  for (var a=50; a<=2000; a+=(a<200?10:a<500?20:50)) {
-    areas.push(a);
-    vals.push(+(totalPerM2*a/1e4*1000).toFixed(4));
-  }
-  var cur=window._cfpArea||400;
-  var curVal=+(totalPerM2*cur/1e4*1000).toFixed(4);
-
-  window._cfpSensChart = new Chart(canvas.getContext('2d'), {
-    type:'line',
-    data:{
-      labels:areas,
-      datasets:[
-        { label:'CO₂eq/unit (g)', data:vals,
-          borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.06)',
-          fill:true, tension:0.35, pointRadius:0, pointHoverRadius:4, borderWidth:2 },
-        { label:'Current ('+cur+' cm²)', data:[{x:cur,y:curVal}],
-          type:'scatter', pointRadius:7, pointHoverRadius:9,
-          backgroundColor:'#dc2626', borderColor:'#fff', borderWidth:2, showLine:false }
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      interaction:{ mode:'nearest', axis:'x', intersect:false },
-      plugins:{
-        legend:{ position:'top', labels:{ boxWidth:10, font:{size:10} } },
-        tooltip:{ callbacks:{
-          title:function(i){ return i[0].label+' cm²'; },
-          label:function(ctx){ return ' '+ctx.dataset.label+': '+(+ctx.parsed.y).toFixed(3)+' g CO₂eq'; }
-        }}
-      },
-      scales:{
-        x:{ type:'linear',
-            title:{ display:true, text:'Surface area (cm²)', font:{size:10,weight:'600'} },
-            ticks:{ font:{size:9} }, grid:{ color:'rgba(0,0,0,0.04)' } },
-        y:{ title:{ display:true, text:'g CO₂eq / unit', font:{size:10,weight:'600'} },
-            beginAtZero:true,
-            ticks:{ font:{size:9}, callback:function(v){return v.toFixed(2);} },
-            grid:{ color:'rgba(0,0,0,0.04)' } }
-      }
-    }
-  });
-}
-
 // ── Public event handlers ────────────────────────────────────────────
 function cfpCellChange(idx) {
   if (!window._cfpEdit) window._cfpEdit={};
@@ -232,22 +182,18 @@ function cfpCellChange(idx) {
   _cfpUpdateAll();
 }
 
+// Area functions kept for internal calculations but UI removed
 function cfpAreaSlider(v) {
   window._cfpArea=parseFloat(v)||400;
-  var n=document.getElementById('cfp-area-num'); if(n) n.value=window._cfpArea;
   _cfpUpdateAll();
 }
 
 function cfpAreaInput(v) {
   var val=Math.max(10,Math.min(5000,parseFloat(v)||400));
   window._cfpArea=val;
-  var s=document.getElementById('cfp-area-slider'); if(s) s.value=val;
   _cfpUpdateAll();
 }
 
-// Funzione cfpSave rimossa - salvataggio disabilitato
-
-// ── Main render ──────────────────────────────────────────────────────
 // ── Main render ──────────────────────────────────────────────────────
 function renderCarbonFootprint() {
   var c=document.getElementById('app-content'); if (!c) return;
@@ -307,13 +253,12 @@ function renderCarbonFootprint() {
   html+='</div>';
   html+='<div style="display:flex;align-items:center;gap:0.6rem;font-size:0.7rem;color:var(--text-light)">';
   html+='<span style="display:inline-flex;align-items:center;gap:0.25rem"><span style="width:10px;height:10px;border-radius:2px;background:#fef3c7;border:1px solid #fcd34d;display:inline-block"></span>Estimated default</span>';
-  html+='<span style="display:inline-flex;align-items:center;gap:0.25rem"><span style="width:10px;height:10px;border-radius:2px;background:#f0fdf4;border:1px solid #86efac;display:inline-block"></span>Saved value</span>';
   html+='</div>';
   html+='</div>';
 
-  // Table
+  // Table — 7 columns (save button column removed)
   html+='<div style="overflow-x:auto">';
-  html+='<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:580px">';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:0.78rem;min-width:500px">';
   html+='<thead><tr style="background:#f8fafc">';
   var cols=[
     {label:'Material',     align:'left',   color:'var(--text)',       w:'auto'},
@@ -322,8 +267,7 @@ function renderCarbonFootprint() {
     {label:'GWP (kg CO₂eq/kg)', align:'center', color:'#2563eb',    w:'120px'},
     {label:'Mass (g/m²)', align:'right',  color:'var(--text-light)', w:'80px'},
     {label:'CO₂eq (g/m²)',align:'right',  color:'#7c3aed',           w:'90px'},
-    {label:'Share',        align:'right',  color:'var(--text-light)', w:'55px'},
-    {label:'',             align:'center', color:'',                  w:'72px'}
+    {label:'Share',        align:'right',  color:'var(--text-light)', w:'55px'}
   ];
   for (var ci=0;ci<cols.length;ci++) {
     var co=cols[ci];
@@ -371,21 +315,12 @@ function renderCarbonFootprint() {
     // Share %
     html+='<td style="padding:0.6rem 0.5rem;text-align:right;color:var(--text-light);vertical-align:middle;font-variant-numeric:tabular-nums"><span id="cfp-pct-'+ri+'">'+pct+'%</span></td>';
 
-    // Save button
-    var saved=!r.isDefault;
-    html+='<td style="padding:0.4rem 0.5rem;text-align:center;vertical-align:middle">';
-    if (saved) {
-      html+='<button id="cfp-savebtn-'+ri+'" disabled style="background:#16a34a;color:#fff;border:none;border-radius:5px;padding:0.28rem 0.55rem;font-size:0.68rem;font-weight:600;opacity:0.7;cursor:default;white-space:nowrap">✓ Saved</button>';
-    } else {
-      html+='<button id="cfp-savebtn-'+ri+'" onclick="cfpSave('+ri+')" style="background:var(--primary);color:#fff;border:none;border-radius:5px;padding:0.28rem 0.55rem;font-size:0.68rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity 0.15s" onmouseover="this.style.opacity=\'0.8\'" onmouseout="this.style.opacity=\'1\'">Save to DB</button>';
-    }
-    html+='</td>';
     html+='</tr>';
   }
 
-  // Footer total
+  // Footer total — colspan updated for 7 columns
   html+='<tr style="background:var(--primary)">';
-  html+='<td colspan="5" style="padding:0.55rem 1rem;text-align:right;color:rgba(255,255,255,0.7);font-weight:600;font-size:0.72rem">TOTAL</td>';
+  html+='<td colspan="4" style="padding:0.55rem 1rem;text-align:right;color:rgba(255,255,255,0.7);font-weight:600;font-size:0.72rem">TOTAL</td>';
   html+='<td style="padding:0.55rem 0.5rem;text-align:right;color:#fff;font-weight:800;font-size:0.88rem;font-variant-numeric:tabular-nums"><span id="cfp-total-footer">'+(totalPerM2*1000).toFixed(3)+'</span></td>';
   html+='<td colspan="2" style="padding:0.55rem 0.5rem;text-align:right;color:rgba(255,255,255,0.6);font-size:0.7rem">g CO₂eq/m²</td>';
   html+='</tr>';
@@ -401,8 +336,6 @@ function renderCarbonFootprint() {
 
   html+='</div>'; // end 2-col grid
 
-  // SEZIONE RIMOSSA: CO₂eq per unit vs. Package Surface Area
-
   // ── Disclaimer ────────────────────────────────────────────────────
   html+=_cfpMethodologyHTML();
   html+='</div>'; // max-width
@@ -411,7 +344,6 @@ function renderCarbonFootprint() {
   setTimeout(function(){
     var r2=_cfpBuildRows(), t2=_cfpTotals(r2);
     _cfpDrawDonut(r2,t2);
-    // Sensitivity chart non viene più disegnata
   },80);
 }
 
