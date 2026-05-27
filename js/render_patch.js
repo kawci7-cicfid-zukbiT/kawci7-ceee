@@ -287,45 +287,57 @@
   // ──────────────────────────────────────────────────────────────────
   // ROUTER — Updated to prefer new renderers when available
   // ──────────────────────────────────────────────────────────────────
-  var ROUTES = {
-    'carbonfp': function () {
-      if (typeof renderCarbonFootprint === 'function') {
-        renderCarbonFootprint();
-      } else if (typeof _orig === 'function') {
-        _orig();
-      }
-    },
-    'headspace': function () {
-      // Prefer new shelflife-style renderer if available
-      if (typeof renderHeadspace === 'function' && typeof HS !== 'undefined') {
-        renderHeadspace();
-      } else {
-        _renderHeadspace(); // Fallback legacy
-      }
-    },
-    'pharma-mvtr': function () {
-      if (typeof renderPharmaMVTR === 'function') {
-        renderPharmaMVTR();
-      } else {
-        _renderPharmaMVTR();
-      }
-    },
-    'pharma-uptake': function () {
-      if (typeof renderPharmaUptake === 'function') {
-        renderPharmaUptake();
-      } else {
-        _renderPharmaUptake();
-      }
+// ──────────────────────────────────────────────────────────────────
+// ROUTER — Updated to prefer new renderers when available
+// ──────────────────────────────────────────────────────────────────
+var ROUTES = {
+  'carbonfp': function () {
+    if (typeof renderCarbonFootprint === 'function') {
+      renderCarbonFootprint();
+    } else if (typeof _orig === 'function') {
+      _orig();
     }
-  };
-
-  window.renderContent = function () {
-    var tab = (typeof State !== 'undefined') ? State.tab : '';
-    if (ROUTES[tab]) {
-      ROUTES[tab]();
+  },
+  
+  'headspace': function () {
+    // ✅ PREFER NEW RENDERER IF AVAILABLE
+    if (typeof window.renderHeadspace === 'function' && typeof window.HS !== 'undefined') {
+      console.log('🎯 Using new shelflife-style headspace renderer');
+      window.renderHeadspace();
     } else {
-      if (typeof _orig === 'function') _orig();
+      // Fallback legacy
+      console.log('⚠️ Falling back to legacy headspace renderer');
+      _renderHeadspace();
     }
-  };
+  },
+  
+  'pharma-mvtr': function () {
+    if (typeof renderPharmaMVTR === 'function') {
+      renderPharmaMVTR();
+    } else {
+      _renderPharmaMVTR();
+    }
+  },
+  
+  'pharma-uptake': function () {
+    if (typeof renderPharmaUptake === 'function') {
+      renderPharmaUptake();
+    } else {
+      _renderPharmaUptake();
+    }
+  }
+};
+
+window.renderContent = function () {
+  var tab = (typeof State !== 'undefined') ? State.tab : '';
+  console.log('🔄 renderContent called for tab:', tab);
+  
+  if (ROUTES[tab]) {
+    ROUTES[tab]();
+  } else {
+    console.warn('⚠️ No route found for tab:', tab);
+    if (typeof _orig === 'function') _orig();
+  }
+};
 
 })();
