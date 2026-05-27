@@ -1116,7 +1116,7 @@ const HS = {
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(...C.white);
-      pdf.text('Report generated on ' + genDate + '  |  Headspace Calculator  |  wvtr-otr-calculator.com', ML + CW/2, y + 5.5, { align: 'center' });
+      pdf.text('Report generated on ' + genDate + '  |  O₂ in-pack Evolution  |  wvtr-otr-calculator.com', ML + CW/2, y + 5.5, { align: 'center' });
       pdf.setFontSize(7);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(186, 210, 255);
