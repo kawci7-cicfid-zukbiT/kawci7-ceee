@@ -7,7 +7,6 @@
 //   Home | Calculator | Food Analysis | Biomedical Analysis |
 //   Community Database | Company Database
 // ====================================================================
-
 var NAV_GROUPS = [
   {
     id: 'home',
