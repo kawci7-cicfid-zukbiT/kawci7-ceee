@@ -8,7 +8,6 @@
 //   Total           = Σ CO₂_layer
 //   Per unit        = Total × package_area_m²
 // ====================================================================
-
 // ------------------------------------------------------------------
 // Default GWP & density lookup table by material family keyword
 // Values from public EPD databases (Ecoinvent 3.x, PlasticsEurope)
