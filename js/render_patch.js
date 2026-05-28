@@ -61,7 +61,7 @@
       desc:  'Moisture content evolution inside a blister cavity over time, shelf life limited by critical moisture gain or first-order chemical degradation.'
     },
     'ppwr-label': {
-      icon:  '⚖️',
+      icon:  '',
       title: 'PPWR Label Generator',
       desc:  'Automatic material classification per Decision 97/129/EC and national labelling rules (FR, IT, DE, ES). Generates the labelling specification for each target market based on the laminate layer structure.'
     }
