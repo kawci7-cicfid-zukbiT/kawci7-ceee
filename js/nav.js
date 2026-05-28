@@ -95,12 +95,20 @@ if (g.id === 'home') {
   btnLabel = dot + g.label;
 }
 
-topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
-  '" data-group="' + g.id + '"' +
-  ' onclick="onGroupClick(\'' + g.id + '\')"' +
-  (g.id === 'home' ? ' title="Home" style="min-width:unset;padding-left:0.75rem;padding-right:0.75rem"' : '') +
-  '>' + btnLabel + '</button>';
-  }
+if (g.id === 'home') {
+  topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+    '" data-group="home"' +
+    ' onclick="onGroupClick(\'home\')"' +
+    ' title="Home"' +
+    ' style="min-width:unset;width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center">' +
+    '<i class="ti ti-home" aria-label="Home" style="font-size:16px"></i>' +
+    '</button>';
+} else {
+  topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+    '" data-group="' + g.id + '"' +
+    ' onclick="onGroupClick(\'' + g.id + '\')">' +
+    dot + g.label + '</button>';
+}
   document.getElementById('nav-tabs').innerHTML = topHtml;
 
   // ── Sub nav ───────────────────────────────────────────────────────
