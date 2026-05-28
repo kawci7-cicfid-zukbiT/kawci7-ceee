@@ -1,124 +1,156 @@
 // ====================================================================
-// render_patch.js  v11
-// Load LAST in index.html, after all feature files and nav.js
-//
-// Changes from v10:
-//   + 'ppwr-label' added to COMING_SOON_META and switch
-//   Everything else is identical to v10.
+// nav.js  —  Two-level navigation
 // ====================================================================
-(function () {
 
-  var _orig = window.renderContent;
+var NAV_GROUPS = [
+  {
+    id: 'home',
+    label: ' Home',
+    tabs: []
+  },
+  {
+    id: 'calculator',
+    label: ' Calculator',
+    tabs: [
+      { id: 'calc',        label: 'Laminate Calculator'    },
+      { id: 'sensitivity', label: 'Sensitivity & Optimizer'},
+      { id: 'arrhenius',   label: 'Arrhenius Predictor'   }
+    ]
+  },
+  {
+    id: 'food',
+    label: ' Food Analysis',
+    tabs: [
+      { id: 'shelflife',  label: 'Shelf Life'          },
+      { id: 'carbonfp',   label: 'Carbon Footprint'    },
+      { id: 'headspace',  label: 'MAP / O₂ Evolution'  },
+      { id: 'ppwr-label', label: 'PPWR Label Generator'}
+    ]
+  },
+  {
+    id: 'biomedical',
+    label: ' Biomedical Analysis',
+    tabs: [
+      { id: 'pharma-mvtr',   label: 'MVTR / ICH Conditions'},
+      { id: 'pharma-uptake', label: 'Drug Moisture Uptake' }
+    ]
+  },
+  {
+    id: 'community',
+    label: ' Community Database',
+    tabs: [
+      { id: 'materials', label: 'Materials'},
+      { id: 'laminates', label: 'Laminates'}
+    ]
+  },
+  {
+    id: 'company',
+    label: ' Company Database',
+    tabs: [
+      { id: 'mat-company', label: 'Materials'},
+      { id: 'lam-company', label: 'Laminates'}
+    ]
+  }
+];
 
-  window.renderContent = function () {
-    var tab = (typeof State !== 'undefined') ? State.tab : '';
-
-    switch (tab) {
-
-      // ── Food Analysis ────────────────────────────────────────────
-      case 'carbonfp':
-        if (typeof window.renderCarbonFootprint === 'function')
-          window.renderCarbonFootprint();
-        break;
-
-      case 'headspace':
-        if ((typeof State !== 'undefined') && State.mode === 'wvtr') {
-          var c = document.getElementById('app-content');
-          if (c) c.innerHTML = _renderMapBlocked();
-        } else {
-          var c = document.getElementById('app-content');
-          if (c && typeof window.renderHeadspace === 'function')
-            c.innerHTML = window.renderHeadspace();
-        }
-        break;
-
-      // ── Biomedical Analysis — COMING SOON ────────────────────────
-      case 'pharma-mvtr':
-      case 'pharma-uptake':
-      // ── Regulatory — COMING SOON ─────────────────────────────────
-      case 'ppwr-label':
-        var c = document.getElementById('app-content');
-        if (c) c.innerHTML = _renderComingSoon(tab);
-        break;
-
-      // ── All existing tabs ────────────────────────────────────────
-      default:
-        if (typeof _orig === 'function') _orig();
-        break;
+// ------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------
+function getActiveGroup() {
+  if (State.tab === 'home') return 'home';
+  for (var i = 0; i < NAV_GROUPS.length; i++) {
+    var g = NAV_GROUPS[i];
+    for (var j = 0; j < g.tabs.length; j++) {
+      if (g.tabs[j].id === State.tab) return g.id;
     }
-  };
+  }
+  return 'calculator';
+}
 
-  // ── Coming Soon page ─────────────────────────────────────────────
-  var COMING_SOON_META = {
-    'pharma-mvtr': {
-      icon:  '',
-      title: 'MVTR at ICH Conditions',
-      desc:  'Effective moisture vapor transmission rate across all ICH Q1A(R2) climatic zones, with Arrhenius correction and per-cavity ingress calculation.'
-    },
-    'pharma-uptake': {
-      icon:  '',
-      title: 'Drug Moisture Uptake',
-      desc:  'Moisture content evolution inside a blister cavity over time, shelf life limited by critical moisture gain or first-order chemical degradation.'
-    },
-    'ppwr-label': {
-      icon:  '⚖️',
-      title: 'PPWR Label Generator',
-      desc:  'Automatic material classification per Decision 97/129/EC and national labelling rules (FR, IT, DE, ES). Generates the labelling specification for each target market based on the laminate layer structure.'
+// ------------------------------------------------------------------
+// renderNav  — overrides the function defined in app.js/render.js
+// ------------------------------------------------------------------
+function renderNav() {
+  var activeGroup = getActiveGroup();
+
+  // ── Top nav ──────────────────────────────────────────────────────
+  var topHtml = '';
+  for (var i = 0; i < NAV_GROUPS.length; i++) {
+    var g        = NAV_GROUPS[i];
+    var isActive = (g.id === activeGroup);
+
+    // Company DB: green dot when a company profile is active
+    var dot = '';
+    if (g.id === 'company' && typeof CompanyState !== 'undefined' && CompanyState.isActive()) {
+      dot = '<span style="width:6px;height:6px;border-radius:50%;' +
+            'background:#22c55e;display:inline-block;margin-right:5px;' +
+            'vertical-align:middle"></span>';
     }
-  };
 
-  function _renderComingSoon(tab) {
-    var meta = COMING_SOON_META[tab] || { icon: '', title: 'Coming Soon', desc: '' };
-    return '<div style="max-width:480px;margin:4rem auto;text-align:center;padding:0 1rem">' +
+    topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+      '" data-group="' + g.id + '"' +
+      ' onclick="onGroupClick(\'' + g.id + '\')">' +
+      dot + g.label + '</button>';
+  }
+  document.getElementById('nav-tabs').innerHTML = topHtml;
 
-      // Badge
-      '<div style="display:inline-flex;align-items:center;gap:0.4rem;' +
-      'background:#fef3c7;color:#d97706;border:1px solid #fde68a;' +
-      'border-radius:20px;padding:0.3rem 0.9rem;font-size:0.72rem;' +
-      'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
-      'margin-bottom:1.5rem"> Coming Soon</div>' +
+  // ── Sub nav ───────────────────────────────────────────────────────
+  var subEl = document.getElementById('nav-subtabs');
+  if (!subEl) return;
 
-      // Icon
-      '<div style="font-size:3rem;margin-bottom:1rem;line-height:1">' + meta.icon + '</div>' +
-
-      // Title
-      '<h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin:0 0 0.75rem">' +
-      meta.title + '</h2>' +
-
-      // Description
-      '<p style="font-size:0.85rem;color:#64748b;line-height:1.65;margin:0 0 2rem">' +
-      meta.desc + '</p>' +
-
-      // Divider
-      '<div style="width:48px;height:3px;background:var(--primary);border-radius:2px;margin:0 auto 1.5rem"></div>' +
-
-      // Note
-      '<p style="font-size:0.75rem;color:#94a3b8;line-height:1.5">' +
-      'This analysis module is under development.<br>' +
-      'It will be available in an upcoming release.</p>' +
-
-      '</div>';
+  var activeGroupObj = null;
+  for (var k = 0; k < NAV_GROUPS.length; k++) {
+    if (NAV_GROUPS[k].id === activeGroup) { activeGroupObj = NAV_GROUPS[k]; break; }
   }
 
-  // ── OTR required page (MAP blocked in WVTR mode) ─────────────────
-  function _renderMapBlocked() {
-    return '<div style="max-width:520px;margin:3rem auto;text-align:center;padding:0 1rem">' +
-      '<div style="width:64px;height:64px;border-radius:50%;background:#fee2e2;' +
-      'display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="width:30px;height:30px">' +
-      '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>' +
-      '</svg></div>' +
-      '<h2 style="font-size:1.15rem;font-weight:700;color:#0f172a;margin:0 0 0.5rem">OTR mode required</h2>' +
-      '<p style="font-size:0.85rem;color:#64748b;line-height:1.6;margin:0 0 1.5rem">' +
-      '<strong>MAP / O₂ Evolution</strong> models how oxygen concentration changes ' +
-      'inside a sealed package over time — it needs the film\'s <strong>OTR</strong> as input.<br><br>' +
-      'You are currently in <strong>WVTR</strong> mode. ' +
-      'Switch to <strong>OTR</strong> using the selector at the top of the page.</p>' +
-      '<button onclick="setMode(\'otr\')" ' +
-      'style="background:#2563eb;color:#fff;border:none;border-radius:8px;' +
-      'padding:0.65rem 1.5rem;font-size:0.88rem;font-weight:600;cursor:pointer">' +
-      'Switch to OTR →</button>' +
-      '</div>';
+  if (!activeGroupObj || activeGroupObj.tabs.length === 0) {
+    subEl.style.display = 'none';
+    return;
   }
 
-})();
+  subEl.style.display = 'flex';
+  var subHtml = '';
+  for (var j = 0; j < activeGroupObj.tabs.length; j++) {
+    var tab = activeGroupObj.tabs[j];
+    subHtml += '<button class="nav-subtab' + (State.tab === tab.id ? ' active' : '') +
+      '" onclick="onSubTabClick(\'' + tab.id + '\')">' + tab.label + '</button>';
+  }
+  subEl.innerHTML = subHtml;
+}
+
+// ------------------------------------------------------------------
+// Click handlers
+// ------------------------------------------------------------------
+function onGroupClick(groupId) {
+  if (groupId === 'home') {
+    State.tab = 'home';
+    renderNav();
+    renderContent();
+    if (typeof postNavRender === 'function') postNavRender();
+    return;
+  }
+
+  var g = null;
+  for (var i = 0; i < NAV_GROUPS.length; i++) {
+    if (NAV_GROUPS[i].id === groupId) { g = NAV_GROUPS[i]; break; }
+  }
+  if (!g || g.tabs.length === 0) return;
+
+  // Stay on current sub-tab if already inside this group
+  var alreadyIn = false;
+  for (var j = 0; j < g.tabs.length; j++) {
+    if (g.tabs[j].id === State.tab) { alreadyIn = true; break; }
+  }
+  if (!alreadyIn) State.tab = g.tabs[0].id;
+
+  renderNav();
+  renderContent();
+  if (typeof postNavRender === 'function') postNavRender();
+}
+
+function onSubTabClick(tabId) {
+  State.tab = tabId;
+  renderNav();
+  renderContent();
+  if (typeof postNavRender === 'function') postNavRender();
+}
