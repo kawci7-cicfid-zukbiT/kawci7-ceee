@@ -651,3 +651,10 @@ main{padding-left:1.5rem!important;padding-right:1.5rem!important}
 .tab-content       { max-width: 860px; }
 .section-title     { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem; }
 .section-desc      { font-size: 0.8rem; color: #64748b; margin-bottom: 1.25rem; line-height: 1.5; }
+
+.nav-tab[data-group="home"] {
+  flex: 0 0 40px !important;
+  min-width: unset !important;
+  width: 40px !important;
+  padding: 0 !important;
+}
