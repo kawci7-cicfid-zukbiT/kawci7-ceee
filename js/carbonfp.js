@@ -393,18 +393,18 @@ function _cfpMethodologyHTML() {
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">What This Model Includes and What It Does Not</h3>
       <p>This calculator adopts a <strong>cradle-to-gate</strong> system boundary, which means it accounts for all greenhouse gas emissions from the extraction of raw materials up to the point where the finished laminate leaves the production facility. Specifically, it includes:</p>
       <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem;">
-        <li>- Extraction and refining of fossil or bio-based feedstocks</li>
-        <li>- Polymerisation, compounding, and additive incorporation</li>
-        <li>- Film extrusion, metallisation, and coating processes</li>
-        <li>- Energy consumption and process emissions at each stage</li>
+        <li> Extraction and refining of fossil or bio-based feedstocks</li>
+        <li> Polymerisation, compounding, and additive incorporation</li>
+        <li> Film extrusion, metallisation, and coating processes</li>
+        <li> Energy consumption and process emissions at each stage</li>
       </ul>
 
       <p>However, a complete environmental assessment of a packaged product requires looking beyond the laminate itself. The following stages are <strong>not included</strong> in this calculator and must be evaluated separately for a full product life-cycle analysis:</p>
       <ul style="margin:0.5rem 0 1rem 1.5rem; padding-left:0.5rem; color:var(--text-light);">
-        <li>- Conversion processes: printing, adhesive lamination, pouch forming, sealing</li>
-        <li>- Distribution: transport of materials and finished goods, warehousing, retail logistics</li>
-        <li>- Use phase: consumer storage conditions, product protection performance</li>
-        <li>- End-of-life: collection systems, mechanical or chemical recycling, incineration, landfill</li>
+        <li> Conversion processes: printing, adhesive lamination, pouch forming, sealing</li>
+        <li> Distribution: transport of materials and finished goods, warehousing, retail logistics</li>
+        <li> Use phase: consumer storage conditions, product protection performance</li>
+        <li> End-of-life: collection systems, mechanical or chemical recycling, incineration, landfill</li>
       </ul>
 
       <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Alignment with International Standards</h3>
