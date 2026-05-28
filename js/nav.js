@@ -87,10 +87,19 @@ function renderNav() {
             'vertical-align:middle"></span>';
     }
 
-    topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
-      '" data-group="' + g.id + '"' +
-      ' onclick="onGroupClick(\'' + g.id + '\')">' +
-      dot + g.label + '</button>';
+
+var btnLabel;
+if (g.id === 'home') {
+  btnLabel = '<i class="ti ti-home" aria-label="Home" style="font-size:15px;vertical-align:-2px"></i>';
+} else {
+  btnLabel = dot + g.label;
+}
+
+topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+  '" data-group="' + g.id + '"' +
+  ' onclick="onGroupClick(\'' + g.id + '\')"' +
+  (g.id === 'home' ? ' title="Home" style="min-width:unset;padding-left:0.75rem;padding-right:0.75rem"' : '') +
+  '>' + btnLabel + '</button>';
   }
   document.getElementById('nav-tabs').innerHTML = topHtml;
 
