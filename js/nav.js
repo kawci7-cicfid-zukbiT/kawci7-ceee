@@ -29,6 +29,7 @@ var NAV_GROUPS = [
       { id: 'shelflife',   label: 'Shelf Life'               },
       { id: 'carbonfp',    label: 'Carbon Footprint'         },
       { id: 'headspace', label: 'MAP / O₂ Evolution' },
+      { id: 'ppwr-label', label: 'PPWR Label Generator' }
     ]
   },
   {
