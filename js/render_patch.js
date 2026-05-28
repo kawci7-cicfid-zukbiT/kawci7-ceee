@@ -1,6 +1,12 @@
 // ====================================================================
-// render_patch.js  v10
+// render_patch.js  v11
 // Load LAST in index.html, after all feature files and nav.js
+//
+// Changes from v10:
+//   + case 'ppwr-label'  → renderPPWRLabel()  (new file ppwr_label.js)
+//   + case 'pharma-mvtr' / 'pharma-uptake' → full calculators
+//     (previously showed Coming Soon placeholder)
+//   Everything else is identical to v10.
 // ====================================================================
 (function () {
 
@@ -28,11 +34,36 @@
         }
         break;
 
-      // ── Biomedical Analysis — COMING SOON ────────────────────────
+      // ── NEW: PPWR Label Generator ────────────────────────────────
+      case 'ppwr-label':
+        if (typeof window.renderPPWRLabel === 'function')
+          window.renderPPWRLabel();
+        break;
+
+      // ── Biomedical Analysis ──────────────────────────────────────
+      // v10 showed Coming Soon; v11 renders the real calculators
+      // (pharma_mvtr.js and pharma_uptake.js are already loaded)
       case 'pharma-mvtr':
+        if (typeof window.renderPharmaMVTR === 'function')
+          window.renderPharmaMVTR();
+        else if (typeof window.onPharmaMVTRCalc === 'function') {
+          // fallback: renderContent handled by pharma_mvtr.js itself
+          var c = document.getElementById('app-content');
+          if (c && typeof window.renderPharmaMVTR_page === 'function')
+            window.renderPharmaMVTR_page();
+        } else {
+          var c = document.getElementById('app-content');
+          if (c) c.innerHTML = _renderComingSoon(tab);
+        }
+        break;
+
       case 'pharma-uptake':
-        var c = document.getElementById('app-content');
-        if (c) c.innerHTML = _renderComingSoon(tab);
+        if (typeof window.renderPharmaUptake === 'function')
+          window.renderPharmaUptake();
+        else {
+          var c = document.getElementById('app-content');
+          if (c) c.innerHTML = _renderComingSoon(tab);
+        }
         break;
 
       // ── All existing tabs ────────────────────────────────────────
@@ -42,7 +73,7 @@
     }
   };
 
-  // ── Coming Soon page ─────────────────────────────────────────────
+  // ── Coming Soon page (kept as fallback) ──────────────────────────
   var COMING_SOON_META = {
     'pharma-mvtr': {
       icon: '',
@@ -57,39 +88,23 @@
   };
 
   function _renderComingSoon(tab) {
-    var meta = COMING_SOON_META[tab] || { icon:'🔬', title:'Coming Soon', desc:'' };
+    var meta = COMING_SOON_META[tab] || { icon: '🔬', title: 'Coming Soon', desc: '' };
     return '<div style="max-width:480px;margin:4rem auto;text-align:center;padding:0 1rem">' +
-
-      // Badge
       '<div style="display:inline-flex;align-items:center;gap:0.4rem;' +
       'background:#fef3c7;color:#d97706;border:1px solid #fde68a;' +
       'border-radius:20px;padding:0.3rem 0.9rem;font-size:0.72rem;' +
       'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
       'margin-bottom:1.5rem"> Coming Soon</div>' +
-
-      // Icon
       '<div style="font-size:3rem;margin-bottom:1rem;line-height:1">' + meta.icon + '</div>' +
-
-      // Title
-      '<h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin:0 0 0.75rem">' +
-      meta.title + '</h2>' +
-
-      // Description
-      '<p style="font-size:0.85rem;color:#64748b;line-height:1.65;margin:0 0 2rem">' +
-      meta.desc + '</p>' +
-
-      // Divider
+      '<h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin:0 0 0.75rem">' + meta.title + '</h2>' +
+      '<p style="font-size:0.85rem;color:#64748b;line-height:1.65;margin:0 0 2rem">' + meta.desc + '</p>' +
       '<div style="width:48px;height:3px;background:var(--primary);border-radius:2px;margin:0 auto 1.5rem"></div>' +
-
-      // Note
       '<p style="font-size:0.75rem;color:#94a3b8;line-height:1.5">' +
-      'This analysis module is under development.<br>' +
-      'It will be available in an upcoming release.</p>' +
-
+      'This analysis module is under development.<br>It will be available in an upcoming release.</p>' +
       '</div>';
   }
 
-  // ── OTR required page (MAP blocked in WVTR mode) ─────────────────
+  // ── OTR required page (MAP blocked in WVTR mode) — unchanged ─────
   function _renderMapBlocked() {
     return '<div style="max-width:520px;margin:3rem auto;text-align:center;padding:0 1rem">' +
       '<div style="width:64px;height:64px;border-radius:50%;background:#fee2e2;' +
