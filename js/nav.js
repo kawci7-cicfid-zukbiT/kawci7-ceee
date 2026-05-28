@@ -87,28 +87,22 @@ function renderNav() {
             'vertical-align:middle"></span>';
     }
 
+    if (g.id === 'home') {
+      topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+        '" data-group="home"' +
+        ' onclick="onGroupClick(\'home\')"' +
+        ' title="Home"' +
+        ' style="min-width:unset;width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center">' +
+        '<i class="ti ti-home" aria-label="Home" style="font-size:16px"></i>' +
+        '</button>';
+    } else {
+      topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
+        '" data-group="' + g.id + '"' +
+        ' onclick="onGroupClick(\'' + g.id + '\')">' +
+        dot + g.label + '</button>';
+    }
+  }  // <-- questa graffa mancava
 
-var btnLabel;
-if (g.id === 'home') {
-  btnLabel = '<i class="ti ti-home" aria-label="Home" style="font-size:15px;vertical-align:-2px"></i>';
-} else {
-  btnLabel = dot + g.label;
-}
-
-if (g.id === 'home') {
-  topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
-    '" data-group="home"' +
-    ' onclick="onGroupClick(\'home\')"' +
-    ' title="Home"' +
-    ' style="min-width:unset;width:40px;padding:0;display:inline-flex;align-items:center;justify-content:center">' +
-    '<i class="ti ti-home" aria-label="Home" style="font-size:16px"></i>' +
-    '</button>';
-} else {
-  topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
-    '" data-group="' + g.id + '"' +
-    ' onclick="onGroupClick(\'' + g.id + '\')">' +
-    dot + g.label + '</button>';
-}
   document.getElementById('nav-tabs').innerHTML = topHtml;
 
   // ── Sub nav ───────────────────────────────────────────────────────
