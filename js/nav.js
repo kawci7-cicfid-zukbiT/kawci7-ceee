@@ -97,9 +97,10 @@ function renderNav() {
         '</button>';
     } else {
       topHtml += '<button class="nav-tab' + (isActive ? ' active' : '') +
-        '" data-group="' + g.id + '"' +
-        ' onclick="onGroupClick(\'' + g.id + '\')">' +
-        dot + g.label + '</button>';
+  '" data-group="home"' +
+  ' onclick="onGroupClick(\'home\')">' +
+  'Home' +
+  '</button>';
     }
   }  // <-- questa graffa mancava
 
