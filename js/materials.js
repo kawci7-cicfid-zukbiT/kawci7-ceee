@@ -316,18 +316,23 @@ window.updateTop3UI = updateTop3UI;
             var condTM   = v.testMethod || topTM || '—';
             var isPending = !!v.pending;
             var rowStyle = isPending
-                ? 'border-bottom:1px solid #fcd34d;background:#fefce8'
+                ? 'border-bottom:none;background:#fefce8'
                 : 'border-bottom:1px solid var(--border-light,#f1f5f9)';
-            var pendingBadge = isPending
-                ? ' <span style="font-size:0.62rem;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:4px;padding:1px 5px;vertical-align:middle">pending</span>'
-                : '';
             html += '<tr style="' + rowStyle + '">' +
-                '<td style="padding:4px 6px;font-weight:600;color:' + (isPending ? '#92400e' : 'var(--primary)') + ';font-family:monospace;font-size:0.8rem">' + v.value + pendingBadge + '</td>' +
+                '<td style="padding:4px 6px;font-weight:600;color:' + (isPending ? '#92400e' : 'var(--primary)') + ';font-family:monospace;font-size:0.8rem">' + v.value + '</td>' +
                 '<td style="padding:4px 6px">' + v.thickness + ' µm</td>' +
                 '<td style="padding:4px 6px">' + condTemp + (condTemp !== '—' ? '°C' : '') + '</td>' +
                 '<td style="padding:4px 6px">' + condHum  + (condHum  !== '—' ? '%'   : '') + '</td>' +
                 '<td style="padding:4px 6px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + condTM + '</td>' +
                 '</tr>';
+            if(isPending) {
+                html += '<tr style="background:#fef9c3;border-bottom:1px solid #fcd34d">' +
+                    '<td colspan="5" style="padding:4px 8px">' +
+                    '<span style="display:inline-flex;align-items:center;gap:5px;font-size:0.7rem;color:#92400e;font-weight:500">' +
+                    '<span style="background:#fcd34d;color:#78350f;border-radius:3px;padding:1px 6px;font-size:0.65rem;font-weight:700">PENDING</span>' +
+                    'To be approved — visible only to you until admin review.</span>' +
+                    '</td></tr>';
+            }
         });
         html += '</tbody></table></div>';
     } else {
@@ -919,7 +924,16 @@ function showMatModal(editId) {
                     }
                 });
                 DB.updateMat(editId, { supplierEmail: supplierEmail, tdsLink: tdsLink });
-                render(); return true;
+                render();
+                // Show pending toast
+                setTimeout(function(){
+                    var t = document.createElement('div');
+                    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#92400e;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+                    t.textContent = '\u23f3 Condition saved — highlighted in yellow, pending admin approval.';
+                    document.body.appendChild(t);
+                    setTimeout(function(){ if(t.parentNode) t.remove(); }, 5000);
+                }, 300);
+                return true;
             }
 
             function collectRows(type) {
@@ -1002,15 +1016,16 @@ function showMatModal(editId) {
 // sendPendingConditionForApproval
 // ====================================================================
 async function sendPendingConditionForApproval(mat, type, newEntry) {
-    // Save to Firebase with pending:true — visible locally in yellow, public after your approval
     var valKey = { wvtr:'wvtrValues', otr:'otrValues', co2:'co2Values' };
-    var pendingEntry = Object.assign({}, newEntry, { pending: true });
+    var pendingEntry = { value: newEntry.value, thickness: newEntry.thickness,
+        temperature: newEntry.temperature, humidity: newEntry.humidity,
+        testMethod: newEntry.testMethod || '', pending: true };
     if(!mat[valKey[type]]) mat[valKey[type]] = [];
     mat[valKey[type]].push(pendingEntry);
     DB.save();
+    matApplyFilters();
     if(window.communityDB && mat.firebaseDocId) {
         try {
-            var ref = window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId);
             var pendingCol = window.fbCollection(window.communityDB, 'pending_conditions');
             var pendingDoc = {
                 materialName:  mat.name,
@@ -1028,7 +1043,6 @@ async function sendPendingConditionForApproval(mat, type, newEntry) {
             if(window.fbAddDoc) await window.fbAddDoc(pendingCol, pendingDoc);
         } catch(e) { console.warn('Pending Firebase save failed:', e); }
     }
-    matApplyFilters();
 }
 
 
