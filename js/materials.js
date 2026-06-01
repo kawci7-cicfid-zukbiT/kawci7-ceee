@@ -284,7 +284,8 @@ window.updateTop3UI = updateTop3UI;
 // 🃏 MATERIAL CARD HTML — NEW LAYOUT
 // ====================================================================
 
-// Helper: build a barrier data table (WVTR, OTR, or CO2) for the card bodyfunction _matBarrierSection(m, type, idStr) {
+// Helper: build a barrier data table (WVTR, OTR, or CO2) for the card body
+function _matBarrierSection(m, type, idStr) {
     var labels = { wvtr: 'WVTR', otr: 'OTR', co2: 'CO₂TR' };
     var units  = { wvtr: 'g/m²·day', otr: 'cc/m²·day·atm', co2: 'cc/m²·day·atm' };
     var valKey = { wvtr: 'wvtrValues', otr: 'otrValues', co2: 'co2Values' };
