@@ -284,131 +284,59 @@ window.updateTop3UI = updateTop3UI;
 // 🃏 MATERIAL CARD HTML — NEW LAYOUT
 // ====================================================================
 
-// Helper: build a barrier data table (WVTR, OTR, or CO2) for the card body
-function _matBarrierSection(m, type, idStr) {
+// Helper: build a barrier data table (WVTR, OTR, or CO2) for the card bodyfunction _matBarrierSection(m, type, idStr) {
     var labels = { wvtr: 'WVTR', otr: 'OTR', co2: 'CO₂TR' };
     var units  = { wvtr: 'g/m²·day', otr: 'cc/m²·day·atm', co2: 'cc/m²·day·atm' };
     var valKey = { wvtr: 'wvtrValues', otr: 'otrValues', co2: 'co2Values' };
     var tmKey  = { wvtr: 'testMethodWVTR', otr: 'testMethodOTR', co2: 'testMethodCO2' };
+    var label  = labels[type];
+    var unit   = units[type];
+    var vals   = m[valKey[type]] || [];
+    var topTM  = m[tmKey[type]] || '';
 
-    var label = labels[type];
-    var unit  = units[type];
-    var vals  = (m[valKey[type]] || []);
-    var topTM = m[tmKey[type]] || '';
-
-    // Per-row add-condition dropdown options
-    var ctmOpts = {
-        wvtr: ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'],
-        otr:  ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'],
-        co2:  ['ASTM D1434','ISO 15105-1','ISO 15105-2','MOCON']
-    };
-    var tmOptsList = ctmOpts[type];
-    var tmOptsHTML = '<option value="">— test method —</option>';
-    for(var ti=0; ti<tmOptsList.length; ti++) {
-        tmOptsHTML += '<option value="'+tmOptsList[ti]+'">'+tmOptsList[ti]+'</option>';
-    }
-
-    // Section header
     var html =
         '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px">' +
             '<div style="font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em">' +
                 label + ' <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.68rem">· ' + unit + '</span>' +
             '</div>' +
-            '<button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:2px 8px;height:auto" ' +
-                'onclick="event.stopPropagation();matToggleInlineForm(\'' + idStr + '-' + type + '-form\')">+ Add condition</button>' +
         '</div>';
 
-    // Table of existing values
     if(vals.length > 0) {
-        html += '<div style="overflow-x:auto">' +
-            '<table style="width:100%;border-collapse:collapse;font-size:0.75rem">' +
+        html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.75rem">' +
             '<thead><tr style="border-bottom:1px solid var(--border)">' +
-                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Value</th>' +
-                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Thickness</th>' +
-                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Temp</th>' +
-                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">RH%</th>' +
-                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Method</th>' +
+            '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light)">Value</th>' +
+            '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light)">Thickness</th>' +
+            '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light)">Temp</th>' +
+            '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light)">RH%</th>' +
+            '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light)">Method</th>' +
             '</tr></thead><tbody>';
-        for(var ri=0; ri<vals.length; ri++) {
-            var v = vals[ri];
-            var condTemp = (v.temperature != null) ? v.temperature : '—';
-            var condHum  = (v.humidity    != null) ? v.humidity    : '—';
+        vals.forEach(function(v) {
+            var condTemp = v.temperature != null ? v.temperature : '—';
+            var condHum  = v.humidity    != null ? v.humidity    : '—';
             var condTM   = v.testMethod || topTM || '—';
-            html +=
-                '<tr style="border-bottom:1px solid var(--border-light,#f1f5f9)">' +
-                '<td style="padding:4px 6px;font-weight:600;color:var(--primary);font-family:monospace;font-size:0.8rem">' + v.value + '</td>' +
-                '<td style="padding:4px 6px;color:var(--text)">' + v.thickness + ' µm</td>' +
-                '<td style="padding:4px 6px;color:var(--text)">' + condTemp + (condTemp !== '—' ? '°C' : '') + '</td>' +
-                '<td style="padding:4px 6px;color:var(--text)">' + condHum + (condHum !== '—' ? '%' : '') + '</td>' +
+            var isPending = !!v.pending;
+            var rowStyle = isPending
+                ? 'border-bottom:1px solid #fcd34d;background:#fefce8'
+                : 'border-bottom:1px solid var(--border-light,#f1f5f9)';
+            var pendingBadge = isPending
+                ? ' <span style="font-size:0.62rem;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:4px;padding:1px 5px;vertical-align:middle">pending</span>'
+                : '';
+            html += '<tr style="' + rowStyle + '">' +
+                '<td style="padding:4px 6px;font-weight:600;color:' + (isPending ? '#92400e' : 'var(--primary)') + ';font-family:monospace;font-size:0.8rem">' + v.value + pendingBadge + '</td>' +
+                '<td style="padding:4px 6px">' + v.thickness + ' µm</td>' +
+                '<td style="padding:4px 6px">' + condTemp + (condTemp !== '—' ? '°C' : '') + '</td>' +
+                '<td style="padding:4px 6px">' + condHum  + (condHum  !== '—' ? '%'   : '') + '</td>' +
                 '<td style="padding:4px 6px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + condTM + '</td>' +
                 '</tr>';
-        }
+        });
         html += '</tbody></table></div>';
     } else {
         html += '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic;padding:4px 0">No ' + label + ' data available.</div>';
     }
 
-    // Inline add-condition form (hidden by default)
-    html +=
-        '<div id="' + idStr + '-' + type + '-form" style="display:none;margin-top:8px;padding:10px 12px;' +
-            'background:var(--primary-light,#eff6ff);border:1px dashed var(--primary);border-radius:8px">' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px;margin-bottom:6px">' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">' + label + ' value</label>' +
-                    '<input type="number" step="any" class="form-input matinline-val" id="' + idStr + '-' + type + '-val" placeholder="0" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Thickness (µm)</label>' +
-                    '<input type="number" step="any" class="form-input matinline-thick" id="' + idStr + '-' + type + '-thick" placeholder="0" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Test method</label>' +
-                    '<select class="form-input matinline-method" id="' + idStr + '-' + type + '-method" style="font-size:0.75rem" onclick="event.stopPropagation()">' + tmOptsHTML + '</select></div>' +
-            '</div>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Temp (°C)</label>' +
-                    '<input type="number" step="any" class="form-input matinline-temp" id="' + idStr + '-' + type + '-temp" placeholder="23" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Humidity (%RH)</label>' +
-                    '<input type="number" step="any" class="form-input matinline-hum" id="' + idStr + '-' + type + '-hum" placeholder="50" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;justify-content:flex-end">' +
-                '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();matToggleInlineForm(\'' + idStr + '-' + type + '-form\')">Cancel</button>' +
-                '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();matSaveInlineRow(\'' + idStr + '\',\'' + type + '\')">✓ Save</button>' +
-            '</div>' +
-        '</div>';
-
     return html;
 }
 
-// Toggle inline form visibility
-function matToggleInlineForm(formId) {
-    var el = document.getElementById(formId);
-    if(!el) return;
-    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
-}
-
-// Save a new row from the inline form into DB and re-render the card
-function matSaveInlineRow(idStr, type) {
-    var val   = parseFloat(document.getElementById(idStr + '-' + type + '-val').value);
-    var thick = parseFloat(document.getElementById(idStr + '-' + type + '-thick').value);
-    var temp  = parseFloat(document.getElementById(idStr + '-' + type + '-temp').value);
-    var hum   = parseFloat(document.getElementById(idStr + '-' + type + '-hum').value);
-    var meth  = document.getElementById(idStr + '-' + type + '-method').value.trim();
-
-    var label = {wvtr:'WVTR', otr:'OTR', co2:'CO₂TR'}[type];
-    if(isNaN(val)  || val < 0)   { alert(label + ' value is invalid');    return; }
-    if(isNaN(thick)|| thick <= 0){ alert('Thickness must be > 0');         return; }
-    if(isNaN(temp))               { alert('Temperature is required');       return; }
-    if(isNaN(hum))                { alert('Humidity is required');          return; }
-
-    var mat = DB.materials.find(function(m){ return String(m.id) === String(idStr); });
-    if(!mat) return;
-
-    var valKey = { wvtr: 'wvtrValues', otr: 'otrValues', co2: 'co2Values' };
-    if(!mat[valKey[type]]) mat[valKey[type]] = [];
-
-    var newEntry = { value: val, thickness: thick, temperature: temp, humidity: hum };
-    if(meth) newEntry.testMethod = meth;
-    mat[valKey[type]].push(newEntry);
-
-    DB.save();
-    matApplyFilters();
-}
 
 function matCardHTML(m, q) {
     var isComm   = !!(m.isCommunity || (m.id && String(m.id).startsWith('fb_')));
@@ -987,7 +915,7 @@ function showMatModal(editId) {
                     if(!isNaN(nv)&&nv>=0&&!isNaN(nt)&&nt>0&&!isNaN(ntp)&&!isNaN(nh)) {
                         var entry = { value:nv, thickness:nt, temperature:ntp, humidity:nh };
                         if(nm) entry.testMethod = nm;
-                        sendPendingConditionForApproval(mat, type, entry, supplierEmail);
+                        sendPendingConditionForApproval(mat, type, entry);
                     }
                 });
                 DB.updateMat(editId, { supplierEmail: supplierEmail, tdsLink: tdsLink });
@@ -1073,50 +1001,34 @@ function showMatModal(editId) {
 // ====================================================================
 // sendPendingConditionForApproval
 // ====================================================================
-async function sendPendingConditionForApproval(mat, type, newEntry, submitterEmail) {
-    var ADMIN_EMAIL = 'admin@yourapp.com';
-    var typeLabel = { wvtr:'WVTR', otr:'OTR', co2:'CO2TR' }[type] || type.toUpperCase();
-    if(window.communityDB) {
+async function sendPendingConditionForApproval(mat, type, newEntry) {
+    // Save to Firebase with pending:true — visible locally in yellow, public after your approval
+    var valKey = { wvtr:'wvtrValues', otr:'otrValues', co2:'co2Values' };
+    var pendingEntry = Object.assign({}, newEntry, { pending: true });
+    if(!mat[valKey[type]]) mat[valKey[type]] = [];
+    mat[valKey[type]].push(pendingEntry);
+    DB.save();
+    if(window.communityDB && mat.firebaseDocId) {
         try {
+            var ref = window.fbDoc(window.communityDB, 'materials', mat.firebaseDocId);
+            var pendingCol = window.fbCollection(window.communityDB, 'pending_conditions');
             var pendingDoc = {
-                materialName:   mat.name,
-                materialId:     String(mat.id),
-                firebaseDocId:  mat.firebaseDocId || null,
-                type:           type,
-                value:          newEntry.value,
-                thickness:      newEntry.thickness,
-                temperature:    newEntry.temperature,
-                humidity:       newEntry.humidity,
-                testMethod:     newEntry.testMethod || '',
-                submitterEmail: submitterEmail || '',
-                pending:        true,
-                submittedAt:    new Date().toISOString()
+                materialName:  mat.name,
+                materialId:    String(mat.id),
+                firebaseDocId: mat.firebaseDocId,
+                type:          type,
+                value:         newEntry.value,
+                thickness:     newEntry.thickness,
+                temperature:   newEntry.temperature,
+                humidity:      newEntry.humidity,
+                testMethod:    newEntry.testMethod || '',
+                pending:       true,
+                submittedAt:   new Date().toISOString()
             };
-            if(window.fbDoc && window.fbSetDoc) {
-                await window.fbSetDoc(
-                    window.fbDoc(window.communityDB, 'pending_conditions', Date.now() + '_' + String(mat.id)),
-                    pendingDoc
-                );
-            }
-        } catch(e) { console.warn('Pending save failed:', e); }
+            if(window.fbAddDoc) await window.fbAddDoc(pendingCol, pendingDoc);
+        } catch(e) { console.warn('Pending Firebase save failed:', e); }
     }
-    var subject = encodeURIComponent('[APPROVAL NEEDED] New ' + typeLabel + ' condition for ' + mat.name);
-    var bodyLines = [
-        'A new condition was submitted for approval.',
-        '',
-        'Material: ' + mat.name + ' (' + (mat.family||'?') + ')',
-        'Type: ' + typeLabel,
-        'Value: ' + newEntry.value,
-        'Thickness: ' + newEntry.thickness + ' um',
-        'Temperature: ' + newEntry.temperature + 'C',
-        'Humidity: ' + newEntry.humidity + '%',
-        'Test method: ' + (newEntry.testMethod || '-'),
-        'Submitted by: ' + (submitterEmail || '-'),
-        '',
-        'To approve: Firebase console > pending_conditions > set pending: false.',
-        'Material Firebase ID: ' + (mat.firebaseDocId || 'not yet shared')
-    ];
-    window.open('mailto:' + ADMIN_EMAIL + '?subject=' + subject + '&body=' + encodeURIComponent(bodyLines.join('\n')));
+    matApplyFilters();
 }
 
 
