@@ -119,7 +119,7 @@ function isVerifiedMaterial(mat) {
 }
 
 // ====================================================================
-// 👍 RELIABILITY VOTING — ✅ FIX: DB non sparisce dopo il voto
+// 👍 RELIABILITY VOTING
 // ====================================================================
 async function voteReliability(matId, voteType) {
     var matIdStr = String(matId);
@@ -136,7 +136,6 @@ async function voteReliability(matId, voteType) {
         if(currentVote === voteType) {
             recordUserVote(matIdStr, null);
             DB.save();
-            // ✅ FIX: usa matApplyFilters se siamo nella tab materiali, altrimenti renderContent
             if(State.tab === 'materials') { matApplyFilters(); } else { renderContent(); }
             if(needsSync) {
                 try { const ref = window.fbDoc(window.communityDB,"materials",mat.firebaseDocId); await window.fbUpdateDoc(ref, firebaseUpdate); } catch(e) {}
@@ -149,7 +148,6 @@ async function voteReliability(matId, voteType) {
     recordUserVote(matIdStr, voteType);
     if(needsSync) firebaseUpdate["reliabilityVotes." + voteType] = window.fbIncrement(1);
     DB.save();
-    // ✅ FIX: stessa logica qui
     if(State.tab === 'materials') { matApplyFilters(); } else { renderContent(); }
     if(needsSync && Object.keys(firebaseUpdate).length > 0) {
         try { const ref = window.fbDoc(window.communityDB,"materials",mat.firebaseDocId); await window.fbUpdateDoc(ref, firebaseUpdate); } catch(e) {}
@@ -171,11 +169,11 @@ function recordUserVote(matId, voteType) {
 }
 
 function getReliabilityScore(mat) {
-    if(!mat.reliabilityVotes) return 50;
+    if(!mat.reliabilityVotes) return null;
     var up = mat.reliabilityVotes.up || 0;
     var down = mat.reliabilityVotes.down || 0;
     var total = up + down;
-    if(total === 0) return 50;
+    if(total === 0) return null;
     return Math.round((up / total) * 100);
 }
 
@@ -283,19 +281,143 @@ async function updateTop3UI() {
 window.updateTop3UI = updateTop3UI;
 
 // ====================================================================
-// 🃏 MATERIAL CARD HTML
+// 🃏 MATERIAL CARD HTML — NEW LAYOUT
 // ====================================================================
+
+// Helper: build a barrier data table (WVTR, OTR, or CO2) for the card body
+function _matBarrierSection(m, type, idStr) {
+    var labels = { wvtr: 'WVTR', otr: 'OTR', co2: 'CO₂TR' };
+    var units  = { wvtr: 'g/m²·day', otr: 'cc/m²·day·atm', co2: 'cc/m²·day·atm' };
+    var valKey = { wvtr: 'wvtrValues', otr: 'otrValues', co2: 'co2Values' };
+    var tmKey  = { wvtr: 'testMethodWVTR', otr: 'testMethodOTR', co2: 'testMethodCO2' };
+
+    var label = labels[type];
+    var unit  = units[type];
+    var vals  = (m[valKey[type]] || []);
+    var topTM = m[tmKey[type]] || '';
+
+    // Per-row add-condition dropdown options
+    var ctmOpts = {
+        wvtr: ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'],
+        otr:  ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'],
+        co2:  ['ASTM D1434','ISO 15105-1','ISO 15105-2','MOCON']
+    };
+    var tmOptsList = ctmOpts[type];
+    var tmOptsHTML = '<option value="">— test method —</option>';
+    for(var ti=0; ti<tmOptsList.length; ti++) {
+        tmOptsHTML += '<option value="'+tmOptsList[ti]+'">'+tmOptsList[ti]+'</option>';
+    }
+
+    // Section header
+    var html =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px">' +
+            '<div style="font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em">' +
+                label + ' <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.68rem">· ' + unit + '</span>' +
+            '</div>' +
+            '<button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:2px 8px;height:auto" ' +
+                'onclick="event.stopPropagation();matToggleInlineForm(\'' + idStr + '-' + type + '-form\')">+ Add condition</button>' +
+        '</div>';
+
+    // Table of existing values
+    if(vals.length > 0) {
+        html += '<div style="overflow-x:auto">' +
+            '<table style="width:100%;border-collapse:collapse;font-size:0.75rem">' +
+            '<thead><tr style="border-bottom:1px solid var(--border)">' +
+                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Value</th>' +
+                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Thickness</th>' +
+                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Temp</th>' +
+                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">RH%</th>' +
+                '<th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text-light);white-space:nowrap">Method</th>' +
+            '</tr></thead><tbody>';
+        for(var ri=0; ri<vals.length; ri++) {
+            var v = vals[ri];
+            var condTemp = (v.temperature != null) ? v.temperature : '—';
+            var condHum  = (v.humidity    != null) ? v.humidity    : '—';
+            var condTM   = v.testMethod || topTM || '—';
+            html +=
+                '<tr style="border-bottom:1px solid var(--border-light,#f1f5f9)">' +
+                '<td style="padding:4px 6px;font-weight:600;color:var(--primary);font-family:monospace;font-size:0.8rem">' + v.value + '</td>' +
+                '<td style="padding:4px 6px;color:var(--text)">' + v.thickness + ' µm</td>' +
+                '<td style="padding:4px 6px;color:var(--text)">' + condTemp + (condTemp !== '—' ? '°C' : '') + '</td>' +
+                '<td style="padding:4px 6px;color:var(--text)">' + condHum + (condHum !== '—' ? '%' : '') + '</td>' +
+                '<td style="padding:4px 6px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + condTM + '</td>' +
+                '</tr>';
+        }
+        html += '</tbody></table></div>';
+    } else {
+        html += '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic;padding:4px 0">No ' + label + ' data available.</div>';
+    }
+
+    // Inline add-condition form (hidden by default)
+    html +=
+        '<div id="' + idStr + '-' + type + '-form" style="display:none;margin-top:8px;padding:10px 12px;' +
+            'background:var(--primary-light,#eff6ff);border:1px dashed var(--primary);border-radius:8px">' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px;margin-bottom:6px">' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">' + label + ' value</label>' +
+                    '<input type="number" step="any" class="form-input matinline-val" id="' + idStr + '-' + type + '-val" placeholder="0" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Thickness (µm)</label>' +
+                    '<input type="number" step="any" class="form-input matinline-thick" id="' + idStr + '-' + type + '-thick" placeholder="0" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Test method</label>' +
+                    '<select class="form-input matinline-method" id="' + idStr + '-' + type + '-method" style="font-size:0.75rem" onclick="event.stopPropagation()">' + tmOptsHTML + '</select></div>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Temp (°C)</label>' +
+                    '<input type="number" step="any" class="form-input matinline-temp" id="' + idStr + '-' + type + '-temp" placeholder="23" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Humidity (%RH)</label>' +
+                    '<input type="number" step="any" class="form-input matinline-hum" id="' + idStr + '-' + type + '-hum" placeholder="50" style="font-size:0.78rem" onclick="event.stopPropagation()"></div>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;justify-content:flex-end">' +
+                '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();matToggleInlineForm(\'' + idStr + '-' + type + '-form\')">Cancel</button>' +
+                '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();matSaveInlineRow(\'' + idStr + '\',\'' + type + '\')">✓ Save</button>' +
+            '</div>' +
+        '</div>';
+
+    return html;
+}
+
+// Toggle inline form visibility
+function matToggleInlineForm(formId) {
+    var el = document.getElementById(formId);
+    if(!el) return;
+    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+}
+
+// Save a new row from the inline form into DB and re-render the card
+function matSaveInlineRow(idStr, type) {
+    var val   = parseFloat(document.getElementById(idStr + '-' + type + '-val').value);
+    var thick = parseFloat(document.getElementById(idStr + '-' + type + '-thick').value);
+    var temp  = parseFloat(document.getElementById(idStr + '-' + type + '-temp').value);
+    var hum   = parseFloat(document.getElementById(idStr + '-' + type + '-hum').value);
+    var meth  = document.getElementById(idStr + '-' + type + '-method').value.trim();
+
+    var label = {wvtr:'WVTR', otr:'OTR', co2:'CO₂TR'}[type];
+    if(isNaN(val)  || val < 0)   { alert(label + ' value is invalid');    return; }
+    if(isNaN(thick)|| thick <= 0){ alert('Thickness must be > 0');         return; }
+    if(isNaN(temp))               { alert('Temperature is required');       return; }
+    if(isNaN(hum))                { alert('Humidity is required');          return; }
+
+    var mat = DB.materials.find(function(m){ return String(m.id) === String(idStr); });
+    if(!mat) return;
+
+    var valKey = { wvtr: 'wvtrValues', otr: 'otrValues', co2: 'co2Values' };
+    if(!mat[valKey[type]]) mat[valKey[type]] = [];
+
+    var newEntry = { value: val, thickness: thick, temperature: temp, humidity: hum };
+    if(meth) newEntry.testMethod = meth;
+    mat[valKey[type]].push(newEntry);
+
+    DB.save();
+    matApplyFilters();
+}
+
 function matCardHTML(m, q) {
-    var isUserMat = !DEFAULT_MATERIALS.some(function(d){ return d.id === m.id; });
-    var isComm    = !!(m.isCommunity || (m.id && String(m.id).startsWith('fb_')));
-    var verified  = isVerifiedMaterial(m);
-    var relScore  = getReliabilityScore(m);
-    var userVote  = hasUserVoted(m.id);
-    Engine.mode = State.mode;
-var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
-    var arrOk     = Engine.validateArrhenius(m).valid;
-    var currentUnit = getUnit();
-    var idStr     = String(m.id);
+    var isComm   = !!(m.isCommunity || (m.id && String(m.id).startsWith('fb_')));
+    var verified = isVerifiedMaterial(m);
+    var relScore = getReliabilityScore(m);
+    var userVote = hasUserVoted(m.id);
+    var arrOk    = Engine.validateArrhenius(m).valid;
+    var idStr    = String(m.id);
+    var hasEmail = !!(m.supplierEmail && m.supplierEmail.trim());
 
     function hl(str) {
         if(!q || !str) return str || '';
@@ -303,20 +425,32 @@ var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
         return String(str).replace(re,'<mark style="background:#fef08a;color:#713f12;padding:0 2px;border-radius:2px">$1</mark>');
     }
 
-    var tags = '';
-    if(m.isMetallized) tags += '<span class="badge badge-yellow" style="font-size:0.65rem">⚙️ Metallized</span> ';
-    for(var t=0; t<vals.length; t++){
-        var v = vals[t] || {value:'?', thickness:'?'};
-        // Condition: prefer embedded (new schema), fallback to validConditions[t] (legacy)
-        var condTemp = (v.temperature != null) ? v.temperature : ((m.validConditions && m.validConditions[t]) ? m.validConditions[t].temperature : '?');
-        var condHum  = (v.humidity    != null) ? v.humidity    : ((m.validConditions && m.validConditions[t]) ? m.validConditions[t].humidity    : '?');
-        var tmLabel  = v.testMethod ? (' · <em style="color:var(--text-light)">' + v.testMethod + '</em>') : '';
-        tags += '<span class="mat-tag">'+Engine.getUnits().label+': <strong>'+v.value+'</strong> '+currentUnit+' · '+v.thickness+'µm · '+condTemp+'°C/'+condHum+'%'+tmLabel+'</span>';
+    // ── Header pills: show first value of each barrier type ──────────
+    function firstValPill(vals, label, unit) {
+        if(vals && vals.length > 0) {
+            return '<span style="font-size:0.7rem;font-weight:600;color:var(--primary);background:var(--primary-light,#eff6ff);' +
+                'border:1px solid var(--primary-border,#bfdbfe);border-radius:4px;padding:1px 7px;white-space:nowrap">' +
+                label + ' ' + vals[0].value + '</span> ';
+        }
+        return '<span style="font-size:0.7rem;color:var(--text-light);background:var(--bg-secondary,#f8fafc);' +
+            'border:1px solid var(--border);border-radius:4px;padding:1px 7px;white-space:nowrap">' +
+            label + ' —</span> ';
     }
 
-    var shareLabel = m.firebaseDocId ? '🔄 Update community' : '🌍 Share with community';
-    var hasEmail   = !!(m.supplierEmail && m.supplierEmail.trim());
+    var headerPills =
+        firstValPill(m.wvtrValues, 'WVTR', 'g/m²·day') +
+        firstValPill(m.otrValues,  'OTR',  'cc/m²·day') +
+        ((m.co2Values && m.co2Values.length > 0) ? firstValPill(m.co2Values, 'CO₂', 'cc/m²·day') : '');
 
+    // ── Badges ───────────────────────────────────────────────────────
+    var badges = '';
+    if(isComm)         badges += '<span class="badge badge-purple" style="font-size:0.65rem">🌍 Community</span> ';
+    if(verified)       badges += '<span class="badge-verified" title="Verified by ' + verified.by + '">✅ Verified</span> ';
+    if(m.isMetallized) badges += '<span class="badge badge-yellow" style="font-size:0.65rem">⚙️ Metallized</span> ';
+    if(arrOk)          badges += '<span class="badge badge-green" style="font-size:0.65rem">✓ Arrhenius</span> ';
+
+    // ── Action buttons ───────────────────────────────────────────────
+    var shareLabel = m.firebaseDocId ? '🔄 Update community' : '🌍 Share with community';
     var btns =
         '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showMatModal(\'' + idStr + '\')">✏️ Edit</button>' +
         '<button class="btn btn-sm btn-danger"  onclick="event.stopPropagation();softDeleteMat(\'' + idStr + '\')">🗑️ Delete</button>' +
@@ -328,42 +462,141 @@ var vals = State.mode === 'wvtr' ? (m.wvtrValues || []) : (m.otrValues || []);
             (hasEmail ? 'contactSupplier(\'' + (m.name||'').replace(/'/g,"\\'") + '\',\'' + (m.company||'').replace(/'/g,"\\'") + '\',\'' + (m.supplierEmail||'').replace(/'/g,"\\'") + '\')' : '') +
             '">📧 Contact supplier</button>';
 
+    // ── Reliability voting ───────────────────────────────────────────
     var upStyle   = userVote === 'up'   ? 'background:var(--success-light);border-color:var(--success);color:var(--success)' : '';
-    var downStyle = userVote === 'down' ? 'background:var(--danger-light);border-color:var(--danger);color:var(--danger)' : '';
-    var currentTM = State.mode === 'wvtr' ? (m.testMethodWVTR||'') : (m.testMethodOTR||'');
+    var downStyle = userVote === 'down' ? 'background:var(--danger-light);border-color:var(--danger);color:var(--danger)'   : '';
+    var relLabel  = relScore !== null ? relScore + '%' : '—';
+    var relClass  = relScore !== null ? (relScore >= 70 ? 'high' : relScore >= 40 ? 'medium' : 'low') : 'medium';
 
+    // ── Physical properties grid ─────────────────────────────────────
+    var physProps = '';
+    var physItems = [];
+    if(m.density)      physItems.push(['Density', m.density + ' kg/m³']);
+    if(m.meltingTemp)  physItems.push(['Melting temp', m.meltingTemp + '°C' + (m.meltingTempMethod ? ' <span style="color:var(--text-light);font-size:0.68rem">(' + m.meltingTempMethod + ')</span>' : '')]);
+    if(m.gwp)          physItems.push(['GWP', m.gwp + ' kg CO₂eq/kg']);
+    if(m.haze != null) physItems.push(['Haze', m.haze + (m.hazeUnit || '%') + (m.hazeMethod ? ' <span style="color:var(--text-light);font-size:0.68rem">(' + m.hazeMethod + ')</span>' : '')]);
+    if(physItems.length > 0) {
+        physProps =
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px">' +
+                '<div style="font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em">Physical properties</div>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px">' +
+            physItems.map(function(p){
+                return '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px">' +
+                    '<div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">' + p[0] + '</div>' +
+                    '<div style="font-size:0.8rem;font-weight:600;color:var(--text)">' + p[1] + '</div>' +
+                    '</div>';
+            }).join('') +
+            '</div>';
+    }
+
+    // ── Hygroscopic props ────────────────────────────────────────────
+    var hygroProps = '';
+    if((m.hygroscopicBetaWVTR && m.hygroscopicBetaWVTR > 0) || (m.hygroscopicBetaOTR && m.hygroscopicBetaOTR > 0)) {
+        hygroProps =
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px">' +
+                '<div style="font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em">Hygroscopic correction</div>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px">' +
+            (m.hygroscopicBetaWVTR > 0 ? '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">β WVTR</div><div style="font-size:0.8rem;font-weight:600;color:var(--text)">' + m.hygroscopicBetaWVTR + ' · ref ' + (m.hygroscopicRefRHWVTR||50) + '% RH</div></div>' : '') +
+            (m.hygroscopicBetaOTR  > 0 ? '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">β OTR</div><div style="font-size:0.8rem;font-weight:600;color:var(--text)">' + m.hygroscopicBetaOTR  + ' · ref ' + (m.hygroscopicRefRHOTR ||50) + '% RH</div></div>' : '') +
+            '</div>';
+    }
+
+    // ── Source note ──────────────────────────────────────────────────
+    var sourceNote = '';
+    if(m.tdsSource) {
+        sourceNote =
+            '<div style="margin-top:10px;padding:8px 10px;background:var(--bg-secondary,#f8fafc);border-radius:6px;border-left:2px solid var(--border)">' +
+            '<div style="font-size:0.65rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Data source</div>' +
+            '<div style="font-size:0.72rem;color:var(--text-light);line-height:1.5">' + m.tdsSource + '</div>' +
+            '</div>';
+    }
+
+    // ── Food contact ─────────────────────────────────────────────────
+    var foodContactNote = '';
+    if(m.foodContactRegulations && m.foodContactRegulations.length > 0) {
+        foodContactNote =
+            '<div style="font-size:0.72rem;color:var(--text-light);margin-top:4px">' +
+            '🍽️ Food contact: ' + m.foodContactRegulations.join(', ') +
+            '</div>';
+    }
+
+    // ── Assemble full card ───────────────────────────────────────────
     return '<div class="material-item' + (verified ? ' verified-item' : '') + '" onclick="this.classList.toggle(\'expanded\')">' +
 
+        // ── CLOSED STATE: compact header ─────────────────────────────
         '<div class="mat-header">' +
-            '<h3>' +
-                '<span>' + hl(m.name) + '</span>' +
-                (isComm    ? '<span class="mat-comm-badge">🌍 Community</span>' : '') +
-                (verified  ? '<span class="badge-verified" title="Verified by ' + verified.by + '">✅ Verified</span>' : '') +
-                '<span style="font-weight:400;color:var(--text-light);font-size:0.72rem">[' + (m.family||'?') + ']</span>' +
-                (arrOk     ? '<span class="badge badge-green">✓ Arrhenius</span>' : '') +
-            '</h3>' +
-            '<svg class="chevron" style="margin-left:auto;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '<div style="flex:1;min-width:0;overflow:hidden">' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+                    '<h3 style="margin:0;font-size:0.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + hl(m.name) + '</h3>' +
+                    '<span style="font-size:0.7rem;font-weight:400;color:var(--text-light)">[' + (m.family||'?') + ']</span>' +
+                    (m.company ? '<span style="font-size:0.7rem;color:var(--text-light)">· ' + hl(m.company) + '</span>' : '') +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:4px">' +
+                    headerPills + badges +
+                '</div>' +
+            '</div>' +
+            '<svg class="chevron" style="margin-left:8px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
         '</div>' +
 
+        // ── EXPANDED STATE: full detail ──────────────────────────────
         '<div class="mat-body"><div class="mat-body-content">' +
-            '<div class="mat-tags">' + tags + '</div>' +
-            '<div class="mat-info">' +
-                (currentTM ? '<div class="mat-info-item"><strong>Test standard</strong><span class="mat-testmethod">' + currentTM + '</span></div>' : '') +
-                (m.company ? '<div class="mat-info-item"><strong>Supplier</strong><span>' + hl(m.company) + '</span></div>' : '') +
-                (m.supplierEmail ? '<div class="mat-info-item"><strong>Email</strong><span style="color:var(--primary)">' + m.supplierEmail + '</span></div>' : '') +
-                (m.tdsLink ? '<div class="mat-info-item"><strong>TDS</strong><a href="' + m.tdsLink + '" target="_blank" onclick="event.stopPropagation()">View →</a></div>' : '') +
+
+            // Barrier sections
+            '<div style="border-top:1px solid var(--border);padding-top:4px">' +
+                _matBarrierSection(m, 'wvtr', idStr) +
             '</div>' +
-            '<div class="mat-actions">' + btns + '</div>' +
-            '<div class="mat-voting">' +
+            '<div style="border-top:1px solid var(--border-light,#f1f5f9);padding-top:4px;margin-top:4px">' +
+                _matBarrierSection(m, 'otr', idStr) +
+            '</div>' +
+            '<div style="border-top:1px solid var(--border-light,#f1f5f9);padding-top:4px;margin-top:4px">' +
+                _matBarrierSection(m, 'co2', idStr) +
+            '</div>' +
+
+            // Physical properties
+            physProps +
+            hygroProps +
+            foodContactNote +
+
+            // Supplier info
+            '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:12px;padding-top:10px">' +
+                '<div style="font-size:0.7rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Supplier</div>' +
+                '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px">' +
+                    (m.company ? '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">Company</div><div style="font-size:0.8rem;font-weight:600">' + hl(m.company) + '</div></div>' : '') +
+                    '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px">' +
+                        '<div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">Contact email</div>' +
+                        (m.supplierEmail
+                            ? '<div style="font-size:0.78rem;font-weight:500;color:var(--primary)">' + m.supplierEmail + '</div>'
+                            : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
+                    '</div>' +
+                    '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px">' +
+                        '<div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">TDS</div>' +
+                        (m.tdsLink
+                            ? '<a href="' + m.tdsLink + '" target="_blank" onclick="event.stopPropagation()" style="font-size:0.78rem;font-weight:500;color:var(--primary);text-decoration:none">View datasheet →</a>'
+                            : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+
+            // Source note
+            sourceNote +
+
+            // Actions
+            '<div class="mat-actions" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light,#f1f5f9)">' + btns + '</div>' +
+
+            // Reliability voting
+            '<div class="mat-voting" style="margin-top:10px">' +
                 '<div class="mat-voting-label">' +
                     '<span>Community reliability</span>' +
-                    '<span class="reliability-badge ' + (relScore>=70?'high':relScore>=40?'medium':'low') + '">' + relScore + '%</span>' +
+                    '<span class="reliability-badge ' + relClass + '">' + relLabel + '</span>' +
                 '</div>' +
                 '<div class="mat-voting-buttons">' +
                     '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + idStr + '\',\'up\')"   style="' + upStyle   + '" title="' + (userVote==='up'  ?'Remove vote':'Reliable')   + '">👍</button>' +
                     '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + idStr + '\',\'down\')" style="' + downStyle + '" title="' + (userVote==='down'?'Remove vote':'Unreliable') + '">👎</button>' +
                 '</div>' +
             '</div>' +
+
         '</div></div></div>';
 }
 
@@ -382,11 +615,11 @@ function matApplyFilters() {
     var chipsEl = document.getElementById('mf-chips');
     if(chipsEl) {
         var chips = [];
-        if(fc)      chips.push({ label:'Supplier: '+fc,              clear:"document.getElementById('mf-company').value='';matApplyFilters()" });
+        if(fc)      chips.push({ label:'Supplier: '+fc,                    clear:"document.getElementById('mf-company').value='';matApplyFilters()" });
         if(fperf)   chips.push({ label:State.mode.toUpperCase()+': '+fperf, clear:"document.getElementById('mf-perf').value='';matApplyFilters()" });
-        if(fmethod) chips.push({ label:'Method: '+fmethod,           clear:"document.getElementById('mf-method').value='';matApplyFilters()" });
-        if(ffamily) chips.push({ label:'Family: '+ffamily,           clear:"document.getElementById('mf-family').value='';matApplyFilters()" });
-        if(ftype)   chips.push({ label:'Type: '+ftype,               clear:"document.getElementById('mf-type').value='';matApplyFilters()" });
+        if(fmethod) chips.push({ label:'Method: '+fmethod,                 clear:"document.getElementById('mf-method').value='';matApplyFilters()" });
+        if(ffamily) chips.push({ label:'Family: '+ffamily,                 clear:"document.getElementById('mf-family').value='';matApplyFilters()" });
+        if(ftype)   chips.push({ label:'Type: '+ftype,                     clear:"document.getElementById('mf-type').value='';matApplyFilters()" });
         chipsEl.innerHTML = chips.map(function(c){
             return '<span onclick="' + c.clear + '" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:0.72rem;font-weight:600;cursor:pointer">✕ ' + c.label + '</span>';
         }).join('');
@@ -409,11 +642,11 @@ function matApplyFilters() {
         if(ftype==='metallized'&& !m.isMetallized) return false;
         if(ftype==='arrhenius' && !Engine.validateArrhenius(m).valid) return false;
         if(q) {
-            var numRe = /^\s*(wvtr|otr)\s*(<=|>=|<|>|=)\s*([\d.]+)\s*$/i;
+            var numRe = /^\s*(wvtr|otr|co2)\s*(<=|>=|<|>|=)\s*([\d.]+)\s*$/i;
             var nm = q.match(numRe);
             if(nm) {
                 var type2=nm[1].toLowerCase(), op=nm[2], thresh=parseFloat(nm[3]);
-                var vals2 = type2==='wvtr'?(m.wvtrValues||[]):(m.otrValues||[]);
+                var vals2 = type2==='wvtr'?(m.wvtrValues||[]):type2==='otr'?(m.otrValues||[]):(m.co2Values||[]);
                 var found2 = vals2.some(function(v){
                     if(op==='<')  return v.value < thresh;
                     if(op==='>')  return v.value > thresh;
@@ -424,7 +657,7 @@ function matApplyFilters() {
                 });
                 if(!found2) return false;
             } else {
-                var hay2 = (m.name+' '+(m.family||'')+' '+(m.company||'')+' '+(m.testMethodWVTR||'')+' '+(m.testMethodOTR||'')).toLowerCase();
+                var hay2 = (m.name+' '+(m.family||'')+' '+(m.company||'')+' '+(m.testMethodWVTR||'')+' '+(m.testMethodOTR||'')+' '+(m.testMethodCO2||'')).toLowerCase();
                 if(hay2.indexOf(q) < 0) return false;
             }
         }
@@ -505,13 +738,13 @@ function renderMaterials() {
                     '<option value="verified">Verified only</option><option value="metallized">Metallized only</option>' +
                     '<option value="arrhenius">Arrhenius ready</option></select></div>' +
             '</div>' +
-           '<div id="mf-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>' +
+            '<div id="mf-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>' +
         '</div>' +
 
         '<div class="search-input" style="position:relative;margin-bottom:0.75rem">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-light);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
             '<input type="text" class="form-input" id="mat-search" style="padding-left:32px;font-size:0.82rem" ' +
-                'placeholder="Search by name, supplier, value (e.g. wvtr &lt; 2, otr &gt; 500)…" ' +
+                'placeholder="Search by name, supplier, value (e.g. wvtr &lt; 2, otr &gt; 500, co2 &lt; 5)…" ' +
                 'value="' + State.searchQuery + '" oninput="onMatSearch(this.value)">' +
         '</div>' +
 
@@ -519,37 +752,37 @@ function renderMaterials() {
             '<div style="font-weight:700;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;font-size:0.68rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.4rem">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:#2563eb"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>' +
                 'Badge Guide' +
-           '</div>' +
-'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">' +
-    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f5f3ff;border-radius:8px;border-left:3px solid #7c3aed">' +
-        '<span class="badge badge-purple" style="flex-shrink:0;white-space:nowrap">🌍 Community</span>' +
-        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">User-submitted data.</span>' +
-    '</div>' +
-    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
-        '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✅ Verified</span>' +
-        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Certified Materials</span>' +
-    '</div>' +
-    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#fefce8;border-radius:8px;border-left:3px solid #d97706">' +
-        '<span class="badge badge-yellow" style="flex-shrink:0;white-space:nowrap">⚙️ Metallized</span>' +
-        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Barrier independent of thickness.</span>' +
-    '</div>' +
-    '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
-        '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✓ Arrhenius</span>' +
-        '<span style="color:#374151;font-size:0.72rem;line-height:1.4">≥ 2 temperatures at constant RH.</span>' +
-    '</div>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">' +
+                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f5f3ff;border-radius:8px;border-left:3px solid #7c3aed">' +
+                    '<span class="badge badge-purple" style="flex-shrink:0;white-space:nowrap">🌍 Community</span>' +
+                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">User-submitted data.</span>' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
+                    '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✅ Verified</span>' +
+                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Certified Materials</span>' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#fefce8;border-radius:8px;border-left:3px solid #d97706">' +
+                    '<span class="badge badge-yellow" style="flex-shrink:0;white-space:nowrap">⚙️ Metallized</span>' +
+                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">Barrier independent of thickness.</span>' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #16a34a">' +
+                    '<span class="badge badge-green" style="flex-shrink:0;white-space:nowrap">✓ Arrhenius</span>' +
+                    '<span style="color:#374151;font-size:0.72rem;line-height:1.4">≥ 2 temperatures at constant RH.</span>' +
+                '</div>' +
             '</div>' +
         '</div>' +
 
         '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center">' +
             '<span id="mat-result-label">Showing <strong>' + DB.materials.length + '</strong> materials</span>' +
-            '<span>' + currentLabel + ' mode · ' + currentUnit + '</span>' +
+            '<span>WVTR · OTR · CO₂TR</span>' +
         '</div>' +
         '<div id="mat-list" style="display:flex;flex-direction:column;gap:6px"></div>' +
     '</div>';
 }
 
 // ====================================================================
-// ✏️ ADD / EDIT MATERIAL MODAL — ✅ FIX: Alert timing corretto
+// ✏️ ADD / EDIT MATERIAL MODAL
 // ====================================================================
 function showMatModal(editId) {
     var mat = null;
@@ -569,10 +802,9 @@ function showMatModal(editId) {
     }
     var isReadOnly = isDefaultMat || isCommMat;
 
-    // ✅ AVViso inline per materiali read-only (visibile vicino a Save)
     var saveWarningHTML = '';
     if(isReadOnly) {
-        saveWarningHTML = 
+        saveWarningHTML =
             '<div style="margin:1rem 0 0.5rem 0;padding:0.75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;gap:0.5rem;align-items:flex-start">' +
             '<span style="font-size:1.1rem;flex-shrink:0">⚠️</span>' +
             '<div style="font-size:0.78rem;color:#991b1b;line-height:1.5">' +
@@ -580,6 +812,7 @@ function showMatModal(editId) {
             'Please double-check all values before confirming. If you need corrections later, contact support at the bottom of the Home page.' +
             '</div></div>';
     }
+
     var currentMode  = State.mode;
     var currentLabel = currentMode === 'wvtr' ? 'WVTR' : 'OTR';
     var currentUnit  = currentMode === 'wvtr' ? 'g/m²·day' : 'cc/m²·day';
@@ -630,29 +863,6 @@ function showMatModal(editId) {
             '</div></div>';
     }
 
-    var ctmWVTR = ['','ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122','Custom/Other'];
-    var ctmOTR  = ['','ASTM D3985','ISO 15106-2','JIS K7126','MOCON OXTRAN','Custom/Other'];
-    var ctm = currentMode === 'wvtr' ? ctmWVTR : ctmOTR;
-    var currentTM = currentMode === 'wvtr' ? (mat ? mat.testMethodWVTR : '') : (mat ? mat.testMethodOTR : '');
-    var isCustomTM = currentTM && ctm.indexOf(currentTM) < 0;
-    var testMethodBlock =
-        '<div class="form-group" id="mf-testmethod-group">' +
-        '<label>Test Method for '+currentLabel+'</label>' +
-        '<select class="form-input" id="mf-testmethod-select" onchange="onTestMethodSelectChange(this)"'+RO+'>' +
-        (function(){
-            var o='<option value="">Select or enter method...</option>';
-            for(var t=0;t<ctm.length;t++){
-                var s=(currentTM===ctm[t])?' selected':'';
-                o+='<option value="'+ctm[t]+'"'+s+'>'+(ctm[t]||'-- Select --')+'</option>';
-            }
-            if(!isReadOnly) o+='<option value="_custom" style="font-weight:600">+ Enter custom method...</option>';
-            return o;
-        })() +
-        '</select>' +
-        '<input type="text" class="form-input" id="mf-testmethod-custom" value="'+(isCustomTM?currentTM:'')+'" placeholder="Enter custom method..." style="display:'+(isCustomTM?'block':'none')+';margin-top:0.3rem"'+RO+'>' +
-        '</div>';
-
-    // Build test-method options for per-row dropdown
     var ctmWVTR_row = ['','ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'];
     var ctmOTR_row  = ['','ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'];
     var ctmRow = currentMode === 'wvtr' ? ctmWVTR_row : ctmOTR_row;
@@ -666,7 +876,6 @@ function showMatModal(editId) {
             if (s) found = true;
             o += '<option value="' + ctmRow[ti] + '"' + s + '>' + ctmRow[ti] + '</option>';
         }
-        // If selectedVal exists but is not in the standard list, add it dynamically
         if (selectedVal && !found) {
             o += '<option value="' + selectedVal + '" selected>' + selectedVal + '</option>';
         }
@@ -676,45 +885,28 @@ function showMatModal(editId) {
     var rowsHTML = '';
     for(var r=0; r<currentValues.length; r++){
         var v = currentValues[r] || {value:'',thickness:''};
-        // Condition: prefer embedded in value (new schema), fallback to validConditions[r]
         var condTemp = (v.temperature != null) ? v.temperature : ((conds[r] && conds[r].temperature != null) ? conds[r].temperature : '');
         var condHum  = (v.humidity    != null) ? v.humidity    : ((conds[r] && conds[r].humidity    != null) ? conds[r].humidity    : '');
-        // testMethod resolution (priority order):
-        // 1. embedded in value object (new schema)
-        // 2. top-level testMethodWVTR / testMethodOTR (split schema)
-        // 3. top-level testMethod (legacy unified field, pre-split)
-        var _matTM = mat ? (currentMode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '')) : '';
-        var condTM = v.testMethod || _matTM;
+        var _matTM   = mat ? (currentMode === 'wvtr' ? (mat.testMethodWVTR || mat.testMethod || '') : (mat.testMethodOTR || mat.testMethod || '')) : '';
+        var condTM   = v.testMethod || _matTM;
         var rowRO    = isReadOnly ? ' disabled readonly style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowROsel = isReadOnly ? ' disabled style="opacity:0.65;cursor:not-allowed;background:#f1f5f9"' : '';
         var rowBg    = isReadOnly ? 'background:#f8fafc;border-radius:6px;padding:0.4rem 0.5rem;border:1px solid #e2e8f0;' : '';
         rowsHTML +=
             '<div class="wvtr-row-form" style="' + rowBg + 'margin-bottom:0.5rem">' +
-            // Row 1: value + thickness + testMethod (compact, 3 cols)
             '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0.35rem;margin-bottom:0.35rem">' +
-                '<div class="form-group" style="margin:0">' +
-                    '<label style="font-size:0.68rem">' + currentLabel + ' value</label>' +
-                    '<input type="number" step="any" class="form-input mf-val" value="' + (v.value||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '>' +
-                '</div>' +
-                '<div class="form-group" style="margin:0">' +
-                    '<label style="font-size:0.68rem">Thickness (µm)</label>' +
-                    '<input type="number" step="any" class="form-input mf-thick" value="' + (v.thickness||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '>' +
-                '</div>' +
-                '<div class="form-group" style="margin:0">' +
-                    '<label style="font-size:0.68rem">Test method</label>' +
-                    '<select class="form-input mf-rowmethod" style="font-size:0.75rem"' + rowROsel + '>' + buildTmOpts(condTM) + '</select>' +
-                '</div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">' + currentLabel + ' value</label>' +
+                    '<input type="number" step="any" class="form-input mf-val" value="' + (v.value||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Thickness (µm)</label>' +
+                    '<input type="number" step="any" class="form-input mf-thick" value="' + (v.thickness||'') + '" placeholder="0" style="font-size:0.78rem"' + rowRO + '></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Test method</label>' +
+                    '<select class="form-input mf-rowmethod" style="font-size:0.75rem"' + rowROsel + '>' + buildTmOpts(condTM) + '</select></div>' +
             '</div>' +
-            // Row 2: temp + humidity (2 cols, narrower)
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.35rem">' +
-                '<div class="form-group" style="margin:0">' +
-                    '<label style="font-size:0.68rem">Temp (°C)</label>' +
-                    '<input type="number" step="any" class="form-input mf-temp" value="' + condTemp + '" placeholder="23" style="font-size:0.78rem"' + rowRO + '>' +
-                '</div>' +
-                '<div class="form-group" style="margin:0">' +
-                    '<label style="font-size:0.68rem">Humidity (%)</label>' +
-                    '<input type="number" step="any" class="form-input mf-hum" value="' + condHum + '" placeholder="50" style="font-size:0.78rem"' + rowRO + '>' +
-                '</div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Temp (°C)</label>' +
+                    '<input type="number" step="any" class="form-input mf-temp" value="' + condTemp + '" placeholder="23" style="font-size:0.78rem"' + rowRO + '></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Humidity (%)</label>' +
+                    '<input type="number" step="any" class="form-input mf-hum" value="' + condHum + '" placeholder="50" style="font-size:0.78rem"' + rowRO + '></div>' +
             '</div>' +
             '</div>';
     }
@@ -722,8 +914,8 @@ function showMatModal(editId) {
     var addCondStyle = isReadOnly
         ? 'style="margin-top:0.75rem;border:2px solid var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700"'
         : 'style="margin-top:0.4rem"';
-    // ✅ Costruisci il body del modal in una variabile (più sicuro)
-    var modalBody = 
+
+    var modalBody =
         readOnlyBanner +
         '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mf-name" value="'+(mat?mat.name:'')+'"'+RO+'></div>' +
         '<div class="form-group"><label>Material Family</label><select class="form-input" id="mf-family"'+RO+'>'+familyOpts+'</select></div>' +
@@ -737,47 +929,35 @@ function showMatModal(editId) {
         (isReadOnly ? '<div style="margin-top:0.9rem;padding-top:0.75rem;border-top:2px dashed var(--primary);"><div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.4rem">Add New Condition</div>' : '') +
         '<button class="btn btn-outline btn-full" '+addCondStyle+' onclick="addMatRow()">'+(isReadOnly?'+ Add New Condition (allowed)':'+ Add Condition')+'</button>' +
         (isReadOnly ? '</div>' : '') +
-        saveWarningHTML; // ✅ Avviso inline aggiunto qui
+        saveWarningHTML;
 
-    // ✅ Chiamata corretta a Modal.open (3 argomenti: title, body, callback)
     Modal.open(
         editId !== undefined ? 'Edit Material' : 'Add Material',
         modalBody,
         function(){
-            // === VALIDAZIONE ===
             var name = document.getElementById('mf-name').value.trim();
             if(!name){ alert('Enter material name'); return false; }
-            var family = document.getElementById('mf-family').value;
+            var family  = document.getElementById('mf-family').value;
             var company = document.getElementById('mf-company').value.trim();
             var tdsLink = document.getElementById('mf-tdslink').value.trim();
             if(tdsLink && !tdsLink.startsWith('http')){ alert('TDS Link must start with http:// or https://'); return false; }
 
             var testMethodWVTR = mat ? mat.testMethodWVTR : '';
-            var testMethodOTR = mat ? mat.testMethodOTR : '';
-            if(!isReadOnly){
-                var tmSelect = document.getElementById('mf-testmethod-select');
-                var tmCustom = document.getElementById('mf-testmethod-custom');
-                var testMethodValue = '';
-                if(tmSelect && tmSelect.value && tmSelect.value !== '_custom') testMethodValue = tmSelect.value;
-                if(tmCustom && tmCustom.style && tmCustom.style.display !== 'none' && tmCustom.value.trim()) testMethodValue = tmCustom.value.trim();
-                if(currentMode === 'wvtr') testMethodWVTR = testMethodValue;
-                else testMethodOTR = testMethodValue;
-            }
+            var testMethodOTR  = mat ? mat.testMethodOTR  : '';
+
             var isMetallized = document.getElementById('mf-metallized') ? document.getElementById('mf-metallized').checked : false;
 
-            // === RACCOLTA VALORI ===
             var allValInputs    = document.querySelectorAll('.mf-val');
             var allThickInputs  = document.querySelectorAll('.mf-thick');
             var allTempInputs   = document.querySelectorAll('.mf-temp');
             var allHumInputs    = document.querySelectorAll('.mf-hum');
             var allMethodInputs = document.querySelectorAll('.mf-rowmethod');
-            var existingCount = isReadOnly ? currentValues.length : 0;
-            var valuesArray = [];
+            var existingCount   = isReadOnly ? currentValues.length : 0;
+            var valuesArray     = [];
             var conditionsArray = [];
 
             for(var i=0; i<allValInputs.length; i++){
                 if(isReadOnly && i < existingCount){
-                    // Keep existing rows as-is (already have embedded conditions)
                     valuesArray.push(currentValues[i]);
                     conditionsArray.push(conds[i] || {});
                     continue;
@@ -787,11 +967,10 @@ function showMatModal(editId) {
                 var temp  = parseFloat(allTempInputs[i].value);
                 var hum   = parseFloat(allHumInputs[i].value);
                 var tm    = allMethodInputs[i] ? allMethodInputs[i].value.trim() : '';
-                if(isNaN(val)||val<0){   alert(currentLabel+' value invalid in row '+(i+1)); return false; }
+                if(isNaN(val)||val<0){    alert(currentLabel+' value invalid in row '+(i+1)); return false; }
                 if(isNaN(thick)||thick<=0){ alert('Thickness must be > 0 in row '+(i+1)); return false; }
-                if(isNaN(temp)){ alert('Temperature required in row '+(i+1)); return false; }
-                if(isNaN(hum)){  alert('Humidity required in row '+(i+1));    return false; }
-                // ── NEW SCHEMA: embed temperature, humidity, testMethod inside the value object
+                if(isNaN(temp)){            alert('Temperature required in row '+(i+1));    return false; }
+                if(isNaN(hum)){             alert('Humidity required in row '+(i+1));       return false; }
                 var valueObj = { value: val, thickness: thick, temperature: temp, humidity: hum };
                 if(tm) valueObj.testMethod = tm;
                 valuesArray.push(valueObj);
@@ -802,50 +981,36 @@ function showMatModal(editId) {
                 return false;
             }
 
-            // === PREPARA DATI ===
             var finalFamily = family || getFamily(name);
-            var betaId = currentMode==='wvtr'?'mf-beta-wvtr':'mf-beta-otr';
+            var betaId  = currentMode==='wvtr'?'mf-beta-wvtr':'mf-beta-otr';
             var refRHId = currentMode==='wvtr'?'mf-refrh-wvtr':'mf-refrh-otr';
-            var betaEl = document.getElementById(betaId);
+            var betaEl  = document.getElementById(betaId);
             var refRHEl = document.getElementById(refRHId);
-            var betaVal = betaEl ? (parseFloat(betaEl.value) || 0) : 0;
+            var betaVal  = betaEl  ? (parseFloat(betaEl.value)  || 0)  : 0;
             var refRHVal = refRHEl ? (parseFloat(refRHEl.value) || 50) : 50;
 
             var matData = {
                 name: name, family: finalFamily, company: company, tdsLink: tdsLink,
                 supplierEmail: (document.getElementById('mf-email') ? document.getElementById('mf-email').value.trim() : ''),
                 isMetallized: isMetallized,
-                hygroscopicBetaWVTR: currentMode==='wvtr' ? betaVal : (mat?mat.hygroscopicBetaWVTR:0),
+                hygroscopicBetaWVTR:  currentMode==='wvtr' ? betaVal  : (mat?mat.hygroscopicBetaWVTR:0),
                 hygroscopicRefRHWVTR: currentMode==='wvtr' ? refRHVal : (mat?mat.hygroscopicRefRHWVTR:50),
-                hygroscopicBetaOTR: currentMode==='otr' ? betaVal : (mat?mat.hygroscopicBetaOTR:0),
-                hygroscopicRefRHOTR: currentMode==='otr' ? refRHVal : (mat?mat.hygroscopicRefRHOTR:50),
+                hygroscopicBetaOTR:   currentMode==='otr'  ? betaVal  : (mat?mat.hygroscopicBetaOTR:0),
+                hygroscopicRefRHOTR:  currentMode==='otr'  ? refRHVal : (mat?mat.hygroscopicRefRHOTR:50),
                 isHygroscopic: betaVal > 0, hygroscopicBeta: betaVal, hygroscopicRefRH: refRHVal,
                 testMethodWVTR: testMethodWVTR, testMethodOTR: testMethodOTR,
                 wvtrValues: currentMode==='wvtr' ? valuesArray : (mat&&mat.wvtrValues?mat.wvtrValues:[]),
-                otrValues: currentMode==='otr' ? valuesArray : (mat&&mat.otrValues?mat.otrValues:[]),
+                otrValues:  currentMode==='otr'  ? valuesArray : (mat&&mat.otrValues ?mat.otrValues :[]),
+                co2Values:  mat&&mat.co2Values ? mat.co2Values : [],
                 validConditions: conditionsArray
             };
 
-            // === SALVATAGGIO (UNA SOLA VOLTA) ===
             if(editId !== null && editId !== undefined) DB.updateMat(editId, matData);
             else DB.addMat(matData);
             render();
             return true;
         }
     );
-    setTimeout(function(){
-        var tmSelect = document.getElementById('mf-testmethod-select');
-        var tmCustom = document.getElementById('mf-testmethod-custom');
-        if(!tmSelect || !tmCustom) return;
-        if(isCustomTM){ tmCustom.style.display='block'; tmSelect.value=''; }
-    }, 50);
-}
-
-function onTestMethodSelectChange(select) {
-    var customInput = document.getElementById('mf-testmethod-custom');
-    if(!customInput) return;
-    if(select.value === '_custom'){ customInput.style.display='block'; customInput.focus(); select.value=''; }
-    else customInput.style.display='none';
 }
 
 function addMatRow() {
@@ -860,7 +1025,6 @@ function addMatRow() {
     }
     document.getElementById('mf-rows').insertAdjacentHTML('beforeend',
         '<div class="wvtr-row-form" style="margin-bottom:0.5rem;animation:fadeIn 0.2s ease">' +
-        // Row 1: value + thickness + testMethod
         '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:0.35rem;margin-bottom:0.35rem">' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">' + currentLabel + ' value</label>' +
                 '<input type="number" step="any" class="form-input mf-val" placeholder="0" style="font-size:0.78rem"></div>' +
@@ -869,7 +1033,6 @@ function addMatRow() {
             '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Test method</label>' +
                 '<select class="form-input mf-rowmethod" style="font-size:0.75rem">' + tmOpts + '</select></div>' +
         '</div>' +
-        // Row 2: temp + humidity
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.35rem">' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Temp (°C)</label>' +
                 '<input type="number" step="any" class="form-input mf-temp" placeholder="23" style="font-size:0.78rem"></div>' +
@@ -901,12 +1064,12 @@ function showBulkImport() {
                 for(var li=0; li<lines.length; li++){
                     var cols = lines[li].split(/,\s*|\t/).map(function(s){ return s.trim(); });
                     if(cols.length < 10) continue;
-                    var name        = cols[0];
-                    var family      = cols[1] || getFamily(cols[0]);
-                    var testMethod  = cols[2] || '';
-                    var isMetallized= (cols[3]||'').toLowerCase() === 'true';
-                    var wvtr = parseFloat(cols[4])||0; var wvtrT = parseFloat(cols[5])||0;
-                    var otr  = parseFloat(cols[6])||0; var otrT  = parseFloat(cols[7])||0;
+                    var name         = cols[0];
+                    var family       = cols[1] || getFamily(cols[0]);
+                    var testMethod   = cols[2] || '';
+                    var isMetallized = (cols[3]||'').toLowerCase() === 'true';
+                    var wvtr  = parseFloat(cols[4])||0; var wvtrT = parseFloat(cols[5])||0;
+                    var otr   = parseFloat(cols[6])||0; var otrT  = parseFloat(cols[7])||0;
                     var validConditions = [];
                     for(var i=8; i<cols.length; i+=2){
                         var te=parseFloat(cols[i]); var h=parseFloat(cols[i+1]);
@@ -914,7 +1077,8 @@ function showBulkImport() {
                     }
                     if(name && validConditions.length > 0){
                         DB.addMat({ name:name, family:family, testMethod:testMethod, isMetallized:isMetallized,
-                            wvtrValues:[{value:wvtr,thickness:wvtrT}], otrValues:[{value:otr,thickness:otrT}], validConditions:validConditions });
+                            wvtrValues:[{value:wvtr,thickness:wvtrT}], otrValues:[{value:otr,thickness:otrT}],
+                            co2Values:[], validConditions:validConditions });
                         count++;
                     }
                 }
@@ -940,77 +1104,77 @@ function importFile(input) {
 // 📥 EXTERNAL materials.json LOADER
 // ====================================================================
 async function loadExternalMaterialsDB() {
-  try {
-    var res = await fetch('materials.json');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    var data = await res.json();
-    var externalMats = Array.isArray(data) ? data : (data.materials || []);
-    if (!externalMats.length) return;
+    try {
+        var res = await fetch('materials.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var data = await res.json();
+        var externalMats = Array.isArray(data) ? data : (data.materials || []);
+        if (!externalMats.length) return;
 
-    var existingByFirebaseId = {};
-    var existingByName = {};
-    for (var i = 0; i < DB.materials.length; i++) {
-      var m = DB.materials[i];
-      if (m.firebaseDocId) existingByFirebaseId[m.firebaseDocId] = m;
-      existingByName[m.name.trim().toLowerCase()] = m;
-    }
-
-    var addedCount = 0;
-    for (var ei = 0; ei < externalMats.length; ei++) {
-      var em = externalMats[ei];
-      if (!em || !em.name) continue;
-
-      var nameLower = em.name.trim().toLowerCase();
-
-      if (em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
-        var existing = existingByFirebaseId[em.firebaseDocId];
-        if (em.hygroscopicBetaWVTR !== undefined) {
-          existing.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
-          existing.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
-          existing.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
-          existing.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
+        var existingByFirebaseId = {};
+        var existingByName = {};
+        for (var i = 0; i < DB.materials.length; i++) {
+            var m = DB.materials[i];
+            if (m.firebaseDocId) existingByFirebaseId[m.firebaseDocId] = m;
+            existingByName[m.name.trim().toLowerCase()] = m;
         }
-        continue;
-      }
 
-      if (existingByName[nameLower]) {
-        var existingN = existingByName[nameLower];
-        if (em.firebaseDocId) existingN.firebaseDocId = em.firebaseDocId;
-        if (em.hygroscopicBetaWVTR !== undefined) {
-          existingN.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
-          existingN.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
-          existingN.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
-          existingN.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
+        var addedCount = 0;
+        for (var ei = 0; ei < externalMats.length; ei++) {
+            var em = externalMats[ei];
+            if (!em || !em.name) continue;
+            var nameLower = em.name.trim().toLowerCase();
+
+            if (em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
+                var existing = existingByFirebaseId[em.firebaseDocId];
+                if (em.hygroscopicBetaWVTR !== undefined) {
+                    existing.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
+                    existing.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
+                    existing.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
+                    existing.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
+                }
+                continue;
+            }
+
+            if (existingByName[nameLower]) {
+                var existingN = existingByName[nameLower];
+                if (em.firebaseDocId) existingN.firebaseDocId = em.firebaseDocId;
+                if (em.hygroscopicBetaWVTR !== undefined) {
+                    existingN.hygroscopicBetaWVTR  = em.hygroscopicBetaWVTR;
+                    existingN.hygroscopicRefRHWVTR = em.hygroscopicRefRHWVTR;
+                    existingN.hygroscopicBetaOTR   = em.hygroscopicBetaOTR;
+                    existingN.hygroscopicRefRHOTR  = em.hygroscopicRefRHOTR;
+                }
+                continue;
+            }
+
+            var newMat = Object.assign({}, em);
+            if (em.firebaseDocId) {
+                var numericIds = DB.materials.map(function(m) {
+                    return typeof m.id === 'number' ? m.id : 0;
+                });
+                var maxId = numericIds.length ? Math.max.apply(null, numericIds) : 0;
+                newMat.id = maxId + 1 + addedCount;
+            }
+            newMat.family           = em.family || getFamily(em.name);
+            newMat.isMetallized     = em.isMetallized || false;
+            newMat.reliabilityVotes = em.reliabilityVotes || { up: 0, down: 0 };
+            if (!newMat.co2Values) newMat.co2Values = [];
+
+            DB.materials.push(newMat);
+            existingByFirebaseId[newMat.firebaseDocId] = newMat;
+            existingByName[nameLower] = newMat;
+            addedCount++;
         }
-        continue;
-      }
 
-      var newMat = Object.assign({}, em);
-      if (em.firebaseDocId) {
-        var numericIds = DB.materials.map(function(m) {
-          return typeof m.id === 'number' ? m.id : 0;
-        });
-        var maxId = numericIds.length ? Math.max.apply(null, numericIds) : 0;
-        newMat.id = maxId + 1 + addedCount;
-      }
-      newMat.family           = em.family || getFamily(em.name);
-      newMat.isMetallized     = em.isMetallized || false;
-      newMat.reliabilityVotes = em.reliabilityVotes || { up: 0, down: 0 };
-
-      DB.materials.push(newMat);
-      existingByFirebaseId[newMat.firebaseDocId] = newMat;
-      existingByName[nameLower] = newMat;
-      addedCount++;
+        if (addedCount > 0) {
+            DB.save();
+            render();
+            console.log('✅ materials.json: aggiunti ' + addedCount + ' materiali');
+        }
+    } catch (e) {
+        console.log('ℹ️ materials.json non caricato:', e.message);
     }
-
-    if (addedCount > 0) {
-      DB.save();
-      render();
-      console.log('✅ materials.json: aggiunti ' + addedCount + ' materiali');
-    }
-  } catch (e) {
-    console.log('ℹ️ materials.json non caricato:', e.message);
-  }
 }
 
 // ====================================================================
