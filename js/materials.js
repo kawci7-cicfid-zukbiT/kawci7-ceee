@@ -717,6 +717,13 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
     return html;
 }
 
+function matModalHygroToggle() {
+    var cb = document.getElementById('mf-hygroscopic');
+    var fields = document.getElementById('mf-hygro-fields');
+    if(!cb || !fields) return;
+    fields.style.display = cb.checked ? 'block' : 'none';
+}
+
 // ====================================================================
 // ADD / EDIT MATERIAL MODAL
 // ====================================================================
@@ -762,19 +769,6 @@ function showMatModal(editId) {
     }
 
     var hygroRO = (isCommMat || isDefaultMat) ? ' disabled readonly style="opacity:0.6;cursor:not-allowed;background:#f1f5f9"' : '';
-    var hygroHTML =
-        '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:14px;padding-top:12px">' +
-        '<div style="font-size:0.72rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Hygroscopic correction</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta WVTR (%/RH)</label>' +
-                '<input type="number" step="0.001" class="form-input" id="mf-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="0.034"'+hygroRO+'></div>' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH WVTR (%)</label>' +
-                '<input type="number" class="form-input" id="mf-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta OTR (%/RH)</label>' +
-                '<input type="number" step="0.001" class="form-input" id="mf-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="0.034"'+hygroRO+'></div>' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH OTR (%)</label>' +
-                '<input type="number" class="form-input" id="mf-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
-        '</div></div>';
 
     var modalBody =
         banner +
@@ -789,14 +783,43 @@ function showMatModal(editId) {
             '<div class="form-group" style="margin:0"><label>TDS link <span style="font-size:0.65rem;color:var(--text-light)">(always editable)</span></label>' +
                 '<input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://"'+tdsRO+'></div>' +
         '</div>' +
-        '<div style="margin:10px 0;padding:0.4rem 0.6rem;background:var(--warning-light);border-radius:6px;display:flex;align-items:center;gap:0.4rem">' +
-            '<input type="checkbox" id="mf-metallized" '+metallizedCheck+ROcheck+'>' +
-            '<label for="mf-metallized" style="font-size:0.75rem;color:var(--text-light);margin:0;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'">' +
-            '<strong>Metallized/Coated film</strong> - Barrier independent of substrate thickness</label></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">' +
+
+        '<div style="padding:12px 14px;background:#fefce8;border:1.5px solid #fcd34d;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-metallized\').click()')+'">' +
+            '<input type="checkbox" id="mf-metallized" '+metallizedCheck+ROcheck+' style="width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'">' +
+            '<div>' +
+                '<div style="font-size:0.82rem;font-weight:700;color:#78350f">Metallized / Coated film</div>' +
+                '<div style="font-size:0.72rem;color:#92400e;margin-top:2px;line-height:1.4">Barrier is independent of substrate thickness (AlOx, SiOx, Al foil)</div>' +
+            '</div>' +
+        '</div>' +
+
+        '<div style="padding:12px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-hygroscopic\').click()')+'">' +
+            '<input type="checkbox" id="mf-hygroscopic" '+( (mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0)) ? 'checked' : '' )+((isCommMat||isDefaultMat)?' disabled style="opacity:0.6;cursor:not-allowed"':' style="cursor:pointer"')+' onchange="matModalHygroToggle()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">' +
+            '<div>' +
+                '<div style="font-size:0.82rem;font-weight:700;color:#0c4a6e">Hygroscopic material</div>' +
+                '<div style="font-size:0.72rem;color:#075985;margin-top:2px;line-height:1.4">Barrier depends on relative humidity (EVOH, PA, cellulose)</div>' +
+            '</div>' +
+        '</div>' +
+
+        '</div>' +
+
+        '<div id="mf-hygro-fields" style="display:' + ((mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0))?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
+            '<div style="font-size:0.75rem;font-weight:600;color:#0369a1;margin-bottom:10px">Hygroscopic correction coefficients</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta WVTR (%/RH)</label>' +
+                    '<input type="number" step="0.001" class="form-input" id="mf-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH WVTR (%)</label>' +
+                    '<input type="number" class="form-input" id="mf-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta OTR (%/RH)</label>' +
+                    '<input type="number" step="0.001" class="form-input" id="mf-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH OTR (%)</label>' +
+                    '<input type="number" class="form-input" id="mf-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
+            '</div>' +
+            '<div style="font-size:0.68rem;color:#0369a1;margin-top:8px">Beta = % increase in permeability per 1% RH increase. Reference RH = condition at which the listed values were measured.</div>' +
+        '</div>' +
         _modalBarrierSection('wvtr', mat, isCommMat, isDefaultMat) +
         _modalBarrierSection('otr',  mat, isCommMat, isDefaultMat) +
-        _modalBarrierSection('co2',  mat, isCommMat, isDefaultMat) +
-        hygroHTML;
+        _modalBarrierSection('co2',  mat, isCommMat, isDefaultMat);
 
     Modal.open(
         editId !== undefined ? 'Edit Material' : 'Add Material',
