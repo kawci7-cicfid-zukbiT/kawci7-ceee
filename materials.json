@@ -955,14 +955,14 @@
         "thickness": 9,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 (TDS reports '<2' for 8-10 µm range — recorded as upper bound)"
+        "testMethod": "DIN 53380 "
       },
       {
         "value": 1,
         "thickness": 23,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 (TDS reports '<1' for 12-75 µm range — recorded as upper bound)"
+        "testMethod": "DIN 53380 "
       }
     ],
     "wvtrValues": [
@@ -971,7 +971,7 @@
         "thickness": 9,
         "temperature": 23,
         "humidity": 85,
-        "testMethod": "DIN 53122 (TDS reports '<2' for 8-10 µm range — recorded as upper bound)"
+        "testMethod": "DIN 53122 "
       },
       {
         "value": 0.5,
@@ -1008,7 +1008,7 @@
     "gwp": 2.15,
     "haze": 2.5,
     "hazeUnit": "%",
-    "hazeMethod": "ASTM D1003-61 method A (enlarged measurement angle); TDS states '<2.5' — recorded as upper bound",
+    "hazeMethod": "ASTM D1003-61 method A",
     "meltingTemp": null,
     "meltingTempMethod": null,
     "shrinkageMD": 1.6,
@@ -6730,7 +6730,7 @@
     "meltingTempMethod": null,
     "shrinkageMD": 3.0,
     "shrinkageTD": 2.5,
-    "shrinkageConditions": "Hot air 160C/5min (max values)",
+    "shrinkageConditions": "Hot air 160C/5min ",
     "shrinkageMethod": null,
     "hygroscopicBetaWVTR": null,
     "hygroscopicRefRHWVTR": null,
@@ -8859,7 +8859,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -8927,7 +8927,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -9063,7 +9063,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -9131,7 +9131,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -9210,21 +9210,21 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico"
+        "testMethod": "ASTM D-3985"
       },
       {
         "value": 0.1,
         "thickness": 15,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico"
+        "testMethod": "ASTM D-3985"
       },
       {
         "value": 0.1,
         "thickness": 23,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico"
+        "testMethod": "ASTM D-3985"
       }
     ],
     "wvtrValues": [
@@ -9233,21 +9233,21 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F-1249, tipico"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.1,
         "thickness": 15,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F-1249, tipico"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.1,
         "thickness": 23,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F-1249, tipico"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -9295,7 +9295,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico"
+        "testMethod": "ASTM D-3985"
       }
     ],
     "wvtrValues": [
@@ -9304,7 +9304,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F-1249, tipico"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -9352,7 +9352,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico"
+        "testMethod": "ASTM D-3985"
       }
     ],
     "wvtrValues": [
@@ -9361,7 +9361,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F-1249, tipico"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -9409,7 +9409,7 @@
         "thickness": 12.3,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D-3985, tipico (<0.1, upper bound)"
+        "testMethod": "ASTM D-3985 "
       }
     ],
     "wvtrValues": [
@@ -9418,7 +9418,7 @@
         "thickness": 12.3,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F-1249, tipico (<0.5, upper bound)"
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -9452,7 +9452,7 @@
     "meltingTempMethod": "ISO 3146-C / DSC (TDS states 220 ± 2°C)",
     "shrinkageMD": 2.5,
     "shrinkageTD": 2.5,
-    "shrinkageConditions": "160°C, 15 min (TDS states '≤ 2.5 / ≤ 2.5' — upper bound)",
+    "shrinkageConditions": "160°C, 15 min ",
     "shrinkageMethod": "DIN EN ISO 11501",
     "hygroscopicBetaWVTR": null,
     "hygroscopicRefRHWVTR": null,
@@ -9475,7 +9475,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 85,
-        "testMethod": "DIN 53122 / ASTM E96 (typical value)"
+        "testMethod": "DIN 53122 / ASTM E96 "
       }
     ],
     "co2Values": [],
@@ -10978,14 +10978,14 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM F1927 (0.03 cc/100in² × 15.5)"
+        "testMethod": "ASTM F1927 "
       },
       {
         "value": 0.93,
         "thickness": 20,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "ASTM F1927 (0.06 cc/100in² × 15.5)"
+        "testMethod": "ASTM F1927 "
       }
     ],
     "wvtrValues": [
@@ -10994,7 +10994,7 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM E96 (0.65 g/100in² × 15.5)"
+        "testMethod": "ASTM E96 "
       }
     ],
     "co2Values": [],
@@ -11261,7 +11261,7 @@
         "thickness": 285,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (max; PVC 250µm + PVdC 60gsm)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -11270,7 +11270,7 @@
         "thickness": 285,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (max)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
