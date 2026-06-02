@@ -19,42 +19,43 @@
   --shadow-lg:0 10px 25px rgba(0,0,0,0.1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:16px}
 .page{max-width:1400px;margin:0 auto;padding:1.1rem 1.5rem}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:start}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
 .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.75rem}
 @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
 .card{background:var(--card);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:.9rem}
-.card h2{font-size:.9rem;font-weight:600;margin-bottom:.7rem;color:var(--text)}
-.step-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem;color:var(--text)}
+.card h2 svg{width:15px;height:15px;color:var(--primary)}
+.step-label{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;display:flex;align-items:center;gap:.35rem}
 .step-label.blue{color:var(--primary)}.step-label.warning{color:var(--warning)}.step-label.purple{color:var(--purple)}.step-label.green{color:var(--success)}.step-label.gray{color:var(--text-light)}
 .step-block{padding:.9rem 1.1rem;border-bottom:1px solid var(--border)}
 .step-block:last-child{border-bottom:none}
 .src-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.35rem;margin-bottom:.65rem}
-.src-btn{padding:.45rem .5rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);font-size:.7rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text-light);transition:all .15s;text-align:center}
+.src-btn{padding:.45rem .5rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text-light);transition:all .15s;text-align:center}
 .src-btn:hover:not(:disabled){border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
 .src-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .src-btn:disabled{opacity:.4;cursor:not-allowed}
 .form-group{margin-bottom:.65rem}
-.form-group label{display:block;font-size:.72rem;font-weight:600;margin-bottom:.15rem;color:var(--text-light)}
-.form-input{width:100%;padding:.42rem .65rem;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;transition:all .15s;background:#fff;font-family:inherit;color:var(--text)}
+.form-group label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.15rem;color:var(--text-light)}
+.form-input{width:100%;padding:.42rem .65rem;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;transition:all .15s;background:#fff;font-family:inherit;color:var(--text)}
 .form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 .form-input.invalid{border-color:var(--danger)}
 select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .65rem center;padding-right:1.8rem}
 .input-row{display:flex;gap:.4rem;align-items:center}
-.input-unit{font-size:.7rem;color:var(--text-light);font-weight:500;white-space:nowrap}
-.hint{font-size:.67rem;color:var(--text-light);margin-top:.18rem;line-height:1.4}
-.err{font-size:.67rem;color:var(--danger);margin-top:.18rem;display:none}
+.input-unit{font-size:.85rem;color:var(--text-light);font-weight:500;white-space:nowrap}
+.hint{font-size:.8rem;color:var(--text-light);margin-top:.18rem;line-height:1.4}
+.err{font-size:.8rem;color:var(--danger);margin-top:.18rem;display:none}
 .form-group.invalid .err{display:block}
 .form-group.invalid .form-input{border-color:var(--danger)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.48rem .85rem;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.48rem .85rem;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
 .btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow-lg)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
 .btn-success{background:var(--success);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.btn-sm{padding:.32rem .6rem;font-size:.7rem}
+.btn-sm{padding:.32rem .6rem;font-size:.85rem}
 .btn-full{width:100%}
 .btn-group{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.65rem}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
@@ -62,76 +63,76 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .kpi.blue{background:var(--primary-light);border-color:#93c5fd}.kpi.green{background:var(--success-light);border-color:#86efac}
 .kpi.warning{background:var(--warning-light);border-color:#fcd34d}.kpi.danger{background:var(--danger-light);border-color:#fca5a5}
 .kpi.gray{background:#f8fafc;border-color:var(--border)}
-.kpi-label{font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-light);margin-bottom:.25rem}
-.kpi-val{font-size:1.35rem;font-weight:800;line-height:1.1}
+.kpi-label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-light);margin-bottom:.25rem}
+.kpi-val{font-size:1.5rem;font-weight:800;line-height:1.1}
 .kpi.blue .kpi-val{color:var(--primary)}.kpi.green .kpi-val{color:var(--success)}
 .kpi.warning .kpi-val{color:var(--warning)}.kpi.danger .kpi-val{color:var(--danger)}.kpi.gray .kpi-val{color:var(--text)}
-.kpi-sub{font-size:.64rem;color:var(--text-light);margin-top:.1rem}
+.kpi-sub{font-size:.78rem;color:var(--text-light);margin-top:.1rem}
 .progress-bar{width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:.35rem}
 .progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
 .progress-fill.blue{background:var(--primary)}.progress-fill.green{background:var(--success)}
 .progress-fill.warning{background:var(--warning)}.progress-fill.danger{background:var(--danger)}
-.source-panel{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-size:.73rem}
+.source-panel{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-size:.88rem}
 .source-panel .sp-name{font-weight:700;color:var(--text);margin-bottom:.12rem}
 .source-panel .sp-struct{color:var(--text-light);margin-bottom:.3rem;min-height:1.1em;word-break:break-word}
 .source-panel .sp-row{display:flex;justify-content:space-between;align-items:center}
-.sp-val{color:var(--primary);font-weight:700;font-family:'Courier New',monospace;font-size:.8rem}
+.sp-val{color:var(--primary);font-weight:700;font-family:'Courier New',monospace;font-size:.95rem}
 .rate-banner{background:var(--primary-light);border:1px solid #93c5fd;border-radius:8px;padding:.45rem .8rem;display:flex;justify-content:space-between;align-items:center;margin-top:.65rem}
-.rb-label{font-size:.7rem;font-weight:600;color:#1e40af}
-.rb-val{font-family:'Courier New',monospace;color:var(--primary);font-weight:700;font-size:.88rem}
-.alert{padding:.55rem .75rem;border-radius:8px;font-size:.73rem;margin:.45rem 0;display:flex;gap:.4rem;align-items:flex-start}
+.rb-label{font-size:.85rem;font-weight:600;color:#1e40af}
+.rb-val{font-family:'Courier New',monospace;color:var(--primary);font-weight:700;font-size:1rem}
+.alert{padding:.55rem .75rem;border-radius:8px;font-size:.88rem;margin:.45rem 0;display:flex;gap:.4rem;align-items:flex-start}
 .alert-info{background:var(--primary-light);border:1px solid #93c5fd;color:#1e40af}
 .alert-warning{background:var(--warning-light);border:1px solid #fcd34d;color:#92400e}
 .alert-danger{background:var(--danger-light);border:1px solid #fca5a5;color:#991b1b}
 .alert-success{background:var(--success-light);border:1px solid #86efac;color:#166534}
 .pkg-mode-row{display:flex;gap:.75rem;margin-bottom:.5rem}
-.pkg-mode-row label{display:flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;color:var(--text-light);cursor:pointer}
+.pkg-mode-row label{display:flex;align-items:center;gap:.3rem;font-size:.85rem;font-weight:600;color:var(--text-light);cursor:pointer}
 .dims-block{margin-top:.45rem}
-.area-result{background:var(--primary-light);border-radius:6px;padding:.35rem .65rem;display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;font-size:.72rem}
-.area-result strong{color:var(--primary);font-family:'Courier New',monospace;font-size:.8rem}
+.area-result{background:var(--primary-light);border-radius:6px;padding:.35rem .65rem;display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;font-size:.88rem}
+.area-result strong{color:var(--primary);font-family:'Courier New',monospace;font-size:.95rem}
 .tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1rem;flex-wrap:wrap}
-.tab{padding:.5rem .85rem;background:none;border:none;font-size:.76rem;font-weight:600;color:var(--text-light);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit}
+.tab{padding:.5rem .85rem;background:none;border:none;font-size:.9rem;font-weight:600;color:var(--text-light);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;font-family:inherit}
 .tab:hover{color:var(--primary)}.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
 .tab-pane{display:none}.tab-pane.active{display:block;animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .tbl-wrap{overflow-x:auto}
-.data-table{width:100%;border-collapse:collapse;font-size:.73rem}
+.data-table{width:100%;border-collapse:collapse;font-size:.88rem}
 .data-table th,.data-table td{padding:.55rem .65rem;text-align:left;border-bottom:1px solid var(--border)}
-.data-table th{background:var(--bg);font-weight:700;font-size:.65rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)}
+.data-table th{background:var(--bg);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)}
 .data-table tr:hover td{background:#fafcff}
 .data-table tr:last-child td{border-bottom:none}
-.pill{display:inline-flex;align-items:center;padding:.16rem .5rem;border-radius:99px;font-size:.63rem;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:.22rem;padding:.16rem .5rem;border-radius:99px;font-size:.78rem;font-weight:700}
 .pill-pass{background:var(--success-light);color:#166534;border:1px solid #86efac}
 .pill-fail{background:var(--danger-light);color:#991b1b;border:1px solid #fca5a5}
-.chart-wrap{position:relative;height:250px;margin-top:.6rem}
-.chart-wrap.sm{height:210px}
+.chart-wrap{position:relative;height:280px;margin-top:.6rem}
+.chart-wrap.sm{height:240px}
 .scenario-card{border:1.5px solid var(--border);border-radius:10px;padding:.8rem .9rem;margin-bottom:.55rem;background:var(--card);transition:all .15s}
 .scenario-card:hover{border-color:var(--primary);box-shadow:var(--shadow-lg)}
 .sce-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
-.sce-name{font-weight:700;font-size:.82rem}
-.sce-del{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;line-height:1}
-.formula-block{background:#f8fafc;border:1px dashed var(--border);border-radius:8px;padding:.9rem;font-family:'Courier New',monospace;font-size:.78rem;text-align:center;color:var(--text);margin:.65rem 0;line-height:1.85}
+.sce-name{font-weight:700;font-size:.95rem}
+.sce-del{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1.1rem;line-height:1}
+.formula-block{background:#f8fafc;border:1px dashed var(--border);border-radius:8px;padding:.9rem;font-family:'Courier New',monospace;font-size:.9rem;text-align:center;color:var(--text);margin:.65rem 0;line-height:1.85}
 .methodology-card{background:#fff;border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:1.2rem}
 .methodology-card .mc-inner{padding:1.5rem 1.75rem}
-.methodology-card h2{font-family:Georgia,'Times New Roman',serif;font-size:1.2rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.5rem;margin-bottom:1.1rem}
-.mc-body{font-family:Georgia,'Times New Roman',serif;font-size:.88rem;line-height:1.8;color:#334155}
+.methodology-card h2{font-family:Georgia,'Times New Roman',serif;font-size:1.35rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.5rem;margin-bottom:1.1rem}
+.mc-body{font-family:Georgia,'Times New Roman',serif;font-size:1rem;line-height:1.8;color:#334155}
 .mc-body p{margin-bottom:.75rem;text-align:justify}
-.mc-body h3{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:.95rem;font-weight:700;color:var(--primary-dark);margin:1.5rem 0 .5rem;border-bottom:2px solid var(--border);padding-bottom:.4rem}
+.mc-body h3{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:1.1rem;font-weight:700;color:var(--primary-dark);margin:1.5rem 0 .5rem;border-bottom:2px solid var(--border);padding-bottom:.4rem}
 .mc-body ul{margin:.4rem 0 .75rem 1.3rem}
 .mc-body ul li{margin-bottom:.25rem}
-.callout{padding:.75rem 1rem;border-radius:8px;margin:.85rem 0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:.8rem;line-height:1.6}
+.callout{padding:.75rem 1rem;border-radius:8px;margin:.85rem 0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:.95rem;line-height:1.6}
 .callout.blue{background:var(--primary-light);border-left:3px solid var(--primary);color:#1e3a8a}
 .callout.warning{background:var(--warning-light);border-left:3px solid var(--warning);color:#78350f}
 .callout.success{background:var(--success-light);border-left:3px solid var(--success);color:#064e3b}
 .callout.danger{background:var(--danger-light);border-left:3px solid var(--danger);color:#7f1d1d}
-.mc-refs{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:.75rem;color:var(--text-light);margin-top:1.25rem;padding-top:.85rem;border-top:1px solid var(--border);line-height:1.7}
+.mc-refs{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:.88rem;color:var(--text-light);margin-top:1.25rem;padding-top:.85rem;border-top:1px solid var(--border);line-height:1.7}
 .disclaimer{background:#fff8f8;border:1.5px solid #fca5a5;border-radius:var(--radius);padding:1.1rem 1.4rem;margin-top:1.1rem}
-.disclaimer h3{font-size:.82rem;font-weight:700;color:var(--danger);margin-bottom:.65rem}
-.disc-item{margin-bottom:.7rem;font-size:.75rem;color:#374151;line-height:1.6}
+.disclaimer h3{font-size:.95rem;font-weight:700;color:var(--danger);margin-bottom:.65rem;display:flex;align-items:center;gap:.35rem}
+.disc-item{margin-bottom:.7rem;font-size:.88rem;color:#374151;line-height:1.6}
 .disc-item strong{color:var(--danger);font-weight:700}
 .sticky-col{position:sticky;top:.8rem;height:fit-content}
 @media(max-width:900px){.sticky-col{position:static}}
-.company-placeholder{text-align:center;padding:1rem;font-size:.75rem;color:var(--text-light)}
+.company-placeholder{text-align:center;padding:1rem;font-size:.88rem;color:var(--text-light)}
 .company-placeholder a{color:var(--primary);cursor:pointer}
 </style>
 </head>
@@ -187,7 +188,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
       </div>
       <div style="margin-top:.65rem;padding-top:.5rem;border-top:1px dashed var(--border)">
-        <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.7rem;color:var(--text-light);font-weight:600">
+        <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.85rem;color:var(--text-light);font-weight:600">
           <input type="checkbox" id="manual-toggle" onchange="toggleManual(this.checked)">
           Override with manual WVTR value
         </label>
@@ -313,19 +314,12 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       </div>
     </div>
 
-    <div class="step-block">
+    <div class="step-block" style="border-bottom:none">
       <div class="step-label green">5. Save & Export</div>
       <div class="btn-group" style="margin-top:0">
         <button class="btn btn-success btn-sm" onclick="saveScenario()">Save Scenario</button>
         <button class="btn btn-outline btn-sm" onclick="exportCSV()">CSV</button>
         <button class="btn btn-outline btn-sm" onclick="exportPDF()">PDF Report</button>
-      </div>
-    </div>
-
-    <div class="step-block" style="border-bottom:none">
-      <div class="step-label gray">Saved Scenarios</div>
-      <div id="scenarios-list">
-        <p style="font-size:.75rem;color:var(--text-light);text-align:center;padding:.75rem 0">No saved scenarios yet.</p>
       </div>
     </div>
   </div>
@@ -356,7 +350,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
       </div>
       <div style="margin-top:.85rem">
-        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:.25rem">
+        <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.25rem">
           <span id="kpi-status" style="color:var(--text-light)">Waiting for calculation…</span>
           <span id="kpi-pct" style="font-weight:700">—</span>
         </div>
@@ -365,7 +359,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     </div>
     <div class="card">
       <h2>Quick Results</h2>
-      <div id="quick-results" style="font-size:.78rem;color:var(--text-light);text-align:center;padding:1rem 0">
+      <div id="quick-results" style="font-size:.9rem;color:var(--text-light);text-align:center;padding:1rem 0">
         Configure parameters and click <strong>Calculate ICH Compliance</strong>.
       </div>
     </div>
@@ -387,7 +381,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="card">
         <h2>Correction Factors</h2>
         <div class="chart-wrap sm"><canvas id="ch-factors"></canvas></div>
-        <div id="factors-sum" style="margin-top:.6rem;font-size:.72rem;color:var(--text-light)"></div>
+        <div id="factors-sum" style="margin-top:.6rem;font-size:.85rem;color:var(--text-light)"></div>
       </div>
     </div>
     <div class="card"><h2>Summary by ICH Zone</h2>
@@ -405,7 +399,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <tbody></tbody>
       </table></div>
     </div>
-    <div class="card"><h2>Active Parameters</h2><div id="params-panel" style="font-size:.73rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
+    <div class="card"><h2>Active Parameters</h2><div id="params-panel" style="font-size:.88rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
   </div>
 
   <div id="tab-charts" class="tab-pane">
@@ -446,37 +440,72 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="chart-wrap"><canvas id="ch-swvtr"></canvas></div>
       </div>
     </div>
-    <div class="card"><h2>Tornado Chart — Parameter Impact</h2><div class="chart-wrap"><canvas id="ch-tornado"></canvas></div></div>
   </div>
 </div>
 
 <div class="disclaimer">
-  <h3>Regulatory Disclaimer & Model Limitations</h3>
-  <div class="disc-item"><strong>For R&D screening only.</strong> This tool does not replace regulatory stability testing.</div>
-  <div class="disc-item"><strong>Real-time and accelerated stability studies are mandatory</strong> for commercial shelf-life claims.</div>
-  <div class="disc-item"><strong>Model assumptions:</strong> steady-state permeation, linear corrections, no seal permeation, constant storage conditions.</div>
+  <h3>⚠ Regulatory Disclaimer & Model Limitations</h3>
+  <div class="disc-item"><strong>For R&D screening and concept development only.</strong> This tool assists packaging engineers during early material selection. It produces predictive estimates from mathematical models and does not replace regulatory stability testing.</div>
+  <div class="disc-item"><strong>Real-time and accelerated stability studies are mandatory.</strong> Commercial shelf-life claims submitted to FDA, EMA, PMDA, ANVISA, or any national authority must be supported by experimental data from accredited stability chambers, in full compliance with ICH Q1A(R2) and applicable local regulations.</div>
+  <div class="disc-item"><strong>Model assumptions:</strong> (1) Steady-state permeation through a defect-free uniform film. (2) Linear superposition of Arrhenius and RH correction factors. (3) No seal permeation, pinholes, or mechanical damage. (4) Constant storage conditions throughout shelf life. (5) Negligible back-diffusion as internal moisture approaches external humidity. Real systems may deviate significantly from these idealised conditions.</div>
+  <div class="disc-item"><strong>Source data quality determines output reliability.</strong> When using the Calculator source, accuracy depends on the material database entries. When entering values manually, the user is solely responsible for ensuring the measurement was performed under the stated reference conditions per ASTM F1249 or ISO 15106.</div>
 </div>
 
 <div class="methodology-card">
   <div class="mc-inner">
     <h2>Mechanics of MVTR Analysis & ICH Q1A(R2) Compliance</h2>
     <div class="mc-body">
-      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity.</p>
+      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. In pharmaceutical packaging science, quantifying this rate and projecting its cumulative effect over the product's intended shelf life is not optional — it is the foundation upon which stability assessments under ICH Q1A(R2) are built. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
+
       <h3>I. The ICH Climatic Zone Framework</h3>
-      <p>The ICH codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life.</p>
+      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life in that region. These are not arbitrary categories — they encode real thermodynamic stress that packaging must survive.</p>
       <div class="callout blue">
-        <strong>Zone Definitions — ICH Q1A(R2) / WHO TRS No. 863:</strong><br>
-        Zone I (21°C / 45% RH) — Temperate · Zone II (25°C / 60% RH) — Subtropical<br>
-        Zone IIIa (40°C / 15% RH) — Hot/Dry · Zone IVa (40°C / 75% RH) — Hot/Humid<br>
-        Zone IVb (30°C / 75% RH) — Hot/Very Humid (ASEAN)<br>
-        Accelerated (40°C / 75% RH) · Intermediate (30°C / 65% RH)
+        <strong>Zone Definitions — ICH Q1A(R2) / WHO Technical Report Series No. 863:</strong><br>
+        Zone I (21°C / 45% RH) — Temperate — Europe, Canada, Russia<br>
+        Zone II (25°C / 60% RH) — Subtropical / Mediterranean — USA, Japan<br>
+        Zone IIIa (40°C / 15% RH) — Hot/Dry — Middle East, arid Africa<br>
+        Zone IVa (40°C / 75% RH) — Hot/Humid — South-East Asia, tropical regions<br>
+        Zone IVb (30°C / 75% RH) — Hot/Very Humid (ASEAN harmonised protocol)<br>
+        Accelerated (40°C / 75% RH) — ICH Q1A(R2) stress testing, Section 2.1.2<br>
+        Intermediate (30°C / 65% RH) — ICH Q1A(R2) bridging condition
       </div>
+
       <h3>II. Arrhenius Temperature Correction</h3>
-      <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br>R = 8.314 × 10⁻³ kJ/(mol·K) · T in Kelvin</div>
+      <p>Water vapor permeation through a polymer film is a thermally activated diffusion process. As temperature rises, polymer chain segmental mobility increases, free volume grows, and the diffusion coefficient of water molecules through the matrix accelerates exponentially. This relationship is described by the Arrhenius equation:</p>
+      <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br><br>Eₐ = activation energy of permeation (kJ/mol)<br>R = 8.314 × 10⁻³ kJ/(mol·K) · T in Kelvin</div>
+      <p>When F_T &gt; 1 the target zone is hotter than the reference and permeation is accelerated; F_T &lt; 1 means the zone is cooler and the film performs better than its measured value. Setting Eₐ = 0 treats WVTR as temperature-independent — appropriate only when no activation energy data exists.</p>
+      <div class="callout warning">
+        <strong>Literature Eₐ guidance:</strong> Polyolefins (LDPE, PP) ≈ 28–42 kJ/mol. Polar films (EVOH, Nylon) ≈ 45–70 kJ/mol due to stronger hydrogen-bonding with water. Aluminium foil laminates: near zero when foil is intact, because transport occurs through defects (pinholes, seals), not through the metal lattice itself. Metallised films fall between 10–30 kJ/mol depending on metallisation quality.
+      </div>
+
       <h3>III. Relative Humidity Driving Force</h3>
+      <p>Permeation is driven by the partial pressure differential of water vapour across the film. At the same temperature, the ratio of partial pressures simplifies to the ratio of relative humidities, giving a linear first-order correction:</p>
       <div class="formula-block">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
-      <h3>IV. Cumulative Ingress</h3>
-      <div class="formula-block">Ingress_daily (mg) = WVTR_eff × A (m²) × 1000<br>Ingress_total = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
+      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied — see the hygroscopic correction module in the WVTR/OTR Calculator. The Community DB laminates listed in Step 1 have been validated to contain hygroscopic-grade corrections where applicable.</p>
+
+      <h3>IV. Cumulative Ingress and Compliance Evaluation</h3>
+      <p>Once the effective WVTR is established for each ICH zone, cumulative ingress over the shelf life follows from a steady-state linear model:</p>
+      <div class="formula-block">Ingress_daily (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
+      <div class="callout success">
+        <strong>Worked example — pharmaceutical blister pack:</strong> WVTR_ref = 1.0 g/m²/day at 38°C/90%RH, Eₐ = 35 kJ/mol, cavity area = 2 cm². Zone IVa (40°C/75%RH): F_T = exp[(35/0.008314)×(1/311.15 − 1/313.15)] = 1.088; F_RH = 75/90 = 0.833; WVTR_eff = 0.907 g/m²/day. Daily ingress = 0.907 × 0.0002 × 1000 = 0.000181 mg. Over 2 years (730 days) = 0.133 mg — well within a 2.0 mg M_crit.
+      </div>
+      <p>The critical moisture limit M_crit must be established through independent product characterisation — moisture sorption isotherm testing (ISO 18787, DVS method) combined with accelerated degradation experiments identifying the threshold beyond which physicochemical or microbiological failure initiates.</p>
+
+      <h3>V. Packaging Geometry & Exposed Area</h3>
+      <p>The surface area A is the single geometric parameter coupling the barrier value to the mass of water entering the package. For blister packs, only the polymer lid foil area over the cavity is moisture-active — the aluminium base contributes negligibly. For pouches and bags, both faces and any gusset area contribute. Bottles require numerical integration over the body, shoulder, and neck surfaces, which this tool performs automatically when the "Bottle" shape is selected. Seal areas and induction-welded surfaces are excluded by default and should be accounted for separately if seal permeation is a known concern for the laminate in question.</p>
+
+      <h3>VI. Safety Margin and Sensitivity Analysis</h3>
+      <p>A compliance pass is a necessary but not sufficient condition for robust packaging. The safety margin — the fraction of M_crit not consumed at end of shelf life — quantifies engineering headroom against real-world variability: batch-to-batch WVTR variation (±15–25% is typical for commercial films), seal integrity degradation during distribution, cyclic humidity in transit, and measurement uncertainty in the reference WVTR. A margin below 20% warrants a design review. The sensitivity analysis identifies which input parameters have the greatest leverage on the compliance outcome, directing experimental validation effort efficiently.</p>
+
+      <h3>VII. Alignment with International Standards</h3>
+      <div class="mc-refs">
+        • <strong>ASTM F1249-20</strong> — WVTR through plastic film and sheeting, modulated infrared sensor method<br>
+        • <strong>ISO 15106-3:2003</strong> — Water vapour transmission rate, electrolytic detection sensor method<br>
+        • <strong>ICH Q1A(R2) (2003)</strong> — Stability Testing of New Drug Substances and Pharmaceutical Products<br>
+        • <strong>WHO TRS No. 863 (1996)</strong> — Climatic zone classification for global stability testing<br>
+        • <strong>ASTM E1641</strong> — Decomposition kinetics by thermogravimetry (Arrhenius parameter determination)<br>
+        • <strong>ISO 18787:2017</strong> — Determination of water activity in food and food products
+      </div>
     </div>
   </div>
 </div>
@@ -504,6 +533,15 @@ let scenarios = [];
 let CX = {};
 
 try { scenarios = JSON.parse(localStorage.getItem('mvtr_sce') || '[]'); } catch(e){}
+
+// ── Add 2 example scenarios if empty ──
+if(scenarios.length === 0) {
+  const example1Params = {wRef:0.5, Tref:38, RHref:90, Ea:35, area:0.0408, Mcrit:2.0, shelf_years:2, shelfDays:730, label:'Blister Pack - Low WVTR', source:'db'};
+  const example2Params = {wRef:1.5, Tref:38, RHref:90, Ea:40, area:0.0850, Mcrit:5.0, shelf_years:3, shelfDays:1095, label:'Pouch - Medium WVTR', source:'db'};
+  scenarios.push({id: Date.now()-2000, name: example1Params.label, params: example1Params, zones: runCalc(example1Params), ts: new Date().toISOString()});
+  scenarios.push({id: Date.now()-1000, name: example2Params.label, params: example2Params, zones: runCalc(example2Params), ts: new Date().toISOString()});
+  try { localStorage.setItem('mvtr_sce', JSON.stringify(scenarios)); } catch(e){}
+}
 
 function setSource(s) {
   activeSource = s;
@@ -731,8 +769,8 @@ function updateQuick() {
   const pass = results.zones.filter(r=>r.pass).length, tot = results.zones.length;
   const clr = pass===tot?'var(--success)':pass===0?'var(--danger)':'var(--warning)';
   document.getElementById('quick-results').innerHTML =
-    `<div style="color:${clr};font-weight:700;font-size:.95rem">${pass===tot?'All zones compliant':pass===0?'No zones compliant':`${pass}/${tot} zones compliant`}</div>
-     <div style="margin-top:.3rem;font-size:.7rem;color:var(--text-light)">See tabs below for detail</div>`;
+    `<div style="color:${clr};font-weight:700;font-size:1.05rem">${pass===tot?'All zones compliant':pass===0?'No zones compliant':`${pass}/${tot} zones compliant`}</div>
+     <div style="margin-top:.3rem;font-size:.85rem;color:var(--text-light)">See tabs below for detail</div>`;
 }
 
 function renderOverview() {
@@ -786,8 +824,8 @@ function dc(key) { if(CX[key]) { CX[key].destroy(); delete CX[key]; } }
 
 function baseOpts(yLabel, legend) {
   return {responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:legend, position:'top', labels:{font:{size:9}, boxWidth:10}}},
-    scales:{y:{beginAtZero:true, title:{display:true, text:yLabel, font:{size:9}}}}};
+    plugins:{legend:{display:legend, position:'top', labels:{font:{size:10}, boxWidth:10}}},
+    scales:{y:{beginAtZero:true, title:{display:true, text:yLabel, font:{size:10}}}}};
 }
 
 function renderOverviewChart() {
@@ -811,8 +849,8 @@ function renderFactorsChart() {
       {label:'F_T (Arrhenius)', data:zs.map(r=>r.arrF), borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,.15)', borderWidth:2},
       {label:'F_RH',            data:zs.map(r=>r.rhF),  borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,.15)',  borderWidth:2}
     ]}, options:{responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'top', labels:{font:{size:9}, boxWidth:10}}},
-      scales:{r:{beginAtZero:false, ticks:{font:{size:8}}}}}});
+      plugins:{legend:{position:'top', labels:{font:{size:10}, boxWidth:10}}},
+      scales:{r:{beginAtZero:false, ticks:{font:{size:9}}}}}});
   const avgArr = (zs.reduce((s,r)=>s+r.arrF,0)/zs.length).toFixed(3);
   const avgRH  = (zs.reduce((s,r)=>s+r.rhF, 0)/zs.length).toFixed(3);
   document.getElementById('factors-sum').innerHTML =
@@ -846,15 +884,15 @@ function renderTRHChart() {
     ]},
     options:{responsive:true, maintainAspectRatio:false,
       plugins:{
-        legend:{display:true, position:'top', labels:{font:{size:8}, boxWidth:12}},
+        legend:{display:true, position:'top', labels:{font:{size:9}, boxWidth:12}},
         tooltip:{callbacks:{label:(c)=>{
           const r=zs[c.datasetIndex]; 
           return [`${r.zone.label}: ${r.zone.T}°C / ${r.zone.RH}% RH`,`WVTR_eff: ${r.eff.toFixed(5)}`];
         }}}
       },
       scales:{
-        x:{title:{display:true,text:'Temperature (°C)', font:{size:9}}, grid:{color:'rgba(0,0,0,0.05)'}},
-        y:{title:{display:true,text:'RH (%)', font:{size:9}}, grid:{color:'rgba(0,0,0,0.05)'}}
+        x:{title:{display:true,text:'Temperature (°C)', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'}},
+        y:{title:{display:true,text:'RH (%)', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'}}
       }
     }
   });
@@ -883,11 +921,9 @@ function saveScenario() {
 }
 
 function renderScenariosList() {
-  const listEl = document.getElementById('scenarios-list');
   const compEl = document.getElementById('sce-comp-list');
   if(scenarios.length === 0) {
-    const html = '<p style="font-size:.75rem;color:var(--text-light);text-align:center;padding:.75rem 0">No saved scenarios yet.</p>';
-    if(listEl) listEl.innerHTML = html;
+    const html = '<p style="font-size:.88rem;color:var(--text-light);text-align:center;padding:.75rem 0">No saved scenarios yet.</p>';
     if(compEl) compEl.innerHTML = html;
     updateScenarioComparison();
     return;
@@ -898,12 +934,11 @@ function renderScenariosList() {
         <div class="sce-name">${s.name}</div>
         <button class="sce-del" onclick="deleteScenario(${s.id})">×</button>
       </div>
-      <div style="font-size:.73rem;color:var(--text-light);margin-bottom:.4rem">
+      <div style="font-size:.88rem;color:var(--text-light);margin-bottom:.4rem">
         WVTR ${s.params.wRef.toFixed(4)} · Eₐ ${s.params.Ea} · ${s.params.shelf_years}yr
       </div>
       <button class="btn btn-primary btn-sm btn-full" onclick="loadScenario(${s.id})">Load</button>
     </div>`).join('');
-  if(listEl) listEl.innerHTML = html;
   if(compEl) compEl.innerHTML = html;
   updateScenarioComparison();
 }
@@ -1010,8 +1045,8 @@ function runSensEA() {
       { label:'Compliant Zones', data:passCnts, borderColor:'#0e9f6e', fill:true, backgroundColor:'rgba(14,159,110,0.08)', yAxisID:'y1', tension:0.4 }
     ]},
     options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top', labels:{font:{size:9}, boxWidth:10}}},
-      scales:{ y:{position:'left',title:{display:true,text:'Ingress (mg)', font:{size:9}}}, y1:{position:'right',min:0,max:7,title:{display:true,text:'Zones', font:{size:9}}, grid:{drawOnChartArea:false}} } }
+      plugins:{legend:{position:'top', labels:{font:{size:10}, boxWidth:10}}},
+      scales:{ y:{position:'left',title:{display:true,text:'Ingress (mg)', font:{size:10}}}, y1:{position:'right',min:0,max:7,title:{display:true,text:'Zones', font:{size:10}}, grid:{drawOnChartArea:false}} } }
   });
 }
 
@@ -1038,40 +1073,8 @@ function runSensWVTR() {
       { label:'Compliant Zones', data:passCnts, borderColor:'#0e9f6e', fill:true, backgroundColor:'rgba(14,159,110,0.08)', yAxisID:'y1', tension:0.4 }
     ]},
     options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top', labels:{font:{size:9}, boxWidth:10}}},
-      scales:{ y:{position:'left',title:{display:true,text:'Ingress (mg)', font:{size:9}}}, y1:{position:'right',min:0,max:7,title:{display:true,text:'Zones', font:{size:9}}, grid:{drawOnChartArea:false}} } }
-  });
-  renderTornado();
-}
-
-function renderTornado() {
-  if(!results) return;
-  dc('tornado');
-  const base = results.params;
-  const baseMax = Math.max(...runCalc(base).map(r=>r.total));
-  const variations = [
-    ['WVTR +20%',  {...base, wRef: base.wRef*1.2}],
-    ['WVTR −20%',  {...base, wRef: base.wRef*0.8}],
-    ['Eₐ +20%',    {...base, Ea: base.Ea*1.2}],
-    ['Eₐ −20%',    {...base, Ea: base.Ea*0.8}],
-    ['T_ref +5°C', {...base, Tref: base.Tref+5}],
-    ['Area +50%',  {...base, area: base.area*1.5}],
-    ['SL +1 yr',   {...base, shelf_years: base.shelf_years+1, shelfDays:(base.shelf_years+1)*DAYS}],
-  ];
-  const labels=[], data=[], colors=[];
-  variations.forEach(([lbl,p])=>{
-    const mx = Math.max(...runCalc(p).map(r=>r.total));
-    const chg = (mx - baseMax)/baseMax*100;
-    labels.push(lbl); data.push(Math.abs(chg).toFixed(1));
-    colors.push(chg>0?'rgba(224,36,36,0.75)':'rgba(14,159,110,0.75)');
-  });
-  const ctx = document.getElementById('ch-tornado');
-  if(!ctx) return;
-  CX.tornado = new Chart(ctx.getContext('2d'), {
-    type:'bar', indexAxis:'y',
-    data:{ labels, datasets:[{ label:'Impact on Max Ingress (%)', data, backgroundColor:colors, borderRadius:3 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{ x:{ title:{ display:true, text:'% Δ vs base case' } } } }
+      plugins:{legend:{position:'top', labels:{font:{size:10}, boxWidth:10}}},
+      scales:{ y:{position:'left',title:{display:true,text:'Ingress (mg)', font:{size:10}}}, y1:{position:'right',min:0,max:7,title:{display:true,text:'Zones', font:{size:10}}, grid:{drawOnChartArea:false}} } }
   });
 }
 
@@ -1144,7 +1147,7 @@ function switchTab(name, event) {
   if(event) event.target.classList.add('active');
   const tc = document.getElementById(`tab-${name}`);
   if(tc) tc.classList.add('active');
-  if(name==='sensitivity' && results) { setTimeout(()=>{runSensEA(); runSensWVTR(); renderTornado();}, 80); }
+  if(name==='sensitivity' && results) { setTimeout(()=>{runSensEA(); runSensWVTR();}, 80); }
   if(name==='charts' && results) { setTimeout(()=>Object.values(CX).forEach(c=>{ try{c.resize()}catch(e){} }), 80); }
 }
 
