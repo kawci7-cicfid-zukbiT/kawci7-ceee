@@ -8,7 +8,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval_F101A.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F101A, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS. OTR thickness is the normalized 20 µm reference per ISO method, not 15 µm.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F101A, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS. OTR thickness is the normalized 20 µm reference per ISO method, not 15 µm.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -29,7 +29,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -37,7 +37,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -54,7 +54,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval_F101B.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F101B, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F101B, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -75,7 +75,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.055,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -83,7 +83,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -100,7 +100,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval_F171B.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F171B, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ F171B, 32 mol% ethylene-vinyl alcohol copolymer, data updated 2016-12-15, layout updated 2020-07-21. Single OTR point on TDS: 0.3 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -121,7 +121,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.055,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -129,7 +129,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -146,7 +146,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval_L171B.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ L171B, 27 mol% ethylene-vinyl alcohol copolymer (low-ethylene, ultra-high-barrier grade), data updated 2016-12-15. Single OTR point on TDS: 0.1 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ L171B, 27 mol% ethylene-vinyl alcohol copolymer (low-ethylene, ultra-high-barrier grade), data updated 2016-12-15. Single OTR point on TDS: 0.1 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -167,7 +167,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.054,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -175,7 +175,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -192,7 +192,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval_H171B.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ H171B, 38 mol% ethylene-vinyl alcohol copolymer (mid-ethylene, easier-processing grade), data updated 2016-12-15. Single OTR point on TDS: 0.7 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ H171B, 38 mol% ethylene-vinyl alcohol copolymer (mid-ethylene, easier-processing grade), data updated 2016-12-15. Single OTR point on TDS: 0.7 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -213,7 +213,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.040,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -221,7 +221,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -238,7 +238,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/wp-content/uploads/2021/11/tds_eval__e105b.pdf",
-    "tdsSource": "Kuraray Technical Data Sheet EVAL™ E105B, 44 mol% ethylene-vinyl alcohol copolymer (high-ethylene grade, used for moisture-sensitive structures), updated 2020-08-07. Single OTR point on TDS: 1.9 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 Annex C). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
+    "tdsSource": "Kuraray Technical Data Sheet EVAL™ E105B, 44 mol% ethylene-vinyl alcohol copolymer (high-ethylene grade, used for moisture-sensitive structures), updated 2020-08-07. Single OTR point on TDS: 1.9 cm³·20µm/m²·day·atm at 20°C / 65% RH (ISO 21309-2 ). No WVTR, no CO2 TR, no haze, no shrinkage, no food contact regulations stated on this TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -259,7 +259,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.028,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -267,7 +267,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -994,7 +994,7 @@
     "family": "PET",
     "company": "Mitsubishi Polyester Film (Mitsubishi Chemical Group)",
     "tdsLink": "https://www.m-petfilm.de/wp-content/uploads/RHBYe.pdf",
-    "tdsSource": "Mitsubishi Polyester Film GmbH Hostaphan® RHBY TDS, Edition 06/23. Transparent BOPET film with enhanced barrier when vacuum-coated with Al, Al2O3 or SiOx. TDS provides 4 barrier columns: uncoated baseline, metallized RHBY MI (OD 2.6-3.0), SiOx-coated, Al2O3-coated. All barrier values explicitly marked 'unlaminated' — pure film. WVTR conditions: 37.8°C/90%RH (DIN 53122 Part 2). OTR conditions: 23°C/50%RH (DIN 53380 Part 3). This entry covers the UNCOATED RHBY 12 baseline; metallized/coated variants are separate database entries.",
+    "tdsSource": "Mitsubishi Polyester Film GmbH Hostaphan® RHBY TDS, Edition 06/23. Transparent BOPET film with enhanced barrier when vacuum-coated with Al, Al2O3 or SiOx. TDS provides 4 barrier columns: uncoated baseline, metallized RHBY MI (OD 2.6-3.0), SiOx-coated, Al2O3-coated. All barrier values explicitly marked 'unlaminated' — pure film. WVTR conditions: 37.8°C/90%RH (DIN 53122). OTR conditions: 23°C/50%RH (DIN 53380). This entry covers the UNCOATED RHBY 12 baseline; metallized/coated variants are separate database entries.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -1019,15 +1019,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380 Part 3",
-    "testMethodWVTR": "DIN 53122 Part 2",
+    "testMethodOTR": "DIN 53380 ",
+    "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
         "value": 110,
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 Part 3"
+        "testMethod": "DIN 53380 "
       }
     ],
     "wvtrValues": [
@@ -1036,7 +1036,7 @@
         "thickness": 12,
         "temperature": 37.8,
         "humidity": 90,
-        "testMethod": "DIN 53122 Part 2"
+        "testMethod": "DIN 53122"
       }
     ],
     "co2Values": [],
@@ -1077,15 +1077,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380 Part 3",
-    "testMethodWVTR": "DIN 53122 Part 2",
+    "testMethodOTR": "DIN 53380",
+    "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
         "value": 0.5,
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 Part 3"
+        "testMethod": "DIN 53380"
       }
     ],
     "wvtrValues": [
@@ -1094,7 +1094,7 @@
         "thickness": 12,
         "temperature": 37.8,
         "humidity": 90,
-        "testMethod": "DIN 53122 Part 2"
+        "testMethod": "DIN 53122"
       }
     ],
     "co2Values": [],
@@ -1135,15 +1135,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380 Part 3",
-    "testMethodWVTR": "DIN 53122 Part 2",
+    "testMethodOTR": "DIN 53380",
+    "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
         "value": 0.5,
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 Part 3"
+        "testMethod": "DIN 53380"
       }
     ],
     "wvtrValues": [
@@ -1152,7 +1152,7 @@
         "thickness": 12,
         "temperature": 37.8,
         "humidity": 90,
-        "testMethod": "DIN 53122 Part 2"
+        "testMethod": "DIN 53122"
       }
     ],
     "co2Values": [],
@@ -1193,15 +1193,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380 Part 3",
-    "testMethodWVTR": "DIN 53122 Part 2",
+    "testMethodOTR": "DIN 53380",
+    "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
         "value": 1.8,
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 Part 3"
+        "testMethod": "DIN 53380"
       }
     ],
     "wvtrValues": [
@@ -1210,7 +1210,7 @@
         "thickness": 12,
         "temperature": 37.8,
         "humidity": 90,
-        "testMethod": "DIN 53122 Part 2"
+        "testMethod": "DIN 53122"
       }
     ],
     "co2Values": [],
@@ -1302,7 +1302,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1310,56 +1310,56 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 7.7,
         "thickness": 17,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 7.0,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.0,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.5,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1397,7 +1397,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1405,7 +1405,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1443,7 +1443,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1451,21 +1451,21 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.5,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.6,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1503,7 +1503,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1511,21 +1511,21 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.5,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.6,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1563,7 +1563,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1571,14 +1571,14 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.6,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1616,7 +1616,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1624,21 +1624,21 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.5,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.6,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1676,7 +1676,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1684,35 +1684,35 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 31,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.0,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.5,
         "thickness": 41,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1750,7 +1750,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1758,7 +1758,7 @@
         "thickness": 21,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1796,7 +1796,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1804,14 +1804,14 @@
         "thickness": 26,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.2,
         "thickness": 32,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1849,7 +1849,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1857,7 +1857,7 @@
         "thickness": 19,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1895,7 +1895,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1903,14 +1903,14 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -1948,7 +1948,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -1956,21 +1956,21 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.5,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2008,7 +2008,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -2016,28 +2016,28 @@
         "thickness": 21,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.2,
         "thickness": 26,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.8,
         "thickness": 32,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 2.9,
         "thickness": 42,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2075,7 +2075,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -2083,21 +2083,21 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 31,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2135,7 +2135,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -2143,7 +2143,7 @@
         "thickness": 27,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2181,7 +2181,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 10,
@@ -2204,14 +2204,14 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 2.7,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2249,7 +2249,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 850,
@@ -2272,14 +2272,14 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2317,7 +2317,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.5,
@@ -2363,7 +2363,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.5,
@@ -2409,7 +2409,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 50,
@@ -2439,21 +2439,21 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.3,
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.3,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2491,7 +2491,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -2499,28 +2499,28 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.8,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.8,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.8,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2558,7 +2558,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -2566,7 +2566,7 @@
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2604,7 +2604,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 50,
@@ -2620,7 +2620,7 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2658,7 +2658,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 40,
@@ -2681,14 +2681,14 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.3,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2726,7 +2726,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 26,
@@ -2742,7 +2742,7 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2780,7 +2780,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 25,
@@ -2796,7 +2796,7 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2834,7 +2834,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
@@ -2857,14 +2857,14 @@
         "thickness": 16,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.1,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2902,7 +2902,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
@@ -2918,7 +2918,7 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -2956,7 +2956,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.5,
@@ -2972,7 +2972,7 @@
         "thickness": 16,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3010,7 +3010,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.5,
@@ -3026,7 +3026,7 @@
         "thickness": 16,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3064,7 +3064,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.5,
@@ -3080,7 +3080,7 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3118,7 +3118,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
@@ -3134,7 +3134,7 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3172,7 +3172,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3180,14 +3180,14 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3225,7 +3225,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3233,7 +3233,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3271,7 +3271,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3279,14 +3279,14 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3324,7 +3324,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3332,7 +3332,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3370,7 +3370,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1,
@@ -3386,7 +3386,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3424,7 +3424,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1,
@@ -3440,7 +3440,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3478,7 +3478,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1,
@@ -3494,7 +3494,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3532,7 +3532,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3540,14 +3540,14 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 18,
         "thickness": 23,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3585,7 +3585,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3593,21 +3593,21 @@
         "thickness": 33,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.2,
         "thickness": 38,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.1,
         "thickness": 47,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3645,7 +3645,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3653,21 +3653,21 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.2,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3705,7 +3705,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3713,35 +3713,35 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.0,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 2.5,
         "thickness": 60,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3779,7 +3779,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3787,35 +3787,35 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 6.6,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.5,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.7,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.1,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3853,7 +3853,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3861,14 +3861,14 @@
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3906,7 +3906,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3914,7 +3914,7 @@
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -3952,7 +3952,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -3960,28 +3960,28 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.5,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.0,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4019,7 +4019,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4027,7 +4027,7 @@
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4065,7 +4065,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4073,7 +4073,7 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4111,7 +4111,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4119,21 +4119,21 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.2,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.1,
         "thickness": 45,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4171,7 +4171,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4179,7 +4179,7 @@
         "thickness": 42,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4217,7 +4217,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4225,14 +4225,14 @@
         "thickness": 36,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.4,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4270,7 +4270,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4278,7 +4278,7 @@
         "thickness": 31,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4316,7 +4316,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4324,14 +4324,14 @@
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.2,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4369,7 +4369,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4377,14 +4377,14 @@
         "thickness": 42,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.0,
         "thickness": 52,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4422,7 +4422,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [],
     "co2Values": [],
@@ -4460,7 +4460,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
@@ -4483,14 +4483,14 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 0.1,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4528,7 +4528,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4536,7 +4536,7 @@
         "thickness": 38,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4574,7 +4574,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 80,
@@ -4590,7 +4590,7 @@
         "thickness": 38,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4628,7 +4628,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
@@ -4644,7 +4644,7 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4682,7 +4682,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Jindal internal (23°C/0%RH)",
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 30,
@@ -4698,7 +4698,7 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4736,7 +4736,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4744,7 +4744,7 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4782,7 +4782,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4790,14 +4790,14 @@
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.0,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -4835,7 +4835,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "Jindal internal (38°C/90%RH)",
+    "testMethodWVTR": "",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -4843,42 +4843,42 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.9,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 5.0,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.2,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 4.2,
         "thickness": 32,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       },
       {
         "value": 3.7,
         "thickness": 36,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Jindal internal (38°C/90%RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -6443,7 +6443,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 21309-2 Annex C",
+    "testMethodOTR": "ISO 21309-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -6451,7 +6451,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 21309-2 Annex C"
+        "testMethod": "ISO 21309-2 "
       }
     ],
     "wvtrValues": [],
@@ -6468,7 +6468,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/en-emea/downloads/tds-eval-g156b/",
-    "tdsSource": "Kuraray EVAL™ Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), grade table 20C/65%RH ISO 14663-2 Annex C. Individual TDS PDF gated - verify against official TDS.",
+    "tdsSource": "Kuraray EVAL™ Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), grade table 20C/65%RH ISO 14663-2 . Individual TDS PDF gated - verify against official TDS.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -6489,7 +6489,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.043,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -6497,7 +6497,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C"
+        "testMethod": "ISO 14663-2 "
       }
     ],
     "wvtrValues": [],
@@ -8751,15 +8751,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Cosmo published upper bound; condizioni 23°C/0%RH assunte",
-    "testMethodWVTR": "Cosmo published upper bound; condizioni 38°C/90%RH assunte",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 30,
         "thickness": 25,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Cosmo upper bound; 23°C/0%RH assunto"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -8768,7 +8768,7 @@
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Cosmo upper bound; 38°C/90%RH assunto"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -8805,15 +8805,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Cosmo published upper bound; condizioni 23°C/0%RH assunte",
-    "testMethodWVTR": "Cosmo published upper bound; condizioni 38°C/90%RH assunte",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Cosmo upper bound; 23°C/0%RH assunto"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -8822,7 +8822,7 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Cosmo upper bound; 38°C/90%RH assunto"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -8860,21 +8860,21 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
-    "testMethodWVTR": "Flex Films upper bound; 38°C/90%RH assunto",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.1,
         "thickness": 9.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 0.1,
         "thickness": 23.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -8928,21 +8928,21 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
-    "testMethodWVTR": "Flex Films upper bound; 38°C/90%RH assunto",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.0,
         "thickness": 9.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 23.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -8995,22 +8995,22 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
-    "testMethodWVTR": "Flex Films upper bound; 38°C/90%RH assunto",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 2.0,
         "thickness": 12.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 2.0,
         "thickness": 23.5,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9064,21 +9064,21 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
-    "testMethodWVTR": "Flex Films upper bound; 38°C/90%RH assunto",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.0,
         "thickness": 18,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9132,21 +9132,21 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Flex Films upper bound; 23°C/0%RH assunto",
-    "testMethodWVTR": "Flex Films upper bound; 38°C/90%RH assunto",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.0,
         "thickness": 18,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 23°C/0%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9512,15 +9512,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated on product page)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated on product page)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.3,
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9529,7 +9529,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9566,15 +9566,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated on product page)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated on product page)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.0,
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9583,7 +9583,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9620,15 +9620,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated on product page)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated on product page)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.2,
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -9637,7 +9637,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo official product page; T/RH conditions not specified — typical value"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9699,7 +9699,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/information-center/datasheets/",
-    "tdsSource": "Kuraray Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), Table 1c: Special grades. 24 mol% ethylene, ultra high-barrier grade. OTR 0.1 cm³·20µm/m²·day·atm at 20°C/65%RH (ISO 14663-2 Annex C). MFR 2.2 g/10min at 210°C/2160g. Lowest ethylene EVAL grade — highest barrier. Individual TDS gated on eval.kuraray.com.",
+    "tdsSource": "Kuraray Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), Table 1c: Special grades. 24 mol% ethylene, ultra high-barrier grade. OTR 0.1 cm³·20µm/m²·day·atm at 20°C/65%RH (ISO 14663-2 ). MFR 2.2 g/10min at 210°C/2160g. Lowest ethylene EVAL grade — highest barrier. Individual TDS gated on eval.kuraray.com.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -9720,7 +9720,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.033,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9728,7 +9728,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (from Kuraray brochure Table 1c)"
+        "testMethod": "ISO 14663-2  (from Kuraray brochure Table 1c)"
       }
     ],
     "wvtrValues": [],
@@ -9745,7 +9745,7 @@
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/information-center/datasheets/",
-    "tdsSource": "Kuraray Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), Table 1b. 32 mol% ethylene, high MFR (4.4 g/10min) F-type grade. OTR 0.4 cm³·20µm/m²·day·atm at 20°C/65%RH (ISO 14663-2 Annex C).",
+    "tdsSource": "Kuraray Technical Brochure '01B EVAL Technical EN' (Scribd 791124835), Table 1b. 32 mol% ethylene, high MFR (4.4 g/10min) F-type grade. OTR 0.4 cm³·20µm/m²·day·atm at 20°C/65%RH (ISO 14663-2 ).",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -9766,7 +9766,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9774,7 +9774,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (from Kuraray brochure Table 1b)"
+        "testMethod": "ISO 14663-2  (from Kuraray brochure Table 1b)"
       }
     ],
     "wvtrValues": [],
@@ -9812,7 +9812,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9820,7 +9820,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; pipe grade with anti-oxidant)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; pipe grade with anti-oxidant)"
       }
     ],
     "wvtrValues": [],
@@ -9858,7 +9858,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9866,7 +9866,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; pipe grade with anti-oxidant)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; pipe grade with anti-oxidant)"
       }
     ],
     "wvtrValues": [],
@@ -9904,7 +9904,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9912,7 +9912,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; 44 mol% pipe grade)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; 44 mol% pipe grade)"
       }
     ],
     "wvtrValues": [],
@@ -9950,7 +9950,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9958,7 +9958,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; deep thermoforming grade)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; deep thermoforming grade)"
       }
     ],
     "wvtrValues": [],
@@ -9996,7 +9996,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -10004,7 +10004,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; extrusion coating grade)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; extrusion coating grade)"
       }
     ],
     "wvtrValues": [],
@@ -10042,7 +10042,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -10050,7 +10050,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; SP grade, improved layer distribution)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade, improved layer distribution)"
       }
     ],
     "wvtrValues": [],
@@ -10088,7 +10088,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -10096,7 +10096,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; SP grade, improved orientation)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade, improved orientation)"
       }
     ],
     "wvtrValues": [],
@@ -10134,7 +10134,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 14663-2 Annex C",
+    "testMethodOTR": "ISO 14663-2 ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -10142,7 +10142,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 Annex C (Kuraray brochure; SP grade 44 mol%)"
+        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade 44 mol%)"
       }
     ],
     "wvtrValues": [],
@@ -10230,7 +10230,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "DIN 53380-3 / ASTM D3985",
-    "testMethodWVTR": "DIN 53122 / ASTM E96",
+    "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
         "value": 30,
@@ -10283,15 +10283,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.3,
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10300,7 +10300,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10338,14 +10338,14 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "Toyobo typical (conditions not stated)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated)",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.0,
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10354,7 +10354,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10491,15 +10491,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.01,
         "thickness": 20,
         "temperature": 20,
         "humidity": 50,
-        "testMethod": "Tohcello: 10 ml/m²/d/MPa ÷ 9.87 = 1.01 cc/m²/d/atm; PVOH-coated BOPP BH"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10508,7 +10508,7 @@
         "thickness": 20,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10545,15 +10545,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.71,
         "thickness": 20,
         "temperature": 20,
         "humidity": 50,
-        "testMethod": "Tohcello: 7 ml/m²/d/MPa ÷ 9.87 = 0.71 cc/m²/d/atm; PVOH-coated BOPP AG"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10562,7 +10562,7 @@
         "thickness": 20,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10599,15 +10599,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C/80%RH, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 3.04,
         "thickness": 20,
         "temperature": 20,
         "humidity": 80,
-        "testMethod": "Tohcello: 30 ml/m²/d/MPa ÷ 9.87 = 3.04 cc/m²/d/atm at 80%RH; PVOH-coated BOPP EX"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10616,7 +10616,7 @@
         "thickness": 20,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10653,15 +10653,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C/80%RH, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.52,
         "thickness": 20,
         "temperature": 20,
         "humidity": 80,
-        "testMethod": "Tohcello: 15 ml/m²/d/MPa ÷ 9.87 = 1.52 cc/m²/d/atm at 80%RH; PVOH-coated BOPP EXR"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10670,7 +10670,7 @@
         "thickness": 20,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -10707,15 +10707,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C/80%RH, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 1.52,
         "thickness": 18,
         "temperature": 20,
         "humidity": 80,
-        "testMethod": "Tohcello: 15 ml/m²/d/MPa ÷ 9.87 = 1.52 at 80%RH; EXR-C corona-treated"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10724,7 +10724,7 @@
         "thickness": 18,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -11085,8 +11085,8 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Polyplex/TPL brochure (conditions assumed standard)",
-    "testMethodWVTR": "Polyplex/TPL brochure (conditions assumed standard)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.5,
@@ -11139,15 +11139,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C/80%RH, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 5.07,
         "thickness": 25,
         "temperature": 20,
         "humidity": 80,
-        "testMethod": "Tohcello: 50 ml/m²/d/MPa ÷ 9.87 = 5.07 cc/m²/d/atm at 80%RH"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -11156,7 +11156,7 @@
         "thickness": 25,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -11193,15 +11193,15 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Tohcello standard (20°C/80%RH, converted from ml/m²/d/MPa)",
-    "testMethodWVTR": "Tohcello standard (40°C/90%RH)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 5.07,
         "thickness": 20,
         "temperature": 20,
         "humidity": 80,
-        "testMethod": "Tohcello: 50 ml/m²/d/MPa ÷ 9.87 = 5.07 at 80%RH; matte grade"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -11210,7 +11210,7 @@
         "thickness": 20,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Tohcello standard"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -11892,7 +11892,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -11938,7 +11938,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (post-retort, converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12473,7 +12473,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (post-retort, converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12519,7 +12519,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (post-retort, converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12565,7 +12565,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (post-retort, converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12805,7 +12805,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films catalog (23°C/0%RH assumed)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12854,7 +12854,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films catalog (23°C/0%RH assumed)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12903,7 +12903,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films catalog (23°C/0%RH assumed)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12952,7 +12952,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Flex Films catalog (23°C/0%RH assumed)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -12998,8 +12998,8 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "cross-reference from equivalent BOPA grades",
-    "testMethodWVTR": "cross-reference from equivalent BOPA grades",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 30,
