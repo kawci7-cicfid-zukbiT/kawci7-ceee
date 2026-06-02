@@ -4,15 +4,24 @@
 // ====================================================================
 
 // ====================================================================
-// SOFT DELETE / TRASH
+// SOFT DELETE / TRASH  (persisted in localStorage)
 // ====================================================================
-var _matTrash = [];
+var _matTrash = (function() {
+    try { return JSON.parse(localStorage.getItem('wvtr_mat_trash') || '[]'); }
+    catch(e) { return []; }
+})();
+
+function _saveTrash() {
+    try { localStorage.setItem('wvtr_mat_trash', JSON.stringify(_matTrash)); }
+    catch(e) { console.warn('Trash persist failed:', e); }
+}
 
 function softDeleteMat(matId) {
     var idx = DB.materials.findIndex(function(m){ return String(m.id) === String(matId); });
     if(idx < 0) return;
     var mat = DB.materials[idx];
     _matTrash.push(mat);
+    _saveTrash();
     DB.materials.splice(idx, 1);
     DB.save();
     matApplyFilters();
@@ -24,6 +33,7 @@ function restoreFromTrash(matId) {
     if(idx < 0) return;
     var mat = _matTrash[idx];
     _matTrash.splice(idx, 1);
+    _saveTrash();
     DB.materials.push(mat);
     DB.save();
     matApplyFilters();
@@ -36,11 +46,11 @@ function showTrashNotification(mat) {
     toast.id = 'trash-toast';
     toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;display:flex;align-items:center;gap:1rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3)';
     toast.innerHTML =
-        '<span>🗑️ <strong>' + mat.name + '</strong> moved to trash</span>' +
+        '<span>\uD83D\uDDD1\uFE0F <strong>' + _escHtml(mat.name) + '</strong> moved to trash</span>' +
         '<button onclick="restoreFromTrash(\'' + String(mat.id) + '\');this.closest(\'#trash-toast\').remove()" ' +
         'style="background:var(--primary);color:#fff;border:none;padding:0.3rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600">Undo</button>' +
         '<button onclick="this.closest(\'#trash-toast\').remove()" ' +
-        'style="background:transparent;color:rgba(255,255,255,0.5);border:none;cursor:pointer;font-size:1rem;padding:0 0.25rem">x</button>';
+        'style="background:transparent;color:rgba(255,255,255,0.5);border:none;cursor:pointer;font-size:1rem;padding:0 0.25rem">\u00d7</button>';
     document.body.appendChild(toast);
     setTimeout(function(){ if(toast.parentNode) toast.remove(); }, 6000);
 }
@@ -50,11 +60,28 @@ function showTrashPanel() {
     var body = '<div style="font-size:0.8rem;color:var(--text-light);margin-bottom:0.75rem">Items in trash are recovered to your local database only.</div>';
     body += _matTrash.map(function(m) {
         return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)">' +
-            '<span style="font-size:0.85rem;font-weight:500">' + m.name + '</span>' +
+            '<span style="font-size:0.85rem;font-weight:500">' + _escHtml(m.name) + '</span>' +
             '<button class="btn btn-sm btn-success" onclick="restoreFromTrash(\'' + String(m.id) + '\');Modal.close();matApplyFilters()">Restore</button>' +
             '</div>';
     }).join('');
     Modal.open('Trash (' + _matTrash.length + ' items)', body, function(){ return true; });
+}
+
+// ====================================================================
+// HTML ESCAPING HELPER
+// ====================================================================
+function _escHtml(str) {
+    if(!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function _escAttr(str) {
+    return _escHtml(str).replace(/\\/g, '\\\\');
 }
 
 // ====================================================================
@@ -271,8 +298,8 @@ async function updateTop3UI() {
             return '<div style="display:flex;align-items:center;gap:1rem;padding:0.85rem 1.5rem;border-bottom:1px solid #f8fafc">' +
                 '<div style="font-size:0.72rem;font-weight:700;color:#cbd5e1;font-family:monospace;width:20px;flex-shrink:0">0' + (idx+1) + '</div>' +
                 '<div style="flex:1;min-width:0">' +
-                '<div style="font-size:0.85rem;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + m.name + '</div>' +
-                '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">' + (m.company || 'Community - ' + m.count + ' uses') + '</div>' +
+                '<div style="font-size:0.85rem;font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _escHtml(m.name) + '</div>' +
+                '<div style="font-size:0.72rem;color:#94a3b8;margin-top:0.1rem">' + _escHtml(m.company || 'Community - ' + m.count + ' uses') + '</div>' +
                 '</div>' +
                 '<div style="font-size:0.72rem;font-weight:700;color:#2563eb">' + m.count + '</div>' +
                 '</div>';
@@ -294,10 +321,10 @@ function _buildBarrierRows(vals, topTM) {
         var isPending = !!v.pending;
         rows += '<tr style="border-bottom:' + (isPending ? 'none' : '1px solid var(--border-light,#f1f5f9)') + ';background:' + (isPending ? '#fefce8' : 'transparent') + '">' +
             '<td style="padding:4px 6px;font-weight:600;color:' + (isPending ? '#92400e' : 'var(--primary)') + ';font-family:monospace;font-size:0.8rem">' + v.value + '</td>' +
-            '<td style="padding:4px 6px">' + v.thickness + ' um</td>' +
-            '<td style="padding:4px 6px">' + condTemp + (condTemp !== '-' ? 'C' : '') + '</td>' +
+            '<td style="padding:4px 6px">' + v.thickness + ' \u00b5m</td>' +
+            '<td style="padding:4px 6px">' + condTemp + (condTemp !== '-' ? '\u00b0C' : '') + '</td>' +
             '<td style="padding:4px 6px">' + condHum  + (condHum  !== '-' ? '%' : '') + '</td>' +
-            '<td style="padding:4px 6px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + condTM + '</td>' +
+            '<td style="padding:4px 6px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + _escHtml(condTM) + '</td>' +
             '</tr>';
         if(isPending) {
             rows += '<tr style="background:#fef9c3;border-bottom:1px solid #fcd34d">' +
@@ -344,9 +371,10 @@ function matCardHTML(m, q) {
     var hasEmail = !!(m.supplierEmail && m.supplierEmail.trim());
 
     function hl(str) {
-        if(!q || !str) return str || '';
+        if(!q || !str) return _escHtml(str) || '';
+        var safe = _escHtml(str);
         var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')','gi');
-        return String(str).replace(re,'<mark style="background:#fef08a;color:#713f12;padding:0 2px;border-radius:2px">$1</mark>');
+        return safe.replace(re,'<mark style="background:#fef08a;color:#713f12;padding:0 2px;border-radius:2px">$1</mark>');
     }
 
     function firstValPill(vals, label) {
@@ -361,19 +389,19 @@ function matCardHTML(m, q) {
 
     var badges = '';
     if(isComm)         badges += '<span class="badge badge-purple" style="font-size:0.65rem">Community</span> ';
-    if(verified)       badges += '<span class="badge-verified" title="Verified by ' + verified.by + '">Verified</span> ';
+    if(verified)       badges += '<span class="badge-verified" title="Verified by ' + _escAttr(verified.by) + '">Verified</span> ';
     if(m.isMetallized) badges += '<span class="badge badge-yellow" style="font-size:0.65rem">Metallized</span> ';
     if(arrOk)          badges += '<span class="badge badge-green" style="font-size:0.65rem">Arrhenius</span> ';
 
     var shareLabel = m.firebaseDocId ? 'Update community' : 'Share with community';
     var btns =
-        '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showMatModal(\'' + idStr + '\')">Edit</button>' +
-        '<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();softDeleteMat(\'' + idStr + '\')">Delete</button>' +
-        '<button class="btn btn-sm ' + (m.firebaseDocId ? 'btn-success' : 'btn-primary') + '" onclick="event.stopPropagation();submitToFirebaseById(\'' + idStr + '\')">' + shareLabel + '</button>' +
+        '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();showMatModal(\'' + _escAttr(idStr) + '\')">Edit</button>' +
+        '<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();softDeleteMat(\'' + _escAttr(idStr) + '\')">Delete</button>' +
+        '<button class="btn btn-sm ' + (m.firebaseDocId ? 'btn-success' : 'btn-primary') + '" onclick="event.stopPropagation();submitToFirebaseById(\'' + _escAttr(idStr) + '\')">' + shareLabel + '</button>' +
         '<button class="btn btn-sm btn-outline" ' +
             (hasEmail ? '' : 'style="opacity:0.4;cursor:not-allowed" title="No supplier email" ') +
             'onclick="event.stopPropagation();' +
-            (hasEmail ? 'contactSupplier(\'' + (m.name||'').replace(/'/g,"\\'") + '\',\'' + (m.company||'').replace(/'/g,"\\'") + '\',\'' + (m.supplierEmail||'').replace(/'/g,"\\'") + '\')' : '') +
+            (hasEmail ? 'contactSupplier(\'' + _escAttr(m.name||'') + '\',\'' + _escAttr(m.company||'') + '\',\'' + _escAttr(m.supplierEmail||'') + '\')' : '') +
             '">Contact supplier</button>';
 
     var upStyle   = userVote === 'up'   ? 'background:var(--success-light);border-color:var(--success);color:var(--success)' : '';
@@ -382,9 +410,9 @@ function matCardHTML(m, q) {
     var relClass  = relScore !== null ? (relScore >= 70 ? 'high' : relScore >= 40 ? 'medium' : 'low') : 'medium';
 
     var physItems = [];
-    if(m.density)      physItems.push(['Density',      m.density + ' kg/m3']);
-    if(m.meltingTemp)  physItems.push(['Melting temp',  m.meltingTemp + 'C' + (m.meltingTempMethod ? ' (' + m.meltingTempMethod + ')' : '')]);
-    if(m.gwp)          physItems.push(['GWP',           m.gwp + ' kg CO2eq/kg']);
+    if(m.density)      physItems.push(['Density',      m.density + ' kg/m\u00b3']);
+    if(m.meltingTemp)  physItems.push(['Melting temp',  m.meltingTemp + '\u00b0C' + (m.meltingTempMethod ? ' (' + _escHtml(m.meltingTempMethod) + ')' : '')]);
+    if(m.gwp)          physItems.push(['GWP',           m.gwp + ' kg CO\u2082eq/kg']);
     if(m.haze != null) physItems.push(['Haze',          m.haze + (m.hazeUnit||'%')]);
     var physHTML = '';
     if(physItems.length > 0) {
@@ -419,7 +447,7 @@ function matCardHTML(m, q) {
             '<div style="flex:1;min-width:0;overflow:hidden">' +
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
                     '<h3 style="margin:0;font-size:0.9rem;font-weight:600">' + hl(m.name) + '</h3>' +
-                    '<span style="font-size:0.7rem;font-weight:400;color:var(--text-light)">[' + (m.family||'?') + ']</span>' +
+                    '<span style="font-size:0.7rem;font-weight:400;color:var(--text-light)">[' + _escHtml(m.family||'?') + ']</span>' +
                     (m.company ? '<span style="font-size:0.7rem;color:var(--text-light)">- ' + hl(m.company) + '</span>' : '') +
                 '</div>' +
                 '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-top:4px">' + headerPills + badges + '</div>' +
@@ -428,13 +456,13 @@ function matCardHTML(m, q) {
         '</div>' +
         '<div class="mat-body"><div class="mat-body-content">' +
             '<div style="border-top:1px solid var(--border);padding-top:4px">' +
-                _barrierSection('WVTR','g/m2 day', m.wvtrValues||[], m.testMethodWVTR||'') +
+                _barrierSection('WVTR','g/m\u00b2\u00b7day', m.wvtrValues||[], m.testMethodWVTR||'') +
                 '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:8px;padding-top:4px">' +
-                _barrierSection('OTR','cc/m2 day atm', m.otrValues||[], m.testMethodOTR||'') +
+                _barrierSection('OTR','cc/m\u00b2\u00b7day\u00b7atm', m.otrValues||[], m.testMethodOTR||'') +
                 '</div>' +
                 ((m.co2Values && m.co2Values.length > 0) ?
                     '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:8px;padding-top:4px">' +
-                    _barrierSection('CO2TR','cc/m2 day atm', m.co2Values||[], m.testMethodCO2||'') +
+                    _barrierSection('CO\u2082TR','cc/m\u00b2\u00b7day\u00b7atm', m.co2Values||[], m.testMethodCO2||'') +
                     '</div>' : '') +
             '</div>' +
             physHTML + hygroHTML +
@@ -443,10 +471,10 @@ function matCardHTML(m, q) {
                 '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px">' +
                     (m.company ? '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">Company</div><div style="font-size:0.8rem;font-weight:600">' + hl(m.company) + '</div></div>' : '') +
                     '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">Contact email</div>' +
-                        (m.supplierEmail ? '<div style="font-size:0.78rem;font-weight:500;color:var(--primary)">' + m.supplierEmail + '</div>' : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
+                        (m.supplierEmail ? '<div style="font-size:0.78rem;font-weight:500;color:var(--primary)">' + _escHtml(m.supplierEmail) + '</div>' : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
                     '</div>' +
                     '<div style="background:var(--bg-secondary,#f8fafc);border-radius:6px;padding:7px 10px"><div style="font-size:0.68rem;color:var(--text-light);margin-bottom:2px">TDS</div>' +
-                        (m.tdsLink ? '<a href="' + m.tdsLink + '" target="_blank" onclick="event.stopPropagation()" style="font-size:0.78rem;font-weight:500;color:var(--primary);text-decoration:none">View datasheet</a>' : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
+                        (m.tdsLink ? '<a href="' + _escAttr(m.tdsLink) + '" target="_blank" onclick="event.stopPropagation()" style="font-size:0.78rem;font-weight:500;color:var(--primary);text-decoration:none">View datasheet</a>' : '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic">Not available</div>') +
                     '</div>' +
                 '</div>' +
             '</div>' +
@@ -454,8 +482,8 @@ function matCardHTML(m, q) {
             '<div class="mat-voting" style="margin-top:10px">' +
                 '<div class="mat-voting-label"><span>Community reliability</span><span class="reliability-badge ' + relClass + '">' + relLabel + '</span></div>' +
                 '<div class="mat-voting-buttons">' +
-                    '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + idStr + '\',\'up\')" style="' + upStyle + '" title="' + (userVote==='up'?'Remove vote':'Reliable') + '">+1</button>' +
-                    '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + idStr + '\',\'down\')" style="' + downStyle + '" title="' + (userVote==='down'?'Remove vote':'Unreliable') + '">-1</button>' +
+                    '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + _escAttr(idStr) + '\',\'up\')" style="' + upStyle + '" title="' + (userVote==='up'?'Remove vote':'Reliable') + '">+1</button>' +
+                    '<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();voteReliability(\'' + _escAttr(idStr) + '\',\'down\')" style="' + downStyle + '" title="' + (userVote==='down'?'Remove vote':'Unreliable') + '">-1</button>' +
                 '</div>' +
             '</div>' +
         '</div></div></div>';
@@ -466,23 +494,24 @@ function matCardHTML(m, q) {
 // ====================================================================
 function matApplyFilters() {
     Engine.mode = State.mode;
-    var q       = ((document.getElementById('mat-search')  ? document.getElementById('mat-search').value  : State.searchQuery) || '').trim().toLowerCase();
-    var fc      = (document.getElementById('mf-company')   ? document.getElementById('mf-company').value  : '');
-    var fperf   = (document.getElementById('mf-perf')      ? document.getElementById('mf-perf').value     : '');
-    var fmethod = (document.getElementById('mf-method')    ? document.getElementById('mf-method').value   : '');
-    var ffamily = (document.getElementById('mf-family')    ? document.getElementById('mf-family').value   : '');
-    var ftype   = (document.getElementById('mf-type')      ? document.getElementById('mf-type').value     : '');
+    // FIX: use filter-specific IDs (ft-*) to avoid collision with modal IDs (mm-*)
+    var q       = ((document.getElementById('ft-search')  ? document.getElementById('ft-search').value  : State.searchQuery) || '').trim().toLowerCase();
+    var fc      = (document.getElementById('ft-company')  ? document.getElementById('ft-company').value  : '');
+    var fperf   = (document.getElementById('ft-perf')     ? document.getElementById('ft-perf').value     : '');
+    var fmethod = (document.getElementById('ft-method')   ? document.getElementById('ft-method').value   : '');
+    var ffamily = (document.getElementById('ft-family')   ? document.getElementById('ft-family').value   : '');
+    var ftype   = (document.getElementById('ft-type')     ? document.getElementById('ft-type').value     : '');
 
-    var chipsEl = document.getElementById('mf-chips');
+    var chipsEl = document.getElementById('ft-chips');
     if(chipsEl) {
         var chips = [];
-        if(fc)      chips.push({ label:'Supplier: '+fc,                     clear:"document.getElementById('mf-company').value='';matApplyFilters()" });
-        if(fperf)   chips.push({ label:State.mode.toUpperCase()+': '+fperf, clear:"document.getElementById('mf-perf').value='';matApplyFilters()" });
-        if(fmethod) chips.push({ label:'Method: '+fmethod,                  clear:"document.getElementById('mf-method').value='';matApplyFilters()" });
-        if(ffamily) chips.push({ label:'Family: '+ffamily,                  clear:"document.getElementById('mf-family').value='';matApplyFilters()" });
-        if(ftype)   chips.push({ label:'Type: '+ftype,                      clear:"document.getElementById('mf-type').value='';matApplyFilters()" });
+        if(fc)      chips.push({ label:'Supplier: '+fc,                     clear:"document.getElementById('ft-company').value='';matApplyFilters()" });
+        if(fperf)   chips.push({ label:State.mode.toUpperCase()+': '+fperf, clear:"document.getElementById('ft-perf').value='';matApplyFilters()" });
+        if(fmethod) chips.push({ label:'Method: '+fmethod,                  clear:"document.getElementById('ft-method').value='';matApplyFilters()" });
+        if(ffamily) chips.push({ label:'Family: '+ffamily,                  clear:"document.getElementById('ft-family').value='';matApplyFilters()" });
+        if(ftype)   chips.push({ label:'Type: '+ftype,                      clear:"document.getElementById('ft-type').value='';matApplyFilters()" });
         chipsEl.innerHTML = chips.map(function(c){
-            return '<span onclick="' + c.clear + '" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:0.72rem;font-weight:600;cursor:pointer">x ' + c.label + '</span>';
+            return '<span onclick="' + c.clear + '" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:0.72rem;font-weight:600;cursor:pointer">\u00d7 ' + _escHtml(c.label) + '</span>';
         }).join('');
     }
 
@@ -542,7 +571,7 @@ function onMatSearch(val) {
     State.searchQuery = val || '';
     matApplyFilters();
     setTimeout(function(){
-        var input = document.getElementById('mat-search');
+        var input = document.getElementById('ft-search');
         if(input){ input.focus(); input.setSelectionRange(val.length, val.length); }
     }, 10);
 }
@@ -553,7 +582,7 @@ function onMatSearch(val) {
 function renderMaterials() {
     Engine.mode = State.mode;
     var currentLabel = State.mode === 'wvtr' ? 'WVTR' : 'OTR';
-    var currentUnit  = State.mode === 'wvtr' ? 'g/m2 day' : 'cc/m2 day';
+    var currentUnit  = State.mode === 'wvtr' ? 'g/m\u00b2\u00b7day' : 'cc/m\u00b2\u00b7day';
 
     var companies={}, methods={}, families={};
     DB.materials.forEach(function(m){
@@ -563,10 +592,11 @@ function renderMaterials() {
         if(m.family) families[m.family] = true;
     });
 
-    var compOpts = Object.keys(companies).sort().map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
-    var methOpts = Object.keys(methods).sort().map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join('');
-    var famOpts  = Object.keys(families).sort().map(function(f){ return '<option value="'+f+'">'+f+'</option>'; }).join('');
+    var compOpts = Object.keys(companies).sort().map(function(c){ return '<option value="'+_escAttr(c)+'">'+_escHtml(c)+'</option>'; }).join('');
+    var methOpts = Object.keys(methods).sort().map(function(m){ return '<option value="'+_escAttr(m)+'">'+_escHtml(m)+'</option>'; }).join('');
+    var famOpts  = Object.keys(families).sort().map(function(f){ return '<option value="'+_escAttr(f)+'">'+_escHtml(f)+'</option>'; }).join('');
 
+    // FIX: filter IDs use ft-* prefix to avoid collision with modal mm-* IDs
     return '<div style="padding:0.25rem 0">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">' +
             '<div style="font-size:1rem;font-weight:600">Materials <span class="badge badge-blue">' + DB.materials.length + '</span></div>' +
@@ -581,36 +611,36 @@ function renderMaterials() {
             '<div style="font-size:0.75rem;font-weight:600;color:var(--text-light);margin-bottom:0.6rem">Filters</div>' +
             '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:0.6rem">' +
                 '<div class="form-group" style="margin:0"><label>Supplier</label>' +
-                    '<select class="form-input" id="mf-company" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All suppliers</option>' + compOpts + '</select></div>' +
+                    '<select class="form-input" id="ft-company" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All suppliers</option>' + compOpts + '</select></div>' +
                 '<div class="form-group" style="margin:0"><label>' + currentLabel + ' level</label>' +
-                    '<select class="form-input" id="mf-perf" onchange="matApplyFilters()" style="font-size:0.78rem">' +
+                    '<select class="form-input" id="ft-perf" onchange="matApplyFilters()" style="font-size:0.78rem">' +
                     '<option value="">Any</option>' +
                     '<option value="ultra">&lt; 0.1 ' + currentUnit + '</option>' +
                     '<option value="high">&lt; 1 ' + currentUnit + '</option>' +
                     '<option value="med">&lt; 10 ' + currentUnit + '</option>' +
                     '<option value="low">&gt; 10 ' + currentUnit + '</option></select></div>' +
                 '<div class="form-group" style="margin:0"><label>Test method</label>' +
-                    '<select class="form-input" id="mf-method" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All methods</option>' + methOpts + '</select></div>' +
+                    '<select class="form-input" id="ft-method" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All methods</option>' + methOpts + '</select></div>' +
                 '<div class="form-group" style="margin:0"><label>Family</label>' +
-                    '<select class="form-input" id="mf-family" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All families</option>' + famOpts + '</select></div>' +
+                    '<select class="form-input" id="ft-family" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All families</option>' + famOpts + '</select></div>' +
                 '<div class="form-group" style="margin:0"><label>Type</label>' +
-                    '<select class="form-input" id="mf-type" onchange="matApplyFilters()" style="font-size:0.78rem">' +
+                    '<select class="form-input" id="ft-type" onchange="matApplyFilters()" style="font-size:0.78rem">' +
                     '<option value="">All types</option>' +
                     '<option value="community">Community only</option>' +
                     '<option value="verified">Verified only</option>' +
                     '<option value="metallized">Metallized only</option>' +
                     '<option value="arrhenius">Arrhenius ready</option></select></div>' +
             '</div>' +
-            '<div id="mf-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>' +
+            '<div id="ft-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>' +
         '</div>' +
         '<div style="position:relative;margin-bottom:0.75rem">' +
-            '<input type="text" class="form-input" id="mat-search" style="padding-left:32px;font-size:0.82rem" ' +
+            '<input type="text" class="form-input" id="ft-search" style="padding-left:32px;font-size:0.82rem" ' +
                 'placeholder="Search by name, supplier, value (e.g. wvtr &lt; 2)..." ' +
-                'value="' + State.searchQuery + '" oninput="onMatSearch(this.value)">' +
+                'value="' + _escAttr(State.searchQuery) + '" oninput="onMatSearch(this.value)">' +
         '</div>' +
         '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center">' +
             '<span id="mat-result-label">Showing <strong>' + DB.materials.length + '</strong> materials</span>' +
-            '<span>WVTR - OTR - CO2TR</span>' +
+            '<span>WVTR \u2013 OTR \u2013 CO\u2082TR</span>' +
         '</div>' +
         '<div id="mat-list" style="display:flex;flex-direction:column;gap:6px"></div>' +
     '</div>';
@@ -618,14 +648,13 @@ function renderMaterials() {
 
 // ====================================================================
 // MODAL BARRIER SECTION HELPER (modal — with editable rows + add form)
+// FIX: all modal IDs use mm-* prefix to avoid collision with ft-* filter IDs
 // ====================================================================
 function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
-    var labels  = { wvtr:'WVTR', otr:'OTR', co2:'CO2TR' };
-    var units   = { wvtr:'g/m2 day', otr:'cc/m2 day atm', co2:'cc/m2 day atm' };
+    var labels  = { wvtr:'WVTR', otr:'OTR', co2:'CO\u2082TR' };
+    var units   = { wvtr:'g/m\u00b2\u00b7day', otr:'cc/m\u00b2\u00b7day\u00b7atm', co2:'cc/m\u00b2\u00b7day\u00b7atm' };
     var valKeys = { wvtr:'wvtrValues', otr:'otrValues', co2:'co2Values' };
     var tmKeys  = { wvtr:'testMethodWVTR', otr:'testMethodOTR', co2:'testMethodCO2' };
-    var betaKeys = { wvtr:'hygroscopicBetaWVTR', otr:'hygroscopicBetaOTR', co2:'hygroscopicBetaCO2' };
-    var refRHKeys = { wvtr:'hygroscopicRefRHWVTR', otr:'hygroscopicRefRHOTR', co2:'hygroscopicRefRHCO2' };
     var ctmOpts = {
         wvtr: ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'],
         otr:  ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'],
@@ -638,7 +667,7 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
     var roData = isCommMat || isDefaultMat;
 
     var tmOptsHTML = '<option value="">-- method --</option>';
-    ctmOpts[type].forEach(function(t){ tmOptsHTML += '<option value="'+t+'">'+t+'</option>'; });
+    ctmOpts[type].forEach(function(t){ tmOptsHTML += '<option value="'+_escAttr(t)+'">'+_escHtml(t)+'</option>'; });
 
     var html = '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:14px;padding-top:12px">' +
         '<div style="font-size:0.72rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">' +
@@ -654,7 +683,7 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
             '<th style="text-align:left;padding:3px 5px;color:var(--text-light);font-weight:600">RH%</th>' +
             '<th style="text-align:left;padding:3px 5px;color:var(--text-light);font-weight:600">Method</th>' +
             (roData ? '' : '<th></th>') +
-            '</tr></thead><tbody id="modal-' + type + '-tbody">';
+            '</tr></thead><tbody id="mm-' + type + '-tbody">';
         vals.forEach(function(v, ri) {
             var condTemp = v.temperature != null ? v.temperature : '-';
             var condHum  = v.humidity    != null ? v.humidity    : '-';
@@ -662,25 +691,25 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
             if(roData) {
                 html += '<tr style="border-bottom:1px solid var(--border-light,#f1f5f9);background:#f8fafc">' +
                     '<td style="padding:4px 5px;font-weight:600;color:var(--primary);font-family:monospace">' + v.value + '</td>' +
-                    '<td style="padding:4px 5px">' + v.thickness + ' um</td>' +
-                    '<td style="padding:4px 5px">' + condTemp + (condTemp!=='-'?'C':'') + '</td>' +
+                    '<td style="padding:4px 5px">' + v.thickness + ' \u00b5m</td>' +
+                    '<td style="padding:4px 5px">' + condTemp + (condTemp!=='-'?'\u00b0C':'') + '</td>' +
                     '<td style="padding:4px 5px">' + condHum  + (condHum !=='-'?'%' :'') + '</td>' +
-                    '<td style="padding:4px 5px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + condTM + '</td>' +
+                    '<td style="padding:4px 5px;color:var(--text-light);font-size:0.7rem;font-style:italic">' + _escHtml(condTM) + '</td>' +
                     '</tr>';
             } else {
                 var tmSelOpts = '<option value="">-- method --</option>';
                 ctmOpts[type].forEach(function(t){
-                    tmSelOpts += '<option value="'+t+'"'+(condTM===t?' selected':'')+'>' + t + '</option>';
+                    tmSelOpts += '<option value="'+_escAttr(t)+'"'+(condTM===t?' selected':'')+'>' + _escHtml(t) + '</option>';
                 });
                 if(condTM && condTM!=='-' && ctmOpts[type].indexOf(condTM)<0)
-                    tmSelOpts += '<option value="'+condTM+'" selected>'+condTM+'</option>';
-                html += '<tr style="border-bottom:1px solid var(--border-light,#f1f5f9)" id="modal-'+type+'-row-'+ri+'">' +
-                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input modal-val" data-type="'+type+'" data-ri="'+ri+'" value="'+v.value+'" style="font-size:0.75rem;padding:3px 6px;width:70px"></td>' +
-                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input modal-thick" data-type="'+type+'" data-ri="'+ri+'" value="'+v.thickness+'" style="font-size:0.75rem;padding:3px 6px;width:70px"></td>' +
-                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input modal-temp" data-type="'+type+'" data-ri="'+ri+'" value="'+(v.temperature!=null?v.temperature:'')+'" placeholder="23" style="font-size:0.75rem;padding:3px 6px;width:55px"></td>' +
-                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input modal-hum" data-type="'+type+'" data-ri="'+ri+'" value="'+(v.humidity!=null?v.humidity:'')+'" placeholder="50" style="font-size:0.75rem;padding:3px 6px;width:55px"></td>' +
-                    '<td style="padding:3px 4px"><select class="form-input modal-method" data-type="'+type+'" data-ri="'+ri+'" style="font-size:0.72rem;padding:3px 5px">'+tmSelOpts+'</select></td>' +
-                    '<td style="padding:3px 4px"><button type="button" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:0.85rem;padding:2px 5px" onclick="document.getElementById(\'modal-'+type+'-row-'+ri+'\').remove()">x</button></td>' +
+                    tmSelOpts += '<option value="'+_escAttr(condTM)+'" selected>'+_escHtml(condTM)+'</option>';
+                html += '<tr style="border-bottom:1px solid var(--border-light,#f1f5f9)" id="mm-'+type+'-row-'+ri+'">' +
+                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input mm-val" data-type="'+type+'" data-ri="'+ri+'" value="'+v.value+'" style="font-size:0.75rem;padding:3px 6px;width:70px"></td>' +
+                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input mm-thick" data-type="'+type+'" data-ri="'+ri+'" value="'+v.thickness+'" style="font-size:0.75rem;padding:3px 6px;width:70px"></td>' +
+                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input mm-temp" data-type="'+type+'" data-ri="'+ri+'" value="'+(v.temperature!=null?v.temperature:'')+'" placeholder="23" style="font-size:0.75rem;padding:3px 6px;width:55px"></td>' +
+                    '<td style="padding:3px 4px"><input type="number" step="any" class="form-input mm-hum" data-type="'+type+'" data-ri="'+ri+'" value="'+(v.humidity!=null?v.humidity:'')+'" placeholder="50" style="font-size:0.75rem;padding:3px 6px;width:55px"></td>' +
+                    '<td style="padding:3px 4px"><select class="form-input mm-method" data-type="'+type+'" data-ri="'+ri+'" style="font-size:0.72rem;padding:3px 5px">'+tmSelOpts+'</select></td>' +
+                    '<td style="padding:3px 4px"><button type="button" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:0.85rem;padding:2px 5px" onclick="document.getElementById(\'mm-'+type+'-row-'+ri+'\').remove()">\u00d7</button></td>' +
                     '</tr>';
             }
         });
@@ -695,17 +724,17 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
         (isCommMat ? '<div style="font-size:0.68rem;color:#92400e;background:#fef3c7;border-radius:4px;padding:4px 7px;margin-bottom:7px">Pending approval - visible in yellow until admin approves.</div>' : '') +
         '<div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:5px;margin-bottom:5px">' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">' + label + ' value</label>' +
-                '<input type="number" step="any" class="form-input" id="modal-'+type+'-new-val" placeholder="0" style="font-size:0.75rem;padding:3px 7px"></div>' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Thickness (um)</label>' +
-                '<input type="number" step="any" class="form-input" id="modal-'+type+'-new-thick" placeholder="0" style="font-size:0.75rem;padding:3px 7px"></div>' +
+                '<input type="number" step="any" class="form-input" id="mm-'+type+'-new-val" placeholder="0" style="font-size:0.75rem;padding:3px 7px"></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Thickness (\u00b5m)</label>' +
+                '<input type="number" step="any" class="form-input" id="mm-'+type+'-new-thick" placeholder="0" style="font-size:0.75rem;padding:3px 7px"></div>' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Test method</label>' +
-                '<select class="form-input" id="modal-'+type+'-new-method" style="font-size:0.72rem;padding:3px 5px">' + tmOptsHTML + '</select></div>' +
+                '<select class="form-input" id="mm-'+type+'-new-method" style="font-size:0.72rem;padding:3px 5px">' + tmOptsHTML + '</select></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">' +
-            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Temp (C)</label>' +
-                '<input type="number" step="any" class="form-input" id="modal-'+type+'-new-temp" placeholder="23" style="font-size:0.75rem;padding:3px 7px"></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Temp (\u00b0C)</label>' +
+                '<input type="number" step="any" class="form-input" id="mm-'+type+'-new-temp" placeholder="23" style="font-size:0.75rem;padding:3px 7px"></div>' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Humidity (%RH)</label>' +
-                '<input type="number" step="any" class="form-input" id="modal-'+type+'-new-hum" placeholder="50" style="font-size:0.75rem;padding:3px 7px"></div>' +
+                '<input type="number" step="any" class="form-input" id="mm-'+type+'-new-hum" placeholder="50" style="font-size:0.75rem;padding:3px 7px"></div>' +
         '</div>' +
         '</div>' +
         '</div>';
@@ -714,14 +743,15 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
 }
 
 function matModalHygroToggle() {
-    var cb = document.getElementById('mf-hygroscopic');
-    var fields = document.getElementById('mf-hygro-fields');
+    var cb = document.getElementById('mm-hygroscopic');
+    var fields = document.getElementById('mm-hygro-fields');
     if(!cb || !fields) return;
     fields.style.display = cb.checked ? 'block' : 'none';
 }
 
 // ====================================================================
 // ADD / EDIT MATERIAL MODAL
+// FIX: all modal IDs use mm-* prefix to avoid collision with ft-* filter IDs
 // ====================================================================
 function showMatModal(editId) {
     var mat = null;
@@ -747,7 +777,7 @@ function showMatModal(editId) {
     var familyOpts = '<option value="">Select family...</option>';
     for(var fam in POLYMER_FAMILIES){
         var sel = (mat && mat.family === fam) ? ' selected' : '';
-        familyOpts += '<option value="'+fam+'"'+sel+'>'+fam+'</option>';
+        familyOpts += '<option value="'+_escAttr(fam)+'"'+sel+'>'+_escHtml(fam)+'</option>';
     }
     var metallizedCheck = mat && mat.isMetallized ? 'checked' : '';
 
@@ -766,72 +796,80 @@ function showMatModal(editId) {
 
     var hygroRO = (isCommMat || isDefaultMat) ? ' disabled readonly style="opacity:0.6;cursor:not-allowed;background:#f1f5f9"' : '';
 
+    var hasHygro = mat && (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBetaOTR > 0 || mat.hygroscopicBetaCO2 > 0);
+    var isRO = isCommMat || isDefaultMat;
+
     var modalBody =
         banner +
-        '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mf-name" value="'+(mat?mat.name:'')+'"'+RO+'></div>' +
+        '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mm-name" value="'+_escAttr(mat?mat.name:'')+'"'+RO+'></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-            '<div class="form-group" style="margin:0"><label>Material family</label><select class="form-input" id="mf-family"'+RO+'>'+familyOpts+'</select></div>' +
-            '<div class="form-group" style="margin:0"><label>Company name</label><input type="text" class="form-input" id="mf-company" value="'+(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>Material family</label><select class="form-input" id="mm-family"'+RO+'>'+familyOpts+'</select></div>' +
+            '<div class="form-group" style="margin:0"><label>Company name</label><input type="text" class="form-input" id="mm-company" value="'+_escAttr(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
             '<div class="form-group" style="margin:0"><label>Contact email <span style="font-size:0.65rem;color:var(--text-light)">(always editable)</span></label>' +
-                '<input type="email" class="form-input" id="mf-email" value="'+(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
+                '<input type="email" class="form-input" id="mm-email" value="'+_escAttr(mat&&mat.supplierEmail?mat.supplierEmail:'')+'" placeholder="supplier@company.com"></div>' +
             '<div class="form-group" style="margin:0"><label>TDS link <span style="font-size:0.65rem;color:var(--text-light)">(always editable)</span></label>' +
-                '<input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://"'+tdsRO+'></div>' +
+                '<input type="url" class="form-input" id="mm-tdslink" value="'+_escAttr(mat?mat.tdsLink||'':'')+'" placeholder="https://"'+tdsRO+'></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
-            '<div class="form-group" style="margin:0"><label>Density (kg/m³)</label>' +
-                '<input type="number" step="any" class="form-input" id="mf-density" value="'+(mat&&mat.density?mat.density:'')+'" placeholder="e.g. 1400"'+RO+'></div>' +
-            '<div class="form-group" style="margin:0"><label>GWP (kg CO2eq/kg)</label>' +
-                '<input type="number" step="any" class="form-input" id="mf-gwp" value="'+(mat&&mat.gwp?mat.gwp:'')+'" placeholder="e.g. 2.15"'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>Density (kg/m\u00b3)</label>' +
+                '<input type="number" step="any" class="form-input" id="mm-density" value="'+(mat&&mat.density?mat.density:'')+'" placeholder="e.g. 1400"'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>GWP (kg CO\u2082eq/kg)</label>' +
+                '<input type="number" step="any" class="form-input" id="mm-gwp" value="'+(mat&&mat.gwp?mat.gwp:'')+'" placeholder="e.g. 2.15"'+RO+'></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
             '<div class="form-group" style="margin:0"><label>Haze (%)</label>' +
-                '<input type="number" step="any" class="form-input" id="mf-haze" value="'+(mat&&mat.haze!=null?mat.haze:'')+'" placeholder="e.g. 2.5"'+RO+'></div>' +
-            '<div class="form-group" style="margin:0"><label>Melting temp (°C)</label>' +
-                '<input type="number" step="any" class="form-input" id="mf-melting-temp" value="'+(mat&&mat.meltingTemp?mat.meltingTemp:'')+'" placeholder="e.g. 260"'+RO+'></div>' +
+                '<input type="number" step="any" class="form-input" id="mm-haze" value="'+(mat&&mat.haze!=null?mat.haze:'')+'" placeholder="e.g. 2.5"'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>Melting temp (\u00b0C)</label>' +
+                '<input type="number" step="any" class="form-input" id="mm-melting-temp" value="'+(mat&&mat.meltingTemp?mat.meltingTemp:'')+'" placeholder="e.g. 260"'+RO+'></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">' +
 
-        '<div style="padding:12px 14px;background:#fefce8;border:1.5px solid #fcd34d;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-metallized\').click()')+'">' +
-            '<input type="checkbox" id="mf-metallized" '+metallizedCheck+ROcheck+' style="width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'">' +
+        // FIX: metallized card — use label+for instead of onclick on container (accessibility)
+        '<label for="mm-metallized" style="padding:12px 14px;background:#fefce8;border:1.5px solid #fcd34d;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
+            '<input type="checkbox" id="mm-metallized" '+metallizedCheck+ROcheck+' style="width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
             '<div>' +
                 '<div style="font-size:0.82rem;font-weight:700;color:#78350f">Metallized / Coated film</div>' +
                 '<div style="font-size:0.72rem;color:#92400e;margin-top:2px;line-height:1.4">Barrier is independent of substrate thickness (AlOx, SiOx, Al foil)</div>' +
             '</div>' +
-        '</div>' +
+        '</label>' +
 
-        '<div style="padding:12px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-hygroscopic\').click()')+'">' +
-            '<input type="checkbox" id="mf-hygroscopic" '+( (mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0||mat.hygroscopicBetaCO2>0)) ? 'checked' : '' )+((isCommMat||isDefaultMat)?' disabled style="opacity:0.6;cursor:not-allowed"':' style="cursor:pointer"')+' onchange="matModalHygroToggle()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">' +
+        // FIX: hygroscopic card — single style attribute, merged sizing + cursor
+        '<label for="mm-hygroscopic" style="padding:12px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
+            '<input type="checkbox" id="mm-hygroscopic" '+(hasHygro?'checked':'')+
+                (isRO ? ' disabled' : '') +
+                ' onchange="matModalHygroToggle()"' +
+                ' style="width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:'+(isRO?'not-allowed':'pointer')+(isRO?';opacity:0.6':'')+'">' +
             '<div>' +
                 '<div style="font-size:0.82rem;font-weight:700;color:#0c4a6e">Hygroscopic material</div>' +
                 '<div style="font-size:0.72rem;color:#075985;margin-top:2px;line-height:1.4">Barrier depends on relative humidity (EVOH, PA, cellulose)</div>' +
             '</div>' +
-        '</div>' +
+        '</label>' +
 
         '</div>' +
 
-        '<div id="mf-hygro-fields" style="display:' + ((mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0||mat.hygroscopicBetaCO2>0))?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
+        '<div id="mm-hygro-fields" style="display:' + (hasHygro?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
             '<div style="font-size:0.75rem;font-weight:600;color:#0369a1;margin-bottom:10px">Hygroscopic correction coefficients</div>' +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
                 '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">WVTR Beta</div>' +
                 '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">OTR Beta</div>' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mf-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
+                    '<input type="number" step="0.001" class="form-input" id="mm-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mf-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.055"'+hygroRO+'></div>' +
+                    '<input type="number" step="0.001" class="form-input" id="mm-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.055"'+hygroRO+'></div>' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mf-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
+                    '<input type="number" class="form-input" id="mm-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mf-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
+                    '<input type="number" class="form-input" id="mm-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
             '</div>' +
             '<div style="border-top:1px solid #bae6fd;margin-top:10px;padding-top:10px">' +
-            '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">CO2 Beta</div>' +
+            '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">CO\u2082 Beta</div>' +
             '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mf-beta-co2" value="'+(mat&&mat.hygroscopicBetaCO2>0?mat.hygroscopicBetaCO2:'')+'" placeholder="e.g. 0.040"'+hygroRO+'></div>' +
+                    '<input type="number" step="0.001" class="form-input" id="mm-beta-co2" value="'+(mat&&mat.hygroscopicBetaCO2>0?mat.hygroscopicBetaCO2:'')+'" placeholder="e.g. 0.040"'+hygroRO+'></div>' +
                 '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mf-refrh-co2" value="'+(mat&&mat.hygroscopicRefRHCO2?mat.hygroscopicRefRHCO2:50)+'" placeholder="50"'+hygroRO+'></div>' +
+                    '<input type="number" class="form-input" id="mm-refrh-co2" value="'+(mat&&mat.hygroscopicRefRHCO2?mat.hygroscopicRefRHCO2:50)+'" placeholder="50"'+hygroRO+'></div>' +
             '</div></div>' +
             '<div style="font-size:0.68rem;color:#0369a1;margin-top:8px">Beta = % increase in permeability per 1% RH increase. Reference RH = condition at which the listed values were measured.</div>' +
         '</div>' +
@@ -843,27 +881,29 @@ function showMatModal(editId) {
         editId !== undefined ? 'Edit Material' : 'Add Material',
         modalBody,
         function() {
-            var name    = document.getElementById('mf-name').value.trim();
+            var name    = document.getElementById('mm-name').value.trim();
             if(!name){ alert('Enter material name'); return false; }
-            var family        = document.getElementById('mf-family').value;
-            var company       = document.getElementById('mf-company').value.trim();
-            var tdsLink       = document.getElementById('mf-tdslink').value.trim();
-            var supplierEmail = document.getElementById('mf-email') ? document.getElementById('mf-email').value.trim() : '';
-            var density       = parseFloat(document.getElementById('mf-density').value) || null;
-            var gwp           = parseFloat(document.getElementById('mf-gwp').value) || null;
-            var haze          = parseFloat(document.getElementById('mf-haze').value);
-            var meltingTemp   = parseFloat(document.getElementById('mf-melting-temp').value) || null;
+            var family        = document.getElementById('mm-family').value;
+            var company       = document.getElementById('mm-company').value.trim();
+            var tdsLink       = document.getElementById('mm-tdslink').value.trim();
+            var supplierEmail = document.getElementById('mm-email') ? document.getElementById('mm-email').value.trim() : '';
+            var density       = parseFloat(document.getElementById('mm-density').value) || null;
+            var gwp           = parseFloat(document.getElementById('mm-gwp').value) || null;
+            // FIX: haze NaN — use same pattern as other fields
+            var hazeRaw       = parseFloat(document.getElementById('mm-haze').value);
+            var haze          = isNaN(hazeRaw) ? null : hazeRaw;
+            var meltingTemp   = parseFloat(document.getElementById('mm-melting-temp').value) || null;
             if(tdsLink && !tdsLink.startsWith('http')){ alert('TDS Link must start with http:// or https://'); return false; }
-            var isMetallized  = document.getElementById('mf-metallized') ? document.getElementById('mf-metallized').checked : false;
+            var isMetallized  = document.getElementById('mm-metallized') ? document.getElementById('mm-metallized').checked : false;
 
             // Community: only email + TDS saved; new conditions go to pending
             if(isCommMat && mat) {
                 ['wvtr','otr','co2'].forEach(function(type) {
-                    var nv  = parseFloat(document.getElementById('modal-'+type+'-new-val').value);
-                    var nt  = parseFloat(document.getElementById('modal-'+type+'-new-thick').value);
-                    var ntp = parseFloat(document.getElementById('modal-'+type+'-new-temp').value);
-                    var nh  = parseFloat(document.getElementById('modal-'+type+'-new-hum').value);
-                    var nm  = document.getElementById('modal-'+type+'-new-method').value.trim();
+                    var nv  = parseFloat(document.getElementById('mm-'+type+'-new-val').value);
+                    var nt  = parseFloat(document.getElementById('mm-'+type+'-new-thick').value);
+                    var ntp = parseFloat(document.getElementById('mm-'+type+'-new-temp').value);
+                    var nh  = parseFloat(document.getElementById('mm-'+type+'-new-hum').value);
+                    var nm  = document.getElementById('mm-'+type+'-new-method').value.trim();
                     if(!isNaN(nv)&&nv>=0&&!isNaN(nt)&&nt>0&&!isNaN(ntp)&&!isNaN(nh)) {
                         var entry = { value:nv, thickness:nt, temperature:ntp, humidity:nh };
                         if(nm) entry.testMethod = nm;
@@ -875,7 +915,7 @@ function showMatModal(editId) {
                 setTimeout(function(){
                     var t = document.createElement('div');
                     t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#92400e;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;z-index:9999';
-                    t.textContent = 'Condition saved - highlighted in yellow, pending admin approval.';
+                    t.textContent = 'Condition saved \u2014 highlighted in yellow, pending admin approval.';
                     document.body.appendChild(t);
                     setTimeout(function(){ if(t.parentNode) t.remove(); }, 5000);
                 }, 300);
@@ -884,11 +924,12 @@ function showMatModal(editId) {
 
             function collectRows(type) {
                 var rows = [];
-                var valEls   = document.querySelectorAll('.modal-val[data-type="'+type+'"]');
-                var thickEls = document.querySelectorAll('.modal-thick[data-type="'+type+'"]');
-                var tempEls  = document.querySelectorAll('.modal-temp[data-type="'+type+'"]');
-                var humEls   = document.querySelectorAll('.modal-hum[data-type="'+type+'"]');
-                var methEls  = document.querySelectorAll('.modal-method[data-type="'+type+'"]');
+                // FIX: use mm-* class selectors for modal rows
+                var valEls   = document.querySelectorAll('.mm-val[data-type="'+type+'"]');
+                var thickEls = document.querySelectorAll('.mm-thick[data-type="'+type+'"]');
+                var tempEls  = document.querySelectorAll('.mm-temp[data-type="'+type+'"]');
+                var humEls   = document.querySelectorAll('.mm-hum[data-type="'+type+'"]');
+                var methEls  = document.querySelectorAll('.mm-method[data-type="'+type+'"]');
                 for(var i=0; i<valEls.length; i++) {
                     var v=parseFloat(valEls[i].value), t=parseFloat(thickEls[i].value),
                         te=parseFloat(tempEls[i].value), h=parseFloat(humEls[i].value),
@@ -898,11 +939,11 @@ function showMatModal(editId) {
                     if(mt) obj.testMethod=mt;
                     rows.push(obj);
                 }
-                var nv=parseFloat(document.getElementById('modal-'+type+'-new-val').value);
-                var nt=parseFloat(document.getElementById('modal-'+type+'-new-thick').value);
-                var ntp=parseFloat(document.getElementById('modal-'+type+'-new-temp').value);
-                var nh=parseFloat(document.getElementById('modal-'+type+'-new-hum').value);
-                var nm=document.getElementById('modal-'+type+'-new-method').value.trim();
+                var nv=parseFloat(document.getElementById('mm-'+type+'-new-val').value);
+                var nt=parseFloat(document.getElementById('mm-'+type+'-new-thick').value);
+                var ntp=parseFloat(document.getElementById('mm-'+type+'-new-temp').value);
+                var nh=parseFloat(document.getElementById('mm-'+type+'-new-hum').value);
+                var nm=document.getElementById('mm-'+type+'-new-method').value.trim();
                 if(!isNaN(nv)&&nv>=0&&!isNaN(nt)&&nt>0&&!isNaN(ntp)&&!isNaN(nh)) {
                     var e={value:nv,thickness:nt,temperature:ntp,humidity:nh};
                     if(nm) e.testMethod=nm;
@@ -913,11 +954,11 @@ function showMatModal(editId) {
 
             function collectReadOnlyPlusNew(type) {
                 var existing = mat ? (mat[{wvtr:'wvtrValues',otr:'otrValues',co2:'co2Values'}[type]] || []) : [];
-                var nv=parseFloat(document.getElementById('modal-'+type+'-new-val').value);
-                var nt=parseFloat(document.getElementById('modal-'+type+'-new-thick').value);
-                var ntp=parseFloat(document.getElementById('modal-'+type+'-new-temp').value);
-                var nh=parseFloat(document.getElementById('modal-'+type+'-new-hum').value);
-                var nm=document.getElementById('modal-'+type+'-new-method').value.trim();
+                var nv=parseFloat(document.getElementById('mm-'+type+'-new-val').value);
+                var nt=parseFloat(document.getElementById('mm-'+type+'-new-thick').value);
+                var ntp=parseFloat(document.getElementById('mm-'+type+'-new-temp').value);
+                var nh=parseFloat(document.getElementById('mm-'+type+'-new-hum').value);
+                var nm=document.getElementById('mm-'+type+'-new-method').value.trim();
                 var rows=existing.slice();
                 if(!isNaN(nv)&&nv>=0&&!isNaN(nt)&&nt>0&&!isNaN(ntp)&&!isNaN(nh)) {
                     var e={value:nv,thickness:nt,temperature:ntp,humidity:nh};
@@ -931,12 +972,12 @@ function showMatModal(editId) {
             var otrValues  = isDefaultMat ? collectReadOnlyPlusNew('otr')  : collectRows('otr');
             var co2Values  = isDefaultMat ? collectReadOnlyPlusNew('co2')  : collectRows('co2');
 
-            var betaWVTR  = parseFloat(document.getElementById('mf-beta-wvtr').value)  || 0;
-            var refRHWVTR = parseFloat(document.getElementById('mf-refrh-wvtr').value) || 50;
-            var betaOTR   = parseFloat(document.getElementById('mf-beta-otr').value)   || 0;
-            var refRHOTR  = parseFloat(document.getElementById('mf-refrh-otr').value)  || 50;
-            var betaCO2   = parseFloat(document.getElementById('mf-beta-co2').value)   || 0;
-            var refRHCO2  = parseFloat(document.getElementById('mf-refrh-co2').value)  || 50;
+            var betaWVTR  = parseFloat(document.getElementById('mm-beta-wvtr').value)  || 0;
+            var refRHWVTR = parseFloat(document.getElementById('mm-refrh-wvtr').value) || 50;
+            var betaOTR   = parseFloat(document.getElementById('mm-beta-otr').value)   || 0;
+            var refRHOTR  = parseFloat(document.getElementById('mm-refrh-otr').value)  || 50;
+            var betaCO2   = parseFloat(document.getElementById('mm-beta-co2').value)   || 0;
+            var refRHCO2  = parseFloat(document.getElementById('mm-refrh-co2').value)  || 50;
 
             var matData = {
                 name: name, family: family || getFamily(name), company: company,
