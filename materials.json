@@ -1264,7 +1264,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS Z-0222 — measured on laminated structure LS(12)/BOPA(15)/CPP(60) after 2 weeks storage at measurement conditions; NOT a pure LS film value"
+        "testMethod": "JIS  "
       }
     ],
     "co2Values": [],
@@ -13006,7 +13006,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "Cross-ref: Biaxis BOPA 15 STD = 30 at 23°C/50%RH (DIN 53380-3); generic BOPA-6 literature value"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "wvtrValues": [
@@ -13015,7 +13015,7 @@
         "thickness": 15,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "Cross-ref: generic BOPA-6 literature value at 40°C/90%RH; Biaxis TDS = 50 at 23°C/85%RH (different conditions)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
