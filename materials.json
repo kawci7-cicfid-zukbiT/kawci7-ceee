@@ -1247,7 +1247,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS K-7126 (on LS/BOPA/CPP laminate)",
+    "testMethodOTR": "JIS K7126-2 ",
      "testMethodWVTR": "JIS K7129-2 ",
     "otrValues": [
       {
@@ -1255,7 +1255,7 @@
         "thickness": 12,
         "temperature": 25,
         "humidity": 80,
-        "testMethod": "JIS K-7126 — measured on laminated structure LS(12)/BOPA(15)/CPP(60); NOT a pure LS film value"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
