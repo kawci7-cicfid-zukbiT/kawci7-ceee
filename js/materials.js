@@ -679,19 +679,21 @@ function matApplyFilters() {
         if(ftype==='metallized'&& !m.isMetallized) return false;
         if(ftype==='arrhenius' && !Engine.validateArrhenius(m).valid) return false;
         if(q) {
-            var numRe = /^\s*(wvtr|otr|co2)\s*(<=|>=|<|>|=)\s*([\d.]+)\s*$/i;
+            var numRe = /^\s*(wvtr|otr|co2)\s*(<=|>=|<|>|=)\s*(-?[\d.]+(?:[eE][+-]?\d+)?)\s*$/i;
             var nm = q.match(numRe);
             if(nm) {
                 var type2=nm[1].toLowerCase(), op=nm[2], thresh=parseFloat(nm[3]);
                 var vals2 = type2==='wvtr'?(m.wvtrValues||[]):type2==='otr'?(m.otrValues||[]):(m.co2Values||[]);
                 var found2 = vals2.some(function(v){
-                    if(op==='<')  return v.value < thresh;
-                    if(op==='>')  return v.value > thresh;
-                    if(op==='<=') return v.value <= thresh;
-                    if(op==='>=') return v.value >= thresh;
-                    if(op==='=')  return v.value == thresh;
-                    return false;
-                });
+    var val = parseFloat(v.value);
+    if(isNaN(val)) return false;
+    if(op==='<')  return val < thresh;
+    if(op==='>')  return val > thresh;
+    if(op==='<=') return val <= thresh;
+    if(op==='>=') return val >= thresh;
+    if(op==='=')  return val == thresh;
+    return false;
+});
                 if(!found2) return false;
             } else {
                 var hay2 = (m.name+' '+(m.family||'')+' '+(m.company||'')+' '+(m.testMethodWVTR||'')+' '+(m.testMethodOTR||'')+' '+(m.testMethodCO2||'')).toLowerCase();
@@ -717,10 +719,6 @@ function matApplyFilters() {
 function onMatSearch(val) {
     State.searchQuery = val || '';
     matApplyFilters();
-    setTimeout(function(){
-        var input = document.getElementById('ft-search');
-        if(input){ input.focus(); input.setSelectionRange(val.length, val.length); }
-    }, 10);
 }
 
 // ====================================================================
