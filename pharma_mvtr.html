@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,16 +10,22 @@
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
             --success: #10b981;
+            --success-light: #f0fdf4;
             --warning: #f59e0b;
+            --warning-light: #fffbeb;
             --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
             --bg: #f8fafc;
             --card: #ffffff;
             --text: #1e293b;
             --text-light: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         * {
@@ -29,7 +35,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -38,45 +44,51 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-lg);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
         }
 
         .header h1 {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 0.5rem;
         }
 
         .header p {
-            opacity: 0.9;
-            font-size: 0.95rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
 
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(255,255,255,0.2);
-            border-radius: 9999px;
+            padding: 0.25rem 0.6rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 600;
             margin-top: 0.5rem;
+            margin-right: 0.4rem;
         }
 
         /* Grid Layout */
         .grid {
             display: grid;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
         }
 
         .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
@@ -86,23 +98,24 @@
         /* Cards */
         .card {
             background: var(--card);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+            border-radius: 12px;
+            padding: 0;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
+            overflow: hidden;
         }
 
         .card-header {
+            padding: 1rem 1.25rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--border);
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text);
             display: flex;
@@ -111,25 +124,44 @@
         }
 
         .card-title-icon {
-            width: 2rem;
-            height: 2rem;
+            width: 1.75rem;
+            height: 1.75rem;
             background: var(--primary);
             color: white;
-            border-radius: 0.5rem;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .section-header.blue { color: var(--primary); }
+        .section-header.warning { color: var(--warning); }
+        .section-header.purple { color: var(--purple); }
+        .section-header.success { color: var(--success); }
 
         /* Form Elements */
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.875rem;
         }
 
         .form-label {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text);
             margin-bottom: 0.35rem;
@@ -137,18 +169,20 @@
 
         .form-input {
             width: 100%;
-            padding: 0.625rem 0.875rem;
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
+            padding: 0.55rem 0.75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
             transition: all 0.2s;
             font-family: inherit;
+            background: #fafbfc;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
         }
 
         .form-input.error {
@@ -162,22 +196,22 @@
         }
 
         .input-unit {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: var(--text-light);
             font-weight: 500;
             white-space: nowrap;
         }
 
         .hint {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-light);
-            margin-top: 0.25rem;
+            margin-top: 0.2rem;
         }
 
         .error-message {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--danger);
-            margin-top: 0.25rem;
+            margin-top: 0.2rem;
             display: none;
         }
 
@@ -189,105 +223,136 @@
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
+            padding: 0.65rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            background: var(--card);
+            border-color: var(--primary);
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
         .btn-primary:hover {
             background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
+            border-color: var(--primary-dark);
         }
 
         .btn-success {
             background: var(--success);
             color: white;
+            border-color: var(--success);
         }
 
         .btn-success:hover {
             background: #059669;
+            border-color: #059669;
         }
 
         .btn-outline {
             background: transparent;
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             color: var(--text);
         }
 
         .btn-outline:hover {
             background: var(--bg);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .btn-sm {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
+            padding: 0.45rem 0.7rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-full {
+            width: 100%;
         }
 
         .btn-group {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.6rem;
             flex-wrap: wrap;
             margin-top: 1rem;
         }
 
         /* KPI Cards */
         .kpi-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
             position: relative;
             overflow: hidden;
         }
 
-        .kpi-card.success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .kpi-card.warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .kpi-card.danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .kpi-card.success { 
+            background: var(--success-light); 
+            border-color: var(--success);
+        }
+        .kpi-card.warning { 
+            background: var(--warning-light); 
+            border-color: var(--warning);
+        }
+        .kpi-card.danger { 
+            background: var(--danger-light); 
+            border-color: var(--danger);
+        }
 
         .kpi-label {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.35rem;
+            font-weight: 500;
         }
 
         .kpi-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin-bottom: 0.25rem;
+            color: var(--primary);
+            margin-bottom: 0.15rem;
         }
 
+        .kpi-card.success .kpi-value { color: var(--success); }
+        .kpi-card.warning .kpi-value { color: var(--warning); }
+        .kpi-card.danger .kpi-value { color: var(--danger); }
+
         .kpi-delta {
-            font-size: 0.875rem;
-            opacity: 0.9;
+            font-size: 0.75rem;
+            color: var(--text-light);
         }
 
         /* Tables */
         .table-container {
             overflow-x: auto;
-            margin-top: 1rem;
+            margin-top: 0.75rem;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .data-table th,
         .data-table td {
-            padding: 0.875rem;
+            padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
@@ -297,8 +362,8 @@
             font-weight: 700;
             color: var(--text);
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
         }
 
         .data-table tr:hover {
@@ -312,53 +377,63 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.25rem 0.75rem;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
         }
 
         .status-pass {
-            background: #d1fae5;
+            background: var(--success-light);
             color: #065f46;
         }
 
         .status-fail {
-            background: #fee2e2;
+            background: var(--danger-light);
             color: #991b1b;
         }
 
         /* Charts */
         .chart-container {
             position: relative;
-            height: 300px;
-            margin-top: 1rem;
+            height: 260px;
+            margin-top: 0.75rem;
         }
 
         .chart-container.small {
-            height: 250px;
+            height: 220px;
+        }
+
+        .chart-mini {
+            position: relative;
+            height: 260px;
         }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
             border-bottom: 2px solid var(--border);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
         }
 
         .tab {
-            padding: 0.75rem 1.25rem;
+            padding: 0.65rem 1rem;
             background: none;
             border: none;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-light);
             cursor: pointer;
             border-bottom: 2px solid transparent;
             margin-bottom: -2px;
             transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
         }
 
         .tab.active {
@@ -381,7 +456,7 @@
             background: var(--border);
             border-radius: 9999px;
             overflow: hidden;
-            margin-top: 0.5rem;
+            margin-top: 0.4rem;
         }
 
         .progress-fill {
@@ -402,22 +477,22 @@
         }
 
         .tooltip-icon {
-            width: 1.25rem;
-            height: 1.25rem;
+            width: 1.1rem;
+            height: 1.1rem;
             background: var(--text-light);
             color: white;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 700;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .header h1 { font-size: 1.5rem; }
+            .container { padding: 0.75rem; }
+            .header h1 { font-size: 1.25rem; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
         }
 
@@ -429,43 +504,44 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .animate-in {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.4s ease-out;
         }
 
         /* Scenario Comparison */
         .scenario-card {
-            border: 2px solid var(--border);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
             transition: all 0.2s;
+            background: var(--card);
         }
 
         .scenario-card:hover {
             border-color: var(--primary);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
         }
 
         .scenario-card.active {
             border-color: var(--primary);
-            background: rgba(37, 99, 235, 0.05);
+            background: var(--primary-light);
         }
 
         .scenario-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .scenario-name {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .scenario-delete {
@@ -473,15 +549,15 @@
             border: none;
             color: var(--danger);
             cursor: pointer;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             line-height: 1;
         }
 
         /* Loading */
         .loading {
             display: inline-block;
-            width: 1rem;
-            height: 1rem;
+            width: 0.9rem;
+            height: 0.9rem;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -491,490 +567,648 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Info Box */
+        .info-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.6rem;
+        }
+
+        .info-box strong {
+            color: var(--primary);
+        }
+
+        /* Sticky Panel */
+        .sticky-panel {
+            position: sticky;
+            top: 1rem;
+            height: fit-content;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🧪 MVTR Pro System</h1>
+            <h1>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;color:var(--primary)">
+                    <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+                </svg>
+                MVTR Pro System
+            </h1>
             <p>Advanced Moisture Vapor Transmission Rate Analysis - ICH Q1A(R2) Compliant</p>
             <span class="badge">Enterprise Edition v2.0</span>
             <span class="badge">ISO 15106 Certified</span>
         </div>
 
-        <!-- Main Controls -->
-        <div class="grid grid-2">
-            <!-- Input Parameters -->
+        <!-- Main Layout: 2 columns -->
+        <div class="grid grid-2" style="align-items:start">
+            
+            <!-- LEFT COLUMN: Input Parameters -->
             <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon">⚙️</div>
-                        Parametri di Input
+                <!-- Section 1: Input Parameters -->
+                <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+                    <div class="section-header blue">
+                        ▼ 1. Input Parameters
                     </div>
-                    <button class="btn btn-outline btn-sm" onclick="resetForm()">
-                        🔄 Reset
-                    </button>
-                </div>
 
-                <div class="grid grid-2">
-                    <div class="form-group" id="fg-wvtr">
-                        <label class="form-label">
-                            WVTR di Riferimento
-                            <span class="tooltip">
-                                <span class="tooltip-icon">?</span>
-                            </span>
-                        </label>
-                        <div class="input-group">
-                            <input type="number" id="ph-wvtr" class="form-input" value="1.0" step="0.01" min="0">
-                            <span class="input-unit">g/m²/day</span>
+                    <div class="grid grid-2" style="gap:0.75rem">
+                        <div class="form-group" id="fg-wvtr">
+                            <label class="form-label">
+                                Reference WVTR
+                                <span class="tooltip">
+                                    <span class="tooltip-icon">?</span>
+                                </span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" id="ph-wvtr" class="form-input" value="1.0" step="0.01" min="0">
+                                <span class="input-unit">g/m²/day</span>
+                            </div>
+                            <div class="hint">Value measured at reference conditions</div>
+                            <div class="error-message">Enter a valid value ≥ 0</div>
                         </div>
-                        <div class="hint">Valore misurato a condizioni di riferimento</div>
-                        <div class="error-message">Inserire un valore valido ≥ 0</div>
-                    </div>
 
-                    <div class="form-group" id="fg-tref">
-                        <label class="form-label">Temperatura di Riferimento</label>
-                        <div class="input-group">
-                            <input type="number" id="ph-tref" class="form-input" value="38" step="0.5" min="-50" max="100">
-                            <span class="input-unit">°C</span>
+                        <div class="form-group" id="fg-tref">
+                            <label class="form-label">Reference Temperature</label>
+                            <div class="input-group">
+                                <input type="number" id="ph-tref" class="form-input" value="38" step="0.5" min="-50" max="100">
+                                <span class="input-unit">°C</span>
+                            </div>
+                            <div class="hint">Temperature at which WVTR was measured</div>
+                            <div class="error-message">Enter a valid temperature</div>
                         </div>
-                        <div class="hint">Temperatura alla quale è stato misurato il WVTR</div>
-                        <div class="error-message">Inserire una temperatura valida</div>
-                    </div>
 
-                    <div class="form-group" id="fg-rhref">
-                        <label class="form-label">Umidità Relativa di Riferimento</label>
-                        <div class="input-group">
-                            <input type="number" id="ph-rhref" class="form-input" value="90" step="1" min="0" max="100">
-                            <span class="input-unit">%</span>
+                        <div class="form-group" id="fg-rhref">
+                            <label class="form-label">Reference Relative Humidity</label>
+                            <div class="input-group">
+                                <input type="number" id="ph-rhref" class="form-input" value="90" step="1" min="0" max="100">
+                                <span class="input-unit">%</span>
+                            </div>
+                            <div class="hint">RH% at which WVTR was measured</div>
+                            <div class="error-message">Enter a value between 0 and 100</div>
                         </div>
-                        <div class="hint">UR% alla quale è stato misurato il WVTR</div>
-                        <div class="error-message">Inserire un valore tra 0 e 100</div>
-                    </div>
 
-                    <div class="form-group" id="fg-ea">
-                        <label class="form-label">
-                            Energia di Attivazione (Eₐ)
-                            <span class="tooltip">
-                                <span class="tooltip-icon">?</span>
-                            </span>
-                        </label>
-                        <div class="input-group">
-                            <input type="number" id="ph-ea" class="form-input" value="35" step="1" min="0" max="150">
-                            <span class="input-unit">kJ/mol</span>
+                        <div class="form-group" id="fg-ea">
+                            <label class="form-label">
+                                Activation Energy (Eₐ)
+                                <span class="tooltip">
+                                    <span class="tooltip-icon">?</span>
+                                </span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" id="ph-ea" class="form-input" value="35" step="1" min="0" max="150">
+                                <span class="input-unit">kJ/mol</span>
+                            </div>
+                            <div class="hint">Eₐ = 0 disables Arrhenius correction</div>
+                            <div class="error-message">Enter a valid value</div>
                         </div>
-                        <div class="hint">Eₐ = 0 disattiva la correzione di Arrhenius</div>
-                        <div class="error-message">Inserire un valore valido</div>
-                    </div>
 
-                    <div class="form-group" id="fg-area">
-                        <label class="form-label">Area Superficiale Cavità</label>
-                        <div class="input-group">
-                            <input type="number" id="ph-area" class="form-input" value="2.0" step="0.1" min="0.1">
-                            <span class="input-unit">cm²</span>
+                        <div class="form-group" id="fg-area">
+                            <label class="form-label">Cavity Surface Area</label>
+                            <div class="input-group">
+                                <input type="number" id="ph-area" class="form-input" value="2.0" step="0.1" min="0.1">
+                                <span class="input-unit">cm²</span>
+                            </div>
+                            <div class="hint">Area exposed to moisture transfer</div>
+                            <div class="error-message">Enter a valid area</div>
                         </div>
-                        <div class="hint">Area esposta al trasferimento di umidità</div>
-                        <div class="error-message">Inserire un'area valida</div>
-                    </div>
 
-                    <div class="form-group" id="fg-crit">
-                        <label class="form-label">Guadagno Critico di Umidità</label>
-                        <div class="input-group">
-                            <input type="number" id="ph-crit" class="form-input" value="2.0" step="0.1" min="0.1">
-                            <span class="input-unit">mg/cavità</span>
+                        <div class="form-group" id="fg-crit">
+                            <label class="form-label">Critical Moisture Gain</label>
+                            <div class="input-group">
+                                <input type="number" id="ph-crit" class="form-input" value="2.0" step="0.1" min="0.1">
+                                <span class="input-unit">mg/cavity</span>
+                            </div>
+                            <div class="hint">Maximum moisture absorption limit</div>
+                            <div class="error-message">Enter a valid value</div>
                         </div>
-                        <div class="hint">Limite massimo di umidità assorbita</div>
-                        <div class="error-message">Inserire un valore valido</div>
-                    </div>
 
-                    <div class="form-group" id="fg-years">
-                        <label class="form-label">Shelf Life Target</label>
-                        <div class="input-group">
-                            <input type="number" id="ph-years" class="form-input" value="2" step="0.5" min="0.5" max="10">
-                            <span class="input-unit">anni</span>
+                        <div class="form-group" id="fg-years">
+                            <label class="form-label">Target Shelf Life</label>
+                            <div class="input-group">
+                                <input type="number" id="ph-years" class="form-input" value="2" step="0.5" min="0.5" max="10">
+                                <span class="input-unit">years</span>
+                            </div>
+                            <div class="hint">Desired storage duration</div>
+                            <div class="error-message">Enter a valid duration</div>
                         </div>
-                        <div class="hint">Durata di conservazione desiderata</div>
-                        <div class="error-message">Inserire una durata valida</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Scenario Name</label>
+                            <input type="text" id="scenario-name" class="form-input" placeholder="E.g. Formulation A" value="Base Scenario">
+                            <div class="hint">Identifier for scenario comparison</div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Nome Scenario</label>
-                        <input type="text" id="scenario-name" class="form-input" placeholder="Es. Formulazione A" value="Scenario Base">
-                        <div class="hint">Identificativo per il confronto scenari</div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="calculateAndRender()">
-                        📊 Calcola e Visualizza
-                    </button>
-                    <button class="btn btn-success" onclick="saveScenario()">
-                        💾 Salva Scenario
-                    </button>
-                    <button class="btn btn-outline" onclick="exportToCSV()">
-                        📥 Export CSV
-                    </button>
-                    <button class="btn btn-outline" onclick="exportToPDF()">
-                        📄 Export PDF
-                    </button>
-                </div>
-            </div>
-
-            <!-- KPI Dashboard -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon">📈</div>
-                        KPI Dashboard
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="calculateAndRender()">
+                            📊 Calculate & Display
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="resetForm()">
+                            🔄 Reset
+                        </button>
                     </div>
                 </div>
 
-                <div class="grid grid-2">
-                    <div class="kpi-card" id="kpi-zones-pass">
-                        <div class="kpi-label">Zone ICH Conformi</div>
-                        <div class="kpi-value" id="kpi-pass-count">0/7</div>
-                        <div class="kpi-delta" id="kpi-pass-percent">0% del totale</div>
+                <!-- Section 2: Export Options -->
+                <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+                    <div class="section-header success">
+                        ▼ 2. Export Options
                     </div>
-
-                    <div class="kpi-card warning" id="kpi-max-ingress">
-                        <div class="kpi-label">Max Ingresso Annuo</div>
-                        <div class="kpi-value" id="kpi-max-ingress-val">0 mg</div>
-                        <div class="kpi-delta">Nella zona più critica</div>
-                    </div>
-
-                    <div class="kpi-card" id="kpi-safety-margin">
-                        <div class="kpi-label">Margine di Sicurezza</div>
-                        <div class="kpi-value" id="kpi-safety-val">0%</div>
-                        <div class="kpi-delta">Rispetto al limite critico</div>
-                    </div>
-
-                    <div class="kpi-card" id="kpi-arrhenius-factor">
-                        <div class="kpi-label">Fattore di Arrhenius</div>
-                        <div class="kpi-value" id="kpi-arr-val">1.0x</div>
-                        <div class="kpi-delta">Accelerazione termica media</div>
+                    <div class="btn-group" style="margin-top:0">
+                        <button class="btn btn-success" onclick="saveScenario()">
+                            💾 Save Scenario
+                        </button>
+                        <button class="btn btn-outline" onclick="exportToCSV()">
+                            📥 Export CSV
+                        </button>
+                        <button class="btn btn-outline" onclick="exportToPDF()">
+                            📄 Export PDF
+                        </button>
                     </div>
                 </div>
 
-                <div style="margin-top: 1.5rem;">
-                    <div class="form-label">Stato Complessivo del Sistema</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.875rem;">
-                        <span id="overall-status">In attesa di calcolo...</span>
-                        <span id="overall-percent">0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('overview')">📊 Panoramica</button>
-            <button class="tab" onclick="switchTab('detailed')">📋 Tabelle Dettagliate</button>
-            <button class="tab" onclick="switchTab('charts')">📈 Grafici Avanzati</button>
-            <button class="tab" onclick="switchTab('comparison')">🔀 Confronto Scenari</button>
-            <button class="tab" onclick="switchTab('sensitivity')">🎯 Sensitivity Analysis</button>
-        </div>
-
-        <!-- Tab Contents -->
-        <div id="tab-overview" class="tab-content active">
-            <div class="grid grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">🌍</div>
-                            Performance per Zona ICH
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-overview"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">⚡</div>
-                            Fattori di Correzione
-                        </div>
-                    </div>
-                    <div class="chart-container small">
-                        <canvas id="chart-factors"></canvas>
-                    </div>
-                    <div id="factors-summary" style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-light);">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon">✅</div>
-                        Risultati Sintetici
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="data-table" id="table-summary">
-                        <thead>
-                            <tr>
-                                <th>Zona ICH</th>
-                                <th>Condizioni</th>
-                                <th>WVTR Effettivo</th>
-                                <th>Ingresso/Anno</th>
-                                <th>Totale Shelf Life</th>
-                                <th>Stato</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-detailed" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon"></div>
-                        Tabella Completa dei Calcoli
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="data-table" id="table-detailed">
-                        <thead>
-                            <tr>
-                                <th>Zona</th>
-                                <th>T (°C)</th>
-                                <th>RH (%)</th>
-                                <th>WVTR Ref</th>
-                                <th>Fattore T</th>
-                                <th>Fattore RH</th>
-                                <th>WVTR Eff</th>
-                                <th>Area (m²)</th>
-                                <th>Ingresso Giornaliero</th>
-                                <th>Ingresso Annuo</th>
-                                <th>Totale Shelf Life</th>
-                                <th>% Limite</th>
-                                <th>Stato</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="grid grid-2" style="margin-top: 1.5rem;">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">🧮</div>
-                            Parametri di Calcolo
-                        </div>
-                    </div>
-                    <div id="calc-parameters" style="font-size: 0.875rem; line-height: 2;">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">📐</div>
-                            Formule Utilizzate
-                        </div>
-                    </div>
-                    <div style="font-size: 0.875rem; font-family: 'Courier New', monospace; background: var(--bg); padding: 1rem; border-radius: 0.5rem;">
-                        <div style="margin-bottom: 0.75rem;">
-                            <strong>Equazione di Arrhenius:</strong><br>
-                            k = A · exp(-Eₐ/RT)
-                        </div>
-                        <div style="margin-bottom: 0.75rem;">
-                            <strong>Fattore Temperatura:</strong><br>
-                            F_T = exp[(Eₐ/R) · (1/T_ref - 1/T_target)]
-                        </div>
-                        <div style="margin-bottom: 0.75rem;">
-                            <strong>Fattore RH:</strong><br>
-                            F_RH = RH_target / RH_ref
-                        </div>
-                        <div>
-                            <strong>WVTR Effettivo:</strong><br>
-                            WVTR_eff = WVTR_ref · F_T · F_RH
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-charts" class="tab-content">
-            <div class="grid grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">📊</div>
-                            Confronto WVTR per Zona
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-wvtr-comparison"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">💧</div>
-                            Ingresso Umidità Cumulativo
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-cumulative"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">🌡️</div>
-                            Influenza Temperatura vs Umidità
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-temp-rh-impact"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">⏱️</div>
-                            Tempo al Limite Critico
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="chart-time-to-limit"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-comparison" class="tab-content">
-            <div class="grid grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">💾</div>
-                            Scenari Salvati
-                        </div>
+                <!-- Section 3: Scenario Management -->
+                <div style="padding:1rem 1.25rem">
+                    <div class="section-header purple">
+                        ▼ 3. Saved Scenarios
                     </div>
                     <div id="scenarios-list">
-                        <p style="color: var(--text-light); text-align: center; padding: 2rem;">
-                            Nessun scenario salvato. Configura i parametri e clicca "Salva Scenario".
+                        <p style="color: var(--text-light); text-align: center; padding: 1.5rem; font-size: 0.85rem;">
+                            No saved scenarios. Configure parameters and click "Save Scenario".
                         </p>
                     </div>
                 </div>
+            </div>
 
+            <!-- RIGHT COLUMN: Results (Sticky) -->
+            <div class="sticky-panel">
+                <!-- KPI Dashboard -->
+                <div class="card" style="margin-bottom:1rem">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">📈</div>
+                            KPI Dashboard
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid grid-2" style="gap:0.75rem">
+                            <div class="kpi-card" id="kpi-zones-pass">
+                                <div class="kpi-label">ICH Compliant Zones</div>
+                                <div class="kpi-value" id="kpi-pass-count">0/7</div>
+                                <div class="kpi-delta" id="kpi-pass-percent">0% of total</div>
+                            </div>
+
+                            <div class="kpi-card warning" id="kpi-max-ingress">
+                                <div class="kpi-label">Max Annual Ingress</div>
+                                <div class="kpi-value" id="kpi-max-ingress-val">0 mg</div>
+                                <div class="kpi-delta">In the most critical zone</div>
+                            </div>
+
+                            <div class="kpi-card" id="kpi-safety-margin">
+                                <div class="kpi-label">Safety Margin</div>
+                                <div class="kpi-value" id="kpi-safety-val">0%</div>
+                                <div class="kpi-delta">Vs. critical limit</div>
+                            </div>
+
+                            <div class="kpi-card" id="kpi-arrhenius-factor">
+                                <div class="kpi-label">Arrhenius Factor</div>
+                                <div class="kpi-value" id="kpi-arr-val">1.0x</div>
+                                <div class="kpi-delta">Average thermal acceleration</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.25rem;">
+                            <div class="form-label">Overall System Status</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.4rem; font-size: 0.8rem;">
+                                <span id="overall-status">Waiting for calculation...</span>
+                                <span id="overall-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Results Summary -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <div class="card-title-icon">📊</div>
-                            Confronto Grafico
+                            <div class="card-title-icon">✅</div>
+                            Quick Results
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="chart-scenario-comparison"></canvas>
+                    <div class="card-body">
+                        <div id="quick-results" style="font-size: 0.85rem; color: var(--text-light); text-align: center; padding: 1rem;">
+                            Configure parameters and calculate to see predictions
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 1.5rem;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon">📋</div>
-                        Tabella Comparativa
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="data-table" id="table-scenario-comparison">
-                        <thead>
-                            <tr id="scenario-comparison-header">
-                                <th>Parametro</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scenario-comparison-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
 
-        <div id="tab-sensitivity" class="tab-content">
-            <div class="grid grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <div class="card-title-icon">🎚️</div>
-                            Sensitivity: Energia di Attivazione
+        <!-- Detailed Results Section (Full Width) -->
+        <div id="detailed-results" style="display:none; margin-top: 1.5rem;">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">📊 Overview</button>
+                <button class="tab" onclick="switchTab('detailed')">📋 Detailed Tables</button>
+                <button class="tab" onclick="switchTab('charts')">📈 Advanced Charts</button>
+                <button class="tab" onclick="switchTab('comparison')">🔀 Scenario Comparison</button>
+                <button class="tab" onclick="switchTab('sensitivity')">🎯 Sensitivity Analysis</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">🌍</div>
+                                Performance by ICH Zone
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-overview"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Range Eₐ da analizzare</label>
-                        <div class="input-group">
-                            <input type="number" id="sens-ea-min" class="form-input" value="20" step="5">
-                            <span style="padding: 0 0.5rem;">a</span>
-                            <input type="number" id="sens-ea-max" class="form-input" value="50" step="5">
-                            <span class="input-unit">kJ/mol</span>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">⚡</div>
+                                Correction Factors
+                            </div>
                         </div>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="runSensitivityEA()">
-                        Analizza
-                    </button>
-                    <div class="chart-container" style="margin-top: 1rem;">
-                        <canvas id="chart-sensitivity-ea"></canvas>
+                        <div class="card-body">
+                            <div class="chart-container small">
+                                <canvas id="chart-factors"></canvas>
+                            </div>
+                            <div id="factors-summary" style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-light);">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card" style="margin-top: 1rem;">
                     <div class="card-header">
                         <div class="card-title">
-                            <div class="card-title-icon">🎚️</div>
-                            Sensitivity: WVTR Reference
+                            <div class="card-title-icon">✅</div>
+                            Summary Results
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Range WVTR da analizzare</label>
-                        <div class="input-group">
-                            <input type="number" id="sens-wvtr-min" class="form-input" value="0.5" step="0.1">
-                            <span style="padding: 0 0.5rem;">a</span>
-                            <input type="number" id="sens-wvtr-max" class="form-input" value="2.0" step="0.1">
-                            <span class="input-unit">g/m²/day</span>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="table-summary">
+                                <thead>
+                                    <tr>
+                                        <th>ICH Zone</th>
+                                        <th>Conditions</th>
+                                        <th>Effective WVTR</th>
+                                        <th>Annual Ingress</th>
+                                        <th>Total Shelf Life</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="runSensitivityWVTR()">
-                        Analizza
-                    </button>
-                    <div class="chart-container" style="margin-top: 1rem;">
-                        <canvas id="chart-sensitivity-wvtr"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 1.5rem;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-title-icon">📊</div>
-                            Tornado Chart - Impatto Parametri
+            <div id="tab-detailed" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">📋</div>
+                            Complete Calculation Table
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="table-detailed">
+                                <thead>
+                                    <tr>
+                                        <th>Zone</th>
+                                        <th>T (°C)</th>
+                                        <th>RH (%)</th>
+                                        <th>WVTR Ref</th>
+                                        <th>T Factor</th>
+                                        <th>RH Factor</th>
+                                        <th>Eff. WVTR</th>
+                                        <th>Area (m²)</th>
+                                        <th>Daily Ingress</th>
+                                        <th>Annual Ingress</th>
+                                        <th>Total Shelf Life</th>
+                                        <th>% Limit</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="chart-tornado"></canvas>
+
+                <div class="grid grid-2" style="margin-top: 1rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">🧮</div>
+                                Calculation Parameters
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="calc-parameters" style="font-size: 0.8rem; line-height: 1.8;">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">📐</div>
+                                Formulas Used
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="font-size: 0.8rem; font-family: 'Courier New', monospace; background: var(--bg); padding: 0.875rem; border-radius: 6px; border: 1px dashed var(--border);">
+                                <div style="margin-bottom: 0.6rem;">
+                                    <strong>Arrhenius Equation:</strong><br>
+                                    k = A · exp(-Eₐ/RT)
+                                </div>
+                                <div style="margin-bottom: 0.6rem;">
+                                    <strong>Temperature Factor:</strong><br>
+                                    F_T = exp[(Eₐ/R) · (1/T_ref - 1/T_target)]
+                                </div>
+                                <div style="margin-bottom: 0.6rem;">
+                                    <strong>RH Factor:</strong><br>
+                                    F_RH = RH_target / RH_ref
+                                </div>
+                                <div>
+                                    <strong>Effective WVTR:</strong><br>
+                                    WVTR_eff = WVTR_ref · F_T · F_RH
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-charts" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">📊</div>
+                                WVTR Comparison by Zone
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-wvtr-comparison"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">💧</div>
+                                Cumulative Moisture Ingress
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-cumulative"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">🌡️</div>
+                                Temperature vs Humidity Impact
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-temp-rh-impact"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">⏱️</div>
+                                Time to Critical Limit
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-time-to-limit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-comparison" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">💾</div>
+                                Saved Scenarios
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="scenarios-list-comparison">
+                                <p style="color: var(--text-light); text-align: center; padding: 1.5rem; font-size: 0.85rem;">
+                                    No saved scenarios. Configure parameters and click "Save Scenario".
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">📊</div>
+                                Graphical Comparison
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-scenario-comparison"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">📋</div>
+                            Comparison Table
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table" id="table-scenario-comparison">
+                                <thead>
+                                    <tr id="scenario-comparison-header">
+                                        <th>Parameter</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scenario-comparison-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-sensitivity" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">🎚️</div>
+                                Sensitivity: Activation Energy
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">Eₐ Range to analyze</label>
+                                <div class="input-group">
+                                    <input type="number" id="sens-ea-min" class="form-input" value="20" step="5">
+                                    <span style="padding: 0 0.4rem; font-size: 0.8rem;">to</span>
+                                    <input type="number" id="sens-ea-max" class="form-input" value="50" step="5">
+                                    <span class="input-unit">kJ/mol</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="runSensitivityEA()">
+                                Analyze
+                            </button>
+                            <div class="chart-container" style="margin-top: 0.75rem;">
+                                <canvas id="chart-sensitivity-ea"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-title-icon">🎚️</div>
+                                Sensitivity: Reference WVTR
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">WVTR Range to analyze</label>
+                                <div class="input-group">
+                                    <input type="number" id="sens-wvtr-min" class="form-input" value="0.5" step="0.1">
+                                    <span style="padding: 0 0.4rem; font-size: 0.8rem;">to</span>
+                                    <input type="number" id="sens-wvtr-max" class="form-input" value="2.0" step="0.1">
+                                    <span class="input-unit">g/m²/day</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="runSensitivityWVTR()">
+                                Analyze
+                            </button>
+                            <div class="chart-container" style="margin-top: 0.75rem;">
+                                <canvas id="chart-sensitivity-wvtr"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">📊</div>
+                            Tornado Chart - Parameter Impact
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="chart-tornado"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Methodology Section -->
+        <div class="card" style="margin-top:1.5rem; border-left:4px solid var(--primary); background:#fff;">
+            <div style="padding:1.5rem 2rem;">
+                <h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.3rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1.2rem;">
+                    Mechanics of MVTR Analysis & ICH Compliance
+                </h2>
+                <div style="font-size:0.95rem; line-height:1.8; color:#334155; font-family:Georgia, 'Times New Roman', serif;">
+                    <p>The Moisture Vapor Transmission Rate (MVTR) analysis is a critical component in pharmaceutical and food packaging stability studies. This system implements the ICH Q1A(R2) guidelines for climatic zone classification and applies the Arrhenius equation for temperature-dependent acceleration of moisture permeation through packaging materials.</p>
+
+                    <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:1.5rem; font-weight:700;">ICH Climatic Zones & Regulatory Framework</h3>
+                    <p>The International Conference on Harmonisation (ICH) defines five climatic zones for stability testing purposes. Each zone represents distinct temperature and humidity conditions that pharmaceutical products may encounter during storage and distribution:</p>
+                    
+                    <div style="background:var(--primary-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--primary); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+                        <strong>Zone Classification:</strong><br>
+                        • <strong>Zone I:</strong> Temperate (21°C / 45% RH)<br>
+                        • <strong>Zone II:</strong> Subtropical/Mediterranean (25°C / 60% RH)<br>
+                        • <strong>Zone III:</strong> Hot/Dry (40°C / 15% RH)<br>
+                        • <strong>Zone IV:</strong> Hot/Humid (40°C / 75% RH or 30°C/75% RH)<br>
+                        • <strong>Accelerated:</strong> Stress testing (40°C / 75% RH)
+                    </div>
+
+                    <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Arrhenius Temperature Correction</h3>
+                    <p>The Arrhenius equation models the exponential relationship between temperature and the rate of moisture permeation through polymer films. As temperature increases, molecular kinetic energy rises, causing water vapor molecules to diffuse through the packaging barrier at an accelerated rate.</p>
+
+                    <div style="background:#f8fafc; padding:1.1rem; border-radius:6px; font-family:monospace; font-size:0.95rem; text-align:center; border:1px dashed var(--border); margin:1rem 0; color:#0f172a;">
+                        F_T = exp[(Eₐ/R) · (1/T_ref - 1/T_target)]<br><br>
+                        where Eₐ = Activation Energy (kJ/mol)<br>
+                        R = Universal Gas Constant (8.314 × 10⁻³ kJ/mol·K)<br>
+                        T = Absolute Temperature (Kelvin)
+                    </div>
+
+                    <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Relative Humidity Driving Force</h3>
+                    <p>Moisture transmission is driven by the vapor pressure differential across the packaging barrier. The RH correction factor linearly scales the WVTR based on the ratio of target to reference humidity conditions, reflecting the increased thermodynamic driving force in high-humidity environments.</p>
+
+                    <div style="background:var(--warning-light); padding:0.8rem 1rem; border-radius:8px; border-left:3px solid var(--warning); margin:1rem 0; font-family:sans-serif; font-size:0.9rem;">
+                        <strong>Important:</strong> This model assumes steady-state permeation and ideal barrier behavior. Real-world performance may vary due to material degradation, seal integrity, mechanical stress, and humidity cycling effects.
+                    </div>
+
+                    <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1.1rem; color:var(--primary-dark); margin-top:2rem; font-weight:700;">Scientific Standards Alignment</h3>
+                    <p style="margin-left:1.2rem; color:var(--text-light); font-size:0.88rem; font-family:sans-serif;">
+                        • <strong>Permeation Testing:</strong> ASTM F1249 / ISO 15106-3 (Water Vapor Transmission Rate)<br>
+                        • <strong>Stability Guidelines:</strong> ICH Q1A(R2) - Stability Testing of New Drug Substances and Products<br>
+                        • <strong>Climatic Zones:</strong> WHO Technical Report Series, No. 863, 1996<br>
+                        • <strong>Arrhenius Kinetics:</strong> ASTM E1641 - Standard Practice for Calculation of Kinetic Parameters by Thermogravimetry
+                    </p>
+
+                    <div style="margin-top:2rem; padding:0.9rem; background:var(--bg); border-radius:8px; font-size:0.88rem; color:var(--text-light); border-left:4px solid var(--primary); font-family:sans-serif;">
+                        <strong>Regulatory Disclaimer:</strong> This computational tool is designed for R&D screening and packaging concept optimization. Final stability claims and shelf-life declarations must be validated through real-time and accelerated stability studies conducted in accordance with ICH Q1A(R2) and applicable regulatory requirements.
+                    </div>
                 </div>
             </div>
         </div>
@@ -987,13 +1221,13 @@
 
         // ICH Climatic Zones Definition
         const ICH_ZONES = [
-            { id: 'I',    label: 'Zone I',          desc: 'Temperata',                    T: 21,  RH: 45 },
-            { id: 'II',   label: 'Zone II',         desc: 'Subtropicale / Mediterranea',  T: 25,  RH: 60 },
-            { id: 'IIIa', label: 'Zone IIIa',       desc: 'Calda secca',                  T: 40,  RH: 15 },
-            { id: 'IVa',  label: 'Zone IVa',        desc: 'Calda umida',                  T: 40,  RH: 75 },
-            { id: 'IVb',  label: 'Zone IVb',        desc: 'Calda molto umida (ASEAN)',    T: 30,  RH: 75 },
-            { id: 'ACC',  label: 'Accelerata',      desc: 'Test accelerato ICH',          T: 40,  RH: 75 },
-            { id: 'INT',  label: 'Intermedia',      desc: 'Test intermedio ICH',          T: 30,  RH: 65 }
+            { id: 'I',    label: 'Zone I',          desc: 'Temperate',                    T: 21,  RH: 45 },
+            { id: 'II',   label: 'Zone II',         desc: 'Subtropical / Mediterranean',  T: 25,  RH: 60 },
+            { id: 'IIIa', label: 'Zone IIIa',       desc: 'Hot Dry',                      T: 40,  RH: 15 },
+            { id: 'IVa',  label: 'Zone IVa',        desc: 'Hot Humid',                    T: 40,  RH: 75 },
+            { id: 'IVb',  label: 'Zone IVb',        desc: 'Hot Very Humid (ASEAN)',       T: 30,  RH: 75 },
+            { id: 'ACC',  label: 'Accelerated',     desc: 'ICH Accelerated Test',         T: 40,  RH: 75 },
+            { id: 'INT',  label: 'Intermediate',    desc: 'ICH Intermediate Test',        T: 30,  RH: 65 }
         ];
 
         // Global state
@@ -1009,17 +1243,11 @@
         // CORE CALCULATION FUNCTIONS
         // ============================================================================
 
-        /**
-         * Calcola il WVTR corretto per condizioni ICH target usando Arrhenius + RH
-         */
         function wvtrAtICH(wvtr_ref, Ea_kJ, T_ref, RH_ref, T_target, RH_target) {
             const Tr = T_ref + 273.15;
             const Tt = T_target + 273.15;
             
-            // Arrhenius factor
             const arrFactor = (Ea_kJ > 0) ? Math.exp((Ea_kJ / R_GAS) * (1/Tr - 1/Tt)) : 1;
-            
-            // RH driving force factor
             const rhFactor = (RH_ref > 0) ? (RH_target / RH_ref) : 1;
             
             return {
@@ -1029,11 +1257,8 @@
             };
         }
 
-        /**
-         * Esegue tutti i calcoli per le zone ICH
-         */
         function performCalculations(params) {
-            const areaM2 = params.cavity_cm2 / 10000; // cm² to m²
+            const areaM2 = params.cavity_cm2 / 10000;
             const shelfDays = params.shelf_years * DAYS_PER_YEAR;
             
             const results = ICH_ZONES.map(zone => {
@@ -1047,13 +1272,12 @@
                 );
                 
                 const wvtrEff = correction.wvtrEff;
-                const dailyIngress = wvtrEff * areaM2 * 1000; // mg/day
-                const yearlyIngress = dailyIngress * DAYS_PER_YEAR; // mg/year
-                const totalIngress = dailyIngress * shelfDays; // mg over shelf life
+                const dailyIngress = wvtrEff * areaM2 * 1000;
+                const yearlyIngress = dailyIngress * DAYS_PER_YEAR;
+                const totalIngress = dailyIngress * shelfDays;
                 const percentLimit = (totalIngress / params.critical_mg) * 100;
                 const pass = totalIngress <= params.critical_mg;
                 
-                // Time to reach critical limit
                 const daysToLimit = params.critical_mg / dailyIngress;
                 const yearsToLimit = daysToLimit / DAYS_PER_YEAR;
                 
@@ -1082,10 +1306,8 @@
         // ============================================================================
 
         function calculateAndRender() {
-            // Validate inputs
             if (!validateInputs()) return;
             
-            // Get parameters
             const params = {
                 wvtr_ref: parseFloat(document.getElementById('ph-wvtr').value),
                 T_ref: parseFloat(document.getElementById('ph-tref').value),
@@ -1094,36 +1316,37 @@
                 cavity_cm2: parseFloat(document.getElementById('ph-area').value),
                 critical_mg: parseFloat(document.getElementById('ph-crit').value),
                 shelf_years: parseFloat(document.getElementById('ph-years').value),
-                scenarioName: document.getElementById('scenario-name').value || 'Scenario Base'
+                scenarioName: document.getElementById('scenario-name').value || 'Base Scenario'
             };
             
-            // Perform calculations
             currentResults = {
                 params: params,
                 results: performCalculations(params),
                 timestamp: new Date().toISOString()
             };
             
-            // Update all views
+            // Show detailed results
+            document.getElementById('detailed-results').style.display = 'block';
+            
             updateKPIDashboard();
+            updateQuickResults();
             renderOverviewTab();
             renderDetailedTab();
             renderChartsTab();
             updateSensitivityCharts();
             
-            // Scroll to results
-            document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('detailed-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function validateInputs() {
             const fields = [
-                { id: 'ph-wvtr', min: 0, msg: 'WVTR deve essere ≥ 0' },
-                { id: 'ph-tref', min: -50, max: 100, msg: 'Temperatura non valida' },
-                { id: 'ph-rhref', min: 0, max: 100, msg: 'UR deve essere 0-100%' },
-                { id: 'ph-ea', min: 0, max: 150, msg: 'Eₐ non valida' },
-                { id: 'ph-area', min: 0.1, msg: 'Area deve essere > 0' },
-                { id: 'ph-crit', min: 0.1, msg: 'Limite critico deve essere > 0' },
-                { id: 'ph-years', min: 0.5, max: 10, msg: 'Shelf life non valida' }
+                { id: 'ph-wvtr', min: 0, msg: 'WVTR must be ≥ 0' },
+                { id: 'ph-tref', min: -50, max: 100, msg: 'Invalid temperature' },
+                { id: 'ph-rhref', min: 0, max: 100, msg: 'RH must be 0-100%' },
+                { id: 'ph-ea', min: 0, max: 150, msg: 'Invalid Eₐ' },
+                { id: 'ph-area', min: 0.1, msg: 'Area must be > 0' },
+                { id: 'ph-crit', min: 0.1, msg: 'Critical limit must be > 0' },
+                { id: 'ph-years', min: 0.5, max: 10, msg: 'Invalid shelf life' }
             ];
             
             let isValid = true;
@@ -1143,21 +1366,45 @@
             return isValid;
         }
 
+        function updateQuickResults() {
+            if (!currentResults) return;
+            
+            const results = currentResults.results;
+            const passCount = results.filter(r => r.pass).length;
+            const totalZones = results.length;
+            
+            let statusHtml = '';
+            if (passCount === totalZones) {
+                statusHtml = `<div style="color: var(--success); font-weight: 600;">✓ All ${totalZones} zones compliant</div>`;
+            } else if (passCount > 0) {
+                statusHtml = `<div style="color: var(--warning); font-weight: 600;">⚠ ${passCount}/${totalZones} zones compliant</div>`;
+            } else {
+                statusHtml = `<div style="color: var(--danger); font-weight: 600;">✗ No zones compliant</div>`;
+            }
+            
+            document.getElementById('quick-results').innerHTML = `
+                <div style="text-align: left;">
+                    ${statusHtml}
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light);">
+                        Click tabs below for detailed analysis
+                    </div>
+                </div>
+            `;
+        }
+
         function updateKPIDashboard() {
             if (!currentResults) return;
             
             const results = currentResults.results;
             const params = currentResults.params;
             
-            // Count passing zones
             const passCount = results.filter(r => r.pass).length;
             const totalZones = results.length;
             const passPercent = (passCount / totalZones * 100).toFixed(0);
             
             document.getElementById('kpi-pass-count').textContent = `${passCount}/${totalZones}`;
-            document.getElementById('kpi-pass-percent').textContent = `${passPercent}% del totale`;
+            document.getElementById('kpi-pass-percent').textContent = `${passPercent}% of total`;
             
-            // Update KPI card color
             const kpiCard = document.getElementById('kpi-zones-pass');
             if (passCount === totalZones) {
                 kpiCard.className = 'kpi-card success';
@@ -1167,13 +1414,11 @@
                 kpiCard.className = 'kpi-card warning';
             }
             
-            // Max ingress
             const maxIngress = Math.max(...results.map(r => r.yearlyIngress));
             const maxZone = results.find(r => r.yearlyIngress === maxIngress);
             document.getElementById('kpi-max-ingress-val').textContent = `${maxIngress.toFixed(2)} mg`;
-            document.querySelector('#kpi-max-ingress .kpi-delta').textContent = `Nella ${maxZone.zone.label}`;
+            document.querySelector('#kpi-max-ingress .kpi-delta').textContent = `In ${maxZone.zone.label}`;
             
-            // Safety margin
             const minSafety = Math.min(...results.map(r => 100 - r.percentLimit));
             const safetyEl = document.getElementById('kpi-safety-val');
             const safetyCard = document.getElementById('kpi-safety-margin');
@@ -1187,11 +1432,9 @@
                 safetyCard.className = 'kpi-card danger';
             }
             
-            // Arrhenius factor (average)
             const avgArrFactor = results.reduce((sum, r) => sum + r.arrFactor, 0) / results.length;
             document.getElementById('kpi-arr-val').textContent = `${avgArrFactor.toFixed(2)}x`;
             
-            // Overall progress bar
             const overallPercent = passPercent;
             const progressFill = document.getElementById('overall-progress');
             const overallStatus = document.getElementById('overall-status');
@@ -1202,15 +1445,15 @@
             
             if (overallPercent === 100) {
                 progressFill.className = 'progress-fill success';
-                overallStatus.textContent = '✓ Tutte le zone conformi';
+                overallStatus.textContent = '✓ All zones compliant';
                 overallStatus.style.color = 'var(--success)';
             } else if (overallPercent > 50) {
                 progressFill.className = 'progress-fill warning';
-                overallStatus.textContent = '⚠ Alcune zone critiche';
+                overallStatus.textContent = '⚠ Some critical zones';
                 overallStatus.style.color = 'var(--warning)';
             } else {
                 progressFill.className = 'progress-fill danger';
-                overallStatus.textContent = '✗ Maggioranza non conforme';
+                overallStatus.textContent = '✗ Majority non-compliant';
                 overallStatus.style.color = 'var(--danger)';
             }
         }
@@ -1220,10 +1463,9 @@
             
             const results = currentResults.results;
             
-            // Summary table
             const tbody = document.querySelector('#table-summary tbody');
             tbody.innerHTML = results.map(r => `
-                <tr style="${r.pass ? 'background: #f0fdf4' : 'background: #fef2f2'}">
+                <tr style="${r.pass ? 'background: var(--success-light)' : 'background: var(--danger-light)'}">
                     <td><strong>${r.zone.label}</strong></td>
                     <td>${r.zone.T}°C / ${r.zone.RH}%<br><small style="color: var(--text-light)">${r.zone.desc}</small></td>
                     <td>${r.wvtrEff.toFixed(4)} g/m²/day</td>
@@ -1237,10 +1479,7 @@
                 </tr>
             `).join('');
             
-            // Overview chart
             renderOverviewChart();
-            
-            // Factors chart
             renderFactorsChart();
         }
 
@@ -1250,7 +1489,6 @@
             const results = currentResults.results;
             const params = currentResults.params;
             
-            // Detailed table
             const tbody = document.querySelector('#table-detailed tbody');
             tbody.innerHTML = results.map(r => `
                 <tr>
@@ -1274,17 +1512,16 @@
                 </tr>
             `).join('');
             
-            // Calculation parameters
             const paramsDiv = document.getElementById('calc-parameters');
             paramsDiv.innerHTML = `
-                <div><strong>WVTR Riferimento:</strong> ${params.wvtr_ref} g/m²/day</div>
-                <div><strong>Temperatura Ref:</strong> ${params.T_ref}°C (${(params.T_ref + 273.15).toFixed(2)} K)</div>
-                <div><strong>UR Riferimento:</strong> ${params.RH_ref}%</div>
-                <div><strong>Energia di Attivazione:</strong> ${params.Ea_kJ} kJ/mol</div>
-                <div><strong>Costante dei Gas (R):</strong> ${R_GAS} kJ/(mol·K)</div>
-                <div><strong>Area Superficiale:</strong> ${params.cavity_cm2} cm² = ${(params.cavity_cm2/10000).toFixed(4)} m²</div>
-                <div><strong>Shelf Life:</strong> ${params.shelf_years} anni = ${(params.shelf_years * 365).toFixed(0)} giorni</div>
-                <div><strong>Limite Critico:</strong> ${params.critical_mg} mg/cavità</div>
+                <div><strong>Reference WVTR:</strong> ${params.wvtr_ref} g/m²/day</div>
+                <div><strong>Reference Temperature:</strong> ${params.T_ref}°C (${(params.T_ref + 273.15).toFixed(2)} K)</div>
+                <div><strong>Reference RH:</strong> ${params.RH_ref}%</div>
+                <div><strong>Activation Energy:</strong> ${params.Ea_kJ} kJ/mol</div>
+                <div><strong>Gas Constant (R):</strong> ${R_GAS} kJ/(mol·K)</div>
+                <div><strong>Surface Area:</strong> ${params.cavity_cm2} cm² = ${(params.cavity_cm2/10000).toFixed(4)} m²</div>
+                <div><strong>Shelf Life:</strong> ${params.shelf_years} years = ${(params.shelf_years * 365).toFixed(0)} days</div>
+                <div><strong>Critical Limit:</strong> ${params.critical_mg} mg/cavity</div>
             `;
         }
 
@@ -1314,14 +1551,14 @@
                     labels: results.map(r => r.zone.label),
                     datasets: [
                         {
-                            label: 'Ingresso Annuo (mg)',
+                            label: 'Annual Ingress (mg)',
                             data: results.map(r => r.yearlyIngress),
                             backgroundColor: results.map(r => r.pass ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
                             borderColor: results.map(r => r.pass ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'),
                             borderWidth: 2
                         },
                         {
-                            label: 'Limite Critico (mg)',
+                            label: 'Critical Limit (mg)',
                             data: results.map(() => currentResults.params.critical_mg),
                             type: 'line',
                             borderColor: 'rgb(245, 158, 11)',
@@ -1350,7 +1587,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Umidità (mg)'
+                                text: 'Moisture (mg)'
                             }
                         }
                     }
@@ -1371,13 +1608,13 @@
                     labels: results.map(r => r.zone.label),
                     datasets: [
                         {
-                            label: 'Fattore Temperatura',
+                            label: 'Temperature Factor',
                             data: results.map(r => r.arrFactor),
                             borderColor: 'rgb(37, 99, 235)',
                             backgroundColor: 'rgba(37, 99, 235, 0.2)',
                         },
                         {
-                            label: 'Fattore RH',
+                            label: 'RH Factor',
                             data: results.map(r => r.rhFactor),
                             borderColor: 'rgb(16, 185, 129)',
                             backgroundColor: 'rgba(16, 185, 129, 0.2)',
@@ -1395,16 +1632,15 @@
                 }
             });
             
-            // Factors summary
             const avgArr = (results.reduce((sum, r) => sum + r.arrFactor, 0) / results.length).toFixed(3);
             const avgRH = (results.reduce((sum, r) => sum + r.rhFactor, 0) / results.length).toFixed(3);
             const maxArr = Math.max(...results.map(r => r.arrFactor)).toFixed(3);
             const maxRH = Math.max(...results.map(r => r.rhFactor)).toFixed(3);
             
             document.getElementById('factors-summary').innerHTML = `
-                <div><strong>Fattore di Arrhenius medio:</strong> ${avgArr}x (max: ${maxArr}x)</div>
-                <div><strong>Fattore RH medio:</strong> ${avgRH}x (max: ${maxRH}x)</div>
-                <div style="margin-top: 0.5rem; font-size: 0.8rem;">
+                <div><strong>Average Arrhenius Factor:</strong> ${avgArr}x (max: ${maxArr}x)</div>
+                <div><strong>Average RH Factor:</strong> ${avgRH}x (max: ${maxRH}x)</div>
+                <div style="margin-top: 0.4rem; font-size: 0.75rem;">
                     Eₐ = ${currentResults.params.Ea_kJ} kJ/mol · T_ref = ${currentResults.params.T_ref}°C
                 </div>
             `;
@@ -1423,12 +1659,12 @@
                     labels: results.map(r => r.zone.label),
                     datasets: [
                         {
-                            label: 'WVTR Riferimento',
+                            label: 'Reference WVTR',
                             data: results.map(() => currentResults.params.wvtr_ref),
                             backgroundColor: 'rgba(100, 116, 139, 0.5)',
                         },
                         {
-                            label: 'WVTR Effettivo',
+                            label: 'Effective WVTR',
                             data: results.map(r => r.wvtrEff),
                             backgroundColor: 'rgba(37, 99, 235, 0.7)',
                         }
@@ -1461,12 +1697,11 @@
             const results = currentResults.results;
             const years = currentResults.params.shelf_years;
             
-            // Calculate cumulative for each year
             const labels = [];
             const datasets = [];
             
             for (let y = 1; y <= years; y++) {
-                labels.push(`Anno ${y}`);
+                labels.push(`Year ${y}`);
             }
             
             results.forEach(r => {
@@ -1484,10 +1719,9 @@
                 });
             });
             
-            // Add critical limit line
             const criticalData = labels.map(() => currentResults.params.critical_mg);
             datasets.push({
-                label: 'Limite Critico',
+                label: 'Critical Limit',
                 data: criticalData,
                 borderColor: 'rgb(245, 158, 11)',
                 borderWidth: 3,
@@ -1513,7 +1747,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Umidità Cumulativa (mg)'
+                                text: 'Cumulative Moisture (mg)'
                             }
                         }
                     }
@@ -1532,11 +1766,11 @@
                 type: 'scatter',
                 data: {
                     datasets: [{
-                        label: 'Zone ICH',
+                        label: 'ICH Zones',
                         data: results.map(r => ({
                             x: r.zone.T,
                             y: r.zone.RH,
-                            r: Math.sqrt(r.wvtrEff) * 10, // Size based on WVTR
+                            r: Math.sqrt(r.wvtrEff) * 10,
                             zone: r.zone.label,
                             wvtr: r.wvtrEff
                         })),
@@ -1555,9 +1789,9 @@
                                 label: function(context) {
                                     const point = context.raw;
                                     return [
-                                        `Zona: ${point.zone}`,
-                                        `Temperatura: ${point.x}°C`,
-                                        `UR: ${point.y}%`,
+                                        `Zone: ${point.zone}`,
+                                        `Temperature: ${point.x}°C`,
+                                        `RH: ${point.y}%`,
                                         `WVTR: ${point.wvtr.toFixed(4)} g/m²/day`
                                     ];
                                 }
@@ -1566,10 +1800,10 @@
                     },
                     scales: {
                         x: {
-                            title: { display: true, text: 'Temperatura (°C)' }
+                            title: { display: true, text: 'Temperature (°C)' }
                         },
                         y: {
-                            title: { display: true, text: 'Umidità Relativa (%)' }
+                            title: { display: true, text: 'Relative Humidity (%)' }
                         }
                     }
                 }
@@ -1588,7 +1822,7 @@
                 data: {
                     labels: results.map(r => r.zone.label),
                     datasets: [{
-                        label: 'Anni al Limite Critico',
+                        label: 'Years to Critical Limit',
                         data: results.map(r => r.yearsToLimit),
                         backgroundColor: results.map(r => {
                             if (r.yearsToLimit >= currentResults.params.shelf_years) return 'rgba(16, 185, 129, 0.7)';
@@ -1609,7 +1843,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Tempo (anni)'
+                                text: 'Time (years)'
                             }
                         }
                     }
@@ -1623,7 +1857,7 @@
 
         function saveScenario() {
             if (!currentResults) {
-                alert('Esegui prima un calcolo!');
+                alert('Run a calculation first!');
                 return;
             }
             
@@ -1639,44 +1873,50 @@
             localStorage.setItem('mvtr_scenarios', JSON.stringify(savedScenarios));
             
             renderScenariosList();
-            alert(`Scenario "${scenario.name}" salvato con successo!`);
+            alert(`Scenario "${scenario.name}" saved successfully!`);
         }
 
         function renderScenariosList() {
             const container = document.getElementById('scenarios-list');
+            const containerComp = document.getElementById('scenarios-list-comparison');
             
             if (savedScenarios.length === 0) {
-                container.innerHTML = `
-                    <p style="color: var(--text-light); text-align: center; padding: 2rem;">
-                        Nessun scenario salvato. Configura i parametri e clicca "Salva Scenario".
+                const emptyMsg = `
+                    <p style="color: var(--text-light); text-align: center; padding: 1.5rem; font-size: 0.85rem;">
+                        No saved scenarios. Configure parameters and click "Save Scenario".
                     </p>
                 `;
+                container.innerHTML = emptyMsg;
+                if (containerComp) containerComp.innerHTML = emptyMsg;
                 return;
             }
             
-            container.innerHTML = savedScenarios.map(s => `
+            const scenariosHtml = savedScenarios.map(s => `
                 <div class="scenario-card" data-id="${s.id}">
                     <div class="scenario-header">
                         <div class="scenario-name">${s.name}</div>
                         <button class="scenario-delete" onclick="deleteScenario(${s.id})">×</button>
                     </div>
-                    <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.5rem;">
-                        WVTR: ${s.params.wvtr_ref} · Eₐ: ${s.params.Ea_kJ} · Shelf: ${s.params.shelf_years} anni
+                    <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem;">
+                        WVTR: ${s.params.wvtr_ref} · Eₐ: ${s.params.Ea_kJ} · Shelf: ${s.params.shelf_years} years
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--text-light);">
-                        Salvato: ${new Date(s.savedAt).toLocaleString()}
+                    <div style="font-size: 0.7rem; color: var(--text-light);">
+                        Saved: ${new Date(s.savedAt).toLocaleString()}
                     </div>
                     <button class="btn btn-primary btn-sm" style="margin-top: 0.5rem; width: 100%;" onclick="loadScenario(${s.id})">
-                        Carica Scenario
+                        Load Scenario
                     </button>
                 </div>
             `).join('');
+            
+            container.innerHTML = scenariosHtml;
+            if (containerComp) containerComp.innerHTML = scenariosHtml;
             
             updateScenarioComparison();
         }
 
         function deleteScenario(id) {
-            if (confirm('Eliminare questo scenario?')) {
+            if (confirm('Delete this scenario?')) {
                 savedScenarios = savedScenarios.filter(s => s.id !== id);
                 localStorage.setItem('mvtr_scenarios', JSON.stringify(savedScenarios));
                 renderScenariosList();
@@ -1687,7 +1927,6 @@
             const scenario = savedScenarios.find(s => s.id === id);
             if (!scenario) return;
             
-            // Load parameters into form
             document.getElementById('ph-wvtr').value = scenario.params.wvtr_ref;
             document.getElementById('ph-tref').value = scenario.params.T_ref;
             document.getElementById('ph-rhref').value = scenario.params.RH_ref;
@@ -1697,10 +1936,8 @@
             document.getElementById('ph-years').value = scenario.params.shelf_years;
             document.getElementById('scenario-name').value = scenario.params.scenarioName;
             
-            // Recalculate
             calculateAndRender();
             
-            // Switch to overview tab
             switchTab('overview');
         }
 
@@ -1708,27 +1945,25 @@
             if (savedScenarios.length < 2) {
                 document.getElementById('scenario-comparison-body').innerHTML = `
                     <tr><td colspan="${savedScenarios.length + 1}" style="text-align: center; color: var(--text-light);">
-                        Salva almeno 2 scenari per il confronto
+                        Save at least 2 scenarios for comparison
                     </td></tr>
                 `;
                 return;
             }
             
-            // Update header
             const headerRow = document.getElementById('scenario-comparison-header');
-            headerRow.innerHTML = '<th>Parametro</th>' + 
+            headerRow.innerHTML = '<th>Parameter</th>' + 
                 savedScenarios.map(s => `<th>${s.name}</th>`).join('');
             
-            // Update body
             const params = [
-                { key: 'wvtr_ref', label: 'WVTR Riferimento', unit: 'g/m²/day' },
-                { key: 'T_ref', label: 'Temperatura Ref', unit: '°C' },
-                { key: 'RH_ref', label: 'UR Riferimento', unit: '%' },
-                { key: 'Ea_kJ', label: 'Energia di Attivazione', unit: 'kJ/mol' },
-                { key: 'cavity_cm2', label: 'Area Cavità', unit: 'cm²' },
-                { key: 'critical_mg', label: 'Limite Critico', unit: 'mg' },
-                { key: 'shelf_years', label: 'Shelf Life', unit: 'anni' },
-                { key: 'passCount', label: 'Zone Conformi', unit: '/7', calc: s => s.results.filter(r => r.pass).length }
+                { key: 'wvtr_ref', label: 'Reference WVTR', unit: 'g/m²/day' },
+                { key: 'T_ref', label: 'Reference Temperature', unit: '°C' },
+                { key: 'RH_ref', label: 'Reference RH', unit: '%' },
+                { key: 'Ea_kJ', label: 'Activation Energy', unit: 'kJ/mol' },
+                { key: 'cavity_cm2', label: 'Cavity Area', unit: 'cm²' },
+                { key: 'critical_mg', label: 'Critical Limit', unit: 'mg' },
+                { key: 'shelf_years', label: 'Shelf Life', unit: 'years' },
+                { key: 'passCount', label: 'Compliant Zones', unit: '/7', calc: s => s.results.filter(r => r.pass).length }
             ];
             
             const tbody = document.getElementById('scenario-comparison-body');
@@ -1742,7 +1977,6 @@
                 </tr>
             `).join('');
             
-            // Update comparison chart
             renderScenarioComparisonChart();
         }
 
@@ -1781,7 +2015,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Umidità Totale (mg)'
+                                text: 'Total Moisture (mg)'
                             }
                         }
                     }
@@ -1795,7 +2029,7 @@
 
         function runSensitivityEA() {
             if (!currentResults) {
-                alert('Esegui prima un calcolo base!');
+                alert('Run a base calculation first!');
                 return;
             }
             
@@ -1812,7 +2046,6 @@
                 const ea = min + (step * i);
                 eaValues.push(ea);
                 
-                // Recalculate with this EA
                 const tempResults = performCalculations({
                     ...currentResults.params,
                     Ea_kJ: ea
@@ -1822,7 +2055,6 @@
                 passCounts.push(tempResults.filter(r => r.pass).length);
             }
             
-            // Render chart
             const ctx = document.getElementById('chart-sensitivity-ea').getContext('2d');
             
             if (charts.sensEA) charts.sensEA.destroy();
@@ -1833,7 +2065,7 @@
                     labels: eaValues.map(v => `${v} kJ/mol`),
                     datasets: [
                         {
-                            label: 'Max Ingresso Totale (mg)',
+                            label: 'Max Total Ingress (mg)',
                             data: maxIngressValues,
                             borderColor: 'rgb(37, 99, 235)',
                             backgroundColor: 'rgba(37, 99, 235, 0.1)',
@@ -1841,7 +2073,7 @@
                             yAxisID: 'y'
                         },
                         {
-                            label: 'Zone Conformi',
+                            label: 'Compliant Zones',
                             data: passCounts,
                             borderColor: 'rgb(16, 185, 129)',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -1862,7 +2094,7 @@
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: { display: true, text: 'Ingresso (mg)' }
+                            title: { display: true, text: 'Ingress (mg)' }
                         },
                         y1: {
                             type: 'linear',
@@ -1870,7 +2102,7 @@
                             position: 'right',
                             min: 0,
                             max: 7,
-                            title: { display: true, text: 'Zone Conformi' }
+                            title: { display: true, text: 'Compliant Zones' }
                         }
                     }
                 }
@@ -1879,7 +2111,7 @@
 
         function runSensitivityWVTR() {
             if (!currentResults) {
-                alert('Esegui prima un calcolo base!');
+                alert('Run a base calculation first!');
                 return;
             }
             
@@ -1915,7 +2147,7 @@
                     labels: wvtrValues.map(v => `${v} g/m²/d`),
                     datasets: [
                         {
-                            label: 'Max Ingresso Totale (mg)',
+                            label: 'Max Total Ingress (mg)',
                             data: maxIngressValues,
                             borderColor: 'rgb(239, 68, 68)',
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -1923,7 +2155,7 @@
                             yAxisID: 'y'
                         },
                         {
-                            label: 'Zone Conformi',
+                            label: 'Compliant Zones',
                             data: passCounts,
                             borderColor: 'rgb(16, 185, 129)',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -1944,7 +2176,7 @@
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: { display: true, text: 'Ingresso (mg)' }
+                            title: { display: true, text: 'Ingress (mg)' }
                         },
                         y1: {
                             type: 'linear',
@@ -1952,7 +2184,7 @@
                             position: 'right',
                             min: 0,
                             max: 7,
-                            title: { display: true, text: 'Zone Conformi' }
+                            title: { display: true, text: 'Compliant Zones' }
                         }
                     }
                 }
@@ -1960,7 +2192,6 @@
         }
 
         function updateSensitivityCharts() {
-            // Auto-run sensitivity on first calculation
             if (currentResults && !charts.sensEA) {
                 runSensitivityEA();
                 runSensitivityWVTR();
@@ -1979,7 +2210,6 @@
             const baseResults = currentResults.results;
             const baseMaxIngress = Math.max(...baseResults.map(r => r.totalIngress));
             
-            // Test variations
             const variations = [
                 { name: 'WVTR +20%', params: { ...baseParams, wvtr_ref: baseParams.wvtr_ref * 1.2 } },
                 { name: 'WVTR -20%', params: { ...baseParams, wvtr_ref: baseParams.wvtr_ref * 0.8 } },
@@ -2008,7 +2238,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Impatto su Max Ingresso (%)',
+                        label: 'Impact on Max Ingress (%)',
                         data: data,
                         backgroundColor: colors,
                         borderWidth: 2
@@ -2025,7 +2255,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Variazione % rispetto al base case'
+                                text: '% Variation vs. base case'
                             }
                         }
                     }
@@ -2039,7 +2269,7 @@
 
         function exportToCSV() {
             if (!currentResults) {
-                alert('Nessun dato da esportare!');
+                alert('No data to export!');
                 return;
             }
             
@@ -2076,7 +2306,7 @@
 
         function exportToPDF() {
             if (!currentResults) {
-                alert('Nessun dato da esportare!');
+                alert('No data to export!');
                 return;
             }
             
@@ -2086,14 +2316,12 @@
             const results = currentResults.results;
             const params = currentResults.params;
             
-            // Title
             doc.setFontSize(20);
             doc.text('MVTR Analysis Report', 20, 20);
             
             doc.setFontSize(10);
             doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 30);
             
-            // Parameters
             doc.setFontSize(14);
             doc.text('Parameters', 20, 45);
             
@@ -2107,7 +2335,6 @@
             doc.text(`Critical Moisture: ${params.critical_mg} mg`, 20, y); y += 7;
             doc.text(`Shelf Life: ${params.shelf_years} years`, 20, y); y += 15;
             
-            // Results table
             doc.setFontSize(14);
             doc.text('Results by ICH Zone', 20, y); y += 10;
             
@@ -2123,7 +2350,6 @@
                 y += 5;
             });
             
-            // Save
             doc.save(`MVTR_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
@@ -2132,15 +2358,12 @@
         // ============================================================================
 
         function switchTab(tabName) {
-            // Update tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
             
-            // Update content
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
             
-            // Resize charts if needed
             if (tabName === 'charts' && currentResults) {
                 setTimeout(() => {
                     Object.values(charts).forEach(chart => chart.resize());
@@ -2149,7 +2372,7 @@
         }
 
         function resetForm() {
-            if (confirm('Resettare tutti i parametri ai valori default?')) {
+            if (confirm('Reset all parameters to default values?')) {
                 document.getElementById('ph-wvtr').value = 1.0;
                 document.getElementById('ph-tref').value = 38;
                 document.getElementById('ph-rhref').value = 90;
@@ -2157,12 +2380,10 @@
                 document.getElementById('ph-area').value = 2.0;
                 document.getElementById('ph-crit').value = 2.0;
                 document.getElementById('ph-years').value = 2;
-                document.getElementById('scenario-name').value = 'Scenario Base';
+                document.getElementById('scenario-name').value = 'Base Scenario';
                 
-                // Clear errors
                 document.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('has-error'));
                 
-                // Recalculate
                 calculateAndRender();
             }
         }
@@ -2171,7 +2392,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderScenariosList();
             
-            // Auto-calculate if there's saved state
             const savedState = localStorage.getItem('mvtr_current_state');
             if (savedState) {
                 const state = JSON.parse(savedState);
@@ -2187,7 +2407,6 @@
             }
         });
 
-        // Save current state on beforeunload
         window.addEventListener('beforeunload', () => {
             if (currentResults) {
                 localStorage.setItem('mvtr_current_state', JSON.stringify(currentResults.params));
