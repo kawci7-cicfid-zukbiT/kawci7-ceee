@@ -4894,7 +4894,7 @@
     "family": "PA",
     "company": "Jindal Nylon Films (Jindal Films Group)",
     "tdsLink": "https://www.jindalnylonfilms.com/wp-content/uploads/2023/03/FILMON®-BX-TDS-JNF-January-2023.pdf",
-    "tdsSource": "Jindal Nylon Films TDS FILMON® BX, Cesano Maderno (MB) Italy, January 2023. Bi-axially Oriented Polyamide (BOPA) film, simultaneous-stretching ('double bubble') technology, one-side corona treated. TDS reports full barrier table at 4 thicknesses (12, 15, 20, 25 µm): OTR dry (ASTM D1927), OTR @ 65% RH (ASTM D3985), CO2 TR dry (ASTM D2476), WVTR @ 38°C/90% RH (ASTM F1249), plus haze, density, melting temp, shrinkage. Hygroscopic beta calculated from dry vs 65% RH OTR data (averaged across 4 thicknesses).",
+    "tdsSource": "Jindal Nylon Films TDS FILMON® BX, Cesano Maderno (MB) Italy, January 2023. Bi-axially Oriented Polyamide (BOPA) film, simultaneous-stretching ('double bubble') technology, one-side corona treated. TDS reports full barrier table at 4 thicknesses (12, 15, 20, 25 µm): OTR dry (ASTM D1927), OTR @ 65% RH (ASTM D3985), CO2 TR dry (ASTM D2476), WVTR @ 38°C/90% RH (ASTM F-1249), plus haze, density, melting temp, shrinkage. Hygroscopic beta calculated from dry vs 65% RH OTR data (averaged across 4 thicknesses).",
     "supplierEmail": "info@jindalnylonfilms.com",
     "isMetallized": false,
     "application": "food",
@@ -4916,7 +4916,7 @@
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
     "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 44,
@@ -4981,28 +4981,28 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 280,
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 210,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 165,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [
@@ -5069,7 +5069,7 @@
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
     "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 44,
@@ -5134,28 +5134,28 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 280,
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 210,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 165,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [
@@ -5222,7 +5222,7 @@
     "hygroscopicBetaOTR": 0.00669,
     "hygroscopicRefRHOTR": 0,
     "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 34,
@@ -5385,77 +5385,77 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 238,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 190,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 143,
         "thickness": 40,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 115,
         "thickness": 50,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 95,
         "thickness": 60,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 80,
         "thickness": 70,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 75,
         "thickness": 75,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 70,
         "thickness": 80,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 63,
         "thickness": 90,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 55,
         "thickness": 100,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [
@@ -5574,7 +5574,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5582,7 +5582,7 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5623,7 +5623,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5631,7 +5631,7 @@
         "thickness": 23,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5672,7 +5672,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5680,7 +5680,7 @@
         "thickness": 51,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5721,7 +5721,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5729,7 +5729,7 @@
         "thickness": 76,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5770,7 +5770,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5778,7 +5778,7 @@
         "thickness": 102,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5819,7 +5819,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5827,7 +5827,7 @@
         "thickness": 152,
         "temperature": 38,
         "humidity": 100,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5866,7 +5866,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -5874,7 +5874,7 @@
         "thickness": 20.3,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -5913,7 +5913,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 9.3,
@@ -5950,28 +5950,28 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.078,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.078,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.078,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6012,7 +6012,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 0.078,
@@ -6042,21 +6042,21 @@
         "thickness": 9,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.078,
         "thickness": 12.2,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.078,
         "thickness": 23.4,
         "temperature": 38,
         "humidity": 50,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6095,7 +6095,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 21.7,
@@ -6118,14 +6118,14 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.155,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6164,7 +6164,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -6172,14 +6172,14 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 6.98,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6336,7 +6336,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 139.5,
@@ -6352,7 +6352,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6390,7 +6390,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 77.5,
@@ -6406,7 +6406,7 @@
         "thickness": 23,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -6619,7 +6619,7 @@
     "family": "PET",
     "company": "Toray",
     "tdsLink": "https://www.toraytpa.com/wp-content/uploads/2019/06/LUM-PS10-Techincal-Data-Sheet-ENGLISH.pdf",
-    "tdsSource": "Toray Plastics (America) Inc. Lumirror® PS10 Product Data Sheet DS-00061/3. Fetched from toraytpa.com. OTR: ASTM D3985 at 73F (23C)/0%RH. WVTR: ASTM F1249 at 100F (38C)/90%RH. Unit conversion: value x15.5 to cc or g/m2/day.",
+    "tdsSource": "Toray Plastics (America) Inc. Lumirror® PS10 Product Data Sheet DS-00061/3. Fetched from toraytpa.com. OTR: ASTM D3985 at 73F (23C)/0%RH. WVTR: ASTM F-1249 at 100F (38C)/90%RH. Unit conversion: value x15.5 to cc or g/m2/day.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "general",
@@ -6641,7 +6641,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 186.0,
@@ -6678,28 +6678,28 @@
         "thickness": 8.1,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 60.45,
         "thickness": 9.1,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 21.7,
         "thickness": 23.4,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 15.5,
         "thickness": 36.1,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -10740,7 +10740,7 @@
     "family": "PP",
     "company": "Taghleef Industries",
     "tdsLink": "https://www.jolybar.com/wp-content/uploads/2019/08/XTMU.pdf",
-    "tdsSource": "Taghleef Industries TDS EXTENDO® XTMU (last update 2017/03/A). BoPP multilayer with EVOH barrier core, both sides heat sealable (MST 105°C). Chlorine-free PVdC replacement. OTR 0.10 cc/m²/d at 23°C/0%RH (ASTM D3985) — same for 20 and 30 µm (barrier is core-dominated). WVTR 7.5 (20µm) / 5.0 (30µm) g/m²/d at 38°C/90%RH (ASTM F1249). Typical values. EC and FDA compliant.",
+    "tdsSource": "Taghleef Industries TDS EXTENDO® XTMU (last update 2017/03/A). BoPP multilayer with EVOH barrier core, both sides heat sealable (MST 105°C). Chlorine-free PVdC replacement. OTR 0.10 cc/m²/d at 23°C/0%RH (ASTM D3985) — same for 20 and 30 µm (barrier is core-dominated). WVTR 7.5 (20µm) / 5.0 (30µm) g/m²/d at 38°C/90%RH (ASTM F-1249). Typical values. EC and FDA compliant.",
     "supplierEmail": "staff@ti-films.com",
     "isMetallized": false,
     "application": "food",
@@ -10765,7 +10765,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 0.1,
@@ -10788,14 +10788,14 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       },
       {
         "value": 5.0,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -10836,7 +10836,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 18,
@@ -10859,14 +10859,14 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       },
       {
         "value": 4.5,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -10930,7 +10930,7 @@
         "thickness": 23,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM E96 (1.25 g/100in² × 15.5)"
+        "testMethod": "ASTM E96 "
       }
     ],
     "co2Values": [],
@@ -11226,7 +11226,7 @@
     "family": "PVDC",
     "company": "ICM Packaging (India)",
     "tdsLink": "https://icmpl.net/wp-content/uploads/2023/12/TDS-PVDC-0.25X60.pdf",
-    "tdsSource": "ICM Packaging (icmpl.net) TDS 'PVdC coated PVC Film, Non Toxic Food/Pharma Grade'. PVC 250±10% µm + PVdC 60±3 gsm, total 285µm / 400 gsm. OTR 2.0 max cc/m²/24h at 23°C/0%RH (ASTM D3985). WVTR 0.7 max g/m²/24h at 38°C/90%RH (ASTM F1249). EP 3.1.11/3.2.2, USP 661, EC 2005/79, FDA 21 CFR 177 compliant. Non-toxic (USP). Forming temp 110–170°C.",
+    "tdsSource": "ICM Packaging (icmpl.net) TDS 'PVdC coated PVC Film, Non Toxic Food/Pharma Grade'. PVC 250±10% µm + PVdC 60±3 gsm, total 285µm / 400 gsm. OTR 2.0 max cc/m²/24h at 23°C/0%RH (ASTM D3985). WVTR 0.7 max g/m²/24h at 38°C/90%RH (ASTM F-1249). EP 3.1.11/3.2.2, USP 661, EC 2005/79, FDA 21 CFR 177 compliant. Non-toxic (USP). Forming temp 110–170°C.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "pharma",
@@ -11254,7 +11254,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 2.0,
@@ -11270,7 +11270,7 @@
         "thickness": 285,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -11286,7 +11286,7 @@
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPP/B-UHB-M.pdf",
-    "tdsSource": "Flex Films TDS B-UHB-M (Ref QAD UFLI S/20-MB12/1, 11-10-2023). Metallized BOPP ultra-high barrier, OD 2.5, foil replacement. 20µm. OTR 0.1 cc/m²/d (0.006 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 0.1 g/m²/d (0.006 g/100in²) at 38°C/90%RH (ASTM F1249). Bond ≥1200 gm/25mm. EC+FDA. SIT 110°C.",
+    "tdsSource": "Flex Films TDS B-UHB-M (Ref QAD UFLI S/20-MB12/1, 11-10-2023). Metallized BOPP ultra-high barrier, OD 2.5, foil replacement. 20µm. OTR 0.1 cc/m²/d (0.006 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 0.1 g/m²/d (0.006 g/100in²) at 38°C/90%RH (ASTM F-1249). Bond ≥1200 gm/25mm. EC+FDA. SIT 110°C.",
     "supplierEmail": "enquiry@flexfilm.com",
     "isMetallized": true,
     "application": "food",
@@ -11311,7 +11311,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 0.1,
@@ -11327,7 +11327,7 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -11368,7 +11368,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 80,
@@ -11398,21 +11398,21 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       },
       {
         "value": 0.6,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       },
       {
         "value": 0.6,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -12341,7 +12341,7 @@
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPP/B-UHP-M.pdf",
-    "tdsSource": "Flex Films TDS B-UHP-M (Ref QAD UFLI S/20-MB13/1, 01-04-2020). White voided met-BOPP, ultra-high barrier, foil replacement. 35µm (140 gauge), density 0.65 (cavitated). OTR 0.1 (0.006 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 0.1 (0.006 g/100in²) at 38°C/90%RH (ASTM F1249). OD 2.5. SIT 105°C. EC+FDA.",
+    "tdsSource": "Flex Films TDS B-UHP-M (Ref QAD UFLI S/20-MB13/1, 01-04-2020). White voided met-BOPP, ultra-high barrier, foil replacement. 35µm (140 gauge), density 0.65 (cavitated). OTR 0.1 (0.006 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 0.1 (0.006 g/100in²) at 38°C/90%RH (ASTM F-1249). OD 2.5. SIT 105°C. EC+FDA.",
     "supplierEmail": "enquiry@flexfilm.com",
     "isMetallized": true,
     "application": "food",
@@ -12366,7 +12366,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 0.1,
@@ -12382,7 +12382,7 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -12590,7 +12590,7 @@
     "family": "PP",
     "company": "Toray Plastics (America)",
     "tdsLink": "https://www.toraytpa.com/wp-content/uploads/2019/06/TFN-PMX2-Technical-Data-Sheet-English-1.pdf",
-    "tdsSource": "Toray Plastics (America) TDS PMX2 (DS-00016/4). Met-BOPP, one side vacuum-deposited Al on UHSE, one side heat-sealable. 15/18/20/25 µm. MVTR 0.03 g/100in²/day × 15.5 = 0.47 g/m²/day at 38°C/90%RH (ASTM F1249). No OTR reported on TDS. SIT 91°C.",
+    "tdsSource": "Toray Plastics (America) TDS PMX2 (DS-00016/4). Met-BOPP, one side vacuum-deposited Al on UHSE, one side heat-sealable. 15/18/20/25 µm. MVTR 0.03 g/100in²/day × 15.5 = 0.47 g/m²/day at 38°C/90%RH (ASTM F-1249). No OTR reported on TDS. SIT 91°C.",
     "supplierEmail": "rimarketing@toraytpa.com",
     "isMetallized": true,
     "application": "food",
@@ -12612,7 +12612,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -12620,28 +12620,28 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (0.03 g/100in² × 15.5)"
+        "testMethod": "ASTM F-1249 "
       },
       {
         "value": 0.47,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.47,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 0.47,
         "thickness": 25,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -12679,7 +12679,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": null,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [],
     "wvtrValues": [
       {
@@ -12687,28 +12687,28 @@
         "thickness": 11.3,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 9.9,
         "thickness": 12.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 8.2,
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       },
       {
         "value": 7.0,
         "thickness": 17.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249"
+        "testMethod": "ASTM F-1249"
       }
     ],
     "co2Values": [],
@@ -12724,7 +12724,7 @@
     "family": "PET",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPET/F-LLP-M.pdf",
-    "tdsSource": "Flex Films TDS F-LLP-M (Ref QAD UFLI S/20-MF10/1, 01-04-2020). Met-BOPET for liquid/paste packaging, sandwich lamination, pasteurization. 12µm, OD 2.2 VHD. Bond >600 gm/25mm. OTR 1.1 cc/m²/d (0.07 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 1.0 g/m²/d (0.06 g/100in²) at 38°C/90%RH (ASTM F1249). EC+FDA.",
+    "tdsSource": "Flex Films TDS F-LLP-M (Ref QAD UFLI S/20-MF10/1, 01-04-2020). Met-BOPET for liquid/paste packaging, sandwich lamination, pasteurization. 12µm, OD 2.2 VHD. Bond >600 gm/25mm. OTR 1.1 cc/m²/d (0.07 cc/100in²) at 23°C/0%RH (ASTM D3985). WVTR 1.0 g/m²/d (0.06 g/100in²) at 38°C/90%RH (ASTM F-1249). EC+FDA.",
     "supplierEmail": "enquiry@flexfilm.com",
     "isMetallized": true,
     "application": "food",
@@ -12749,7 +12749,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "ASTM D3985",
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
         "value": 1.1,
@@ -12765,7 +12765,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 "
+        "testMethod": "ASTM F-1249 "
       }
     ],
     "co2Values": [],
@@ -13053,16 +13053,16 @@
       "hygroscopicBetaOTR": 0.055,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 0.4, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 1.2, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 3.8, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 1.55, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 3.9, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 8.0, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM F1249" }
+        { "value": 1.55, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 3.9, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 8.0, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13096,16 +13096,16 @@
       "hygroscopicBetaOTR": 0.028,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 1.5, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 4.0, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 10.0, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 1.0, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 2.5, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 5.2, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM F1249" }
+        { "value": 1.0, "thickness": 20, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 2.5, "thickness": 20, "temperature": 38, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 5.2, "thickness": 20, "temperature": 50, "humidity": 50, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13139,16 +13139,16 @@
       "hygroscopicBetaOTR": 0,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 2480, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 4100, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 6500, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 5.0, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 8.5, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 13.0, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 5.0, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 8.5, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 13.0, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13182,16 +13182,16 @@
       "hygroscopicBetaOTR": 0,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 4300, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 8500, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 14000, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 10, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 20, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 35, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 10, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 20, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 35, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13225,16 +13225,16 @@
       "hygroscopicBetaOTR": 0,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 1200, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 2100, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 3500, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 3.5, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 5.5, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 9.0, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 3.5, "thickness": 50, "temperature": 20, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 5.5, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 9.0, "thickness": 50, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13268,16 +13268,16 @@
       "hygroscopicBetaOTR": 0.05,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 0.5, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 1.8, "thickness": 25, "temperature": 38, "humidity": 50, "testMethod": "ASTM D3985" },
         { "value": 5.5, "thickness": 25, "temperature": 50, "humidity": 50, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 60, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 120, "thickness": 25, "temperature": 38, "humidity": 50, "testMethod": "ASTM F1249" },
-        { "value": 210, "thickness": 25, "temperature": 50, "humidity": 50, "testMethod": "ASTM F1249" }
+        { "value": 60, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 120, "thickness": 25, "temperature": 38, "humidity": 50, "testMethod": "ASTM F-1249" },
+        { "value": 210, "thickness": 25, "temperature": 50, "humidity": 50, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13311,16 +13311,16 @@
       "hygroscopicBetaOTR": 0,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 60, "thickness": 12, "temperature": 23, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 100, "thickness": 12, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 160, "thickness": 12, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 10, "thickness": 12, "temperature": 23, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 17, "thickness": 12, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 26, "thickness": 12, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 10, "thickness": 12, "temperature": 23, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 17, "thickness": 12, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 26, "thickness": 12, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13354,16 +13354,16 @@
       "hygroscopicBetaOTR": 0,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 1200, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 2600, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 4800, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 2.5, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 5.0, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 8.5, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 2.5, "thickness": 30, "temperature": 23, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 5.0, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 8.5, "thickness": 30, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
@@ -13397,16 +13397,16 @@
       "hygroscopicBetaOTR": 0.06,
       "hygroscopicRefRHOTR": 50,
       "testMethodOTR": "ASTM D3985",
-      "testMethodWVTR": "ASTM F1249",
+      "testMethodWVTR": "ASTM F-1249",
       "otrValues": [
         { "value": 15, "thickness": 15, "temperature": 23, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 25, "thickness": 15, "temperature": 38, "humidity": 90, "testMethod": "ASTM D3985" },
         { "value": 42, "thickness": 15, "temperature": 50, "humidity": 90, "testMethod": "ASTM D3985" }
       ],
       "wvtrValues": [
-        { "value": 80, "thickness": 15, "temperature": 23, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 150, "thickness": 15, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-        { "value": 260, "thickness": 15, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+        { "value": 80, "thickness": 15, "temperature": 23, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 150, "thickness": 15, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" },
+        { "value": 260, "thickness": 15, "temperature": 50, "humidity": 90, "testMethod": "ASTM F-1249" }
       ],
       "co2Values": [],
       "validConditions": [],
