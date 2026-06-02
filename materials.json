@@ -1248,7 +1248,7 @@
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
     "testMethodOTR": "JIS K-7126 (on LS/BOPA/CPP laminate)",
-    "testMethodWVTR": "JIS Z-0222 (on LS/BOPA/CPP laminate)",
+     "testMethodWVTR": "JIS K7129-2 ",
     "otrValues": [
       {
         "value": 0.1,
@@ -10153,9 +10153,9 @@
       "down": 0
     }
   },
-  {
+{
     "id": 177,
-    "name": "EVAL™ EF-XL (biaxially oriented EVOH film, 12 µm)",
+    "name": "EVAL™ EF-XL",
     "family": "EVOH",
     "company": "Kuraray",
     "tdsLink": "https://eval.kuraray.com/information-center/datasheets/",
@@ -10258,7 +10258,7 @@
   },
   {
     "id": 179,
-    "name": "Toyobo VAL07 (AlOx BOPET, standard barrier)",
+    "name": "Toyobo VAL07",
     "family": "PET",
     "company": "Toyobo Co., Ltd.",
     "tdsLink": "https://toyobo.co.th/en/film/barrier-pet-film/",
@@ -10312,7 +10312,7 @@
   },
   {
     "id": 180,
-    "name": "Toyobo VA107 (AlOx BOPET, semi-retort)",
+    "name": "Toyobo VA107",
     "family": "PET",
     "company": "Toyobo Co., Ltd.",
     "tdsLink": "https://toyobo.co.th/en/film/barrier-pet-film/",
@@ -10337,7 +10337,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated)",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -10366,7 +10366,7 @@
   },
   {
     "id": 181,
-    "name": "Toyobo VE707 (SiOx+AlOx BOPET, high-retort)",
+    "name": "Toyobo VE707",
     "family": "PET",
     "company": "Toyobo Co., Ltd.",
     "tdsLink": "https://toyobo.co.th/en/film/barrier-pet-film/",
@@ -10391,8 +10391,8 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Toyobo typical (conditions not stated)",
-    "testMethodWVTR": "Toyobo typical (conditions not stated)",
+    "testMethodOTR": "",
+    "testMethodWVTR": "",
     "otrValues": [
       {
         "value": 0.2,
@@ -10420,7 +10420,7 @@
   },
   {
     "id": 182,
-    "name": "Unitika EMBLEM™ DCR (PVDC-coated BOPA, 16.4 µm)",
+    "name": "Unitika EMBLEM™ DCR",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblem-dc/list01.html",
@@ -10445,7 +10445,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -10466,7 +10466,7 @@
   },
   {
     "id": 183,
-    "name": "A-OP™ BH (PVOH-coated BOPP, general, 20 µm)",
+    "name": "A-OP™ BH",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -10520,7 +10520,7 @@
   },
   {
     "id": 184,
-    "name": "A-OP™ AG (PVOH-coated BOPP, high-moisture, 20 µm)",
+    "name": "A-OP™ AG",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -10574,7 +10574,7 @@
   },
   {
     "id": 185,
-    "name": "A-OP™ EX (PVOH-coated BOPP, humidity-resistant barrier, 20 µm)",
+    "name": "A-OP™ EX",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -10628,7 +10628,7 @@
   },
   {
     "id": 186,
-    "name": "A-OP™ EXR (PVOH-coated BOPP, enhanced humidity barrier, 20 µm)",
+    "name": "A-OP™ EXR",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -10682,7 +10682,7 @@
   },
   {
     "id": 187,
-    "name": "A-OP™ EXR-C (PVOH-coated BOPP, corona-treated, 18 µm)",
+    "name": "A-OP™ EXR-C",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -10736,7 +10736,7 @@
   },
   {
     "id": 188,
-    "name": "EXTENDO® XTMU (EVOH-core BOPP, ultra-high O₂ barrier)",
+    "name": "EXTENDO® XTMU",
     "family": "PP",
     "company": "Taghleef Industries",
     "tdsLink": "https://www.jolybar.com/wp-content/uploads/2019/08/XTMU.pdf",
@@ -10807,7 +10807,7 @@
   },
   {
     "id": 189,
-    "name": "EXTENDO® XFWL (EVOH-core BOPP, high O₂ barrier, flow-wrap)",
+    "name": "EXTENDO® XFWL",
     "family": "PP",
     "company": "Taghleef Industries",
     "tdsLink": "https://www.jolybar.com/wp-content/uploads/2019/08/XFWL.pdf",
@@ -10878,7 +10878,7 @@
   },
   {
     "id": 190,
-    "name": "NatureFlex™ NKR (transparent high-barrier cellulose, PVDC-optimized)",
+    "name": "NatureFlex™ NKR",
     "family": "Other",
     "_familyDetail": "Regenerated cellulose (cellophane) with PVDC moisture-barrier + heat-seal coatings",
     "company": "Futamura",
@@ -10942,7 +10942,7 @@
   },
   {
     "id": 191,
-    "name": "NatureFlex™ NKME (metallized high-barrier cellulose, compostable)",
+    "name": "NatureFlex™ NKME",
     "family": "Other",
     "_familyDetail": "Metallized regenerated cellulose with PVDC moisture-barrier coating",
     "company": "Futamura",
@@ -11006,7 +11006,7 @@
   },
   {
     "id": 192,
-    "name": "Unitika EMBLEM™ ONBC-15 (simultaneous BOPA, 15 µm)",
+    "name": "Unitika EMBLEM™ ONBC-15",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/document/properties/pdf-emblem/onbc-15.pdf",
@@ -11031,7 +11031,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "ISO 15105-2 (converted from ml/m²·d·MPa)",
+    "testMethodOTR": "ISO 15105-2",
     "testMethodWVTR": "ISO 15106-2",
     "otrValues": [
       {
@@ -11060,7 +11060,7 @@
   },
   {
     "id": 193,
-    "name": "Polyplex/TPL MT5000 (met-PET, high barrier + high bond)",
+    "name": "Polyplex/TPL MT5000",
     "family": "PET",
     "company": "Polyplex (distributed by TPL)",
     "tdsLink": "https://www.tpl.ch/assets/brochures/Metallized_PET_Films_Part1.pdf",
@@ -11114,7 +11114,7 @@
   },
   {
     "id": 194,
-    "name": "A-OP™ AS (PVOH-coated BOPP, antistatic, 25 µm)",
+    "name": "A-OP™ AS",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -11168,7 +11168,7 @@
   },
   {
     "id": 195,
-    "name": "A-OP™ Matte (PVOH-coated BOPP, matte antistatic, 20 µm)",
+    "name": "A-OP™ Matte",
     "family": "PP",
     "company": "Mitsui Chemicals Tohcello",
     "tdsLink": "https://www.mc-tohcello.co.jp/english/product/wrapping/aop.html",
@@ -11222,7 +11222,7 @@
   },
   {
     "id": 196,
-    "name": "ICM PL PVdC-coated PVC (pharma blister, 250µm PVC + 60gsm PVdC)",
+    "name": "ICM PL PVdC-coated PVC",
     "family": "PVDC",
     "company": "ICM Packaging (India)",
     "tdsLink": "https://icmpl.net/wp-content/uploads/2023/12/TDS-PVDC-0.25X60.pdf",
@@ -11282,7 +11282,7 @@
   },
   {
     "id": 197,
-    "name": "Flex Films B-UHB-M (FLEXMETPROTECT™, met-BOPP ultra-high barrier)",
+    "name": "Flex Films B-UHB-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPP/B-UHB-M.pdf",
@@ -11339,7 +11339,7 @@
   },
   {
     "id": 198,
-    "name": "Flex Films B-TVS-M (FLEXMETPROTECT™, met-BOPP standard barrier)",
+    "name": "Flex Films B-TVS-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPP/B-TVS-M.pdf",
@@ -11424,7 +11424,7 @@
   },
   {
     "id": 199,
-    "name": "Barrialox™ 1011 HGCR (AlOx PET, coated, retort)",
+    "name": "Barrialox™ 1011 HGCR",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11460,7 +11460,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11469,7 +11469,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11481,7 +11481,7 @@
   },
   {
     "id": 200,
-    "name": "Barrialox™ 1011 HGCW (AlOx PET, coated, dry goods)",
+    "name": "Barrialox™ 1011 HGCW",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11516,7 +11516,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11525,7 +11525,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11537,7 +11537,7 @@
   },
   {
     "id": 201,
-    "name": "Barrialox™ 1011 CXR (AlOx PET, coated, high-barrier retort)",
+    "name": "Barrialox™ 1011 CXR",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11573,7 +11573,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11582,7 +11582,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11594,7 +11594,7 @@
   },
   {
     "id": 202,
-    "name": "Barrialox™ 1011 SBR2 (AlOx PET, coated, super-barrier retort 130°C)",
+    "name": "Barrialox™ 1011 SBR2",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11630,7 +11630,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11639,7 +11639,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11651,7 +11651,7 @@
   },
   {
     "id": 203,
-    "name": "Barrialox™ 1011 EGC1 (AlOx PET, coated, dry goods economy)",
+    "name": "Barrialox™ 1011 EGC1",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11686,7 +11686,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11695,7 +11695,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11707,7 +11707,7 @@
   },
   {
     "id": 204,
-    "name": "Barrialox™ 1011 HG (AlOx PET, non-coated, retort)",
+    "name": "Barrialox™ 1011 HG",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11743,7 +11743,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11752,7 +11752,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11764,7 +11764,7 @@
   },
   {
     "id": 205,
-    "name": "Barrialox™ 1031 HG (AlOx PET, non-coated, corona, retort)",
+    "name": "Barrialox™ 1031 HG",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrialox.html",
@@ -11800,7 +11800,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -11809,7 +11809,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -11821,7 +11821,7 @@
   },
   {
     "id": 206,
-    "name": "Unitika EMBLET™ DC KPT-13.3 (PVDC-coated BOPET, 13.3 µm)",
+    "name": "Unitika EMBLET™ DC KPT-13.3",
     "family": "PET",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblet-dc/list01.html",
@@ -11846,7 +11846,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (converted from ml/m²·d·MPa)",
+    "testMethodOTR": "JIS ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -11867,7 +11867,7 @@
   },
   {
     "id": 207,
-    "name": "Unitika EMBLON™ M800-15 (Ny/MXD6/Ny co-ex BOPA, 15 µm)",
+    "name": "Unitika EMBLON™ M800-15",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblon/list01.html",
@@ -11913,7 +11913,7 @@
   },
   {
     "id": 208,
-    "name": "Unitika EMBLEM™ HG-15 (barrier nylon, retort-grade, 15 µm)",
+    "name": "Unitika EMBLEM™ HG-15",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblem-b-nylon/list01.html",
@@ -11959,7 +11959,7 @@
   },
   {
     "id": 209,
-    "name": "Toray AF VM-PET 1310 (met-PET, high adhesion, 12 µm)",
+    "name": "Toray AF VM-PET 1310",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_01.html",
@@ -11992,7 +11992,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12001,7 +12001,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12013,7 +12013,7 @@
   },
   {
     "id": 210,
-    "name": "Toray AF VM-PET 1519 (met-PET, thick deposit OD 3.0, 12 µm)",
+    "name": "Toray AF VM-PET 1519",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_01.html",
@@ -12046,7 +12046,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12055,7 +12055,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12067,7 +12067,7 @@
   },
   {
     "id": 211,
-    "name": "Toray AF BR-PET 1012 (met-PET, no anchor coat, high adhesion, 12 µm)",
+    "name": "Toray AF BR-PET 1012",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_02.html",
@@ -12100,7 +12100,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12109,7 +12109,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12121,7 +12121,7 @@
   },
   {
     "id": 212,
-    "name": "Toray AF BR-PET 1517 (met-PET, high barrier OD 2.5, 12 µm)",
+    "name": "Toray AF BR-PET 1517",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_02.html",
@@ -12154,7 +12154,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12163,7 +12163,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12175,7 +12175,7 @@
   },
   {
     "id": 213,
-    "name": "Toray AF BR-PET 1412 (met-PET, MD straight cut, 12 µm)",
+    "name": "Toray AF BR-PET 1412",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_02.html",
@@ -12208,7 +12208,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12217,7 +12217,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12229,7 +12229,7 @@
   },
   {
     "id": 214,
-    "name": "Toray AF VM-CPP 2203 (met-CPP, general, 25 µm)",
+    "name": "Toray AF VM-CPP 2203",
     "family": "PP",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_03.html",
@@ -12262,7 +12262,7 @@
         "thickness": 25,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12271,7 +12271,7 @@
         "thickness": 25,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12283,7 +12283,7 @@
   },
   {
     "id": 215,
-    "name": "Toray AF VM-CPP 2703 (met-CPP, low-temp seal, 25 µm)",
+    "name": "Toray AF VM-CPP 2703",
     "family": "PP",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_03.html",
@@ -12316,7 +12316,7 @@
         "thickness": 25,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12325,7 +12325,7 @@
         "thickness": 25,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12337,7 +12337,7 @@
   },
   {
     "id": 216,
-    "name": "Flex Films B-UHP-M (FLEXMETPROTECT™, white voided met-BOPP ultra-high barrier)",
+    "name": "Flex Films B-UHP-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPP/B-UHP-M.pdf",
@@ -12394,7 +12394,7 @@
   },
   {
     "id": 217,
-    "name": "Toray AF BR-PET 1312 (met-PET, AC-treated, high adhesion, 12 µm)",
+    "name": "Toray AF BR-PET 1312",
     "family": "PET",
     "company": "Toray Advanced Film Co., Ltd.",
     "tdsLink": "https://www.toray-taf.co.jp/en/products/barrier/bar_02.html",
@@ -12427,7 +12427,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 90,
-        "testMethod": "JIS K7126-2 (representative)"
+        "testMethod": "JIS K7126-2 "
       }
     ],
     "wvtrValues": [
@@ -12436,7 +12436,7 @@
         "thickness": 12,
         "temperature": 40,
         "humidity": 90,
-        "testMethod": "JIS K7129-2 (representative)"
+        "testMethod": "JIS K7129-2 "
       }
     ],
     "co2Values": [],
@@ -12448,7 +12448,7 @@
   },
   {
     "id": 218,
-    "name": "Unitika EMBLEM™ HG-25 (barrier nylon, retort-grade, 25 µm)",
+    "name": "Unitika EMBLEM™ HG-25",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblem-b-nylon/list01.html",
@@ -12494,7 +12494,7 @@
   },
   {
     "id": 219,
-    "name": "Unitika EMBLEM™ HGB-15 (barrier nylon, both-side coated, 15 µm)",
+    "name": "Unitika EMBLEM™ HGB-15",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblem-b-nylon/list01.html",
@@ -12540,7 +12540,7 @@
   },
   {
     "id": 220,
-    "name": "Unitika EMBLEM™ HGB-25 (barrier nylon, both-side coated, 25 µm)",
+    "name": "Unitika EMBLEM™ HGB-25",
     "family": "PA",
     "company": "Unitika Ltd.",
     "tdsLink": "https://www.unitika.co.jp/film/e/products/gas-barrier/emblem-b-nylon/list01.html",
@@ -12586,7 +12586,7 @@
   },
   {
     "id": 221,
-    "name": "Torayfan® PMX2 (met-BOPP, good barrier, heat-sealable)",
+    "name": "Torayfan® PMX2",
     "family": "PP",
     "company": "Toray Plastics (America)",
     "tdsLink": "https://www.toraytpa.com/wp-content/uploads/2019/06/TFN-PMX2-Technical-Data-Sheet-English-1.pdf",
@@ -12653,7 +12653,7 @@
   },
   {
     "id": 222,
-    "name": "Torayfan® TC01 (clear BOPP, two-side treated, print web)",
+    "name": "Torayfan® TC01",
     "family": "PP",
     "company": "Toray Plastics (America)",
     "tdsLink": "https://www.toraytpa.com/wp-content/uploads/2019/07/TFN-TC01-Techincal-Data-Sheet-Metric.pdf",
@@ -12720,7 +12720,7 @@
   },
   {
     "id": 223,
-    "name": "Flex Films F-LLP-M (FLEXMETPROTECT™, met-BOPET, liquid packaging)",
+    "name": "Flex Films F-LLP-M",
     "family": "PET",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/pdf/Products/Metallized/BOPET/F-LLP-M.pdf",
@@ -12777,7 +12777,7 @@
   },
   {
     "id": 224,
-    "name": "Flex Films B-TMQ-M (FLEXMETPROTECT™, met-BOPP, low SIT)",
+    "name": "Flex Films B-TMQ-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/metallised-films.php",
@@ -12826,7 +12826,7 @@
   },
   {
     "id": 225,
-    "name": "Flex Films B-TUH-M (FLEXMETPROTECT™, met-BOPP, high O₂ barrier)",
+    "name": "Flex Films B-TUH-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/metallised-films.php",
@@ -12875,7 +12875,7 @@
   },
   {
     "id": 226,
-    "name": "Flex Films B-TUO-LS-M (FLEXMETPROTECT™, met-BOPP, superior O₂ barrier, ultra-low SIT)",
+    "name": "Flex Films B-TUO-LS-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/metallised-films.php",
@@ -12924,7 +12924,7 @@
   },
   {
     "id": 227,
-    "name": "Flex Films B-TUS-M (FLEXMETPROTECT™, met-BOPP, sandwich lamination)",
+    "name": "Flex Films B-TUS-M",
     "family": "PP",
     "company": "Flex Films (UFlex)",
     "tdsLink": "https://www.flexfilm.com/metallised-films.php",
@@ -12973,7 +12973,7 @@
   },
   {
     "id": 228,
-    "name": "Toyobo Harden® N1102 (BOPA standard, 15 µm)",
+    "name": "Toyobo Harden® N1102",
     "family": "PA",
     "company": "Toyobo Co., Ltd.",
     "tdsLink": "https://www.toyobo-global.com/seihin/film/package/products/harden.html",
