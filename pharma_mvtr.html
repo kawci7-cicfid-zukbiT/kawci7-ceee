@@ -539,11 +539,10 @@ let currentShape = 'flat';
 let results = null;
 let scenarios = [];
 let CX = {};
-let companyLinked = false; // Company DB lock state
+let companyLinked = false;
 
 try { scenarios = JSON.parse(localStorage.getItem('mvtr_sce') || '[]'); } catch(e){}
 
-// ── Add 2 example scenarios if empty ──
 if(scenarios.length === 0) {
   const example1Params = {wRef:0.5, Tref:38, RHref:90, Ea:35, area:0.0408, Mcrit:2.0, shelf_years:2, shelfDays:730, label:'Blister Pack - Low WVTR', source:'db'};
   const example2Params = {wRef:1.5, Tref:38, RHref:90, Ea:40, area:0.0850, Mcrit:5.0, shelf_years:3, shelfDays:1095, label:'Pouch - Medium WVTR', source:'db'};
@@ -553,24 +552,20 @@ if(scenarios.length === 0) {
 }
 
 function setSource(s) {
-  // Blocca solo Company DB se non collegato
   if(s === 'co' && !companyLinked) {
     alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
     return;
   }
-  
   activeSource = s;
-  
-  // Aggiorna bottoni
   ['calc','db','co'].forEach(k => {
     const btn = document.getElementById('src-'+k);
     const panel = document.getElementById('panel-'+k);
     if(btn) btn.classList.toggle('active', k === s);
     if(panel) panel.style.display = k === s ? 'block' : 'none';
   });
-  
   updateBanner();
 }
+
 function unlockCompany() {
   alert('To unlock the Company Database:\n\n1. Go to the main app Settings\n2. Navigate to "Company" section\n3. Join an existing company with an invite code, or create a new company workspace\n4. Your organisation\'s laminates will then appear here automatically\n\nThis feature requires an active company membership.');
 }
@@ -801,8 +796,8 @@ function renderOverview() {
   document.querySelector('#tbl-summary tbody').innerHTML = zs.map(r=>`
     <tr style="${r.pass?'background:var(--success-light)':'background:var(--danger-light)'}">
       <td><strong>${r.zone.label}</strong></td>
-      <td>${r.zone.T}C / ${r.zone.RH}%<br><small style="color:var(--text-light)">${r.zone.desc}</small></td>
-      <td style="font-family:'Courier New',monospace">${r.eff.toFixed(5)} g/m2/d</td>
+      <td>${r.zone.T}°C / ${r.zone.RH}%<br><small style="color:var(--text-light)">${r.zone.desc}</small></td>
+      <td style="font-family:'Courier New',monospace">${r.eff.toFixed(5)} g/m²/d</td>
       <td>${r.annual.toFixed(4)} mg</td>
       <td><strong>${r.total.toFixed(4)} mg</strong></td>
       <td>${r.pct.toFixed(1)}%</td>
@@ -829,12 +824,12 @@ function renderTables() {
       <td>${r.pass?'<span class="pill pill-pass">PASS</span>':'<span class="pill pill-fail">FAIL</span>'}</td>
     </tr>`).join('');
   document.getElementById('params-panel').innerHTML = [
-    ['WVTR ref',   `${p.wRef.toFixed(5)} g/m2/day`],
-    ['T_ref',      `${p.Tref}C = ${(p.Tref+273.15).toFixed(2)} K`],
+    ['WVTR ref',   `${p.wRef.toFixed(5)} g/m²/day`],
+    ['T_ref',      `${p.Tref}°C = ${(p.Tref+273.15).toFixed(2)} K`],
     ['RH_ref',     `${p.RHref}%`],
-    ['Ea',         `${p.Ea} kJ/mol`],
-    ['R',          `${R_GAS} kJ/(mol K)`],
-    ['Area',       `${(p.area*10000).toFixed(2)} cm2 = ${p.area.toFixed(5)} m2`],
+    ['Eₐ',         `${p.Ea} kJ/mol`],
+    ['R',          `${R_GAS} kJ/(mol·K)`],
+    ['Area',       `${(p.area*10000).toFixed(2)} cm² = ${p.area.toFixed(5)} m²`],
     ['Shelf life', `${p.shelf_years} yr = ${p.shelfDays.toFixed(0)} days`],
     ['M_crit',     `${p.Mcrit} mg`],
     ['Source',     p.source.toUpperCase()],
@@ -877,7 +872,7 @@ function renderFactorsChart() {
   const avgArr = (zs.reduce((s,r)=>s+r.arrF,0)/zs.length).toFixed(3);
   const avgRH  = (zs.reduce((s,r)=>s+r.rhF, 0)/zs.length).toFixed(3);
   document.getElementById('factors-sum').innerHTML =
-    `avg F_T = <strong>${avgArr}</strong> | avg F_RH = <strong>${avgRH}</strong> | Ea = ${results.params.Ea} kJ/mol`;
+    `avg F_T = <strong>${avgArr}</strong> | avg F_RH = <strong>${avgRH}</strong> | Eₐ = ${results.params.Ea} kJ/mol`;
 }
 
 function renderWVTRChart() {
@@ -887,7 +882,7 @@ function renderWVTRChart() {
     data:{labels:zs.map(r=>r.zone.label), datasets:[
       {label:'Ref WVTR',  data:zs.map(()=>results.params.wRef), backgroundColor:'rgba(100,116,139,.4)', borderRadius:3},
       {label:'Eff WVTR',  data:zs.map(r=>r.eff), backgroundColor:zs.map(r=>r.zone.color+'b3'), borderColor:zs.map(r=>r.zone.color), borderWidth:1.5, borderRadius:3}
-    ]}, options:baseOpts('g/m2/day', true)});
+    ]}, options:baseOpts('g/m²/day', true)});
 }
 
 function renderTRHChart() {
@@ -910,11 +905,11 @@ function renderTRHChart() {
         legend:{display:true, position:'top', labels:{font:{size:9}, boxWidth:12}},
         tooltip:{callbacks:{label:(c)=>{
           const r=zs[c.datasetIndex]; 
-          return [`${r.zone.label}: ${r.zone.T}C / ${r.zone.RH}% RH`,`WVTR_eff: ${r.eff.toFixed(5)}`];
+          return [`${r.zone.label}: ${r.zone.T}°C / ${r.zone.RH}% RH`,`WVTR_eff: ${r.eff.toFixed(5)}`];
         }}}
       },
       scales:{
-        x:{title:{display:true,text:'Temperature (C)', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{title:{display:true,text:'Temperature (°C)', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'}},
         y:{title:{display:true,text:'RH (%)', font:{size:10}}, grid:{color:'rgba(0,0,0,0.05)'}}
       }
     }
@@ -958,7 +953,7 @@ function renderScenariosList() {
         <button class="sce-del" onclick="deleteScenario(${s.id})">×</button>
       </div>
       <div style="font-size:.88rem;color:var(--text-light);margin-bottom:.4rem">
-        WVTR ${s.params.wRef.toFixed(4)} · Ea ${s.params.Ea} · ${s.params.shelf_years}yr
+        WVTR ${s.params.wRef.toFixed(4)} · Eₐ ${s.params.Ea} · ${s.params.shelf_years}yr
       </div>
       <button class="btn btn-primary btn-sm btn-full" onclick="loadScenario(${s.id})">Load</button>
     </div>`).join('');
@@ -1002,11 +997,11 @@ function updateScenarioComparison() {
   }
   hdrEl.innerHTML = '<th>Parameter</th>' + scenarios.map(s => `<th>${s.name}</th>`).join('');
   const rows = [
-    { k:'wRef', l:'Reference WVTR', u:' g/m2/d' },
-    { k:'Tref', l:'Test Temperature', u:'C' },
+    { k:'wRef', l:'Reference WVTR', u:' g/m²/d' },
+    { k:'Tref', l:'Test Temperature', u:'°C' },
     { k:'RHref', l:'Test RH', u:'%' },
     { k:'Ea', l:'Activation Energy', u:' kJ/mol' },
-    { k:'area', l:'Surface Area', u:' m2' },
+    { k:'area', l:'Surface Area', u:' m²' },
     { k:'Mcrit', l:'Critical Limit', u:' mg' },
     { k:'shelf_years', l:'Shelf Life', u:' yr' },
     { k:'_pass', l:'Compliant Zones', u:'/7', calc: s => s.zones.filter(r => r.pass).length }
@@ -1044,7 +1039,6 @@ function renderScenarioComparisonChart() {
   });
 }
 
-// ── SENSITIVITY ──────────────────────────────────
 function runSensEA() {
   if(!results) return;
   const min = parseFloat(document.getElementById('s-ea-min').value) || 20;
@@ -1091,7 +1085,7 @@ function runSensWVTR() {
   if(!ctx) return;
   CX.swvtr = new Chart(ctx.getContext('2d'), {
     type:'line',
-    data:{ labels:vals.map(v=>`${v.toFixed(2)} g/m2/d`), datasets:[
+    data:{ labels:vals.map(v=>`${v.toFixed(2)} g/m²/d`), datasets:[
       { label:'Max Ingress (mg)', data:maxIngs, borderColor:'#e02424', fill:true, backgroundColor:'rgba(224,36,36,0.08)', yAxisID:'y', tension:0.4 },
       { label:'Compliant Zones', data:passCnts, borderColor:'#0e9f6e', fill:true, backgroundColor:'rgba(14,159,110,0.08)', yAxisID:'y1', tension:0.4 }
     ]},
@@ -1101,22 +1095,21 @@ function runSensWVTR() {
   });
 }
 
-// ── EXPORT CSV ───────────────────────────────────
 function exportCSV() {
   if(!results) { alert('No data to export.'); return; }
   const p = results.params, res = results.zones;
   let csv = 'MVTR / ICH Q1A(R2) Analysis Report\n';
   csv += `Generated:,${new Date().toISOString()}\nScenario:,${p.label}\n\n`;
   csv += 'Parameters\n';
-  csv += `Reference WVTR,${p.wRef.toFixed(5)},g/m2/day\n`;
-  csv += `Reference Temperature,${p.Tref},C\n`;
+  csv += `Reference WVTR,${p.wRef.toFixed(5)},g/m²/day\n`;
+  csv += `Reference Temperature,${p.Tref},°C\n`;
   csv += `Reference RH,${p.RHref},%\n`;
   csv += `Activation Energy (Ea),${p.Ea},kJ/mol\n`;
-  csv += `Surface Area,${(p.area*10000).toFixed(2)},cm2\n`;
-  csv += `Surface Area,${p.area.toFixed(5)},m2\n`;
+  csv += `Surface Area,${(p.area*10000).toFixed(2)},cm²\n`;
+  csv += `Surface Area,${p.area.toFixed(5)},m²\n`;
   csv += `Critical Limit,${p.Mcrit},mg\n`;
   csv += `Shelf Life,${p.shelf_years},years\n\n`;
-  csv += 'Zone,T(C),RH(%),WVTR_ref,F_T,F_RH,WVTR_eff,Daily(mg),Annual(mg),Total(mg),%Limit,Status\n';
+  csv += 'Zone,T(°C),RH(%),WVTR_ref,F_T,F_RH,WVTR_eff,Daily(mg),Annual(mg),Total(mg),%Limit,Status\n';
   res.forEach(r => {
     csv += `${r.zone.label},${r.zone.T},${r.zone.RH},${r.wRef.toFixed(5)},`;
     csv += `${r.arrF.toFixed(4)},${r.rhF.toFixed(4)},${r.eff.toFixed(5)},`;
@@ -1127,9 +1120,6 @@ function exportCSV() {
   a.click();
 }
 
-// ══════════════════════════════════════════════════════════════
-// PDF EXPORT — PROFESSIONAL (2 charts per page)
-// ══════════════════════════════════════════════════════════════
 async function exportPDF() {
   if(!results) { alert('No data to export. Run a calculation first.'); return; }
   if(typeof window.jspdf === 'undefined') { alert('PDF library missing. Reload page.'); return; }
@@ -1269,18 +1259,12 @@ async function exportPDF() {
       y += rowH;
     };
 
-    // ═══════════════════════════════════════════════════
-    // PAGE 1 — COVER
-    // ═══════════════════════════════════════════════════
     pageNum++;
-
-    // Header gradient band
     pdf.setFillColor(...C.blueDark);
     pdf.rect(0, 0, PW, 55, 'F');
     pdf.setFillColor(...C.blue);
     pdf.rect(0, 40, PW, 18, 'F');
 
-    // Title
     pdf.setFontSize(22);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(...C.white);
@@ -1290,7 +1274,6 @@ async function exportPDF() {
     pdf.setTextColor(186, 210, 255);
     pdf.text(safe('ICH Q1A(R2) — ' + p.label), ML, 32);
 
-    // Badge
     const badgeColor = allPass ? C.green : (pass === 0 ? C.red : C.amber);
     const badgeText  = allPass ? 'COMPLIANT' : (pass === 0 ? 'NON-COMPLIANT' : 'PARTIAL');
     pdf.setFillColor(...badgeColor);
@@ -1300,7 +1283,6 @@ async function exportPDF() {
     pdf.setTextColor(...C.white);
     pdf.text(badgeText, PW - MR - 21, 14.5, { align:'center' });
 
-    // Date strip
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
     pdf.setTextColor(...C.white);
@@ -1308,8 +1290,6 @@ async function exportPDF() {
     pdf.setTextColor(...C.black);
 
     y = 65;
-
-    // ── KPI boxes ────────────────────────────────────────
     const kpiW = (CW - 9) / 4;
     const kpiH = 22;
     const minSaf = Math.min(...res.map(r => 100 - r.pct)).toFixed(1);
@@ -1320,7 +1300,6 @@ async function exportPDF() {
     kpiBox(ML+kpiW*3+9, kpiW, kpiH, 'AVG F_T',        avgArr + 'x',      'Arrhenius', C.slate, C.slateL);
     y += kpiH + 8;
 
-    // ── Input parameters ──────────────────────────────────
     sectionTitle('Input Parameters');
     const pCols = ['Parameter', 'Value', 'Parameter', 'Value'];
     const pW    = [45, 35, 45, 35];
@@ -1336,7 +1315,6 @@ async function exportPDF() {
     });
     y += 4;
 
-    // ── Results table ─────────────────────────────────────
     if(y > PH - 90) newPage();
     sectionTitle('Results by ICH Climatic Zone');
     const rCols = ['Zone', 'T (C)', 'RH (%)', 'WVTR eff', 'Annual (mg)', 'Total (mg)', '% Limit', 'Status'];
@@ -1357,7 +1335,6 @@ async function exportPDF() {
     });
     y += 4;
 
-    // ── Methodology summary ────────────────────────────────
     if(y > PH - 60) newPage();
     sectionTitle('Methodology Summary');
     const methodLines = [
@@ -1378,9 +1355,6 @@ async function exportPDF() {
 
     drawFooter();
 
-    // ═══════════════════════════════════════════════════
-    // PAGES 2+ — CHARTS (2 per page)
-    // ═══════════════════════════════════════════════════
     const chartConfigs = [
       { id:'ch-overview', title:'Annual Ingress by Zone',            desc:'Total moisture ingress per ICH zone with compliance limit threshold.' },
       { id:'ch-factors',  title:'Correction Factors (F_T, F_RH)',    desc:'Arrhenius thermal factor and RH driving force across climatic zones.' },
@@ -1392,25 +1366,23 @@ async function exportPDF() {
       { id:'ch-swvtr',    title:'Sensitivity: WVTR',                 desc:'Impact of WVTR variation on max ingress and zone compliance.' }
     ];
 
-    // Filter to only existing/visible charts
     const availableCharts = chartConfigs.filter(cfg => {
       const canvas = document.getElementById(cfg.id);
       return canvas && canvas.width > 0 && canvas.height > 0;
     });
 
-    // Group charts in pairs (2 per page)
     for(let i = 0; i < availableCharts.length; i += 2) {
       newPage();
       const pair = availableCharts.slice(i, i + 2);
-      const chartHeight = (PH - y - 35) / 2; // Space for 2 charts + margins
+      const chartHeight = (PH - y - 35) / 2;
 
-      pair.forEach((cfg, idx) => {
+      for(let idx = 0; idx < pair.length; idx++) {
+        const cfg = pair[idx];
         const canvas = document.getElementById(cfg.id);
-        if(!canvas) return;
+        if(!canvas) continue;
 
-        if(idx > 0) y += 5; // Gap between charts
+        if(idx > 0) y += 5;
 
-        // Section title
         pdf.setFillColor(...C.blue);
         pdf.rect(ML, y, 3, 5, 'F');
         pdf.setFontSize(10);
@@ -1420,7 +1392,6 @@ async function exportPDF() {
         pdf.setTextColor(...C.black);
         y += 8;
 
-        // Description box
         pdf.setFillColor(...C.slateL);
         pdf.setDrawColor(...C.border);
         pdf.setLineWidth(0.3);
@@ -1437,7 +1408,6 @@ async function exportPDF() {
           const img = cc.toDataURL('image/png');
           const maxH = chartHeight - 20;
           const h   = Math.min(CW * (cc.height / cc.width), maxH);
-          // Chart frame
           pdf.setFillColor(...C.white);
           pdf.setDrawColor(...C.border);
           pdf.setLineWidth(0.4);
@@ -1451,12 +1421,9 @@ async function exportPDF() {
           pdf.setTextColor(...C.black);
           y += 15;
         }
-      });
+      }
     }
 
-    // ═══════════════════════════════════════════════════
-    // FINAL PAGE — DISCLAIMER
-    // ═══════════════════════════════════════════════════
     newPage();
     sectionTitle('Important Disclaimer & Model Limitations', C.red);
 
@@ -1504,7 +1471,6 @@ async function exportPDF() {
       y += 5;
     });
 
-    // Final stamp box
     if(y > PH - 25) newPage();
     pdf.setFillColor(...C.blueDark);
     pdf.roundedRect(ML, y, CW, 14, 2, 2, 'F');
@@ -1520,7 +1486,6 @@ async function exportPDF() {
 
     drawFooter();
 
-    // ── Save ─────────────────────────────────────────────
     const safeName = p.label.replace(/[^a-z0-9]+/gi, '_').slice(0, 30) || 'Report';
     pdf.save('MVTR_Report_' + safeName + '_' + genISO + '.pdf');
 
@@ -1528,6 +1493,7 @@ async function exportPDF() {
     console.error('PDF export failed:', error);
     alert('PDF generation failed: ' + error.message);
   } finally {
+    const btn = document.getElementById('btn-pdf');
     if(btn) {
       btn.disabled = false;
       btn.textContent = 'PDF Report';
@@ -1535,7 +1501,6 @@ async function exportPDF() {
   }
 }
 
-// ── TABS ───────────────────────────────────────
 function switchTab(name, event) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(c=>c.classList.remove('active'));
@@ -1546,7 +1511,6 @@ function switchTab(name, event) {
   if(name==='charts' && results) { setTimeout(()=>Object.values(CX).forEach(c=>{ try{c.resize()}catch(e){} }), 80); }
 }
 
-// ── RESET ──────────────────────────────────────
 function resetForm() {
   if(!confirm('Reset to defaults?')) return;
   document.getElementById('ph-tref').value = 38;
@@ -1561,7 +1525,6 @@ function resetForm() {
   updateBanner();
 }
 
-// ── INIT ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   renderScenariosList();
   if(typeof State !== 'undefined' && State.calcResult?.total > 0) {
