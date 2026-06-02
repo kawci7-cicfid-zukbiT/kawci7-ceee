@@ -10453,7 +10453,7 @@
         "thickness": 16.4,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: 65 ml/m²·d·MPa ÷ 9.87 = 6.59 cc/m²·d·atm; PVDC coat 1.4µm"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -11039,7 +11039,7 @@
         "thickness": 15,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 15105-2: 250 ml/m²·d·MPa ÷ 9.87 = 25.33 cc/m²·d·atm"
+        "testMethod": "ISO 15105-2"
       }
     ],
     "wvtrValues": [
@@ -11854,7 +11854,7 @@
         "thickness": 13.3,
         "temperature": 20,
         "humidity": 90,
-        "testMethod": "Unitika: 80 ml/m²·d·MPa ÷ 9.87 = 8.11 cc/m²·d·atm at 90%RH; PVDC coat 1.3µm on BOPET"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -11900,7 +11900,7 @@
         "thickness": 15,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: 80 ml/m²·d·MPa ÷ 9.87 = 8.11 cc/m²·d·atm; Ny/MXD6/Ny co-extrusion"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -11946,7 +11946,7 @@
         "thickness": 15,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: ≤5 ml/m²·d·MPa ÷ 9.87 = ≤0.51 cc/m²·d·atm; POST-RETORT value only"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12481,7 +12481,7 @@
         "thickness": 25,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: ≤5 ml/m²·d·MPa ÷ 9.87 = ≤0.51 cc/m²·d·atm; POST-RETORT value only"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12527,7 +12527,7 @@
         "thickness": 15,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: ≤5 ml/m²·d·MPa ÷ 9.87 = ≤0.51 cc/m²·d·atm; POST-RETORT; middle-web grade"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12573,7 +12573,7 @@
         "thickness": 25,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika: ≤5 ml/m²·d·MPa ÷ 9.87 = ≤0.51 cc/m²·d·atm; POST-RETORT; middle-web grade"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
