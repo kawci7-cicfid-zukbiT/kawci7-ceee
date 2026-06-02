@@ -9458,8 +9458,8 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380-3 / ASTM D3985",
-    "testMethodWVTR": "DIN 53122 / ASTM E96",
+    "testMethodOTR": "DIN 53380-3 ",
+    "testMethodWVTR": "DIN 53122 ",
     "otrValues": [
       {
         "value": 30,
