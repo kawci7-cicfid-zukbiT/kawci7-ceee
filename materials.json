@@ -978,7 +978,7 @@
         "thickness": 23,
         "temperature": 23,
         "humidity": 85,
-        "testMethod": "DIN 53122 (TDS reports '<0.5' for 12-75 µm range — recorded as upper bound)"
+        "testMethod": "DIN 53122 "
       }
     ],
     "co2Values": [],
@@ -9475,7 +9475,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 85,
-        "testMethod": "DIN 53122 / ASTM E96 "
+        "testMethod": "DIN 53122 "
       }
     ],
     "co2Values": [],
@@ -10237,7 +10237,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380-3 (typical; unit cc/m²·24h·bar ≈ cc/m²·day·atm)"
+        "testMethod": "DIN 53380-3 "
       }
     ],
     "wvtrValues": [
@@ -10246,7 +10246,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 85,
-        "testMethod": "DIN 53122 (typical)"
+        "testMethod": "DIN 53122 "
       }
     ],
     "co2Values": [],
@@ -10772,14 +10772,14 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       },
       {
         "value": 0.1,
         "thickness": 30,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -10788,14 +10788,14 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       },
       {
         "value": 5.0,
         "thickness": 30,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
@@ -10843,14 +10843,14 @@
         "thickness": 28,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       },
       {
         "value": 18,
         "thickness": 35,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -10859,14 +10859,14 @@
         "thickness": 28,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       },
       {
         "value": 4.5,
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
@@ -11318,7 +11318,7 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -11327,7 +11327,7 @@
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
@@ -11382,14 +11382,14 @@
         "thickness": 18,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       },
       {
         "value": 80,
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -11398,21 +11398,21 @@
         "thickness": 15,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       },
       {
         "value": 0.6,
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       },
       {
         "value": 0.6,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
@@ -12382,7 +12382,7 @@
         "thickness": 35,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
@@ -12756,7 +12756,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -12765,7 +12765,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "ASTM F1249 (typical)"
+        "testMethod": "ASTM F1249 "
       }
     ],
     "co2Values": [],
