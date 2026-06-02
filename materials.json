@@ -10399,7 +10399,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -10408,7 +10408,7 @@
         "thickness": 12,
         "temperature": null,
         "humidity": null,
-        "testMethod": "Toyobo product page; T/RH not specified"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
