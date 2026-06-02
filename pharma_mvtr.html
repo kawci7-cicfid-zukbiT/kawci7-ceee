@@ -553,18 +553,24 @@ if(scenarios.length === 0) {
 }
 
 function setSource(s) {
+  // Blocca solo Company DB se non collegato
   if(s === 'co' && !companyLinked) {
-    alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.\n\nGo to Settings → Company to join or create a company workspace.');
+    alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
     return;
   }
+  
   activeSource = s;
+  
+  // Aggiorna bottoni
   ['calc','db','co'].forEach(k => {
-    document.getElementById('src-'+k).classList.toggle('active', k === s);
-    document.getElementById('panel-'+k).style.display = k === s ? 'block' : 'none';
+    const btn = document.getElementById('src-'+k);
+    const panel = document.getElementById('panel-'+k);
+    if(btn) btn.classList.toggle('active', k === s);
+    if(panel) panel.style.display = k === s ? 'block' : 'none';
   });
+  
   updateBanner();
 }
-
 function unlockCompany() {
   alert('To unlock the Company Database:\n\n1. Go to the main app Settings\n2. Navigate to "Company" section\n3. Join an existing company with an invite code, or create a new company workspace\n4. Your organisation\'s laminates will then appear here automatically\n\nThis feature requires an active company membership.');
 }
