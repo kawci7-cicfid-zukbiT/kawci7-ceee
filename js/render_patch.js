@@ -1,10 +1,9 @@
 // ====================================================================
-// render_patch.js  v11
+// render_patch.js  v12
 // Load LAST in index.html, after all feature files and nav.js
 //
-// Changes from v10:
-//   + 'ppwr-label' added to COMING_SOON_META and switch
-//   Everything else is identical to v10.
+// Changes from v11:
+//   + 'pharma-mvtr' case attivato — chiama window.renderPharmaMvtr()
 // ====================================================================
 (function () {
 
@@ -32,8 +31,13 @@
         }
         break;
 
-      // ── Biomedical Analysis — COMING SOON ────────────────────────
+      // ── Biomedical Analysis ──────────────────────────────────────
       case 'pharma-mvtr':
+        if (typeof window.renderPharmaMvtr === 'function')
+          window.renderPharmaMvtr();
+        break;
+
+      // ── Biomedical Analysis — COMING SOON ────────────────────────
       case 'pharma-uptake':
       // ── Regulatory — COMING SOON ─────────────────────────────────
       case 'ppwr-label':
@@ -50,11 +54,6 @@
 
   // ── Coming Soon page ─────────────────────────────────────────────
   var COMING_SOON_META = {
-    'pharma-mvtr': {
-      icon:  '',
-      title: 'MVTR at ICH Conditions',
-      desc:  'Effective moisture vapor transmission rate across all ICH Q1A(R2) climatic zones, with Arrhenius correction and per-cavity ingress calculation.'
-    },
     'pharma-uptake': {
       icon:  '',
       title: 'Drug Moisture Uptake',
@@ -71,28 +70,22 @@
     var meta = COMING_SOON_META[tab] || { icon: '', title: 'Coming Soon', desc: '' };
     return '<div style="max-width:480px;margin:4rem auto;text-align:center;padding:0 1rem">' +
 
-      // Badge
       '<div style="display:inline-flex;align-items:center;gap:0.4rem;' +
       'background:#fef3c7;color:#d97706;border:1px solid #fde68a;' +
       'border-radius:20px;padding:0.3rem 0.9rem;font-size:0.72rem;' +
       'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;' +
       'margin-bottom:1.5rem"> Coming Soon</div>' +
 
-      // Icon
       '<div style="font-size:3rem;margin-bottom:1rem;line-height:1">' + meta.icon + '</div>' +
 
-      // Title
       '<h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin:0 0 0.75rem">' +
       meta.title + '</h2>' +
 
-      // Description
       '<p style="font-size:0.85rem;color:#64748b;line-height:1.65;margin:0 0 2rem">' +
       meta.desc + '</p>' +
 
-      // Divider
       '<div style="width:48px;height:3px;background:var(--primary);border-radius:2px;margin:0 auto 1.5rem"></div>' +
 
-      // Note
       '<p style="font-size:0.75rem;color:#94a3b8;line-height:1.5">' +
       'This analysis module is under development.<br>' +
       'It will be available in an upcoming release.</p>' +
