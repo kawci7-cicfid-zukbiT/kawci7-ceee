@@ -8883,7 +8883,7 @@
         "thickness": 9.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 0.2,
@@ -9674,7 +9674,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS (65 ml/m²·d·MPa → converted to cc/m²·d·atm)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -9682,7 +9682,7 @@
         "thickness": 16.4,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "Unitika product page: 65 ml/m²·d·MPa ÷ 9.87 = 6.59 cc/m²·d·atm; PVDC coat 1.4 µm"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -10445,7 +10445,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "JIS ",
+    "testMethodOTR": " ",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -11093,7 +11093,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "TPL brochure; T/RH assumed standard; thickness 12µm assumed (typical met-PET)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
@@ -11102,7 +11102,7 @@
         "thickness": 12,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "TPL brochure; T/RH assumed standard; thickness 12µm assumed"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
