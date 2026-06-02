@@ -9,7 +9,7 @@ function goToMaterial(matName) {
         onSubTabClick('materials');
         State.searchQuery = matName;
         setTimeout(function() {
-            var input = document.getElementById('mat-search');
+            var input = document.getElementById('ft-search');
             if (input) { input.value = matName; onMatSearch(matName); }
         }, 200);
     }, 50);
