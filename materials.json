@@ -4915,7 +4915,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
+    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -5068,7 +5068,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
+    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 ",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -5221,7 +5221,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00669,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 (humid)",
+    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 ",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -9466,7 +9466,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380-3 / ASTM D3985 (typical value; unit cc/m²·24h·bar ≈ cc/m²·day·atm)"
+        "testMethod": "DIN 53380-3 / ASTM D3985 "
       }
     ],
     "wvtrValues": [
@@ -9728,7 +9728,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (from Kuraray brochure Table 1c)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -9774,7 +9774,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (from Kuraray brochure Table 1b)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -9820,7 +9820,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; pipe grade with anti-oxidant)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -9866,7 +9866,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; pipe grade with anti-oxidant)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -9912,7 +9912,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; 44 mol% pipe grade)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -9958,7 +9958,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; deep thermoforming grade)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -10004,7 +10004,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; extrusion coating grade)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -10050,7 +10050,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade, improved layer distribution)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -10096,7 +10096,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade, improved orientation)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -10142,7 +10142,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2  (Kuraray brochure; SP grade 44 mol%)"
+        "testMethod": "ISO 14663-2  "
       }
     ],
     "wvtrValues": [],
@@ -10188,7 +10188,7 @@
         "thickness": 12,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "ISO 14663-2 (Kuraray brochure Table 2; actual film OTR at 12 µm, NOT normalized)"
+        "testMethod": "ISO 14663-2 "
       }
     ],
     "wvtrValues": [],
@@ -10914,14 +10914,14 @@
         "thickness": 23,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM F1927 (0.06 cc/100in² × 15.5)"
+        "testMethod": "ASTM F1927"
       },
       {
         "value": 4.96,
         "thickness": 23,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "ASTM F1927 (0.32 cc/100in² × 15.5)"
+        "testMethod": "ASTM F1927 "
       }
     ],
     "wvtrValues": [
@@ -11375,7 +11375,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical; standard met = low O2 barrier)"
+        "testMethod": "ASTM D3985 "
       },
       {
         "value": 80,
@@ -12373,7 +12373,7 @@
         "thickness": 35,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "ASTM D3985 (typical; white voided met-BOPP)"
+        "testMethod": "ASTM D3985 "
       }
     ],
     "wvtrValues": [
