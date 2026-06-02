@@ -8890,7 +8890,7 @@
         "thickness": 23.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -8951,14 +8951,14 @@
         "thickness": 9.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 23.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9019,14 +9019,14 @@
         "thickness": 12.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 2.0,
         "thickness": 23.5,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9087,14 +9087,14 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
@@ -9155,14 +9155,14 @@
         "thickness": 18,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       },
       {
         "value": 1.0,
         "thickness": 20,
         "temperature": 38,
         "humidity": 90,
-        "testMethod": "Flex Films valore pubblicato (upper bound '<'); 38°C/90%RH assunto (pagina non specifica; AlOx ~indip. da T/RH)"
+        "testMethod": ""
       }
     ],
     "co2Values": [],
