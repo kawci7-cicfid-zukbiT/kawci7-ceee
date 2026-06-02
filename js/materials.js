@@ -907,7 +907,7 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat, isHygro) {
 
     // Hygroscopic beta fields — inline inside each barrier section
     html += '<div class="mm-hygro-inline mm-hygro-inline-' + type + '" style="display:' + (isHygro ? 'block' : 'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:8px 10px;margin-top:8px">' +
-        '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">\uD83D\uDCA7 ' + label + ' hygroscopic correction</div>' +
+        '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px"> ' + label + ' hygroscopic correction</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
             '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Beta (%/RH)</label>' +
                 '<input type="number" step="0.001" class="form-input" id="mm-beta-'+type+'" value="'+betaVal+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
