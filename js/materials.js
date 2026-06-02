@@ -22,6 +22,8 @@ function softDeleteMat(matId) {
     var mat = DB.materials[idx];
     _matTrash.push(mat);
     _saveTrash();
+    // Mark as dismissed so it won't be re-imported from Firebase/materials.json
+    if(typeof dismissMaterial === 'function') dismissMaterial(mat);
     DB.materials.splice(idx, 1);
     DB.save();
     matApplyFilters();
@@ -34,6 +36,8 @@ function restoreFromTrash(matId) {
     var mat = _matTrash[idx];
     _matTrash.splice(idx, 1);
     _saveTrash();
+    // Remove from dismissed list so it won't be blocked
+    if(typeof undismissMaterial === 'function') undismissMaterial(mat);
     DB.materials.push(mat);
     DB.save();
     matApplyFilters();
@@ -1241,6 +1245,8 @@ async function loadExternalMaterialsDB() {
         var addedCount = 0;
         externalMats.forEach(function(em){
             if(!em || !em.name) return;
+            // Skip materials the user explicitly deleted
+            if(typeof isDismissed === 'function' && isDismissed(em)) return;
             var nameLower = em.name.trim().toLowerCase();
             if(em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
                 var ex = existingByFirebaseId[em.firebaseDocId];
