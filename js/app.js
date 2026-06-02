@@ -602,6 +602,26 @@ async function initApp() {
                     }));
                 }
             }
+
+            // SYNC: remove local community materials no longer on Firebase
+            var fbDocIds = {};
+            fbMats.forEach(function(fm) { if(fm.firebaseDocId) fbDocIds[fm.firebaseDocId] = true; });
+            var beforeCount = DB.materials.length;
+            DB.materials = DB.materials.filter(function(m) {
+                // Keep non-community materials always
+                if(!m.isCommunity && !String(m.id).startsWith('fb_')) return true;
+                // Keep if it has a firebaseDocId that exists on Firebase
+                if(m.firebaseDocId && fbDocIds[m.firebaseDocId]) return true;
+                // Keep if it was never synced to Firebase (local-only community share)
+                if(!m.firebaseDocId && !String(m.id).startsWith('fb_')) return true;
+                // Remove: it was from community but no longer exists there
+                console.log('\uD83D\uDDD1\uFE0F Removing stale community material:', m.name);
+                return false;
+            });
+            if(DB.materials.length < beforeCount) {
+                console.log('\uD83D\uDD04 Synced: removed ' + (beforeCount - DB.materials.length) + ' stale community materials');
+                DB.save();
+            }
         }
 
         DB.deduplicateMaterials();
