@@ -85,6 +85,140 @@ function _escAttr(str) {
 }
 
 // ====================================================================
+// MATERIAL CONSOLIDATION — merge entries that differ only by thickness
+// ====================================================================
+function _extractBaseName(name) {
+    if(!name) return '';
+    // Remove trailing thickness patterns: "20 µm", "25 um", "12um", "100 micron"
+    // Also remove trailing comma/space before it inside parentheses
+    var cleaned = name
+        .replace(/,?\s*\d+\.?\d*\s*(?:µm|um|μm|microns?)\s*\)?$/i, function(match, offset) {
+            // If we're inside parentheses, close them
+            var before = name.substring(0, offset);
+            var openParen = (before.match(/\(/g) || []).length;
+            var closeParen = (before.match(/\)/g) || []).length;
+            if(openParen > closeParen) return ')';
+            return '';
+        })
+        .replace(/\(\s*\)/, '')   // remove empty parentheses
+        .replace(/,\s*\)/, ')')   // clean trailing comma in parens
+        .trim();
+    return cleaned;
+}
+
+function _valuesAreDuplicate(a, b) {
+    return a.value === b.value && a.thickness === b.thickness &&
+           a.temperature === b.temperature && a.humidity === b.humidity;
+}
+
+function _mergeValueArrays(target, source) {
+    if(!source) return;
+    source.forEach(function(sv) {
+        var exists = target.some(function(tv){ return _valuesAreDuplicate(tv, sv); });
+        if(!exists) target.push(JSON.parse(JSON.stringify(sv)));
+    });
+}
+
+function consolidateMaterials() {
+    var groups = {};
+    var order = [];
+
+    DB.materials.forEach(function(mat) {
+        var baseName = _extractBaseName(mat.name);
+        var company  = (mat.company || '').trim().toLowerCase();
+        var family   = (mat.family || '').trim().toLowerCase();
+        var key = baseName.toLowerCase() + '|||' + company + '|||' + family;
+
+        if(!groups[key]) {
+            groups[key] = { baseName: baseName, mats: [] };
+            order.push(key);
+        }
+        groups[key].mats.push(mat);
+    });
+
+    var merged = [];
+    var mergeCount = 0;
+
+    order.forEach(function(key) {
+        var group = groups[key];
+        if(group.mats.length <= 1) {
+            merged.push(group.mats[0]);
+            return;
+        }
+
+        // Pick the primary: prefer shortest name or the one with most data
+        var primary = group.mats.reduce(function(best, cur) {
+            var bestVals = (best.wvtrValues||[]).length + (best.otrValues||[]).length + (best.co2Values||[]).length;
+            var curVals  = (cur.wvtrValues||[]).length + (cur.otrValues||[]).length + (cur.co2Values||[]).length;
+            return curVals > bestVals ? cur : best;
+        });
+
+        // Use the base name (without thickness)
+        primary.name = group.baseName;
+
+        // Merge all values from other entries
+        group.mats.forEach(function(mat) {
+            if(mat === primary) return;
+            if(!primary.wvtrValues) primary.wvtrValues = [];
+            if(!primary.otrValues)  primary.otrValues  = [];
+            if(!primary.co2Values)  primary.co2Values  = [];
+            _mergeValueArrays(primary.wvtrValues, mat.wvtrValues);
+            _mergeValueArrays(primary.otrValues,  mat.otrValues);
+            _mergeValueArrays(primary.co2Values,  mat.co2Values);
+
+            // Merge validConditions
+            if(mat.validConditions && mat.validConditions.length > 0) {
+                if(!primary.validConditions) primary.validConditions = [];
+                mat.validConditions.forEach(function(vc) {
+                    var dup = primary.validConditions.some(function(pvc){
+                        return pvc.temperature === vc.temperature && pvc.humidity === vc.humidity;
+                    });
+                    if(!dup) primary.validConditions.push(vc);
+                });
+            }
+
+            // Merge hygroscopic data — keep non-zero values
+            if(!primary.hygroscopicBetaWVTR && mat.hygroscopicBetaWVTR) {
+                primary.hygroscopicBetaWVTR = mat.hygroscopicBetaWVTR;
+                primary.hygroscopicRefRHWVTR = mat.hygroscopicRefRHWVTR;
+            }
+            if(!primary.hygroscopicBetaOTR && mat.hygroscopicBetaOTR) {
+                primary.hygroscopicBetaOTR = mat.hygroscopicBetaOTR;
+                primary.hygroscopicRefRHOTR = mat.hygroscopicRefRHOTR;
+            }
+            if(!primary.hygroscopicBetaCO2 && mat.hygroscopicBetaCO2) {
+                primary.hygroscopicBetaCO2 = mat.hygroscopicBetaCO2;
+                primary.hygroscopicRefRHCO2 = mat.hygroscopicRefRHCO2;
+            }
+
+            // Keep supplier info if primary lacks it
+            if(!primary.supplierEmail && mat.supplierEmail) primary.supplierEmail = mat.supplierEmail;
+            if(!primary.tdsLink && mat.tdsLink) primary.tdsLink = mat.tdsLink;
+            if(!primary.density && mat.density) primary.density = mat.density;
+            if(!primary.gwp && mat.gwp) primary.gwp = mat.gwp;
+            if(primary.haze == null && mat.haze != null) primary.haze = mat.haze;
+            if(!primary.meltingTemp && mat.meltingTemp) primary.meltingTemp = mat.meltingTemp;
+
+            mergeCount++;
+        });
+
+        // Sort values by thickness for clarity
+        ['wvtrValues','otrValues','co2Values'].forEach(function(k) {
+            if(primary[k]) primary[k].sort(function(a,b){ return (a.thickness||0) - (b.thickness||0); });
+        });
+
+        merged.push(primary);
+    });
+
+    if(mergeCount > 0) {
+        DB.materials = merged;
+        DB.save();
+        console.log('Consolidated: merged ' + mergeCount + ' duplicate entries');
+    }
+    return mergeCount;
+}
+
+// ====================================================================
 // CONTACT SUPPLIER
 // ====================================================================
 function contactSupplier(matName, company, email) {
@@ -384,8 +518,18 @@ function matCardHTML(m, q) {
         return '<span style="font-size:0.7rem;color:var(--text-light);background:var(--bg-secondary,#f8fafc);border:1px solid var(--border);border-radius:4px;padding:1px 7px;white-space:nowrap">' + label + ' -</span> ';
     }
 
+    // Show thickness count pill if multiple thicknesses
+    var thicknesses = {};
+    (m.wvtrValues||[]).concat(m.otrValues||[]).concat(m.co2Values||[]).forEach(function(v){
+        if(v.thickness) thicknesses[v.thickness] = true;
+    });
+    var thickCount = Object.keys(thicknesses).length;
+
     var headerPills = firstValPill(m.wvtrValues,'WVTR') + firstValPill(m.otrValues,'OTR');
     if(m.co2Values && m.co2Values.length > 0) headerPills += firstValPill(m.co2Values,'CO2');
+    if(thickCount > 1) {
+        headerPills += '<span style="font-size:0.7rem;font-weight:500;color:#6366f1;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:1px 7px;white-space:nowrap">' + thickCount + ' thicknesses</span> ';
+    }
 
     var badges = '';
     if(isComm)         badges += '<span class="badge badge-purple" style="font-size:0.65rem">Community</span> ';
@@ -494,7 +638,6 @@ function matCardHTML(m, q) {
 // ====================================================================
 function matApplyFilters() {
     Engine.mode = State.mode;
-    // FIX: use filter-specific IDs (ft-*) to avoid collision with modal IDs (mm-*)
     var q       = ((document.getElementById('ft-search')  ? document.getElementById('ft-search').value  : State.searchQuery) || '').trim().toLowerCase();
     var fc      = (document.getElementById('ft-company')  ? document.getElementById('ft-company').value  : '');
     var fperf   = (document.getElementById('ft-perf')     ? document.getElementById('ft-perf').value     : '');
@@ -596,13 +739,13 @@ function renderMaterials() {
     var methOpts = Object.keys(methods).sort().map(function(m){ return '<option value="'+_escAttr(m)+'">'+_escHtml(m)+'</option>'; }).join('');
     var famOpts  = Object.keys(families).sort().map(function(f){ return '<option value="'+_escAttr(f)+'">'+_escHtml(f)+'</option>'; }).join('');
 
-    // FIX: filter IDs use ft-* prefix to avoid collision with modal mm-* IDs
     return '<div style="padding:0.25rem 0">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">' +
             '<div style="font-size:1rem;font-weight:600">Materials <span class="badge badge-blue">' + DB.materials.length + '</span></div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
                 '<button class="btn btn-sm btn-primary" onclick="showMatModal()">+ Add material</button>' +
                 '<button class="btn btn-sm btn-outline" onclick="showBulkImport()">Import CSV</button>' +
+                '<button class="btn btn-sm btn-outline" onclick="runConsolidation()" title="Merge materials that differ only by thickness">Consolidate</button>' +
                 '<button class="btn btn-sm btn-outline" onclick="showTrashPanel()" style="' + (_matTrash.length > 0 ? 'border-color:var(--danger);color:var(--danger)' : '') + '">' +
                     'Trash' + (_matTrash.length > 0 ? ' (' + _matTrash.length + ')' : '') + '</button>' +
             '</div>' +
@@ -646,15 +789,27 @@ function renderMaterials() {
     '</div>';
 }
 
+// Consolidation UI button handler
+function runConsolidation() {
+    var count = consolidateMaterials();
+    if(count > 0) {
+        alert('Consolidated ' + count + ' duplicate entries. Materials have been merged by base name.');
+        render();
+    } else {
+        alert('No duplicates found \u2014 all materials are already unique.');
+    }
+}
+
 // ====================================================================
-// MODAL BARRIER SECTION HELPER (modal — with editable rows + add form)
-// FIX: all modal IDs use mm-* prefix to avoid collision with ft-* filter IDs
+// MODAL BARRIER SECTION HELPER (with inline hygroscopic beta fields)
 // ====================================================================
-function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
+function _modalBarrierSection(type, mat, isCommMat, isDefaultMat, isHygro) {
     var labels  = { wvtr:'WVTR', otr:'OTR', co2:'CO\u2082TR' };
     var units   = { wvtr:'g/m\u00b2\u00b7day', otr:'cc/m\u00b2\u00b7day\u00b7atm', co2:'cc/m\u00b2\u00b7day\u00b7atm' };
     var valKeys = { wvtr:'wvtrValues', otr:'otrValues', co2:'co2Values' };
     var tmKeys  = { wvtr:'testMethodWVTR', otr:'testMethodOTR', co2:'testMethodCO2' };
+    var betaKeys = { wvtr:'hygroscopicBetaWVTR', otr:'hygroscopicBetaOTR', co2:'hygroscopicBetaCO2' };
+    var refRHKeys = { wvtr:'hygroscopicRefRHWVTR', otr:'hygroscopicRefRHOTR', co2:'hygroscopicRefRHCO2' };
     var ctmOpts = {
         wvtr: ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'],
         otr:  ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'],
@@ -665,6 +820,13 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
     var vals   = mat ? (mat[valKeys[type]] || []) : [];
     var topTM  = mat ? (mat[tmKeys[type]] || '') : '';
     var roData = isCommMat || isDefaultMat;
+    var isRO   = isCommMat || isDefaultMat;
+
+    var betaVal  = mat ? (mat[betaKeys[type]] || '') : '';
+    var refRHVal = mat ? (mat[refRHKeys[type]] || 50) : 50;
+    if(betaVal <= 0) betaVal = '';
+
+    var hygroRO = isRO ? ' disabled readonly style="opacity:0.6;cursor:not-allowed;background:#f1f5f9"' : '';
 
     var tmOptsHTML = '<option value="">-- method --</option>';
     ctmOpts[type].forEach(function(t){ tmOptsHTML += '<option value="'+_escAttr(t)+'">'+_escHtml(t)+'</option>'; });
@@ -718,6 +880,7 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
         html += '<div style="font-size:0.75rem;color:var(--text-light);font-style:italic;margin-bottom:8px">No ' + label + ' data yet.</div>';
     }
 
+    // Add condition form
     html +=
         '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary);border-radius:7px;padding:8px 10px;margin-top:4px">' +
         '<div style="font-size:0.68rem;font-weight:600;color:var(--primary);margin-bottom:6px">+ Add condition</div>' +
@@ -736,22 +899,37 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
             '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Humidity (%RH)</label>' +
                 '<input type="number" step="any" class="form-input" id="mm-'+type+'-new-hum" placeholder="50" style="font-size:0.75rem;padding:3px 7px"></div>' +
         '</div>' +
-        '</div>' +
         '</div>';
+
+    // Hygroscopic beta fields — inline inside each barrier section
+    html += '<div class="mm-hygro-inline mm-hygro-inline-' + type + '" style="display:' + (isHygro ? 'block' : 'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:8px 10px;margin-top:8px">' +
+        '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">\uD83D\uDCA7 ' + label + ' hygroscopic correction</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Beta (%/RH)</label>' +
+                '<input type="number" step="0.001" class="form-input" id="mm-beta-'+type+'" value="'+betaVal+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
+            '<div class="form-group" style="margin:0"><label style="font-size:0.65rem">Reference RH (%)</label>' +
+                '<input type="number" class="form-input" id="mm-refrh-'+type+'" value="'+refRHVal+'" placeholder="50"'+hygroRO+'></div>' +
+        '</div>' +
+        '<div style="font-size:0.62rem;color:#0369a1;margin-top:4px">Beta = % increase in ' + label + ' per 1% RH above reference.</div>' +
+    '</div>';
+
+    html += '</div>';
 
     return html;
 }
 
 function matModalHygroToggle() {
     var cb = document.getElementById('mm-hygroscopic');
-    var fields = document.getElementById('mm-hygro-fields');
-    if(!cb || !fields) return;
-    fields.style.display = cb.checked ? 'block' : 'none';
+    if(!cb) return;
+    var show = cb.checked;
+    // Show/hide all inline hygro fields
+    document.querySelectorAll('.mm-hygro-inline').forEach(function(el) {
+        el.style.display = show ? 'block' : 'none';
+    });
 }
 
 // ====================================================================
 // ADD / EDIT MATERIAL MODAL
-// FIX: all modal IDs use mm-* prefix to avoid collision with ft-* filter IDs
 // ====================================================================
 function showMatModal(editId) {
     var mat = null;
@@ -794,10 +972,8 @@ function showMatModal(editId) {
             '</div>';
     }
 
-    var hygroRO = (isCommMat || isDefaultMat) ? ' disabled readonly style="opacity:0.6;cursor:not-allowed;background:#f1f5f9"' : '';
-
-    var hasHygro = mat && (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBetaOTR > 0 || mat.hygroscopicBetaCO2 > 0);
     var isRO = isCommMat || isDefaultMat;
+    var hasHygro = mat && (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBetaOTR > 0 || mat.hygroscopicBetaCO2 > 0);
 
     var modalBody =
         banner +
@@ -826,7 +1002,7 @@ function showMatModal(editId) {
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">' +
 
-        // FIX: metallized card — use label+for instead of onclick on container (accessibility)
+        // Metallized card
         '<label for="mm-metallized" style="padding:12px 14px;background:#fefce8;border:1.5px solid #fcd34d;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
             '<input type="checkbox" id="mm-metallized" '+metallizedCheck+ROcheck+' style="width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
             '<div>' +
@@ -835,7 +1011,7 @@ function showMatModal(editId) {
             '</div>' +
         '</label>' +
 
-        // FIX: hygroscopic card — single style attribute, merged sizing + cursor
+        // Hygroscopic card — toggles inline beta fields inside each barrier section
         '<label for="mm-hygroscopic" style="padding:12px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+(isRO?'not-allowed':'pointer')+'">' +
             '<input type="checkbox" id="mm-hygroscopic" '+(hasHygro?'checked':'')+
                 (isRO ? ' disabled' : '') +
@@ -849,33 +1025,10 @@ function showMatModal(editId) {
 
         '</div>' +
 
-        '<div id="mm-hygro-fields" style="display:' + (hasHygro?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
-            '<div style="font-size:0.75rem;font-weight:600;color:#0369a1;margin-bottom:10px">Hygroscopic correction coefficients</div>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-                '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">WVTR Beta</div>' +
-                '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">OTR Beta</div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mm-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mm-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.055"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mm-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mm-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
-            '</div>' +
-            '<div style="border-top:1px solid #bae6fd;margin-top:10px;padding-top:10px">' +
-            '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">CO\u2082 Beta</div>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mm-beta-co2" value="'+(mat&&mat.hygroscopicBetaCO2>0?mat.hygroscopicBetaCO2:'')+'" placeholder="e.g. 0.040"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
-                    '<input type="number" class="form-input" id="mm-refrh-co2" value="'+(mat&&mat.hygroscopicRefRHCO2?mat.hygroscopicRefRHCO2:50)+'" placeholder="50"'+hygroRO+'></div>' +
-            '</div></div>' +
-            '<div style="font-size:0.68rem;color:#0369a1;margin-top:8px">Beta = % increase in permeability per 1% RH increase. Reference RH = condition at which the listed values were measured.</div>' +
-        '</div>' +
-        _modalBarrierSection('wvtr', mat, isCommMat, isDefaultMat) +
-        _modalBarrierSection('otr',  mat, isCommMat, isDefaultMat) +
-        _modalBarrierSection('co2',  mat, isCommMat, isDefaultMat);
+        // Each barrier section now includes its own beta fields inline
+        _modalBarrierSection('wvtr', mat, isCommMat, isDefaultMat, hasHygro) +
+        _modalBarrierSection('otr',  mat, isCommMat, isDefaultMat, hasHygro) +
+        _modalBarrierSection('co2',  mat, isCommMat, isDefaultMat, hasHygro);
 
     Modal.open(
         editId !== undefined ? 'Edit Material' : 'Add Material',
@@ -889,12 +1042,19 @@ function showMatModal(editId) {
             var supplierEmail = document.getElementById('mm-email') ? document.getElementById('mm-email').value.trim() : '';
             var density       = parseFloat(document.getElementById('mm-density').value) || null;
             var gwp           = parseFloat(document.getElementById('mm-gwp').value) || null;
-            // FIX: haze NaN — use same pattern as other fields
             var hazeRaw       = parseFloat(document.getElementById('mm-haze').value);
             var haze          = isNaN(hazeRaw) ? null : hazeRaw;
             var meltingTemp   = parseFloat(document.getElementById('mm-melting-temp').value) || null;
             if(tdsLink && !tdsLink.startsWith('http')){ alert('TDS Link must start with http:// or https://'); return false; }
             var isMetallized  = document.getElementById('mm-metallized') ? document.getElementById('mm-metallized').checked : false;
+
+            // Read beta from inline fields inside each barrier section
+            var betaWVTR  = parseFloat(document.getElementById('mm-beta-wvtr').value)  || 0;
+            var refRHWVTR = parseFloat(document.getElementById('mm-refrh-wvtr').value) || 50;
+            var betaOTR   = parseFloat(document.getElementById('mm-beta-otr').value)   || 0;
+            var refRHOTR  = parseFloat(document.getElementById('mm-refrh-otr').value)  || 50;
+            var betaCO2   = parseFloat(document.getElementById('mm-beta-co2').value)   || 0;
+            var refRHCO2  = parseFloat(document.getElementById('mm-refrh-co2').value)  || 50;
 
             // Community: only email + TDS saved; new conditions go to pending
             if(isCommMat && mat) {
@@ -924,7 +1084,6 @@ function showMatModal(editId) {
 
             function collectRows(type) {
                 var rows = [];
-                // FIX: use mm-* class selectors for modal rows
                 var valEls   = document.querySelectorAll('.mm-val[data-type="'+type+'"]');
                 var thickEls = document.querySelectorAll('.mm-thick[data-type="'+type+'"]');
                 var tempEls  = document.querySelectorAll('.mm-temp[data-type="'+type+'"]');
@@ -971,13 +1130,6 @@ function showMatModal(editId) {
             var wvtrValues = isDefaultMat ? collectReadOnlyPlusNew('wvtr') : collectRows('wvtr');
             var otrValues  = isDefaultMat ? collectReadOnlyPlusNew('otr')  : collectRows('otr');
             var co2Values  = isDefaultMat ? collectReadOnlyPlusNew('co2')  : collectRows('co2');
-
-            var betaWVTR  = parseFloat(document.getElementById('mm-beta-wvtr').value)  || 0;
-            var refRHWVTR = parseFloat(document.getElementById('mm-refrh-wvtr').value) || 50;
-            var betaOTR   = parseFloat(document.getElementById('mm-beta-otr').value)   || 0;
-            var refRHOTR  = parseFloat(document.getElementById('mm-refrh-otr').value)  || 50;
-            var betaCO2   = parseFloat(document.getElementById('mm-beta-co2').value)   || 0;
-            var refRHCO2  = parseFloat(document.getElementById('mm-refrh-co2').value)  || 50;
 
             var matData = {
                 name: name, family: family || getFamily(name), company: company,
@@ -1041,7 +1193,11 @@ function showBulkImport() {
                         count++;
                     }
                 }
-                alert('Imported ' + count + ' materials'); render(); return true;
+                alert('Imported ' + count + ' materials');
+                // Auto-consolidate after bulk import
+                consolidateMaterials();
+                render();
+                return true;
             } catch(e){ alert('Import error: ' + e.message); return false; }
         }
     );
@@ -1053,7 +1209,13 @@ function importFile(input) {
     reader.onload = function(e){
         try {
             var data = JSON.parse(e.target.result);
-            if(data.materials){ DB.importAll(JSON.stringify(data)); alert('Imported ' + data.materials.length + ' materials'); Modal.close(); render(); }
+            if(data.materials){
+                DB.importAll(JSON.stringify(data));
+                alert('Imported ' + data.materials.length + ' materials');
+                consolidateMaterials();
+                Modal.close();
+                render();
+            }
         } catch(err){ alert('File import error: ' + err.message); }
     };
     reader.readAsText(file);
@@ -1114,7 +1276,13 @@ async function loadExternalMaterialsDB() {
             addedCount++;
         });
 
-        if(addedCount > 0) { DB.save(); render(); console.log('materials.json: added ' + addedCount); }
+        if(addedCount > 0) {
+            DB.save();
+            // Auto-consolidate after external load
+            consolidateMaterials();
+            render();
+            console.log('materials.json: added ' + addedCount);
+        }
     } catch(e) { console.log('materials.json not loaded:', e.message); }
 }
 
