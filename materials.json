@@ -284,7 +284,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/d2908.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS D2908, revised 1 Feb 2024. 29 mol% ethylene EVOH (lowest ethylene, highest barrier standard grade), intermediate MFR. Single OTR point on TDS: 0.1 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22). No WVTR, no CO2 TR, no haze, no shrinkage on this TDS. Food contact regulations explicitly stated.",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS D2908, revised 1 Feb 2024. 29 mol% ethylene EVOH (lowest ethylene, highest barrier standard grade), intermediate MFR. Single OTR point on TDS: 0.1 cc·20µm/m²·day·atm at 20°C/65%RH (). No WVTR, no CO2 TR, no haze, no shrinkage on this TDS. Food contact regulations explicitly stated.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -312,7 +312,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -320,7 +320,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -337,7 +337,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/dt2904rb.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DT2904RB, revised 1 Feb 2024. 29 mol% ethylene EVOH, low MFR variant of D-series. Excellent gas barrier at low humidity, good thermal stability for co-extruded film and blow-molded containers. Single OTR point on TDS: 0.1 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DT2904RB, revised 1 Feb 2024. 29 mol% ethylene EVOH, low MFR variant of D-series. Excellent gas barrier at low humidity, good thermal stability for co-extruded film and blow-molded containers. Single OTR point on TDS: 0.1 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -365,7 +365,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -373,7 +373,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -390,7 +390,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/dc3203rb.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DC3203RB, revised 1 Feb 2024. 32 mol% ethylene EVOH, low MFR. Used in co-extrusion blow-molded containers, film and tube. Single OTR point on TDS: 0.15 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DC3203RB, revised 1 Feb 2024. 32 mol% ethylene EVOH, low MFR. Used in co-extrusion blow-molded containers, film and tube. Single OTR point on TDS: 0.15 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -418,7 +418,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -426,7 +426,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -443,7 +443,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/dc3212b.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DC3212B, revised 1 Feb 2024. 32 mol% ethylene EVOH, high MFR. Used in co-extrusion coating, film and co-injection molded containers. Single OTR point on TDS: 0.15 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS DC3212B, revised 1 Feb 2024. 32 mol% ethylene EVOH, high MFR. Used in co-extrusion coating, film and co-injection molded containers. Single OTR point on TDS: 0.15 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -471,7 +471,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -479,7 +479,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -496,7 +496,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/et3803rb.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS ET3803RB, revised 1 Feb 2024. 38 mol% ethylene EVOH, low MFR. Used in co-extruded film, sheet/thermoforming and shrink packaging. Single OTR point on TDS: 0.5 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS ET3803RB, revised 1 Feb 2024. 38 mol% ethylene EVOH, low MFR. Used in co-extruded film, sheet/thermoforming and shrink packaging. Single OTR point on TDS: 0.5 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -524,7 +524,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -532,7 +532,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -549,7 +549,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/e3808.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS E3808, revised 1 Feb 2024. 38 mol% ethylene EVOH, intermediate MFR (8.0). Used in co-extruded cast film, co-extrusion coating, thermoforming and shrink packaging. Single OTR point on TDS: 0.5 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS E3808, revised 1 Feb 2024. 38 mol% ethylene EVOH, intermediate MFR (8.0). Used in co-extruded cast film, co-extrusion coating, thermoforming and shrink packaging. Single OTR point on TDS: 0.5 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -577,7 +577,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.060,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -585,7 +585,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -602,7 +602,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/a4412b.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS A4412B, revised 1 Feb 2024. 44 mol% ethylene EVOH, high MFR. Highest-ethylene standard grade — excellent water resistance, barrier not drastically lower at high humidity. Used in co-extruded cast film, tube, co-extrusion coating. Single OTR point on TDS: 1.3 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS A4412B, revised 1 Feb 2024. 44 mol% ethylene EVOH, high MFR. Highest-ethylene standard grade — excellent water resistance, barrier not drastically lower at high humidity. Used in co-extruded cast film, tube, co-extrusion coating. Single OTR point on TDS: 1.3 cc·20µm/m²·day·atm at 20°C/65%RH ().",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -630,7 +630,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -638,7 +638,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -655,7 +655,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/at4403b.pdf",
-    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS AT4403B, revised 1 Feb 2024. 44 mol% ethylene EVOH, low MFR (3.5). Used in co-extruded blown film and shrink packaging. Single OTR point on TDS: 1.3 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22). Food regulation list copied from sister TDS as the regulatory page on this PDF had encoding issues — same Mitsubishi Chemical SoarnoL standard regulation set (verified consistent across all 1 Feb 2024 SoarnoL TDS).",
+    "tdsSource": "Mitsubishi Chemical SoarnoL™ TDS AT4403B, revised 1 Feb 2024. 44 mol% ethylene EVOH, low MFR (3.5). Used in co-extruded blown film and shrink packaging. Single OTR point on TDS: 1.3 cc·20µm/m²·day·atm at 20°C/65%RH (). Food regulation list copied from sister TDS as the regulatory page on this PDF had encoding issues — same Mitsubishi Chemical SoarnoL standard regulation set (verified consistent across all 1 Feb 2024 SoarnoL TDS).",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -683,7 +683,7 @@
     "hygroscopicRefRHWVTR": 50,
     "hygroscopicBetaOTR": 0.051,
     "hygroscopicRefRHOTR": 50,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -691,7 +691,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -708,7 +708,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/gc3304b.pdf",
-    "tdsSource": "Mitsubishi Chemical G-SoarnoL™ TDS GC3304B, revised 1 Feb 2024. Special EVOH with controlled crystallinity/melting point for orientability and shrinkability. 33 mol% ethylene. Suitable for orientation applications: thermoformable film and shrink bag (double bubble). Single OTR point: 0.2 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22). US food contact via FDA FCN 749 (not 21 CFR 177.1360 — note the difference for G-SoarnoL).",
+    "tdsSource": "Mitsubishi Chemical G-SoarnoL™ TDS GC3304B, revised 1 Feb 2024. Special EVOH with controlled crystallinity/melting point for orientability and shrinkability. 33 mol% ethylene. Suitable for orientation applications: thermoformable film and shrink bag (double bubble). Single OTR point: 0.2 cc·20µm/m²·day·atm at 20°C/65%RH (). US food contact via FDA FCN 749 (not 21 CFR 177.1360 — note the difference for G-SoarnoL).",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -736,7 +736,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -744,7 +744,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -761,7 +761,7 @@
     "family": "EVOH",
     "company": "Mitsubishi Chemical",
     "tdsLink": "https://www.soarnol.com/eng/grade/pdf/gh3804b.pdf",
-    "tdsSource": "Mitsubishi Chemical G-SoarnoL™ TDS GH3804B, revised 1 Feb 2024. Special EVOH with excellent orientability. 38 mol% ethylene. Suitable for biaxial oriented film with tenter frame (BOPP) and shrink bag with double bubble. Single OTR point: 0.6 cc·20µm/m²·day·atm at 20°C/65%RH (MOCON OXTRAN 2/22). US food contact via FDA FCN 749.",
+    "tdsSource": "Mitsubishi Chemical G-SoarnoL™ TDS GH3804B, revised 1 Feb 2024. Special EVOH with excellent orientability. 38 mol% ethylene. Suitable for biaxial oriented film with tenter frame (BOPP) and shrink bag with double bubble. Single OTR point: 0.6 cc·20µm/m²·day·atm at 20°C/65%RH (). US food contact via FDA FCN 749.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -789,7 +789,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "MOCON OXTRAN 2/22",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -797,7 +797,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "MOCON OXTRAN 2/22"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -6541,7 +6541,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "OXTRAN 2/20 (MOCON)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -6549,7 +6549,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "OXTRAN 2/20 (MOCON)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -6594,7 +6594,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "OXTRAN 2/22 (MOCON)",
+    "testMethodOTR": "",
     "testMethodWVTR": null,
     "otrValues": [
       {
@@ -6602,7 +6602,7 @@
         "thickness": 20,
         "temperature": 20,
         "humidity": 65,
-        "testMethod": "OXTRAN 2/22 (MOCON)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12813,7 +12813,7 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films catalog; thickness 20µm assumed; conditions assumed standard"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12862,7 +12862,7 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films catalog: '<20'; thickness 20µm assumed; upper bound"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12911,7 +12911,7 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films catalog: '<8'; thickness 20µm assumed; upper bound"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
@@ -12960,7 +12960,7 @@
         "thickness": 20,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Flex Films catalog: '30'; thickness 20µm assumed"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [],
