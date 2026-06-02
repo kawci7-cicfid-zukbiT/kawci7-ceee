@@ -839,7 +839,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380",
+    "testMethodOTR": "DIN 53380-3",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -847,28 +847,28 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       },
       {
         "value": 57,
         "thickness": 23,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       },
       {
         "value": 37,
         "thickness": 36,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       },
       {
         "value": 26,
         "thickness": 50,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "wvtrValues": [
@@ -907,7 +907,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "validConditions": [],
@@ -947,7 +947,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380",
+    "testMethodOTR": "DIN 53380-3",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -955,14 +955,14 @@
         "thickness": 9,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 "
+        "testMethod": "DIN 53380-3 "
       },
       {
         "value": 1,
         "thickness": 23,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 "
+        "testMethod": "DIN 53380-3 "
       }
     ],
     "wvtrValues": [
@@ -994,7 +994,7 @@
     "family": "PET",
     "company": "Mitsubishi Polyester Film (Mitsubishi Chemical Group)",
     "tdsLink": "https://www.m-petfilm.de/wp-content/uploads/RHBYe.pdf",
-    "tdsSource": "Mitsubishi Polyester Film GmbH Hostaphan® RHBY TDS, Edition 06/23. Transparent BOPET film with enhanced barrier when vacuum-coated with Al, Al2O3 or SiOx. TDS provides 4 barrier columns: uncoated baseline, metallized RHBY MI (OD 2.6-3.0), SiOx-coated, Al2O3-coated. All barrier values explicitly marked 'unlaminated' — pure film. WVTR conditions: 37.8°C/90%RH (DIN 53122). OTR conditions: 23°C/50%RH (DIN 53380). This entry covers the UNCOATED RHBY 12 baseline; metallized/coated variants are separate database entries.",
+    "tdsSource": "Mitsubishi Polyester Film GmbH Hostaphan® RHBY TDS, Edition 06/23. Transparent BOPET film with enhanced barrier when vacuum-coated with Al, Al2O3 or SiOx. TDS provides 4 barrier columns: uncoated baseline, metallized RHBY MI (OD 2.6-3.0), SiOx-coated, Al2O3-coated. All barrier values explicitly marked 'unlaminated' — pure film. WVTR conditions: 37.8°C/90%RH (DIN 53122). OTR conditions: 23°C/50%RH (DIN 53380-3). This entry covers the UNCOATED RHBY 12 baseline; metallized/coated variants are separate database entries.",
     "supplierEmail": null,
     "isMetallized": false,
     "application": "food",
@@ -1019,7 +1019,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380 ",
+    "testMethodOTR": "DIN 53380-3 ",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -1027,7 +1027,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380 "
+        "testMethod": "DIN 53380-3 "
       }
     ],
     "wvtrValues": [
@@ -1077,7 +1077,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380",
+    "testMethodOTR": "DIN 53380-3",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -1085,7 +1085,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "wvtrValues": [
@@ -1135,7 +1135,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380",
+    "testMethodOTR": "DIN 53380-3",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -1143,7 +1143,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "wvtrValues": [
@@ -1193,7 +1193,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380",
+    "testMethodOTR": "DIN 53380-3",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
@@ -1201,7 +1201,7 @@
         "thickness": 12,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380"
+        "testMethod": "DIN 53380-3"
       }
     ],
     "wvtrValues": [
@@ -4915,7 +4915,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985",
+    "testMethodOTR": "ASTM D1927 ",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -5068,7 +5068,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00696,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 ",
+    "testMethodOTR": "ASTM D1927  ",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -5221,7 +5221,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": 0.00669,
     "hygroscopicRefRHOTR": 0,
-    "testMethodOTR": "ASTM D1927 (dry) / ASTM D3985 ",
+    "testMethodOTR": "ASTM D1927  ",
     "testMethodWVTR": "ASTM F-1249",
     "otrValues": [
       {
@@ -9466,7 +9466,7 @@
         "thickness": 15,
         "temperature": 23,
         "humidity": 50,
-        "testMethod": "DIN 53380-3 / ASTM D3985 "
+        "testMethod": "DIN 53380-3  "
       }
     ],
     "wvtrValues": [
@@ -10229,7 +10229,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "DIN 53380-3 / ASTM D3985",
+    "testMethodOTR": "DIN 53380-3 ",
     "testMethodWVTR": "DIN 53122",
     "otrValues": [
       {
