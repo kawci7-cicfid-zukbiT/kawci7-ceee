@@ -403,7 +403,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="step-block">
       <div class="step-label green">▶ 5. Save &amp; Export</div>
       <div class="btn-group" style="margin-top:0">
-        <button class="btn btn-success btn-sm" onclick="saveScenario()">💾 Save Scenario</button>
+        <button class="btn btn-success btn-sm" onclick="saveScenario()"> Save Scenario</button>
         <button class="btn btn-outline btn-sm" onclick="exportCSV()">↓ CSV</button>
         <button class="btn btn-outline btn-sm" onclick="exportPDF()">↓ PDF</button>
       </div>
@@ -473,19 +473,19 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
      ════════════════════════════════════ -->
 <div id="detailed" style="display:none;margin-top:1.2rem">
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('overview',event)">📊 Overview</button>
-    <button class="tab" onclick="switchTab('tables',event)">📋 Full Tables</button>
-    <button class="tab" onclick="switchTab('charts',event)">📈 Charts</button>
-    <button class="tab" onclick="switchTab('scenarios',event)">🔀 Scenarios</button>
-    <button class="tab" onclick="switchTab('sensitivity',event)">🎯 Sensitivity</button>
+    <button class="tab active" onclick="switchTab('overview',event)"> Overview</button>
+    <button class="tab" onclick="switchTab('tables',event)"> Full Tables</button>
+    <button class="tab" onclick="switchTab('charts',event)"> Charts</button>
+    <button class="tab" onclick="switchTab('scenarios',event)"> Scenarios</button>
+    <button class="tab" onclick="switchTab('sensitivity',event)"> Sensitivity</button>
   </div>
 
   <!-- Overview -->
   <div id="tab-overview" class="tab-pane active">
     <div class="grid-2">
-      <div class="card"><h2>🌍 Annual Ingress by Zone</h2><div class="chart-wrap"><canvas id="ch-overview"></canvas></div></div>
+      <div class="card"><h2> Annual Ingress by Zone</h2><div class="chart-wrap"><canvas id="ch-overview"></canvas></div></div>
       <div class="card">
-        <h2>⚡ Correction Factors</h2>
+        <h2> Correction Factors</h2>
         <div class="chart-wrap sm"><canvas id="ch-factors"></canvas></div>
         <div id="factors-sum" style="margin-top:.6rem;font-size:.72rem;color:var(--text-light)"></div>
       </div>
@@ -500,15 +500,15 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
   <!-- Full Tables -->
   <div id="tab-tables" class="tab-pane">
-    <div class="card"><h2>📋 Complete Calculation Table</h2>
+    <div class="card"><h2> Complete Calculation Table</h2>
       <div class="tbl-wrap"><table class="data-table" id="tbl-detailed">
         <thead><tr><th>Zone</th><th>T°C</th><th>RH%</th><th>WVTR ref</th><th>F_T</th><th>F_RH</th><th>WVTR eff</th><th>Area m²</th><th>Daily mg</th><th>Annual mg</th><th>Total mg</th><th>% Limit</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
     <div class="grid-2">
-      <div class="card"><h2>🧮 Active Parameters</h2><div id="params-panel" style="font-size:.73rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
-      <div class="card"><h2>📐 Equations</h2>
+      <div class="card"><h2> Active Parameters</h2><div id="params-panel" style="font-size:.73rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
+      <div class="card"><h2> Equations</h2>
         <div class="formula-block">
           F_T = exp[(Eₐ/R) × (1/T_ref − 1/T_target)]<br>
           F_RH = RH_target / RH_ref<br>
@@ -524,20 +524,20 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
   <!-- Charts -->
   <div id="tab-charts" class="tab-pane">
     <div class="grid-2">
-      <div class="card"><h2>📊 WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="ch-wvtr"></canvas></div></div>
-      <div class="card"><h2>💧 Cumulative Moisture Ingress</h2><div class="chart-wrap"><canvas id="ch-cumul"></canvas></div></div>
-      <div class="card"><h2>🌡️ Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="ch-trh"></canvas></div></div>
-      <div class="card"><h2>⏱️ Years to Critical Limit</h2><div class="chart-wrap"><canvas id="ch-ttl"></canvas></div></div>
+      <div class="card"><h2> WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="ch-wvtr"></canvas></div></div>
+      <div class="card"><h2> Cumulative Moisture Ingress</h2><div class="chart-wrap"><canvas id="ch-cumul"></canvas></div></div>
+      <div class="card"><h2> Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="ch-trh"></canvas></div></div>
+      <div class="card"><h2> Years to Critical Limit</h2><div class="chart-wrap"><canvas id="ch-ttl"></canvas></div></div>
     </div>
   </div>
 
   <!-- Scenarios -->
   <div id="tab-scenarios" class="tab-pane">
     <div class="grid-2">
-      <div class="card"><h2>💾 Saved Scenarios</h2><div id="sce-comp-list"></div></div>
-      <div class="card"><h2>📊 Comparison Chart</h2><div class="chart-wrap"><canvas id="ch-sce"></canvas></div></div>
+      <div class="card"><h2> Saved Scenarios</h2><div id="sce-comp-list"></div></div>
+      <div class="card"><h2> Comparison Chart</h2><div class="chart-wrap"><canvas id="ch-sce"></canvas></div></div>
     </div>
-    <div class="card"><h2>📋 Comparison Table</h2>
+    <div class="card"><h2> Comparison Table</h2>
       <div class="tbl-wrap"><table class="data-table" id="tbl-sce">
         <thead><tr id="sce-hdr"><th>Parameter</th></tr></thead>
         <tbody id="sce-body"></tbody>
@@ -548,7 +548,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
   <!-- Sensitivity -->
   <div id="tab-sensitivity" class="tab-pane">
     <div class="grid-2">
-      <div class="card"><h2>🎚️ Sensitivity: Eₐ</h2>
+      <div class="card"><h2> Sensitivity: Eₐ</h2>
         <div class="grid-2" style="gap:.4rem;align-items:end">
           <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="s-ea-min" class="form-input" value="20" step="5"></div>
           <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="s-ea-max" class="form-input" value="65" step="5"></div>
@@ -556,7 +556,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <button class="btn btn-primary btn-sm" style="margin-top:.45rem" onclick="runSensEA()">Run</button>
         <div class="chart-wrap"><canvas id="ch-sea"></canvas></div>
       </div>
-      <div class="card"><h2>🎚️ Sensitivity: WVTR</h2>
+      <div class="card"><h2> Sensitivity: WVTR</h2>
         <div class="grid-2" style="gap:.4rem;align-items:end">
           <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="s-wvtr-min" class="form-input" value="0.1" step=".1"></div>
           <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="s-wvtr-max" class="form-input" value="3.0" step=".1"></div>
@@ -565,7 +565,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="chart-wrap"><canvas id="ch-swvtr"></canvas></div>
       </div>
     </div>
-    <div class="card"><h2>🌪️ Tornado Chart — Parameter Impact</h2><div class="chart-wrap"><canvas id="ch-tornado"></canvas></div></div>
+    <div class="card"><h2> Tornado Chart — Parameter Impact</h2><div class="chart-wrap"><canvas id="ch-tornado"></canvas></div></div>
   </div>
 </div><!-- /detailed -->
 
