@@ -36,7 +36,7 @@ function showTrashNotification(mat) {
     toast.id = 'trash-toast';
     toast.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:0.75rem 1.25rem;border-radius:10px;font-size:0.82rem;display:flex;align-items:center;gap:1rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3)';
     toast.innerHTML =
-        '<span>\uD83D\uDDD1\uFE0F <strong>' + mat.name + '</strong> moved to trash</span>' +
+        '<span>🗑️ <strong>' + mat.name + '</strong> moved to trash</span>' +
         '<button onclick="restoreFromTrash(\'' + String(mat.id) + '\');this.closest(\'#trash-toast\').remove()" ' +
         'style="background:var(--primary);color:#fff;border:none;padding:0.3rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600">Undo</button>' +
         '<button onclick="this.closest(\'#trash-toast\').remove()" ' +
@@ -401,6 +401,7 @@ function matCardHTML(m, q) {
     var hygroItems = [];
     if(m.hygroscopicBetaWVTR > 0) hygroItems.push(['Beta WVTR', m.hygroscopicBetaWVTR + ' - ref ' + (m.hygroscopicRefRHWVTR||50) + '% RH']);
     if(m.hygroscopicBetaOTR  > 0) hygroItems.push(['Beta OTR',  m.hygroscopicBetaOTR  + ' - ref ' + (m.hygroscopicRefRHOTR ||50) + '% RH']);
+    if(m.hygroscopicBetaCO2  > 0) hygroItems.push(['Beta CO2',  m.hygroscopicBetaCO2  + ' - ref ' + (m.hygroscopicRefRHCO2 ||50) + '% RH']);
     var hygroHTML = '';
     if(hygroItems.length > 0) {
         hygroHTML = '<div style="border-top:1px solid var(--border-light,#f1f5f9);margin-top:10px;padding-top:10px">' +
@@ -412,12 +413,6 @@ function matCardHTML(m, q) {
                     '<div style="font-size:0.8rem;font-weight:600">' + p[1] + '</div></div>';
             }).join('') + '</div></div>';
     }
-
-    var sourceNote = m.tdsSource
-        ? '<div style="margin-top:10px;padding:8px 10px;background:var(--bg-secondary,#f8fafc);border-radius:6px;border-left:2px solid var(--border)">' +
-          '<div style="font-size:0.65rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Data source</div>' +
-          '<div style="font-size:0.72rem;color:var(--text-light);line-height:1.5">' + m.tdsSource + '</div></div>'
-        : '';
 
     return '<div class="material-item' + (verified ? ' verified-item' : '') + '" onclick="this.classList.toggle(\'expanded\')">' +
         '<div class="mat-header">' +
@@ -455,7 +450,6 @@ function matCardHTML(m, q) {
                     '</div>' +
                 '</div>' +
             '</div>' +
-            sourceNote +
             '<div class="mat-actions" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light,#f1f5f9)">' + btns + '</div>' +
             '<div class="mat-voting" style="margin-top:10px">' +
                 '<div class="mat-voting-label"><span>Community reliability</span><span class="reliability-badge ' + relClass + '">' + relLabel + '</span></div>' +
@@ -630,6 +624,8 @@ function _modalBarrierSection(type, mat, isCommMat, isDefaultMat) {
     var units   = { wvtr:'g/m2 day', otr:'cc/m2 day atm', co2:'cc/m2 day atm' };
     var valKeys = { wvtr:'wvtrValues', otr:'otrValues', co2:'co2Values' };
     var tmKeys  = { wvtr:'testMethodWVTR', otr:'testMethodOTR', co2:'testMethodCO2' };
+    var betaKeys = { wvtr:'hygroscopicBetaWVTR', otr:'hygroscopicBetaOTR', co2:'hygroscopicBetaCO2' };
+    var refRHKeys = { wvtr:'hygroscopicRefRHWVTR', otr:'hygroscopicRefRHOTR', co2:'hygroscopicRefRHCO2' };
     var ctmOpts = {
         wvtr: ['ASTM F1249','ISO 15106-3','ASTM E96','JIS K7129','MOCON PERMATRAN','DIN 53122'],
         otr:  ['ASTM D3985','ASTM D1927','ISO 15106-2','JIS K7126','MOCON OXTRAN'],
@@ -783,6 +779,18 @@ function showMatModal(editId) {
             '<div class="form-group" style="margin:0"><label>TDS link <span style="font-size:0.65rem;color:var(--text-light)">(always editable)</span></label>' +
                 '<input type="url" class="form-input" id="mf-tdslink" value="'+(mat?mat.tdsLink||'':'')+'" placeholder="https://"'+tdsRO+'></div>' +
         '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
+            '<div class="form-group" style="margin:0"><label>Density (kg/m³)</label>' +
+                '<input type="number" step="any" class="form-input" id="mf-density" value="'+(mat&&mat.density?mat.density:'')+'" placeholder="e.g. 1400"'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>GWP (kg CO2eq/kg)</label>' +
+                '<input type="number" step="any" class="form-input" id="mf-gwp" value="'+(mat&&mat.gwp?mat.gwp:'')+'" placeholder="e.g. 2.15"'+RO+'></div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
+            '<div class="form-group" style="margin:0"><label>Haze (%)</label>' +
+                '<input type="number" step="any" class="form-input" id="mf-haze" value="'+(mat&&mat.haze!=null?mat.haze:'')+'" placeholder="e.g. 2.5"'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>Melting temp (°C)</label>' +
+                '<input type="number" step="any" class="form-input" id="mf-melting-temp" value="'+(mat&&mat.meltingTemp?mat.meltingTemp:'')+'" placeholder="e.g. 260"'+RO+'></div>' +
+        '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">' +
 
         '<div style="padding:12px 14px;background:#fefce8;border:1.5px solid #fcd34d;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-metallized\').click()')+'">' +
@@ -794,7 +802,7 @@ function showMatModal(editId) {
         '</div>' +
 
         '<div style="padding:12px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;display:flex;align-items:flex-start;gap:10px;cursor:'+((isCommMat||isDefaultMat)?'not-allowed':'pointer')+'" onclick="'+((isCommMat||isDefaultMat)?'':'document.getElementById(\'mf-hygroscopic\').click()')+'">' +
-            '<input type="checkbox" id="mf-hygroscopic" '+( (mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0)) ? 'checked' : '' )+((isCommMat||isDefaultMat)?' disabled style="opacity:0.6;cursor:not-allowed"':' style="cursor:pointer"')+' onchange="matModalHygroToggle()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">' +
+            '<input type="checkbox" id="mf-hygroscopic" '+( (mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0||mat.hygroscopicBetaCO2>0)) ? 'checked' : '' )+((isCommMat||isDefaultMat)?' disabled style="opacity:0.6;cursor:not-allowed"':' style="cursor:pointer"')+' onchange="matModalHygroToggle()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">' +
             '<div>' +
                 '<div style="font-size:0.82rem;font-weight:700;color:#0c4a6e">Hygroscopic material</div>' +
                 '<div style="font-size:0.72rem;color:#075985;margin-top:2px;line-height:1.4">Barrier depends on relative humidity (EVOH, PA, cellulose)</div>' +
@@ -803,18 +811,28 @@ function showMatModal(editId) {
 
         '</div>' +
 
-        '<div id="mf-hygro-fields" style="display:' + ((mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0))?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
+        '<div id="mf-hygro-fields" style="display:' + ((mat&&(mat.hygroscopicBetaWVTR>0||mat.hygroscopicBetaOTR>0||mat.hygroscopicBetaCO2>0))?'block':'none') + ';background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
             '<div style="font-size:0.75rem;font-weight:600;color:#0369a1;margin-bottom:10px">Hygroscopic correction coefficients</div>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta WVTR (%/RH)</label>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+                '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">WVTR Beta</div>' +
+                '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">OTR Beta</div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
                     '<input type="number" step="0.001" class="form-input" id="mf-beta-wvtr" value="'+(mat&&mat.hygroscopicBetaWVTR>0?mat.hygroscopicBetaWVTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH WVTR (%)</label>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
+                    '<input type="number" step="0.001" class="form-input" id="mf-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.055"'+hygroRO+'></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
                     '<input type="number" class="form-input" id="mf-refrh-wvtr" value="'+(mat&&mat.hygroscopicRefRHWVTR?mat.hygroscopicRefRHWVTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta OTR (%/RH)</label>' +
-                    '<input type="number" step="0.001" class="form-input" id="mf-beta-otr" value="'+(mat&&mat.hygroscopicBetaOTR>0?mat.hygroscopicBetaOTR:'')+'" placeholder="e.g. 0.034"'+hygroRO+'></div>' +
-                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH OTR (%)</label>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
                     '<input type="number" class="form-input" id="mf-refrh-otr" value="'+(mat&&mat.hygroscopicRefRHOTR?mat.hygroscopicRefRHOTR:50)+'" placeholder="50"'+hygroRO+'></div>' +
             '</div>' +
+            '<div style="border-top:1px solid #bae6fd;margin-top:10px;padding-top:10px">' +
+            '<div style="font-size:0.68rem;font-weight:600;color:#0369a1;margin-bottom:6px">CO2 Beta</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Beta (%/RH)</label>' +
+                    '<input type="number" step="0.001" class="form-input" id="mf-beta-co2" value="'+(mat&&mat.hygroscopicBetaCO2>0?mat.hygroscopicBetaCO2:'')+'" placeholder="e.g. 0.040"'+hygroRO+'></div>' +
+                '<div class="form-group" style="margin:0"><label style="font-size:0.68rem">Ref RH (%)</label>' +
+                    '<input type="number" class="form-input" id="mf-refrh-co2" value="'+(mat&&mat.hygroscopicRefRHCO2?mat.hygroscopicRefRHCO2:50)+'" placeholder="50"'+hygroRO+'></div>' +
+            '</div></div>' +
             '<div style="font-size:0.68rem;color:#0369a1;margin-top:8px">Beta = % increase in permeability per 1% RH increase. Reference RH = condition at which the listed values were measured.</div>' +
         '</div>' +
         _modalBarrierSection('wvtr', mat, isCommMat, isDefaultMat) +
@@ -831,6 +849,10 @@ function showMatModal(editId) {
             var company       = document.getElementById('mf-company').value.trim();
             var tdsLink       = document.getElementById('mf-tdslink').value.trim();
             var supplierEmail = document.getElementById('mf-email') ? document.getElementById('mf-email').value.trim() : '';
+            var density       = parseFloat(document.getElementById('mf-density').value) || null;
+            var gwp           = parseFloat(document.getElementById('mf-gwp').value) || null;
+            var haze          = parseFloat(document.getElementById('mf-haze').value);
+            var meltingTemp   = parseFloat(document.getElementById('mf-melting-temp').value) || null;
             if(tdsLink && !tdsLink.startsWith('http')){ alert('TDS Link must start with http:// or https://'); return false; }
             var isMetallized  = document.getElementById('mf-metallized') ? document.getElementById('mf-metallized').checked : false;
 
@@ -913,13 +935,17 @@ function showMatModal(editId) {
             var refRHWVTR = parseFloat(document.getElementById('mf-refrh-wvtr').value) || 50;
             var betaOTR   = parseFloat(document.getElementById('mf-beta-otr').value)   || 0;
             var refRHOTR  = parseFloat(document.getElementById('mf-refrh-otr').value)  || 50;
+            var betaCO2   = parseFloat(document.getElementById('mf-beta-co2').value)   || 0;
+            var refRHCO2  = parseFloat(document.getElementById('mf-refrh-co2').value)  || 50;
 
             var matData = {
                 name: name, family: family || getFamily(name), company: company,
                 tdsLink: tdsLink, supplierEmail: supplierEmail, isMetallized: isMetallized,
+                density: density, gwp: gwp, haze: haze, meltingTemp: meltingTemp,
                 hygroscopicBetaWVTR: betaWVTR, hygroscopicRefRHWVTR: refRHWVTR,
                 hygroscopicBetaOTR:  betaOTR,  hygroscopicRefRHOTR:  refRHOTR,
-                isHygroscopic: (betaWVTR > 0 || betaOTR > 0),
+                hygroscopicBetaCO2:  betaCO2,  hygroscopicRefRHCO2:  refRHCO2,
+                isHygroscopic: (betaWVTR > 0 || betaOTR > 0 || betaCO2 > 0),
                 testMethodWVTR: mat ? mat.testMethodWVTR : '',
                 testMethodOTR:  mat ? mat.testMethodOTR  : '',
                 testMethodCO2:  mat ? mat.testMethodCO2  : '',
@@ -1018,6 +1044,7 @@ async function loadExternalMaterialsDB() {
                 if(em.hygroscopicBetaWVTR !== undefined) {
                     ex.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; ex.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
                     ex.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   ex.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
+                    ex.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   ex.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
                 }
                 return;
             }
@@ -1027,6 +1054,7 @@ async function loadExternalMaterialsDB() {
                 if(em.hygroscopicBetaWVTR !== undefined) {
                     exN.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; exN.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
                     exN.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   exN.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
+                    exN.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   exN.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
                 }
                 return;
             }
