@@ -459,60 +459,60 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
   <div class="disc-item"><strong>Source data quality determines output reliability.</strong> When using the Calculator source, accuracy depends on the material database entries. When entering values manually, the user is solely responsible for ensuring the measurement was performed under the stated reference conditions per ASTM F1249 or ISO 15106.</div>
 </div>
 
-<div class="methodology-card">
+<<div class="methodology-card">
   <div class="mc-inner">
     <h2>Mechanics of MVTR Analysis & ICH Q1A(R2) Compliance</h2>
     <div class="mc-body">
-      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. In pharmaceutical packaging science, quantifying this rate and projecting its cumulative effect over the product's intended shelf life is not optional — it is the foundation upon which stability assessments under ICH Q1A(R2) are built. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
+      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. In pharmaceutical packaging science, quantifying this rate and projecting its cumulative effect over the product's intended shelf life is not optional. It is the foundation upon which stability assessments under ICH Q1A(R2) are built. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
 
-      <h3>I. The ICH Climatic Zone Framework</h3>
-      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life in that region. These are not arbitrary categories — they encode real thermodynamic stress that packaging must survive.</p>
+      <h3> The ICH Climatic Zone Framework</h3>
+      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life in that region. These are not arbitrary categories. They encode real thermodynamic stress that packaging must survive.</p>
       <div class="callout blue">
-        <strong>Zone Definitions — ICH Q1A(R2) / WHO Technical Report Series No. 863:</strong><br>
-        Zone I (21°C / 45% RH) — Temperate — Europe, Canada, Russia<br>
-        Zone II (25°C / 60% RH) — Subtropical / Mediterranean — USA, Japan<br>
-        Zone IIIa (40°C / 15% RH) — Hot/Dry — Middle East, arid Africa<br>
-        Zone IVa (40°C / 75% RH) — Hot/Humid — South-East Asia, tropical regions<br>
-        Zone IVb (30°C / 75% RH) — Hot/Very Humid (ASEAN harmonised protocol)<br>
-        Accelerated (40°C / 75% RH) — ICH Q1A(R2) stress testing, Section 2.1.2<br>
-        Intermediate (30°C / 65% RH) — ICH Q1A(R2) bridging condition
+        <strong>Zone Definitions (ICH Q1A(R2) / WHO Technical Report Series No. 863):</strong><br>
+        Zone I (21°C / 45% RH): Temperate, Europe, Canada, Russia<br>
+        Zone II (25°C / 60% RH): Subtropical / Mediterranean, USA, Japan<br>
+        Zone IIIa (40°C / 15% RH): Hot/Dry, Middle East, arid Africa<br>
+        Zone IVa (40°C / 75% RH): Hot/Humid, South-East Asia, tropical regions<br>
+        Zone IVb (30°C / 75% RH): Hot/Very Humid (ASEAN harmonised protocol)<br>
+        Accelerated (40°C / 75% RH): ICH Q1A(R2) stress testing, Section 2.1.2<br>
+        Intermediate (30°C / 65% RH): ICH Q1A(R2) bridging condition
       </div>
 
-      <h3>II. Arrhenius Temperature Correction</h3>
+      <h3> Arrhenius Temperature Correction</h3>
       <p>Water vapor permeation through a polymer film is a thermally activated diffusion process. As temperature rises, polymer chain segmental mobility increases, free volume grows, and the diffusion coefficient of water molecules through the matrix accelerates exponentially. This relationship is described by the Arrhenius equation:</p>
       <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br><br>Eₐ = activation energy of permeation (kJ/mol)<br>R = 8.314 × 10⁻³ kJ/(mol·K) · T in Kelvin</div>
-      <p>When F_T &gt; 1 the target zone is hotter than the reference and permeation is accelerated; F_T &lt; 1 means the zone is cooler and the film performs better than its measured value. Setting Eₐ = 0 treats WVTR as temperature-independent — appropriate only when no activation energy data exists.</p>
+      <p>When F_T &gt; 1 the target zone is hotter than the reference and permeation is accelerated. F_T &lt; 1 means the zone is cooler and the film performs better than its measured value. Setting Eₐ = 0 treats WVTR as temperature-independent, which is appropriate only when no activation energy data exists.</p>
       <div class="callout warning">
         <strong>Literature Eₐ guidance:</strong> Polyolefins (LDPE, PP) ≈ 28–42 kJ/mol. Polar films (EVOH, Nylon) ≈ 45–70 kJ/mol due to stronger hydrogen-bonding with water. Aluminium foil laminates: near zero when foil is intact, because transport occurs through defects (pinholes, seals), not through the metal lattice itself. Metallised films fall between 10–30 kJ/mol depending on metallisation quality.
       </div>
 
-      <h3>III. Relative Humidity Driving Force</h3>
+      <h3> Relative Humidity Driving Force</h3>
       <p>Permeation is driven by the partial pressure differential of water vapour across the film. At the same temperature, the ratio of partial pressures simplifies to the ratio of relative humidities, giving a linear first-order correction:</p>
       <div class="formula-block">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
-      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied — see the hygroscopic correction module in the WVTR/OTR Calculator. The Community DB laminates listed in Step 1 have been validated to contain hygroscopic-grade corrections where applicable.</p>
+      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied. See the hygroscopic correction module in the WVTR/OTR Calculator. The Community DB laminates listed in Step 1 have been validated to contain hygroscopic-grade corrections where applicable.</p>
 
-      <h3>IV. Cumulative Ingress and Compliance Evaluation</h3>
+      <h3> Cumulative Ingress and Compliance Evaluation</h3>
       <p>Once the effective WVTR is established for each ICH zone, cumulative ingress over the shelf life follows from a steady-state linear model:</p>
       <div class="formula-block">Ingress_daily (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
       <div class="callout success">
-        <strong>Worked example — pharmaceutical blister pack:</strong> WVTR_ref = 1.0 g/m²/day at 38°C/90%RH, Eₐ = 35 kJ/mol, cavity area = 2 cm². Zone IVa (40°C/75%RH): F_T = exp[(35/0.008314)×(1/311.15 − 1/313.15)] = 1.088; F_RH = 75/90 = 0.833; WVTR_eff = 0.907 g/m²/day. Daily ingress = 0.907 × 0.0002 × 1000 = 0.000181 mg. Over 2 years (730 days) = 0.133 mg — well within a 2.0 mg M_crit.
+        <strong>Worked example (pharmaceutical blister pack):</strong> WVTR_ref = 1.0 g/m²/day at 38°C/90%RH, Eₐ = 35 kJ/mol, cavity area = 2 cm². Zone IVa (40°C/75%RH): F_T = exp[(35/0.008314)×(1/311.15 − 1/313.15)] = 1.088; F_RH = 75/90 = 0.833; WVTR_eff = 0.907 g/m²/day. Daily ingress = 0.907 × 0.0002 × 1000 = 0.000181 mg. Over 2 years (730 days) = 0.133 mg, well within a 2.0 mg M_crit.
       </div>
-      <p>The critical moisture limit M_crit must be established through independent product characterisation — moisture sorption isotherm testing (ISO 18787, DVS method) combined with accelerated degradation experiments identifying the threshold beyond which physicochemical or microbiological failure initiates.</p>
+      <p>The critical moisture limit M_crit must be established through independent product characterisation. Moisture sorption isotherm testing (ISO 18787, DVS method) combined with accelerated degradation experiments identifies the threshold beyond which physicochemical or microbiological failure initiates.</p>
 
-      <h3>V. Packaging Geometry & Exposed Area</h3>
-      <p>The surface area A is the single geometric parameter coupling the barrier value to the mass of water entering the package. For blister packs, only the polymer lid foil area over the cavity is moisture-active — the aluminium base contributes negligibly. For pouches and bags, both faces and any gusset area contribute. Bottles require numerical integration over the body, shoulder, and neck surfaces, which this tool performs automatically when the "Bottle" shape is selected. Seal areas and induction-welded surfaces are excluded by default and should be accounted for separately if seal permeation is a known concern for the laminate in question.</p>
+      <h3> Packaging Geometry & Exposed Area</h3>
+      <p>The surface area A is the single geometric parameter coupling the barrier value to the mass of water entering the package. For blister packs, only the polymer lid foil area over the cavity is moisture-active. The aluminium base contributes negligibly. For pouches and bags, both faces and any gusset area contribute. Bottles require numerical integration over the body, shoulder, and neck surfaces, which this tool performs automatically when the "Bottle" shape is selected. Seal areas and induction-welded surfaces are excluded by default and should be accounted for separately if seal permeation is a known concern for the laminate in question.</p>
 
-      <h3>VI. Safety Margin and Sensitivity Analysis</h3>
-      <p>A compliance pass is a necessary but not sufficient condition for robust packaging. The safety margin — the fraction of M_crit not consumed at end of shelf life — quantifies engineering headroom against real-world variability: batch-to-batch WVTR variation (±15–25% is typical for commercial films), seal integrity degradation during distribution, cyclic humidity in transit, and measurement uncertainty in the reference WVTR. A margin below 20% warrants a design review. The sensitivity analysis identifies which input parameters have the greatest leverage on the compliance outcome, directing experimental validation effort efficiently.</p>
+      <h3>Safety Margin and Sensitivity Analysis</h3>
+      <p>A compliance pass is a necessary but not sufficient condition for robust packaging. The safety margin, defined as the fraction of M_crit not consumed at end of shelf life, quantifies engineering headroom against real-world variability: batch-to-batch WVTR variation (±15–25% is typical for commercial films), seal integrity degradation during distribution, cyclic humidity in transit, and measurement uncertainty in the reference WVTR. A margin below 20% warrants a design review. The sensitivity analysis identifies which input parameters have the greatest leverage on the compliance outcome, directing experimental validation effort efficiently.</p>
 
-      <h3>VII. Alignment with International Standards</h3>
+      <h3> Alignment with International Standards</h3>
       <div class="mc-refs">
-        • <strong>ASTM F1249-20</strong> — WVTR through plastic film and sheeting, modulated infrared sensor method<br>
-        • <strong>ISO 15106-3:2003</strong> — Water vapour transmission rate, electrolytic detection sensor method<br>
-        • <strong>ICH Q1A(R2) (2003)</strong> — Stability Testing of New Drug Substances and Pharmaceutical Products<br>
-        • <strong>WHO TRS No. 863 (1996)</strong> — Climatic zone classification for global stability testing<br>
-        • <strong>ASTM E1641</strong> — Decomposition kinetics by thermogravimetry (Arrhenius parameter determination)<br>
-        • <strong>ISO 18787:2017</strong> — Determination of water activity in food and food products
+        • <strong>ASTM F1249-20</strong>: WVTR through plastic film and sheeting, modulated infrared sensor method<br>
+        • <strong>ISO 15106-3:2003</strong>: Water vapour transmission rate, electrolytic detection sensor method<br>
+        • <strong>ICH Q1A(R2) (2003)</strong>: Stability Testing of New Drug Substances and Pharmaceutical Products<br>
+        • <strong>WHO TRS No. 863 (1996)</strong>: Climatic zone classification for global stability testing<br>
+        • <strong>ASTM E1641</strong>: Decomposition kinetics by thermogravimetry (Arrhenius parameter determination)<br>
+        • <strong>ISO 18787:2017</strong>: Determination of water activity in food and food products
       </div>
     </div>
   </div>
