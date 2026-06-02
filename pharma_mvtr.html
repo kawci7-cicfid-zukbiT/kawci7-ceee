@@ -412,25 +412,12 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <tbody></tbody>
       </table></div>
     </div>
-    <div class="grid-2">
-      <div class="card"><h2>⚙️ Active Parameters</h2><div id="params-panel" style="font-size:.73rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
-      <div class="card"><h2>🧮 Equations</h2>
-        <div class="formula-block">
-          F_T = exp[(Eₐ/R) × (1/T_ref − 1/T_target)]<br>
-          F_RH = RH_target / RH_ref<br>
-          WVTR_eff = WVTR_ref × F_T × F_RH<br>
-          Ingress_daily = WVTR_eff × A(m²) × 1000 mg<br>
-          t_limit = M_crit / Ingress_daily
-        </div>
-        <div style="font-size:.67rem;color:var(--text-light);text-align:center">R = 8.314×10⁻³ kJ/(mol·K) · T in Kelvin</div>
-      </div>
-    </div>
+    <div class="card"><h2>⚙️ Active Parameters</h2><div id="params-panel" style="font-size:.73rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
   </div>
 
   <div id="tab-charts" class="tab-pane">
     <div class="grid-2">
       <div class="card"><h2>WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="ch-wvtr"></canvas></div></div>
-      <div class="card"><h2>Cumulative Moisture Ingress</h2><div class="chart-wrap"><canvas id="ch-cumul"></canvas></div></div>
       <div class="card"><h2>Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="ch-trh"></canvas></div></div>
       <div class="card"><h2>Years to Critical Limit</h2><div class="chart-wrap"><canvas id="ch-ttl"></canvas></div></div>
     </div>
@@ -438,7 +425,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
   <div id="tab-scenarios" class="tab-pane">
     <div class="grid-2">
-      <div class="card"><h2>💾 Saved Scenarios</h2><div id="sce-comp-list"></div></div>
+      <div class="card"><div id="sce-comp-list"></div></div>
       <div class="card"><h2>📊 Comparison Chart</h2><div class="chart-wrap"><canvas id="ch-sce"></canvas></div></div>
     </div>
     <div class="card"><h2>📋 Comparison Table</h2>
@@ -453,18 +440,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="grid-2">
       <div class="card"><h2>🎚️ Sensitivity: Eₐ</h2>
         <div class="grid-2" style="gap:.4rem;align-items:end">
-          <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="s-ea-min" class="form-input" value="20" step="5"></div>
-          <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="s-ea-max" class="form-input" value="65" step="5"></div>
+          <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="s-ea-min" class="form-input" value="20" step="5" oninput="runSensEA()"></div>
+          <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="s-ea-max" class="form-input" value="65" step="5" oninput="runSensEA()"></div>
         </div>
-        <button class="btn btn-primary btn-sm" style="margin-top:.45rem" onclick="runSensEA()">Run</button>
         <div class="chart-wrap"><canvas id="ch-sea"></canvas></div>
       </div>
       <div class="card"><h2>🎚️ Sensitivity: WVTR</h2>
         <div class="grid-2" style="gap:.4rem;align-items:end">
-          <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="s-wvtr-min" class="form-input" value="0.1" step=".1"></div>
-          <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="s-wvtr-max" class="form-input" value="3.0" step=".1"></div>
+          <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="s-wvtr-min" class="form-input" value="0.1" step=".1" oninput="runSensWVTR()"></div>
+          <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="s-wvtr-max" class="form-input" value="3.0" step=".1" oninput="runSensWVTR()"></div>
         </div>
-        <button class="btn btn-primary btn-sm" style="margin-top:.45rem" onclick="runSensWVTR()">Run</button>
         <div class="chart-wrap"><canvas id="ch-swvtr"></canvas></div>
       </div>
     </div>
@@ -509,13 +494,13 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 const R_GAS = 8.314e-3;
 const DAYS  = 365;
 const ICH_ZONES = [
-  {id:'I',    label:'Zone I',       desc:'Temperate',              T:21, RH:45},
-  {id:'II',   label:'Zone II',      desc:'Subtropical/Mediterr.',  T:25, RH:60},
-  {id:'IIIa', label:'Zone IIIa',    desc:'Hot Dry',                T:40, RH:15},
-  {id:'IVa',  label:'Zone IVa',     desc:'Hot Humid',              T:40, RH:75},
-  {id:'IVb',  label:'Zone IVb',     desc:'Hot Very Humid (ASEAN)', T:30, RH:75},
-  {id:'ACC',  label:'Accelerated',  desc:'ICH Accelerated Test',   T:40, RH:75},
-  {id:'INT',  label:'Intermediate', desc:'ICH Intermediate Test',  T:30, RH:65}
+  {id:'I',    label:'Zone I',       desc:'Temperate',              T:21, RH:45, color:'#2563eb'},
+  {id:'II',   label:'Zone II',      desc:'Subtropical/Mediterr.',  T:25, RH:60, color:'#16a34a'},
+  {id:'IIIa', label:'Zone IIIa',    desc:'Hot Dry',                T:40, RH:15, color:'#d97706'},
+  {id:'IVa',  label:'Zone IVa',     desc:'Hot Humid',              T:40, RH:75, color:'#dc2626'},
+  {id:'IVb',  label:'Zone IVb',     desc:'Hot Very Humid (ASEAN)', T:30, RH:75, color:'#7c3aed'},
+  {id:'ACC',  label:'Accelerated',  desc:'ICH Accelerated Test',   T:40, RH:75, color:'#0891b2'},
+  {id:'INT',  label:'Intermediate', desc:'ICH Intermediate Test',  T:30, RH:65, color:'#db2777'}
 ];
 
 let activeSource = 'calc';
@@ -753,7 +738,7 @@ function updateQuick() {
   const pass = results.zones.filter(r=>r.pass).length, tot = results.zones.length;
   const clr = pass===tot?'var(--success)':pass===0?'var(--danger)':'var(--warning)';
   document.getElementById('quick-results').innerHTML =
-    `<div style="color:${clr};font-weight:700;font-size:.95rem">${pass===tot?'✓':pass===0?'✗':'⚠'} ${pass}/${tot} zones compliant</div>
+    `<div style="color:${clr};font-weight:700;font-size:.95rem">${pass===tot?'✓':pass===0?'✗':''} ${pass}/${tot} zones compliant</div>
      <div style="margin-top:.3rem;font-size:.7rem;color:var(--text-light)">See tabs below for detail</div>`;
 }
 
@@ -802,7 +787,7 @@ function renderTables() {
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:.12rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--text-light)">${k}:</span><strong>${v}</strong></div>`).join('');
 }
 
-function renderCharts() { renderOverviewChart(); renderFactorsChart(); renderWVTRChart(); renderCumulChart(); renderTRHChart(); renderTTLChart(); }
+function renderCharts() { renderOverviewChart(); renderFactorsChart(); renderWVTRChart(); renderTRHChart(); renderTTLChart(); }
 
 function dc(key) { if(CX[key]) { CX[key].destroy(); delete CX[key]; } }
 
@@ -818,8 +803,8 @@ function renderOverviewChart() {
     type:'bar',
     data:{labels:zs.map(r=>r.zone.label), datasets:[
       {label:'Annual Ingress (mg)', data:zs.map(r=>r.annual),
-        backgroundColor:zs.map(r=>r.pass?'rgba(22,163,74,.7)':'rgba(220,38,38,.7)'),
-        borderColor:zs.map(r=>r.pass?'#16a34a':'#dc2626'), borderWidth:1.5, borderRadius:4},
+        backgroundColor:zs.map(r=>r.zone.color+'b3'),
+        borderColor:zs.map(r=>r.zone.color), borderWidth:1.5, borderRadius:4},
       {label:'Limit (mg/yr)', data:zs.map(()=>results.params.Mcrit/results.params.shelf_years),
         type:'line', borderColor:'#d97706', borderWidth:2, borderDash:[5,4], pointRadius:0, fill:false}
     ]}, options:baseOpts('mg', true)});
@@ -847,45 +832,54 @@ function renderWVTRChart() {
     type:'bar',
     data:{labels:zs.map(r=>r.zone.label), datasets:[
       {label:'Ref WVTR',  data:zs.map(()=>results.params.wRef), backgroundColor:'rgba(100,116,139,.4)', borderRadius:3},
-      {label:'Eff WVTR',  data:zs.map(r=>r.eff),               backgroundColor:'rgba(37,99,235,.7)',   borderRadius:3}
+      {label:'Eff WVTR',  data:zs.map(r=>r.eff), backgroundColor:zs.map(r=>r.zone.color+'b3'), borderColor:zs.map(r=>r.zone.color), borderWidth:1.5, borderRadius:3}
     ]}, options:baseOpts('g/m²/day', true)});
-}
-
-function renderCumulChart() {
-  dc('cumul'); const zs = results.zones, yr = results.params.shelf_years;
-  const labels = Array.from({length:Math.ceil(yr)},(_,i)=>`Year ${i+1}`);
-  CX.cumul = new Chart(document.getElementById('ch-cumul').getContext('2d'), {
-    type:'line',
-    data:{labels, datasets:[
-      ...zs.map(r=>({label:r.zone.label, data:labels.map((_,i)=>r.daily*DAYS*(i+1)),
-        borderColor:r.pass?'#16a34a':'#dc2626', fill:false, tension:.4, borderWidth:1.5,
-        backgroundColor:r.pass?'rgba(22,163,74,.05)':'rgba(220,38,38,.05)'})),
-      {label:'M_crit', data:labels.map(()=>results.params.Mcrit),
-        borderColor:'#d97706', borderDash:[5,4], borderWidth:2, pointRadius:0, fill:false}
-    ]}, options:baseOpts('mg cumulative', true)});
 }
 
 function renderTRHChart() {
   dc('trh'); const zs = results.zones;
   CX.trh = new Chart(document.getElementById('ch-trh').getContext('2d'), {
     type:'scatter',
-    data:{datasets:[{label:'Zones', data:zs.map(r=>({x:r.zone.T, y:r.zone.RH})),
-      backgroundColor:zs.map(r=>r.pass?'rgba(22,163,74,.7)':'rgba(220,38,38,.7)'),
-      borderColor:zs.map(r=>r.pass?'#16a34a':'#dc2626'), borderWidth:1.5, pointRadius:9}]},
+    data:{datasets:[
+      ...zs.map(r=>({
+        label:r.zone.label,
+        data:[{x:r.zone.T, y:r.zone.RH}],
+        backgroundColor:r.zone.color,
+        borderColor:r.zone.color,
+        borderWidth:2,
+        pointRadius:10,
+        pointHoverRadius:12
+      }))
+    ]},
     options:{responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>{
-        const r=zs[c.dataIndex]; return [`${r.zone.label}: ${r.zone.T}°C / ${r.zone.RH}% RH`,`WVTR_eff: ${r.eff.toFixed(5)}`];}}}},
-      scales:{x:{title:{display:true,text:'Temperature (°C)'}},y:{title:{display:true,text:'RH (%)'}}} }});
+      plugins:{
+        legend:{display:true, position:'top', labels:{font:{size:8}, boxWidth:12}},
+        tooltip:{callbacks:{label:(c)=>{
+          const r=zs[c.datasetIndex]; 
+          return [`${r.zone.label}: ${r.zone.T}°C / ${r.zone.RH}% RH`,`WVTR_eff: ${r.eff.toFixed(5)}`];
+        }}}
+      },
+      scales:{
+        x:{title:{display:true,text:'Temperature (°C)', font:{size:9}}, grid:{color:'rgba(0,0,0,0.05)'}},
+        y:{title:{display:true,text:'RH (%)', font:{size:9}}, grid:{color:'rgba(0,0,0,0.05)'}}
+      }
+    }
+  });
 }
 
 function renderTTLChart() {
   dc('ttl'); const zs = results.zones, yr = results.params.shelf_years;
   CX.ttl = new Chart(document.getElementById('ch-ttl').getContext('2d'), {
     type:'bar',
-    data:{labels:zs.map(r=>r.zone.label), datasets:[{label:'Years to M_crit',
+    data:{labels:zs.map(r=>r.zone.label), datasets:[{
+      label:'Years to M_crit',
       data:zs.map(r=>r.yearsToLimit),
       backgroundColor:zs.map(r=>r.yearsToLimit>=yr?'rgba(22,163,74,.7)':r.yearsToLimit>=yr*.5?'rgba(217,119,6,.7)':'rgba(220,38,38,.7)'),
-      borderRadius:4}]}, options:baseOpts('Years', false)});
+      borderColor:zs.map(r=>r.yearsToLimit>=yr?'#16a34a':r.yearsToLimit>=yr*.5?'#d97706':'#dc2626'),
+      borderWidth:1.5,
+      borderRadius:4
+    }]}, 
+    options:baseOpts('Years', false)});
 }
 
 function saveScenario() {
@@ -989,8 +983,8 @@ function renderScenarioComparisonChart() {
           const r = s.zones.find(x => x.zone.id === z.id);
           return r ? r.total : 0;
         }),
-        backgroundColor: `hsla(${i * 55}, 70%, 60%, 0.7)`,
-        borderColor: `hsl(${i * 55}, 70%, 50%)`,
+        backgroundColor: ICH_ZONES.map(z => z.color + '99'),
+        borderColor: ICH_ZONES.map(z => z.color),
         borderWidth: 1.5,
         borderRadius: 3
       }))
@@ -1001,9 +995,9 @@ function renderScenarioComparisonChart() {
 
 // ── SENSITIVITY ──────────────────────────────────
 function runSensEA() {
-  if(!results) { alert('Run a base calculation first.'); return; }
-  const min = parseFloat(document.getElementById('s-ea-min').value);
-  const max = parseFloat(document.getElementById('s-ea-max').value);
+  if(!results) return;
+  const min = parseFloat(document.getElementById('s-ea-min').value) || 20;
+  const max = parseFloat(document.getElementById('s-ea-max').value) || 65;
   const steps = 8, step = (max-min)/(steps-1);
   const vals=[], maxIngs=[], passCnts=[];
   for(let i=0;i<steps;i++){
@@ -1029,9 +1023,9 @@ function runSensEA() {
 }
 
 function runSensWVTR() {
-  if(!results) { alert('Run a base calculation first.'); return; }
-  const min = parseFloat(document.getElementById('s-wvtr-min').value);
-  const max = parseFloat(document.getElementById('s-wvtr-max').value);
+  if(!results) return;
+  const min = parseFloat(document.getElementById('s-wvtr-min').value) || 0.1;
+  const max = parseFloat(document.getElementById('s-wvtr-max').value) || 3.0;
   const steps = 8, step = (max-min)/(steps-1);
   const vals=[], maxIngs=[], passCnts=[];
   for(let i=0;i<steps;i++){
@@ -1114,323 +1108,40 @@ function exportCSV() {
   a.click();
 }
 
-// ── EXPORT PDF (PROFESSIONAL) ────────────────────
+// ── EXPORT PDF ───────────────────────────────────
 function exportPDF() {
-  if(!results) { alert('No data to export. Run a calculation first.'); return; }
+  if(!results) { alert('No data to export.'); return; }
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const doc = new jsPDF();
   const p = results.params, res = results.zones;
-  const pass = res.filter(r=>r.pass).length, tot = res.length;
-  const allPass = pass === tot;
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const margin = 15;
-  let y = 0;
-
-  // ── Helper: draw colored cell ──
-  function cell(x, yy, w, h, text, opts={}) {
-    const {fill, textColor=[0,0,0], align='left', bold=false, fontSize=8, border=true} = opts;
-    if(fill) { doc.setFillColor(...fill); }
-    if(border) { doc.setDrawColor(200,200,210); doc.setLineWidth(0.2); doc.rect(x, yy, w, h, fill?'FD':'D'); }
-    else if(fill) { doc.rect(x, yy, w, h, 'F'); }
-    doc.setTextColor(...textColor);
-    doc.setFontSize(fontSize);
-    doc.setFont('helvetica', bold?'bold':'normal');
-    const pad = 1.5;
-    let tx = x + pad;
-    if(align==='center') tx = x + w/2;
-    else if(align==='right') tx = x + w - pad;
-    doc.text(String(text), tx, yy + h/2 + 1, {align});
-  }
-
-  // ── Helper: check page break ──
-  function checkPage(needed) {
-    if(y + needed > pageH - 25) {
-      drawFooter(doc, pageW, pageH);
-      doc.addPage();
-      y = 15;
-    }
-  }
-
-  // ── Helper: section title ──
-  function sectionTitle(title, color=[37,99,235]) {
-    checkPage(12);
-    doc.setFillColor(...color);
-    doc.rect(margin, y, pageW - 2*margin, 7, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(10);
-    doc.setFont('helvetica','bold');
-    doc.text(title, margin + 3, y + 5);
-    y += 9;
-  }
-
-  // ════════════════════════════════════════════
-  // PAGE 1 — HEADER
-  // ════════════════════════════════════════════
-  // Top colored bar
-  doc.setFillColor(37, 99, 235);
-  doc.rect(0, 0, pageW, 32, 'F');
-  // Accent stripe
-  doc.setFillColor(29, 78, 216);
-  doc.rect(0, 32, pageW, 2, 'F');
-
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(20);
-  doc.setFont('helvetica','bold');
-  doc.text('MVTR / ICH Q1A(R2)', margin, 14);
-  doc.setFontSize(11);
-  doc.setFont('helvetica','normal');
-  doc.text('Packaging Compliance Analysis Report', margin, 21);
-  doc.setFontSize(8);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, margin, 28);
-  doc.text(`Source: ${p.source.toUpperCase()}`, pageW - margin, 28, {align:'right'});
-
-  y = 40;
-
-  // ── Scenario title ──
-  doc.setTextColor(15, 23, 42);
-  doc.setFontSize(14);
-  doc.setFont('helvetica','bold');
-  doc.text(p.label, margin, y);
-  y += 6;
-  doc.setDrawColor(226, 232, 240);
-  doc.setLineWidth(0.4);
-  doc.line(margin, y, pageW - margin, y);
-  y += 6;
-
-  // ── VERDICT BOX ──
-  const verdictColor = allPass ? [22, 163, 74] : (pass === 0 ? [220, 38, 38] : [217, 119, 6]);
-  const verdictBg    = allPass ? [220, 252, 231] : (pass === 0 ? [254, 226, 226] : [254, 243, 199]);
-  const verdictText  = allPass ? 'COMPLIANT — All ICH zones pass' :
-                       (pass === 0 ? 'NON-COMPLIANT — No zones pass' :
-                       `PARTIAL — ${pass}/${tot} zones compliant`);
-  const verdictIcon  = allPass ? '✓' : (pass === 0 ? '✗' : '⚠');
-
-  doc.setFillColor(...verdictBg);
-  doc.setDrawColor(...verdictColor);
-  doc.setLineWidth(0.6);
-  doc.roundedRect(margin, y, pageW - 2*margin, 16, 2, 2, 'FD');
-  doc.setTextColor(...verdictColor);
-  doc.setFontSize(22);
-  doc.setFont('helvetica','bold');
-  doc.text(verdictIcon, margin + 6, y + 11);
-  doc.setFontSize(13);
-  doc.text(verdictText, margin + 16, y + 10);
-  doc.setFontSize(9);
-  doc.setFont('helvetica','normal');
-  const safetyPct = Math.min(...res.map(r => 100 - r.pct)).toFixed(1);
-  doc.text(`Safety margin: ${safetyPct}%  ·  Worst zone: ${res.reduce((a,b)=>a.total>b.total?a:b).zone.label}`, margin + 16, y + 14.5);
-  y += 22;
-
-  // ════════════════════════════════════════════
-  // PARAMETERS SECTION
-  // ════════════════════════════════════════════
-  sectionTitle('INPUT PARAMETERS');
-  const paramRows = [
-    ['Reference WVTR',    `${p.wRef.toFixed(5)} g/m²/day`],
-    ['Reference Temp.',   `${p.Tref} °C  (${(p.Tref+273.15).toFixed(2)} K)`],
-    ['Reference RH',      `${p.RHref} %`],
-    ['Activation Energy', `${p.Ea} kJ/mol`],
-    ['Surface Area',      `${(p.area*10000).toFixed(2)} cm²  (${p.area.toFixed(5)} m²)`],
-    ['Critical Limit',    `${p.Mcrit} mg`],
-    ['Shelf Life',        `${p.shelf_years} years  (${p.shelfDays.toFixed(0)} days)`],
-    ['Gas Constant R',    `${R_GAS} kJ/(mol·K)`]
-  ];
-  const colW1 = 55, colW2 = (pageW - 2*margin - colW1) / 2;
-  const rowH = 6;
-  paramRows.forEach((row, i) => {
-    const bg = i % 2 === 0 ? [248, 250, 252] : [255, 255, 255];
-    cell(margin, y, colW1, rowH, row[0], {fill:bg, bold:true, fontSize:8, textColor:[100,116,139]});
-    cell(margin + colW1, y, pageW - 2*margin - colW1, rowH, row[1], {fill:bg, fontSize:8.5, textColor:[15,23,42]});
-    y += rowH;
-  });
+  const pass = res.filter(r=>r.pass).length;
+  doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('MVTR Pro — ICH Q1A(R2) Report', 15, 18);
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(100);
+  doc.text(`Generated: ${new Date().toLocaleString()} | Source: ${p.source.toUpperCase()} | ${pass}/${res.length} zones pass`, 15, 26);
+  doc.setTextColor(0);
+  let y = 36;
+  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.text('Parameters', 15, y); y += 8;
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  [`WVTR ref: ${p.wRef.toFixed(5)} g/m²/day`, `T_ref: ${p.Tref}°C | RH_ref: ${p.RHref}%`,
+   `Eₐ: ${p.Ea} kJ/mol | Area: ${(p.area*10000).toFixed(2)} cm² | M_crit: ${p.Mcrit} mg | SL: ${p.shelf_years} yr`
+  ].forEach(line=>{ doc.text(line,15,y); y+=6; });
   y += 4;
-
-  // ════════════════════════════════════════════
-  // RESULTS TABLE
-  // ════════════════════════════════════════════
-  sectionTitle('RESULTS BY ICH CLIMATIC ZONE');
-
-  const cols = [
-    {w:22, h:'Zone'},
-    {w:16, h:'T °C'},
-    {w:14, h:'RH %'},
-    {w:22, h:'WVTR eff'},
-    {w:20, h:'Annual mg'},
-    {w:22, h:'Total mg'},
-    {w:18, h:'% Limit'},
-    {w:20, h:'Status'},
-    {w:26, h:'Years to lim'}
-  ];
-  const totalW = cols.reduce((s,c)=>s+c.w, 0);
-  const scale = (pageW - 2*margin) / totalW;
-  cols.forEach(c => c.w *= scale);
-
-  // Header
-  const hdrH = 7;
-  doc.setFillColor(37, 99, 235);
-  doc.rect(margin, y, pageW - 2*margin, hdrH, 'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica','bold');
-  let x = margin;
-  cols.forEach(c => {
-    doc.text(c.h, x + c.w/2, y + 4.8, {align:'center'});
-    x += c.w;
-  });
-  y += hdrH;
-
-  // Rows
-  const dataRows = res.map(r => [
-    r.zone.label,
-    `${r.zone.T}`,
-    `${r.zone.RH}`,
-    r.eff.toFixed(4),
-    r.annual.toFixed(3),
-    r.total.toFixed(3),
-    `${r.pct.toFixed(1)}%`,
-    r.pass ? 'PASS' : 'FAIL',
-    r.yearsToLimit.toFixed(2)
-  ]);
-
-  dataRows.forEach((row, i) => {
-    checkPage(7);
-    const isPass = res[i].pass;
-    const bg = i % 2 === 0 ? [248, 250, 252] : [255, 255, 255];
-    const rowH2 = 6;
-    x = margin;
-    cols.forEach((c, ci) => {
-      let fillC = bg, txtC = [15, 23, 42], bold = false;
-      if(ci === 0) bold = true;
-      if(ci === 7) { // Status column
-        if(isPass) { fillC = [220, 252, 231]; txtC = [22, 101, 52]; bold = true; }
-        else       { fillC = [254, 226, 226]; txtC = [153, 27, 27]; bold = true; }
-      }
-      if(ci === 6) { // % limit - color by severity
-        const pct = res[i].pct;
-        if(pct > 100) { txtC = [153, 27, 27]; bold = true; }
-        else if(pct > 80) { txtC = [146, 64, 14]; bold = true; }
-      }
-      cell(x, y, c.w, rowH2, row[ci], {fill:fillC, textColor:txtC, bold, fontSize:7.5, align: ci===0?'left':'center'});
-      x += c.w;
-    });
-    y += rowH2;
-  });
-  y += 5;
-
-  // ════════════════════════════════════════════
-  // EQUATIONS BOX
-  // ════════════════════════════════════════════
-  checkPage(40);
-  sectionTitle('GOVERNING EQUATIONS', [124, 58, 237]);
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(226, 232, 240);
-  doc.setLineWidth(0.3);
-  const eqH = 30;
-  doc.roundedRect(margin, y, pageW - 2*margin, eqH, 2, 2, 'FD');
-  doc.setTextColor(15, 23, 42);
+  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.text('Results by ICH Zone', 15, y); y+=8;
+  doc.setFontSize(7); doc.setFont('helvetica','bold');
+  doc.text('Zone | T | RH | WVTR_eff | Annual (mg) | Total (mg) | % Limit | Status', 15, y); y+=5;
+  doc.setLineWidth(0.3); doc.line(15,y,195,y); y+=4;
   doc.setFont('helvetica','normal');
-  doc.setFontSize(9);
-  const eqs = [
-    'F_T  = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]',
-    'F_RH = RH_target / RH_ref',
-    'WVTR_eff = WVTR_ref × F_T × F_RH',
-    'Ingress_daily (mg) = WVTR_eff (g/m²/day) × Area (m²) × 1000',
-    'Ingress_total = Ingress_daily × shelf_life (days)',
-    'Compliance criterion:  Ingress_total ≤ M_crit'
-  ];
-  let ey = y + 5;
-  eqs.forEach(eq => {
-    doc.setFont('courier','', 9);
-    doc.text(eq, margin + 6, ey);
-    ey += 4;
+  res.forEach(r=>{
+    const line = `${r.zone.label.padEnd(14)} | ${String(r.zone.T).padEnd(3)} | ${String(r.zone.RH).padEnd(3)} | ${r.eff.toFixed(5).padEnd(10)} | ${r.annual.toFixed(4).padEnd(12)} | ${r.total.toFixed(4).padEnd(11)} | ${r.pct.toFixed(1).padEnd(8)}% | ${r.pass?'PASS':'FAIL'}`;
+    doc.setTextColor(r.pass ? 0 : 200, 0, 0);
+    doc.text(line, 15, y); y += 5;
   });
-  y += eqH + 4;
-
-  // ════════════════════════════════════════════
-  // SUMMARY STATS
-  // ════════════════════════════════════════════
-  checkPage(30);
-  sectionTitle('KEY METRICS', [22, 163, 74]);
-  const maxAnn = Math.max(...res.map(r=>r.annual));
-  const worstZone = res.find(r=>r.annual===maxAnn).zone.label;
-  const avgArr = (res.reduce((s,r)=>s+r.arrF,0)/res.length).toFixed(3);
-  const avgRH  = (res.reduce((s,r)=>s+r.rhF, 0)/res.length).toFixed(3);
-  const minYearsToLim = Math.min(...res.map(r=>r.yearsToLimit)).toFixed(2);
-  const stats = [
-    ['Compliant zones',      `${pass} / ${tot}`],
-    ['Worst zone',           `${worstZone} (${maxAnn.toFixed(3)} mg/yr)`],
-    ['Minimum safety margin',`${safetyPct}%`],
-    ['Average F_T',          `${avgArr}×`],
-    ['Average F_RH',         `${avgRH}×`],
-    ['Min. years to limit',  `${minYearsToLim} yr`]
-  ];
-  const statColW = (pageW - 2*margin) / 2;
-  stats.forEach((s, i) => {
-    const col = i % 2;
-    const sx = margin + col * statColW;
-    const bg = [248, 250, 252];
-    cell(sx, y, 55, 6, s[0], {fill:bg, bold:true, fontSize:8, textColor:[100,116,139]});
-    cell(sx + 55, y, statColW - 55, 6, s[1], {fill:bg, fontSize:8.5, textColor:[15,23,42]});
-    if(col === 1) y += 6;
-  });
-  if(stats.length % 2 === 1) y += 6;
-  y += 4;
-
-  // ════════════════════════════════════════════
-  // FOOTER / DISCLAIMER (last page)
-  // ════════════════════════════════════════════
-  checkPage(40);
-  sectionTitle('REGULATORY DISCLAIMER', [220, 38, 38]);
-  doc.setFillColor(255, 248, 248);
-  doc.setDrawColor(252, 165, 165);
-  doc.setLineWidth(0.4);
-  const discH = 28;
-  doc.roundedRect(margin, y, pageW - 2*margin, discH, 2, 2, 'FD');
-  doc.setTextColor(127, 29, 29);
-  doc.setFontSize(7.5);
-  doc.setFont('helvetica','normal');
-  const discLines = [
-    '• For R&D screening and concept development only. Does not replace regulatory stability testing.',
-    '• Commercial shelf-life claims must be supported by experimental data per ICH Q1A(R2).',
-    '• Model assumes: steady-state permeation, linear Arrhenius/RH corrections, no seal permeation,',
-    '  constant storage conditions, and negligible back-diffusion.',
-    '• User is responsible for ensuring input WVTR matches the stated reference conditions.'
-  ];
-  let dy = y + 4.5;
-  discLines.forEach(l => {
-    doc.text(l, margin + 4, dy);
-    dy += 4.2;
-  });
-  y += discH + 4;
-
-  // ── Reference line ──
-  doc.setFontSize(7);
-  doc.setTextColor(100, 116, 139);
-  doc.text('References: ASTM F1249-20 · ISO 15106-3 · ICH Q1A(R2) · WHO TRS No. 863 · ASTM E1641', margin, y);
-
-  // ── Draw footer on all pages ──
-  const totalPages = doc.internal.getNumberOfPages();
-  for(let i=1; i<=totalPages; i++) {
-    doc.setPage(i);
-    drawFooter(doc, pageW, pageH, i, totalPages);
-  }
-
-  doc.save(`MVTR_ICH_Report_${p.label.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`);
-}
-
-function drawFooter(doc, pageW, pageH, pageNum, total) {
-  const y = pageH - 10;
-  doc.setDrawColor(226, 232, 240);
-  doc.setLineWidth(0.3);
-  doc.line(15, y, pageW - 15, y);
-  doc.setFontSize(7);
-  doc.setTextColor(148, 163, 184);
-  doc.setFont('helvetica','normal');
-  doc.text('MVTR / ICH Q1A(R2) — Packaging Compliance Report', 15, y + 4);
-  if(pageNum && total) {
-    doc.text(`Page ${pageNum} / ${total}`, pageW - 15, y + 4, {align:'right'});
-  }
+  doc.setTextColor(0);
+  y += 8;
+  doc.setFontSize(7); doc.setTextColor(120);
+  doc.text('DISCLAIMER: For R&D screening only. Does not replace ICH Q1A(R2) real-time stability studies.', 15, y);
+  doc.save(`MVTR_Report_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 // ── TABS ───────────────────────────────────────
