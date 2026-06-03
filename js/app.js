@@ -161,6 +161,7 @@ function setMode(mode) {
 function postNavRender() {
     setTimeout(function() {
         if(State.tab === 'home')        initHomeAnimations();
+        if(State.tab === 'mvtr')        MVTR.init();
         if(State.tab === 'calc'        && State.calcResult) postCalcRender();
         if(State.tab === 'arrhenius')   postArrheniusRender();
         if(State.tab === 'sensitivity') postSensitivityRender();
@@ -180,6 +181,7 @@ function renderContent() {
             case 'sensitivity': c.innerHTML = renderSensitivity(); break;
             case 'compare':     c.innerHTML = renderCompare();     break;
             case 'shelflife':   c.innerHTML = renderShelfLife();   break;
+                case 'mvtr':        c.innerHTML = renderMVTR();        break;
             case 'materials':   c.innerHTML = renderMaterials();   break;
             case 'laminates':   c.innerHTML = renderLaminates();   break;
             case 'mat-company': c.innerHTML = renderCompanyMaterialsPage(); setTimeout(initCompanyMaterialsPage, 100); break;
