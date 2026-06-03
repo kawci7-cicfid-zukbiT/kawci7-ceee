@@ -1193,7 +1193,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')" 
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')" 
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
       <!-- Panel: From Calculator -->
@@ -1411,7 +1411,7 @@ function renderMVTR() {
             <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">mg</span>
           </div>
-          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)">Must be > 0</div>
+          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)"></div>
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Target Shelf Life (years)</label>
@@ -1419,7 +1419,7 @@ function renderMVTR() {
             <input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">yr</span>
           </div>
-          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)">0.5–10 yr</div>
+          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)"></div>
         </div>
       </div>
       
