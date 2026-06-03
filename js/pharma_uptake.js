@@ -1,7 +1,16 @@
 // ====================================================================
-// pharma_uptake.js  —  Desiccant Sizing Calculator  v4
-// State.tab === 'pharma-uptake'
-// Layout: identical to headspace.js / shelflife.js
+// pharma_uptake.js  —  Desiccant Sizing Calculator  v4  [PATCHED]
+// ====================================================================
+// FIX APPLIED:
+//  #1 _getRefCond()       - fallback 23/50 → 38/90 + localStorage bridge
+//  #2 setBarrierSource()  - aggiunto fallback localStorage per WVTR
+//  #3 _getActiveRate()    - aggiunto fallback localStorage per WVTR
+//  #4 Q_head formula      - ×1e6 → ×1000 (errore 1000× su headspace moisture)
+//  #5 onDBPick()          - aggiunto des-db-conditions per feedback T/RH
+//  #6 renderPharmaUptake  - fallback localStorage per condizioni di test
+//  #7 safety_factor       - Math.max(1, ...) invece di || 1
+//  #8 days_sat guard      - protezione contro Infinity/NaN
+//  #9 des_wvtrEff         - allineato a formula MVTR (stile, non errore)
 // ====================================================================
 
 // ── Desiccant database ───────────────────────────────────────────────
@@ -45,7 +54,6 @@ const DESICCANT_DB = {
 };
 
 // ── Container geometry presets ────────────────────────────────────────
-// NOTE: these define GEOMETRY only — the barrier film is selected separately in Step 1
 const CONTAINER_GEOMETRY = {
   hdpe_30:     { name: 'Round Bottle 30 mL',             area_cm2: 42,  headspace_ml: 8  },
   hdpe_60:     { name: 'Round Bottle 60 mL',             area_cm2: 62,  headspace_ml: 15 },
@@ -76,6 +84,8 @@ const STORAGE_PRESETS = {
 };
 
 // ── Core math ─────────────────────────────────────────────────────────
+
+// Returns saturation vapour pressure in Pa (Magnus–Tetens approximation)
 function des_psat(T) {
   return 610.94 * Math.exp(17.625 * T / (T + 243.04));
 }
@@ -91,10 +101,13 @@ function des_interpCap(isotherm, rh) {
   return isotherm[isotherm.length-1][1] / 100;
 }
 
+// FIX #9: allineato alla formula MVTR per consistenza di stile.
+// exp((Ea/R) × (1/T_ref − 1/T_store)) — F_T > 1 quando T_store > T_ref
 function des_wvtrEff(wvtr_ref, Ea_kJ, T_ref, T_store, RH_ref, RH_store) {
-  const Ea_J = Ea_kJ * 1000;
-  const arrF = Ea_J > 0
-    ? Math.exp(-(Ea_J / 8.314) * (1 / (T_store + 273.15) - 1 / (T_ref + 273.15)))
+  const Tr = T_ref   + 273.15;
+  const Ts = T_store + 273.15;
+  const arrF = Ea_kJ > 0
+    ? Math.exp((Ea_kJ * 1000 / 8.314) * (1 / Tr - 1 / Ts))
     : 1;
   const rhF = RH_ref > 0 ? RH_store / RH_ref : 1;
   return wvtr_ref * arrF * rhF;
@@ -106,36 +119,66 @@ function des_calc(p) {
   const A_m2   = p.area_cm2 / 1e4;
   const t_days = p.shelf_years * 365;
 
+  // Film ingress (mg)
   const Q_film = wvtr_e * A_m2 * 1000 * t_days;
-  const Ps     = des_psat(p.T_store);
-  const Q_head = (p.headspace_ml / 1e6) * (p.RH_fill / 100) * Ps
-                 / (8.314 * (p.T_store + 273.15)) * 18 * 1e6;
+
+  // FIX #4: Q_head formula correta.
+  // n (mol) = V(m³) × p_partial(Pa) / (R × T(K))
+  // massa (mg) = n × Mw(g/mol) × 1000 mg/g
+  // → ×18 × 1000, NON ×18 × 1e6 (che darebbe µg invece di mg)
+  const Ps     = des_psat(p.T_store); // Pa
+  const Q_head = (p.headspace_ml / 1e6)          // m³
+               * (p.RH_fill / 100)
+               * Ps                               // Pa
+               / (8.314 * (p.T_store + 273.15))   // J/(mol·K) × K = J/mol
+               * 18                               // g/mol → g
+               * 1000;                            // g → mg
+
+  // Product moisture release (mg)
   const Q_prod = p.drug_mass_g * (p.mc_init / 100) * 1000 * (p.mc_release_frac / 100);
+
   const Q_total = Q_film + Q_head + Q_prod;
 
-  const cap_eff      = des_interpCap(des.isotherm, p.RH_crit);
-  const W_required   = cap_eff > 0 ? Q_total / 1000 / cap_eff : Infinity;
-  const W_rec        = W_required * p.safety_factor;
-  const cap_total_mg = W_rec * cap_eff * 1000;
+  const cap_eff    = des_interpCap(des.isotherm, p.RH_crit);
+  const W_required = cap_eff > 0 ? Q_total / 1000 / cap_eff : Infinity;
+  const W_rec      = W_required * p.safety_factor;
+  const cap_total_mg = isFinite(W_rec) ? W_rec * cap_eff * 1000 : Infinity;
 
+  // Saturation timeline
   const timeline = [];
   const step = Math.max(1, Math.floor(t_days / 200));
   for (let d = 0; d <= t_days; d += step) {
     const abs  = wvtr_e * A_m2 * 1000 * d + Q_head + Q_prod;
-    const frac = Math.min(abs / cap_total_mg, 1);
+    const frac = isFinite(cap_total_mg) && cap_total_mg > 0
+      ? Math.min(abs / cap_total_mg, 1)
+      : 0;
     timeline.push({ t: d, absorbed: abs, frac: frac * 100 });
   }
 
-  const days_sat = cap_total_mg > (Q_head + Q_prod)
-    ? (cap_total_mg - Q_head - Q_prod) / (wvtr_e * A_m2 * 1000)
-    : 0;
+  // FIX #8: guard contro Infinity/NaN/division by zero
+  let days_sat = 0;
+  if (isFinite(cap_total_mg) && cap_total_mg > 0 && wvtr_e > 0) {
+    const numerator = cap_total_mg - Q_head - Q_prod;
+    days_sat = numerator > 0
+      ? numerator / (wvtr_e * A_m2 * 1000)
+      : 0;
+  }
 
   return { wvtr_eff: wvtr_e, Q_film, Q_head, Q_prod, Q_total,
            cap_eff_g_g: cap_eff, W_required, W_recommended: W_rec,
            days_sat, timeline, des, t_days };
 }
 
-// ── DES object (mirrors HS / SL pattern) ─────────────────────────────
+// ── Helper: read WVTR result from localStorage (Calculator bridge) ────
+function des_readLocalStorageRate() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+    if (saved && saved.total > 0) return saved;
+  } catch(e) {}
+  return null;
+}
+
+// ── DES object ────────────────────────────────────────────────────────
 const DES = {
   _barrierSource: 'calc',
   _manualOverride: false,
@@ -161,8 +204,21 @@ const DES = {
       }
       if (pan) pan.style.display = key === src ? 'block' : 'none';
     });
+
     if (src === 'calc') {
-      const rate = parseFloat(typeof State !== 'undefined' ? State.calcResult?.total || 0 : 0);
+      // FIX #2: localStorage FIRST, State as fallback
+      let rate = 0;
+      const ls = des_readLocalStorageRate();
+      if (ls) {
+        rate = ls.total;
+        // Aggiorna display condizioni di test
+        const condEl = document.getElementById('des-calc-conditions');
+        if (condEl && ls.tRef != null) {
+          condEl.textContent = `Test conditions: ${ls.tRef}°C / ${ls.rhRef ?? 90}% RH`;
+        }
+      } else if (typeof State !== 'undefined' && State.calcResult?.total > 0) {
+        rate = State.calcResult.total;
+      }
       this._updateBanner(rate > 0 ? rate.toFixed(5) : '-');
     }
   },
@@ -184,34 +240,54 @@ const DES = {
     else this.setBarrierSource(this._barrierSource);
   },
 
+  // FIX #3: localStorage FIRST, State as fallback
   _getActiveRate() {
-    if (this._manualOverride) return parseFloat(document.getElementById('des-rate-manual')?.value || 0);
+    if (this._manualOverride) {
+      return parseFloat(document.getElementById('des-rate-manual')?.value || 0);
+    }
     if (this._barrierSource === 'db') {
       const v = document.getElementById('des-db-pick')?.value;
       return v ? parseFloat(v.split('|')[0]) : 0;
     }
-    return parseFloat(typeof State !== 'undefined' ? State.calcResult?.total || 0 : 0);
+    // source === 'calc'
+    const ls = des_readLocalStorageRate();
+    if (ls && ls.total > 0) return ls.total;
+    if (typeof State !== 'undefined' && State.calcResult?.total > 0) return State.calcResult.total;
+    return 0;
   },
 
+  // FIX #1: _getRefCond con fallback corretto 38/90 + localStorage
   _getRefCond() {
     const get = (id, fb) => { const el = document.getElementById(id); return el ? (parseFloat(el.value) || fb) : fb; };
 
-    // From Calculator: WVTR in State is already at test conditions stored in State.selCond.
-    // Apply Arrhenius only from those test conditions to storage conditions.
     if (!this._manualOverride && this._barrierSource === 'calc') {
-      const T_ref  = (typeof State !== 'undefined' && State.selCond) ? (State.selCond.temperature || 23) : 23;
-      const RH_ref = (typeof State !== 'undefined' && State.selCond) ? (State.selCond.humidity    || 50) : 50;
-      const Ea_kJ  = get('des-ea', 0);
-      return { T_ref, RH_ref, Ea_kJ };
+      // FIX #1: localStorage FIRST — reliable across navigations/reloads
+      const ls = des_readLocalStorageRate();
+      if (ls && ls.tRef != null) {
+        return { T_ref: ls.tRef, RH_ref: ls.rhRef ?? 90, Ea_kJ: get('des-ea', 0) };
+      }
+      // Fallback: State.selCond (same-page context)
+      if (typeof State !== 'undefined' && State.selCond) {
+        return {
+          // FIX #1: fallback 38/90, NON 23/50
+          T_ref:  State.selCond.temperature ?? 38,
+          RH_ref: State.selCond.humidity    ?? 90,
+          Ea_kJ:  get('des-ea', 0)
+        };
+      }
+      // Default ASTM F1249
+      return { T_ref: 38, RH_ref: 90, Ea_kJ: get('des-ea', 0) };
     }
 
-    // From Community DB: test conditions encoded in option value (wvtr|T|RH|Ea)
     if (this._barrierSource === 'db' && !this._manualOverride) {
       const v = document.getElementById('des-db-pick')?.value;
-      if (v) { const parts = v.split('|'); return { T_ref: parseFloat(parts[1])||38, RH_ref: parseFloat(parts[2])||90, Ea_kJ: parseFloat(parts[3])||35 }; }
+      if (v) {
+        const parts = v.split('|');
+        return { T_ref: parseFloat(parts[1]) || 38, RH_ref: parseFloat(parts[2]) || 90, Ea_kJ: parseFloat(parts[3]) || 35 };
+      }
     }
 
-    // Manual: use fields directly
+    // Manual
     return { T_ref: get('des-tref', 38), RH_ref: get('des-rhref', 90), Ea_kJ: get('des-ea-man', 35) };
   },
 
@@ -225,11 +301,16 @@ const DES = {
     this._updateBanner(rate > 0 ? rate.toFixed(5) : '-');
   },
 
+  // FIX #5: mostra condizioni T/RH nel pannello DB
   onDBPick(val) {
     if (!val) return;
     const parts = val.split('|');
-    const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-    setV('des-tref', parts[1]); setV('des-rhref', parts[2]); setV('des-ea', parts[3] || 35);
+    // Mostra le condizioni di test nel pannello DB (FIX #5)
+    const dbCond = document.getElementById('des-db-conditions');
+    if (dbCond) {
+      const t = parts[1] || '38', rh = parts[2] || '90';
+      dbCond.textContent = `Test conditions: ${t}°C / ${rh}% RH`;
+    }
     this._updateBanner(parts[0]);
     DES.calculate();
   },
@@ -277,7 +358,8 @@ const DES = {
       drug_mass_g:     get('des-drugmass', 12),
       mc_init:         get('des-mcinit', 0.5),
       mc_release_frac: get('des-mcrelease', 10),
-      safety_factor:   get('des-safety', 2) || 1
+      // FIX #7: Math.max(1, ...) invece di || 1
+      safety_factor:   Math.max(1, get('des-safety', 2))
     };
     if (typeof State !== 'undefined') State.pharmaUptake = p;
 
@@ -295,7 +377,7 @@ const DES = {
     const panel = document.getElementById('des-result-panel');
     if (!panel) return;
     const satOK = res.days_sat > res.t_days;
-    const satStr = satOK ? '> ' + res.t_days + ' days ✓' : res.days_sat.toFixed(0) + ' days ⚠';
+    const satStr = satOK ? '> ' + res.t_days + ' days ✓' : (res.days_sat > 0 ? res.days_sat.toFixed(0) + ' days ⚠' : 'N/A ⚠');
 
     const kpi = (label, val, color, colorL, sub) =>
       `<div style="background:${colorL};border:1px solid ${color};border-radius:12px;padding:1rem">
@@ -309,7 +391,7 @@ const DES = {
       return `<div style="margin-bottom:0.4rem">
         <div style="display:flex;justify-content:space-between;margin-bottom:0.15rem">
           <span style="color:var(--text-light)">${label}</span>
-          <span style="font-weight:600">${val.toFixed(2)} mg <span style="color:var(--text-light);font-weight:400">(${pct.toFixed(0)}%)</span></span>
+          <span style="font-weight:600">${val.toFixed(4)} mg <span style="color:var(--text-light);font-weight:400">(${pct.toFixed(1)}%)</span></span>
         </div>
         <div style="height:4px;background:var(--border);border-radius:2px">
           <div style="height:100%;width:${Math.min(pct,100)}%;background:${color};border-radius:2px"></div>
@@ -329,14 +411,17 @@ const DES = {
         ${budgetRow('Headspace fill',  res.Q_head, res.Q_total, '#7c3aed')}
         ${budgetRow('Product release', res.Q_prod, res.Q_total, '#d97706')}
         <div style="border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.4rem;display:flex;justify-content:space-between;font-weight:700">
-          <span>Total</span><span>${res.Q_total.toFixed(2)} mg</span>
+          <span>Total</span><span>${res.Q_total.toFixed(4)} mg</span>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
         ${kpi('Required desiccant', isFinite(res.W_required) ? res.W_required.toFixed(2)+' g':'—', '#2563eb','#eff6ff','Without safety factor')}
         ${kpi('Recommended desiccant', isFinite(res.W_recommended) ? res.W_recommended.toFixed(2)+' g':'—', '#16a34a','#f0fdf4', p.safety_factor+'× safety factor')}
-        ${kpi('Total moisture load', res.Q_total.toFixed(2)+' mg', '#d97706','#fef3c7','Film + headspace + product')}
+        ${kpi('Total moisture load', res.Q_total.toFixed(4)+' mg', '#d97706','#fef3c7','Film + headspace + product')}
         ${kpi('Saturation time', satStr, satOK?'#16a34a':'#dc2626', satOK?'#f0fdf4':'#fee2e2', satOK?'Full shelf life protected':'Increase desiccant or improve barrier')}
+      </div>
+      <div style="margin-top:0.75rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--text-light)">
+        Ref. conditions: <strong>${p.T_ref}°C / ${p.RH_ref}% RH</strong> → Storage: <strong>${p.T_store}°C / ${p.RH_store}% RH</strong> · Eₐ = ${p.Ea_kJ} kJ/mol · WVTR_eff = ${res.wvtr_eff.toFixed(5)} g/m²/day
       </div>
     </div>`;
   },
@@ -374,7 +459,7 @@ const DES = {
             borderColor: ['#2563eb','#7c3aed','#d97706'], borderWidth: 2 }] },
         options: { responsive:true, maintainAspectRatio:false,
           plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, boxWidth:12 } },
-            tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${ctx.parsed.toFixed(2)} mg (${(ctx.parsed/res.Q_total*100).toFixed(0)}%)` } } } }
+            tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${ctx.parsed.toFixed(4)} mg (${res.Q_total > 0 ? (ctx.parsed/res.Q_total*100).toFixed(1) : 0}%)` } } } }
       });
     }
 
@@ -429,8 +514,8 @@ function renderPharmaUptake() {
 
   const st = (typeof State !== 'undefined' && State.pharmaUptake) ? State.pharmaUptake : {};
   const wvtr_ref        = st.wvtr_ref        ?? 0.3;
-  const T_ref           = st.T_ref           ?? 23;
-  const RH_ref          = st.RH_ref          ?? 50;
+  const T_ref           = st.T_ref           ?? 38;
+  const RH_ref          = st.RH_ref          ?? 90;
   const Ea_kJ           = st.Ea_kJ           ?? 38;
   const T_store         = st.T_store         ?? 25;
   const RH_store        = st.RH_store        ?? 60;
@@ -445,19 +530,35 @@ function renderPharmaUptake() {
   const safety_factor   = st.safety_factor   ?? 2.0;
   const des_type        = st.des_type        || 'silica_gel_a';
 
-  const calcRate  = (typeof State !== 'undefined' && State.calcResult?.total > 0) ? State.calcResult.total : 0;
-  const lamName   = (typeof State !== 'undefined' && State.laminateName) ? State.laminateName : 'No laminate calculated';
+  // FIX #6: localStorage FIRST per WVTR e condizioni di test
+  const lsResult = des_readLocalStorageRate();
+  const calcRate  = lsResult?.total > 0
+    ? lsResult.total
+    : ((typeof State !== 'undefined' && State.calcResult?.total > 0) ? State.calcResult.total : 0);
+
+  const lamName   = (typeof State !== 'undefined' && State.laminateName)
+    ? State.laminateName
+    : (lsResult?.laminateName || 'No laminate calculated');
+
   const lamStruct = (() => {
-    if (typeof State === 'undefined' || !State.layers?.length) return '—';
-    return State.layers.filter(l => l.mid !== null && l.thick > 0).map(l => {
-      const m = (typeof DB !== 'undefined') ? (DB.materials||[]).find(x => x.id === l.mid) : null;
-      return m ? `${m.name} (${l.thick}µm)` : null;
-    }).filter(Boolean).join(' / ') || '—';
+    if (typeof State !== 'undefined' && State.layers?.length) {
+      return State.layers.filter(l => l.mid !== null && l.thick > 0).map(l => {
+        const m = (typeof DB !== 'undefined') ? (DB.materials||[]).find(x => x.id === l.mid) : null;
+        return m ? `${m.name} (${l.thick}µm)` : null;
+      }).filter(Boolean).join(' / ') || (lsResult?.structure || '—');
+    }
+    return lsResult?.structure || '—';
+  })();
+
+  // FIX #6: condizioni di test da localStorage se State non disponibile
+  const testCondStr = (() => {
+    if (lsResult?.tRef != null) return `${lsResult.tRef}°C / ${lsResult.rhRef ?? 90}% RH`;
+    if (typeof State !== 'undefined' && State.selCond) return `${State.selCond.temperature}°C / ${State.selCond.humidity}% RH`;
+    return '—';
   })();
 
   const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive();
 
-  // Build select options
   const desOpts  = Object.entries(DESICCANT_DB).map(([k,d]) =>
     `<option value="${k}"${k===des_type?' selected':''}>${d.name}</option>`).join('');
   const storOpts = Object.entries(STORAGE_PRESETS).map(([k,d]) =>
@@ -480,7 +581,7 @@ function renderPharmaUptake() {
         </h2>
       </div>
 
-      <!-- STEP 1: WVTR source — identical to headspace.js -->
+      <!-- STEP 1: WVTR source -->
       <div style="padding:1rem;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--primary);font-weight:600;font-size:0.85rem">
           ▼ 1. Barrier Film WVTR Source
@@ -495,6 +596,7 @@ function renderPharmaUptake() {
             ${companyActive?'':'disabled'}>From Company DB</button>
         </div>
 
+        <!-- Panel: Calculator -->
         <div id="des-panel-calc">
           <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
             <div style="font-weight:700;margin-bottom:0.15rem">${lamName}</div>
@@ -503,9 +605,9 @@ function renderPharmaUptake() {
               <span>Calculated WVTR:</span>
               <strong style="color:var(--primary)">${calcRate > 0 ? calcRate.toFixed(5) : '-'} g/m²·day</strong>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;color:var(--text-light)">
+            <div id="des-calc-conditions" style="display:flex;justify-content:space-between;align-items:center;color:var(--text-light)">
               <span>Test conditions:</span>
-              <span>${(typeof State !== 'undefined' && State.selCond) ? State.selCond.temperature+'°C / '+State.selCond.humidity+'% RH' : '—'}</span>
+              <span>${testCondStr}</span>
             </div>
           </div>
           ${calcRate <= 0 ? '<div class="alert alert-info" style="margin-top:0.45rem;font-size:0.8rem"><span>Run a calculation in the Calculator tab first, then return here.</span></div>' : ''}
@@ -515,10 +617,11 @@ function renderPharmaUptake() {
               <input type="number" id="des-ea" value="${Ea_kJ}" step="1" min="0" class="form-input" placeholder="0 = no correction">
               <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
             </div>
-            <div class="hint"></div>
+            <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0</div>
           </div>
         </div>
 
+        <!-- Panel: Community DB -->
         <div id="des-panel-db" style="display:none">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
@@ -535,10 +638,13 @@ function renderPharmaUptake() {
                 <option value="0.8|23|50|38">HDPE 20 mil bottle — 0.800 g/m²/day</option>
               </optgroup>
             </select>
+            <!-- FIX #5: mostra T/RH del laminate selezionato -->
+            <div id="des-db-conditions" style="margin-top:0.3rem;font-size:0.75rem;color:var(--text-light);font-style:italic"></div>
             <div class="hint">Values at stated test conditions. Arrhenius correction applied automatically.</div>
           </div>
         </div>
 
+        <!-- Panel: Company DB -->
         <div id="des-panel-company" style="display:none">
           ${companyActive
             ? `<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label>
@@ -546,6 +652,7 @@ function renderPharmaUptake() {
             : `<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access proprietary laminate data. <a href="#" onclick="showCompanyModal?.();return false" style="color:var(--primary)">Join now</a></div>`}
         </div>
 
+        <!-- Manual override -->
         <div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px dashed var(--border)">
           <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--text-light)">
             <input type="checkbox" id="des-manual-toggle" onchange="DES.toggleManualOverride(this.checked)">
@@ -600,12 +707,12 @@ function renderPharmaUptake() {
             <div class="form-group" style="margin:0"><label>Storage T (°C)</label><input type="number" id="des-tstore" value="${T_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>External RH (%)</label><input type="number" id="des-rhstore" value="${RH_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Shelf life (yr)</label><input type="number" id="des-shelf" value="${shelf_years}" step="0.5" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint">Target RH inside container</div></div>
           </div>
         </div>
       </div>
 
-      <!-- STEP 4: Container geometry + fill — NOTE: geometry only, film is Step 1 -->
+      <!-- STEP 4: Container geometry + fill -->
       <div style="padding:1rem;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--purple);font-weight:600;font-size:0.85rem">
           ▼ 4. Container Geometry & Fill Conditions
@@ -616,12 +723,12 @@ function renderPharmaUptake() {
             <select id="des-cont-preset" class="form-input" onchange="DES.onContPreset(this.value)">${contOpts}</select>
           </div>
           <div class="grid grid-2" style="gap:0.5rem;margin-top:0.5rem">
-            <div class="form-group" style="margin:0"><label>Permeable area (cm²)</label><input type="number" id="des-area" value="${area_cm2}" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>Permeable area (cm²)</label><input type="number" id="des-area" value="${area_cm2}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Headspace volume (mL)</label><input type="number" id="des-headspace" value="${headspace_ml}" step="0.5" class="form-input"><div class="hint">Air volume at sealing</div></div>
             <div class="form-group" style="margin:0"><label>RH at fill/sealing (%)</label><input type="number" id="des-rhfill" value="${RH_fill}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product mass (g)</label><input type="number" id="des-drugmass" value="${drug_mass_g}" step="0.1" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product initial MC (%)</label><input type="number" id="des-mcinit" value="${mc_init}" step="0.01" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint">% of initial MC desorbed</div></div>
           </div>
         </div>
       </div>
@@ -635,7 +742,7 @@ function renderPharmaUptake() {
           <div class="form-group" style="margin:0">
             <label>Safety factor (×)</label>
             <input type="number" id="des-safety" value="${safety_factor}" step="0.1" min="1" class="form-input">
-            <div class="hint"></div>
+            <div class="hint">≥ 1 — typically 2× general, 3–4× for high-value products</div>
           </div>
         </div>
         <button class="btn btn-danger btn-full" onclick="DES.calculate()" style="padding:0.8rem;font-size:0.9rem">
@@ -705,8 +812,8 @@ function renderDesiccantMethodology() {
       <p>The total moisture load is the sum of three independent contributions. The first and typically dominant one is <strong>film ingress</strong> — steady-state permeation of water vapour from the external environment through the container walls, described by the film's WVTR and the package surface area:</p>
       ${formula('Q_film (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000 × t (days)')}
       <p>The second contribution is <strong>headspace moisture at the time of sealing</strong>. Every container encloses a volume of air when it is closed. Treating the enclosed gas as ideal, the mass of water vapour trapped is:</p>
-      ${formula('Q_head (mg) = V (m³) × (RH_fill / 100) × P_sat(T) / (R × T) × M_w × 10⁶')}
-      <p>where P_sat(T) is the saturation vapour pressure (Magnus–Tetens approximation), R is the universal gas constant, T is the absolute sealing temperature, and M_w = 0.018 kg/mol. This term is frequently underestimated; for small containers sealed in poorly controlled environments it can represent a substantial fraction of the total budget. The third contribution is <strong>moisture released by the product itself</strong>, proportional to the initial moisture content of the solid dosage form and the fraction that desorbs into the headspace under storage conditions.</p>
+      ${formula('Q_head (mg) = V (m³) × (RH_fill / 100) × P_sat(T) / (R × T) × M_w × 1000')}
+      <p>where P_sat(T) is the saturation vapour pressure in Pascal (Magnus–Tetens approximation), R = 8.314 J/(mol·K), T is the absolute sealing temperature in Kelvin, and M_w = 18 g/mol. The factor × 1000 converts from grams to milligrams. This term is frequently underestimated; for small containers sealed in poorly controlled environments it can represent a measurable fraction of the total budget. The third contribution is <strong>moisture released by the product itself</strong>, proportional to the initial moisture content of the solid dosage form and the fraction that desorbs into the headspace under storage conditions.</p>
 
       ${h3('Thermal Correction of the Barrier Rate')}
       <p>WVTR values are measured under standardised laboratory conditions — most commonly 38°C and 90% RH per ASTM F1249. To obtain the effective rate at actual storage conditions, two correction factors are applied. Temperature is corrected via the Arrhenius equation:</p>
