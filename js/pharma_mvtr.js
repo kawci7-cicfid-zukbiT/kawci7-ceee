@@ -22,12 +22,12 @@ const ICH_ZONES = [
 ];
 
 const MVTR_SHAPE_CONFIGS = {
-  flat:     { w:12, h:17, d:0,   lw:'Width (cm)',           lh:'Height (cm)',   ld:'(unused)' },
-  standup:  { w:13, h:22, d:4,   lw:'Width (cm)',           lh:'Height (cm)',   ld:'Gusset (cm)' },
-  flow:     { w:20, h:12, d:0,   lw:'Fin seal length (cm)', lh:'Web width (cm)',ld:'(unused)' },
-  box:      { w:10, h:15, d:5,   lw:'Length (cm)',          lh:'Height (cm)',   ld:'Depth (cm)' },
-  cylinder: { w:0,  h:12, d:10,  lw:'(unused)',             lh:'Height (cm)',   ld:'Diameter (cm)' },
-  tray:     { w:15, h:10, d:3,   lw:'Length (cm)',          lh:'Width (cm)',    ld:'Depth (cm)' },
+  flat:     { w:12, h:17, d:0,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Depth / Diameter (cm)' },
+  standup:  { w:13, h:22, d:0,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Gusset / Depth (cm)' },
+  flow:     { w:20, h:12, d:0,   lw:'Fin Seal Length (cm)',   lh:'Web Width (cm)',  ld:'—' },
+  box:      { w:10, h:15, d:5,   lw:'Length (cm)',            lh:'Height (cm)',     ld:'Depth (cm)' },
+  cylinder: { w:0,  h:12, d:10,  lw:'—',                      lh:'Height (cm)',     ld:'Diameter (cm)' },
+  tray:     { w:15, h:10, d:3,   lw:'Length (cm)',            lh:'Width (cm)',      ld:'Depth (cm)' },
   bottle:   null,
   blister:  null
 };
@@ -65,15 +65,14 @@ const MVTR = {
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
       if (saved) {
-        if (saved.Tref)        document.getElementById('ph-tref').value  = saved.Tref;
-        if (saved.RHref)       document.getElementById('ph-rhref').value = saved.RHref;
-        if (saved.Ea != null)  document.getElementById('ph-ea').value    = saved.Ea;
-        if (saved.Mcrit)       document.getElementById('ph-crit').value  = saved.Mcrit;
-        if (saved.shelf_years) document.getElementById('ph-years').value = saved.shelf_years;
+        if (saved.Tref)        document.getElementById('mvtr-tref').value  = saved.Tref;
+        if (saved.RHref)       document.getElementById('mvtr-rhref').value = saved.RHref;
+        if (saved.Ea != null)  document.getElementById('mvtr-ea').value    = saved.Ea;
+        if (saved.Mcrit)       document.getElementById('mvtr-crit').value  = saved.Mcrit;
+        if (saved.shelf_years) document.getElementById('mvtr-years').value = saved.shelf_years;
       }
     } catch(e){}
 
-    // beforeunload
     window.addEventListener('beforeunload', () => {
       if (this._results) try { localStorage.setItem('mvtr_last_params', JSON.stringify(this._results.params)); } catch(e){}
     });
@@ -87,26 +86,29 @@ const MVTR = {
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
       if (saved && saved.total > 0) {
-        const nameEl   = document.getElementById('lam-name');
-        const structEl = document.getElementById('lam-struct');
-        const rateEl   = document.getElementById('lam-rate');
+        const nameEl   = document.getElementById('mvtr-lam-name');
+        const structEl = document.getElementById('mvtr-lam-struct');
+        const rateEl   = document.getElementById('mvtr-lam-rate');
         if (nameEl)   nameEl.textContent  = saved.laminateName || 'Laminate from Calculator';
         if (structEl) structEl.textContent = saved.structure    || '';
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
-        const tEl  = document.getElementById('ph-tref');
-        const rhEl = document.getElementById('ph-rhref');
-        if (saved.tRef  && tEl)  tEl.value  = saved.tRef;
-        if (saved.rhRef && rhEl) rhEl.value = saved.rhRef;
+        this._updateRateSummary(saved.total.toFixed(5));
       } else {
-        const n = document.getElementById('lam-name');
-        const s = document.getElementById('lam-struct');
-        const r = document.getElementById('lam-rate');
+        const n = document.getElementById('mvtr-lam-name');
+        const s = document.getElementById('mvtr-lam-struct');
+        const r = document.getElementById('mvtr-lam-rate');
         if (n) n.textContent = 'No laminate loaded';
         if (s) s.textContent = 'Run a calculation in the Calculator tab first, then return here.';
         if (r) r.textContent = '—';
+        this._updateRateSummary('-');
       }
     } catch(e){}
     this.updateBanner();
+  },
+
+  _updateRateSummary(rateStr) {
+    const el = document.getElementById('mvtr-active-rate');
+    if (el) el.textContent = rateStr + ' g/m²/day';
   },
 
   // ------------------------------------------------------------------
@@ -119,12 +121,24 @@ const MVTR = {
       return;
     }
     this._activeSource = s;
-    ['calc','db','co'].forEach(k => {
-      const btn   = document.getElementById('src-' + k);
-      const panel = document.getElementById('panel-' + k);
-      if (btn)   btn.classList.toggle('active', k === s);
-      if (panel) panel.style.display = k === s ? 'block' : 'none';
+    
+    ['calc','db','co'].forEach(key => {
+      const btn = document.getElementById('mvtr-src-btn-' + key);
+      if (!btn) return;
+      if (key === s) {
+        btn.className = 'btn btn-sm';
+        btn.style.cssText = 'background:var(--primary);color:#fff;border:none;font-size:0.75rem';
+      } else {
+        btn.className = 'btn btn-sm btn-outline';
+        btn.style.cssText = 'font-size:0.75rem';
+      }
     });
+    
+    ['calc','db','co'].forEach(p => {
+      const panel = document.getElementById('mvtr-panel-' + p);
+      if (panel) panel.style.display = p === s ? 'block' : 'none';
+    });
+    
     if (s === 'calc') this.refreshCalcPanel();
     else this.updateBanner();
   },
@@ -135,28 +149,47 @@ const MVTR = {
 
   toggleManual(on) {
     this._manualOverride = on;
-    const panel = document.getElementById('panel-manual');
+    const panel = document.getElementById('mvtr-panel-manual');
     if (panel) panel.style.display = on ? 'block' : 'none';
-    this.updateBanner();
+    
+    ['calc','db','co'].forEach(key => {
+      const btn = document.getElementById('mvtr-src-btn-' + key);
+      if (!btn) return;
+      btn.disabled = on;
+      btn.style.opacity = on ? '0.35' : '1';
+      btn.style.cursor = on ? 'not-allowed' : 'pointer';
+    });
+    
+    ['calc','db','co'].forEach(p => {
+      const el = document.getElementById('mvtr-panel-' + p);
+      if (el) el.style.display = on ? 'none' : (p === this._activeSource ? 'block' : 'none');
+    });
+    
+    if (on) this.onManualChange();
+    else this.setSource(this._activeSource);
   },
 
   onDBPick(val) {
     if (!val) return;
     const [w, t, rh] = val.split('|').map(Number);
-    document.getElementById('ph-tref').value  = t;
-    document.getElementById('ph-rhref').value = rh;
+    document.getElementById('mvtr-tref').value  = t;
+    document.getElementById('mvtr-rhref').value = rh;
     this.updateBanner();
   },
 
-  onManualChange() { this.updateBanner(); },
+  onManualChange() { 
+    const rate = parseFloat(document.getElementById('mvtr-rate-manual')?.value) || 0;
+    this._updateRateSummary(rate > 0 ? rate.toFixed(5) : '-');
+    this.updateBanner(); 
+  },
 
   getActiveRate() {
     if (this._manualOverride) {
-      const v = parseFloat(document.getElementById('man-wvtr')?.value);
+      const v = parseFloat(document.getElementById('mvtr-rate-manual')?.value);
       return isNaN(v) ? null : v;
     }
     if (this._activeSource === 'db') {
-      const v = document.getElementById('db-pick')?.value;
+      const v = document.getElementById('mvtr-db-pick')?.value;
       return v ? parseFloat(v.split('|')[0]) : null;
     }
     if (this._activeSource === 'calc') {
@@ -171,7 +204,7 @@ const MVTR = {
 
   updateBanner() {
     const r = this.getActiveRate();
-    const el = document.getElementById('active-wvtr');
+    const el = document.getElementById('mvtr-active-rate');
     if (el) el.textContent = r != null ? r.toFixed(5) + ' g/m²/day' : '— g/m²/day';
   },
 
@@ -180,50 +213,50 @@ const MVTR = {
   // ------------------------------------------------------------------
 
   togglePkgMode() {
-    const mode = document.querySelector('input[name="pkg-mode"]:checked')?.value || 'shape';
-    const geom = document.getElementById('geom-selector');
-    const man  = document.getElementById('manual-area');
-    if (geom) geom.style.display = mode === 'shape'  ? 'block' : 'none';
+    const mode = document.querySelector('input[name="mvtr-pkg-mode"]:checked')?.value || 'shape';
+    const geom = document.getElementById('mvtr-geom-selector');
+    const man  = document.getElementById('mvtr-manual-area');
+    if (geom) geom.style.display = mode === 'shape'  ? 'grid' : 'none';
     if (man)  man.style.display  = mode === 'manual' ? 'block' : 'none';
     this.calcArea();
   },
 
   onShapeChange() {
-    const shape = document.getElementById('sl-shape').value;
+    const shape = document.getElementById('mvtr-shape').value;
     this._currentShape = shape;
     const isBottle  = shape === 'bottle';
     const isBlister = shape === 'blister';
-    const std = document.getElementById('dims-std');
-    const bot = document.getElementById('dims-bottle');
-    const bli = document.getElementById('dims-blister');
-    if (std) std.style.display = (!isBottle && !isBlister) ? 'block' : 'none';
-    if (bot) bot.style.display = isBottle  ? 'block' : 'none';
-    if (bli) bli.style.display = isBlister ? 'block' : 'none';
+    const std = document.getElementById('mvtr-dims-std');
+    const bot = document.getElementById('mvtr-dims-bottle');
+    const bli = document.getElementById('mvtr-dims-blister');
+    if (std) std.style.display = (!isBottle && !isBlister) ? 'grid' : 'none';
+    if (bot) bot.style.display = isBottle  ? 'grid' : 'none';
+    if (bli) bli.style.display = isBlister ? 'grid' : 'none';
     const cfg = MVTR_SHAPE_CONFIGS[shape];
     if (cfg) {
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
       const lbl = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-      set('sl-w', cfg.w); set('sl-h', cfg.h); set('sl-d', cfg.d);
-      lbl('lbl-w', cfg.lw); lbl('lbl-h', cfg.lh); lbl('lbl-d', cfg.ld);
+      set('mvtr-w', cfg.w); set('mvtr-h', cfg.h); set('mvtr-d', cfg.d);
+      lbl('mvtr-lbl-w', cfg.lw); lbl('mvtr-lbl-h', cfg.lh); lbl('mvtr-lbl-d', cfg.ld);
     }
     this.calcArea();
   },
 
   calcArea() {
-    const mode = document.querySelector('input[name="pkg-mode"]:checked')?.value || 'shape';
+    const mode = document.querySelector('input[name="mvtr-pkg-mode"]:checked')?.value || 'shape';
     let area = 0;
     if (mode === 'manual') {
-      area = parseFloat(document.getElementById('sl-area-man')?.value) || 0;
+      area = parseFloat(document.getElementById('mvtr-area-man')?.value) || 0;
     } else {
-      const shape  = document.getElementById('sl-shape')?.value || 'flat';
+      const shape  = document.getElementById('mvtr-shape')?.value || 'flat';
       this._currentShape = shape;
-      const margin = parseFloat(document.getElementById('sl-margin')?.value) || 0;
+      const margin = parseFloat(document.getElementById('mvtr-margin')?.value) || 0;
       if (shape === 'bottle') {
-        const Rb = parseFloat(document.getElementById('bt-br')?.value) || 3.5;
-        const Hb = parseFloat(document.getElementById('bt-bh')?.value) || 16;
-        const Rn = parseFloat(document.getElementById('bt-nr')?.value) || 1.2;
-        const Hn = parseFloat(document.getElementById('bt-nh')?.value) || 4;
-        const Hs = parseFloat(document.getElementById('bt-sh')?.value) || 2.5;
+        const Rb = parseFloat(document.getElementById('mvtr-bt-br')?.value) || 3.5;
+        const Hb = parseFloat(document.getElementById('mvtr-bt-bh')?.value) || 16;
+        const Rn = parseFloat(document.getElementById('mvtr-bt-nr')?.value) || 1.2;
+        const Hn = parseFloat(document.getElementById('mvtr-bt-nh')?.value) || 4;
+        const Hs = parseFloat(document.getElementById('mvtr-bt-sh')?.value) || 2.5;
         const mf = 1 + margin / 100;
         const bodyLat = 2 * Math.PI * Rb * Hb;
         const neckLat = 2 * Math.PI * Rn * Hn;
@@ -232,13 +265,13 @@ const MVTR = {
         const bottom  = Math.PI * Rb**2;
         area = (bodyLat + neckLat + shoulder + bottom) * mf / 10000;
       } else if (shape === 'blister') {
-        const count = parseFloat(document.getElementById('bl-count')?.value) || 10;
-        const ca    = parseFloat(document.getElementById('bl-area')?.value)  || 1.5;
+        const count = parseFloat(document.getElementById('mvtr-bl-count')?.value) || 10;
+        const ca    = parseFloat(document.getElementById('mvtr-bl-area')?.value)  || 1.5;
         area = count * ca / 10000;
       } else {
-        const w = parseFloat(document.getElementById('sl-w')?.value) || 0;
-        const h = parseFloat(document.getElementById('sl-h')?.value) || 0;
-        const d = parseFloat(document.getElementById('sl-d')?.value) || 0;
+        const w = parseFloat(document.getElementById('mvtr-w')?.value) || 0;
+        const h = parseFloat(document.getElementById('mvtr-h')?.value) || 0;
+        const d = parseFloat(document.getElementById('mvtr-d')?.value) || 0;
         const wT = w + margin * 2, hT = h + margin * 2, dT = d + margin * 2;
         let cm2 = 0;
         switch(shape) {
@@ -253,16 +286,16 @@ const MVTR = {
         area = cm2 / 10000;
       }
     }
-    const display = document.getElementById('area-display');
-    const hidden  = document.getElementById('sl-area');
+    const display = document.getElementById('mvtr-area-display');
+    const hidden  = document.getElementById('mvtr-area');
     if (display) display.textContent = area.toFixed(4) + ' m²';
     if (hidden)  hidden.value = area.toFixed(5);
   },
 
   updateManualArea() {
-    const v = document.getElementById('sl-area-man')?.value || '0';
-    const display = document.getElementById('area-display');
-    const hidden  = document.getElementById('sl-area');
+    const v = document.getElementById('mvtr-area-man')?.value || '0';
+    const display = document.getElementById('mvtr-area-display');
+    const hidden  = document.getElementById('mvtr-area');
     if (display) display.textContent = v + ' m²';
     if (hidden)  hidden.value = v;
   },
@@ -301,11 +334,11 @@ const MVTR = {
 
   validate() {
     const checks = [
-      { id:'ph-tref',  fg:'fg-tref',  min:-50, max:100 },
-      { id:'ph-rhref', fg:'fg-rhref', min:0,   max:100 },
-      { id:'ph-ea',    fg:'fg-ea',    min:0,   max:150 },
-      { id:'ph-crit',  fg:'fg-crit',  min:0.001 },
-      { id:'ph-years', fg:'fg-years', min:0.5, max:10 }
+      { id:'mvtr-tref',  fg:'mvtr-fg-tref',  min:-50, max:100 },
+      { id:'mvtr-rhref', fg:'mvtr-fg-rhref', min:0,   max:100 },
+      { id:'mvtr-ea',    fg:'mvtr-fg-ea',    min:0,   max:150 },
+      { id:'mvtr-crit',  fg:'mvtr-fg-crit',  min:0.001 },
+      { id:'mvtr-years', fg:'mvtr-fg-years', min:0.5, max:10 }
     ];
     let ok = true;
     checks.forEach(c => {
@@ -329,18 +362,18 @@ const MVTR = {
     if (!this.validate()) return;
     const params = {
       wRef:        rate,
-      Tref:        parseFloat(document.getElementById('ph-tref').value),
-      RHref:       parseFloat(document.getElementById('ph-rhref').value),
-      Ea:          parseFloat(document.getElementById('ph-ea').value) || 0,
-      area:        parseFloat(document.getElementById('sl-area').value),
-      Mcrit:       parseFloat(document.getElementById('ph-crit').value),
-      shelf_years: parseFloat(document.getElementById('ph-years').value),
-      shelfDays:   parseFloat(document.getElementById('ph-years').value) * DAYS,
-      label:       document.getElementById('sce-label').value || 'Scenario',
+      Tref:        parseFloat(document.getElementById('mvtr-tref').value),
+      RHref:       parseFloat(document.getElementById('mvtr-rhref').value),
+      Ea:          parseFloat(document.getElementById('mvtr-ea').value) || 0,
+      area:        parseFloat(document.getElementById('mvtr-area').value),
+      Mcrit:       parseFloat(document.getElementById('mvtr-crit').value),
+      shelf_years: parseFloat(document.getElementById('mvtr-years').value),
+      shelfDays:   parseFloat(document.getElementById('mvtr-years').value) * DAYS,
+      label:       document.getElementById('mvtr-label').value || 'Scenario',
       source:      this._activeSource
     };
     this._results = { params, zones: this.runCalc(params), ts: new Date().toISOString() };
-    const det = document.getElementById('detailed');
+    const det = document.getElementById('mvtr-detailed');
     if (det) det.style.display = 'block';
     this.updateKPIs();
     this.updateQuick();
@@ -359,38 +392,38 @@ const MVTR = {
     const zs = this._results.zones;
     const pass = zs.filter(r => r.pass).length, tot = zs.length;
     const pct  = Math.round(pass / tot * 100);
-    const zCard = document.getElementById('kpi-zones');
-    document.getElementById('kv-zones').textContent = pass + '/' + tot;
-    document.getElementById('ks-zones').textContent = pct + '% compliant';
+    const zCard = document.getElementById('mvtr-kpi-zones');
+    document.getElementById('mvtr-kv-zones').textContent = pass + '/' + tot;
+    document.getElementById('mvtr-ks-zones').textContent = pct + '% compliant';
     if (zCard) zCard.className = 'kpi ' + (pass === tot ? 'green' : pass === 0 ? 'danger' : 'warning');
 
     const maxAnn = Math.max(...zs.map(r => r.annual));
-    document.getElementById('kv-ingress').textContent = maxAnn.toFixed(3) + ' mg';
-    document.getElementById('ks-ingress').textContent = zs.find(r => r.annual === maxAnn).zone.label;
+    document.getElementById('mvtr-kv-ingress').textContent = maxAnn.toFixed(3) + ' mg';
+    document.getElementById('mvtr-ks-ingress').textContent = zs.find(r => r.annual === maxAnn).zone.label;
 
     const minSaf = Math.min(...zs.map(r => 100 - r.pct));
-    const sCard = document.getElementById('kpi-safety');
-    document.getElementById('kv-safety').textContent = minSaf.toFixed(1) + '%';
+    const sCard = document.getElementById('mvtr-kpi-safety');
+    document.getElementById('mvtr-kv-safety').textContent = minSaf.toFixed(1) + '%';
     if (sCard) sCard.className = 'kpi ' + (minSaf > 20 ? 'green' : minSaf > 0 ? 'warning' : 'danger');
 
     const avgArr = zs.reduce((s, r) => s + r.arrF, 0) / zs.length;
-    document.getElementById('kv-arr').textContent = avgArr.toFixed(2) + 'x';
+    document.getElementById('mvtr-kv-arr').textContent = avgArr.toFixed(2) + 'x';
 
-    const bar = document.getElementById('kpi-bar');
+    const bar = document.getElementById('mvtr-kpi-bar');
     if (bar) {
       bar.style.width = pct + '%';
       bar.className = 'progress-fill ' + (pct === 100 ? 'green' : pct >= 50 ? 'warning' : 'danger');
     }
-    const st = document.getElementById('kpi-status');
+    const st = document.getElementById('mvtr-kpi-status');
     if (st) st.textContent = pct === 100 ? 'All zones compliant' : pct === 0 ? 'No zones compliant' : 'Partial compliance';
-    const pp = document.getElementById('kpi-pct');
+    const pp = document.getElementById('mvtr-kpi-pct');
     if (pp) pp.textContent = pct + '%';
   },
 
   updateQuick() {
     const pass = this._results.zones.filter(r => r.pass).length, tot = this._results.zones.length;
     const clr = pass === tot ? 'var(--success)' : pass === 0 ? 'var(--danger)' : 'var(--warning)';
-    const el = document.getElementById('quick-results');
+    const el = document.getElementById('mvtr-quick-results');
     if (el) el.innerHTML =
       '<div style="color:' + clr + ';font-weight:700;font-size:1.05rem">' +
       (pass === tot ? 'All zones compliant' : pass === 0 ? 'No zones compliant' : pass + '/' + tot + ' zones compliant') +
@@ -403,7 +436,7 @@ const MVTR = {
 
   renderOverview() {
     const zs = this._results.zones;
-    const tbody = document.querySelector('#tbl-summary tbody');
+    const tbody = document.querySelector('#mvtr-tbl-summary tbody');
     if (tbody) tbody.innerHTML = zs.map(r =>
       '<tr style="' + (r.pass ? 'background:var(--success-light)' : 'background:var(--danger-light)') + '">' +
       '<td><strong>' + r.zone.label + '</strong></td>' +
@@ -421,7 +454,7 @@ const MVTR = {
 
   renderTables() {
     const zs = this._results.zones, p = this._results.params;
-    const tbody = document.querySelector('#tbl-detailed tbody');
+    const tbody = document.querySelector('#mvtr-tbl-detailed tbody');
     if (tbody) tbody.innerHTML = zs.map((r, i) =>
       '<tr style="' + (i % 2 ? 'background:#fafcff' : '') + '">' +
       '<td><strong>' + r.zone.label + '</strong></td>' +
@@ -439,7 +472,7 @@ const MVTR = {
       '</tr>'
     ).join('');
 
-    const pp = document.getElementById('params-panel');
+    const pp = document.getElementById('mvtr-params-panel');
     if (pp) pp.innerHTML = [
       ['WVTR ref',   p.wRef.toFixed(5) + ' g/m²/day'],
       ['T_ref',      p.Tref + '°C = ' + (p.Tref + 273.15).toFixed(2) + ' K'],
@@ -483,7 +516,7 @@ const MVTR = {
   renderOverviewChart() {
     this._dc('ov');
     const zs = this._results.zones;
-    const ctx = document.getElementById('ch-overview')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-overview')?.getContext('2d');
     if (!ctx) return;
     this._charts.ov = new Chart(ctx, {
       type:'bar',
@@ -509,7 +542,7 @@ const MVTR = {
   renderFactorsChart() {
     this._dc('fac');
     const zs = this._results.zones;
-    const ctx = document.getElementById('ch-factors')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-factors')?.getContext('2d');
     if (!ctx) return;
     this._charts.fac = new Chart(ctx, {
       type:'radar',
@@ -528,14 +561,14 @@ const MVTR = {
     });
     const avgArr = (zs.reduce((s, r) => s + r.arrF, 0) / zs.length).toFixed(3);
     const avgRH  = (zs.reduce((s, r) => s + r.rhF,  0) / zs.length).toFixed(3);
-    const el = document.getElementById('factors-sum');
+    const el = document.getElementById('mvtr-factors-sum');
     if (el) el.innerHTML = 'avg F_T = <strong>' + avgArr + '</strong> | avg F_RH = <strong>' + avgRH + '</strong> | Eₐ = ' + this._results.params.Ea + ' kJ/mol';
   },
 
   renderWVTRChart() {
     this._dc('wvtr');
     const zs = this._results.zones;
-    const ctx = document.getElementById('ch-wvtr')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-wvtr')?.getContext('2d');
     if (!ctx) return;
     this._charts.wvtr = new Chart(ctx, {
       type:'bar',
@@ -553,7 +586,7 @@ const MVTR = {
   renderTRHChart() {
     this._dc('trh');
     const zs = this._results.zones;
-    const ctx = document.getElementById('ch-trh')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-trh')?.getContext('2d');
     if (!ctx) return;
     this._charts.trh = new Chart(ctx, {
       type:'scatter',
@@ -590,7 +623,7 @@ const MVTR = {
   renderTTLChart() {
     this._dc('ttl');
     const zs = this._results.zones, yr = this._results.params.shelf_years;
-    const ctx = document.getElementById('ch-ttl')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-ttl')?.getContext('2d');
     if (!ctx) return;
     this._charts.ttl = new Chart(ctx, {
       type:'bar',
@@ -620,7 +653,7 @@ const MVTR = {
   },
 
   renderScenariosList() {
-    const compEl = document.getElementById('sce-comp-list');
+    const compEl = document.getElementById('mvtr-sce-comp-list');
     if (!compEl) return;
     if (this._scenarios.length === 0) {
       compEl.innerHTML = '<p style="font-size:.88rem;color:var(--text-light);text-align:center;padding:.75rem 0">No saved scenarios yet.</p>';
@@ -648,24 +681,22 @@ const MVTR = {
   loadScenario(id) {
     const s = this._scenarios.find(x => x.id === id);
     if (!s) return;
-    document.getElementById('ph-tref').value  = s.params.Tref;
-    document.getElementById('ph-rhref').value = s.params.RHref;
-    document.getElementById('ph-ea').value    = s.params.Ea;
-    document.getElementById('ph-crit').value  = s.params.Mcrit;
-    document.getElementById('ph-years').value = s.params.shelf_years;
-    document.getElementById('sce-label').value = s.params.label;
-    document.getElementById('manual-toggle').checked = true;
+    document.getElementById('mvtr-tref').value  = s.params.Tref;
+    document.getElementById('mvtr-rhref').value = s.params.RHref;
+    document.getElementById('mvtr-ea').value    = s.params.Ea;
+    document.getElementById('mvtr-crit').value  = s.params.Mcrit;
+    document.getElementById('mvtr-years').value = s.params.shelf_years;
+    document.getElementById('mvtr-label').value = s.params.label;
+    document.getElementById('mvtr-manual-toggle').checked = true;
     this.toggleManual(true);
-    document.getElementById('man-wvtr').value = s.params.wRef;
-    document.getElementById('man-t').value    = s.params.Tref;
-    document.getElementById('man-rh').value   = s.params.RHref;
+    document.getElementById('mvtr-rate-manual').value = s.params.wRef;
     this.updateBanner();
     this.calculate();
   },
 
   updateScenarioComparison() {
-    const bodyEl = document.getElementById('sce-body');
-    const hdrEl  = document.getElementById('sce-hdr');
+    const bodyEl = document.getElementById('mvtr-sce-body');
+    const hdrEl  = document.getElementById('mvtr-sce-hdr');
     if (!bodyEl || !hdrEl) return;
     if (this._scenarios.length < 2) {
       bodyEl.innerHTML = '<tr><td colspan="' + (this._scenarios.length + 1) + '" style="text-align:center;color:var(--text-light)">Save at least 2 scenarios to compare.</td></tr>';
@@ -695,7 +726,7 @@ const MVTR = {
   renderScenarioComparisonChart() {
     this._dc('sce');
     if (this._scenarios.length < 2) return;
-    const ctx = document.getElementById('ch-sce')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-sce')?.getContext('2d');
     if (!ctx) return;
     this._charts.sce = new Chart(ctx, {
       type:'bar',
@@ -719,8 +750,8 @@ const MVTR = {
 
   runSensEA() {
     if (!this._results) return;
-    const min = parseFloat(document.getElementById('s-ea-min').value) || 20;
-    const max = parseFloat(document.getElementById('s-ea-max').value) || 65;
+    const min = parseFloat(document.getElementById('mvtr-s-ea-min').value) || 20;
+    const max = parseFloat(document.getElementById('mvtr-s-ea-max').value) || 65;
     const steps = 8, step = (max - min) / (steps - 1);
     const vals = [], maxIngs = [], passCnts = [];
     for (let i = 0; i < steps; i++) {
@@ -731,7 +762,7 @@ const MVTR = {
       passCnts.push(r.filter(x => x.pass).length);
     }
     this._dc('sea');
-    const ctx = document.getElementById('ch-sea')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-sea')?.getContext('2d');
     if (!ctx) return;
     this._charts.sea = new Chart(ctx, {
       type:'line',
@@ -755,8 +786,8 @@ const MVTR = {
 
   runSensWVTR() {
     if (!this._results) return;
-    const min = parseFloat(document.getElementById('s-wvtr-min').value) || 0.1;
-    const max = parseFloat(document.getElementById('s-wvtr-max').value) || 3.0;
+    const min = parseFloat(document.getElementById('mvtr-s-wvtr-min').value) || 0.1;
+    const max = parseFloat(document.getElementById('mvtr-s-wvtr-max').value) || 3.0;
     const steps = 8, step = (max - min) / (steps - 1);
     const vals = [], maxIngs = [], passCnts = [];
     for (let i = 0; i < steps; i++) {
@@ -767,7 +798,7 @@ const MVTR = {
       passCnts.push(r.filter(x => x.pass).length);
     }
     this._dc('swvtr');
-    const ctx = document.getElementById('ch-swvtr')?.getContext('2d');
+    const ctx = document.getElementById('mvtr-ch-swvtr')?.getContext('2d');
     if (!ctx) return;
     this._charts.swvtr = new Chart(ctx, {
       type:'line',
@@ -797,7 +828,7 @@ const MVTR = {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(c => c.classList.remove('active'));
     if (event) event.target.classList.add('active');
-    const tc = document.getElementById('tab-' + name);
+    const tc = document.getElementById('mvtr-tab-' + name);
     if (tc) tc.classList.add('active');
     if (name === 'sensitivity' && this._results) { setTimeout(() => { this.runSensEA(); this.runSensWVTR(); }, 80); }
     if (name === 'charts' && this._results) { setTimeout(() => Object.values(this._charts).forEach(c => { try { c.resize(); } catch(e){} }), 80); }
@@ -809,14 +840,14 @@ const MVTR = {
 
   resetForm() {
     if (!confirm('Reset to defaults?')) return;
-    document.getElementById('ph-tref').value  = 38;
-    document.getElementById('ph-rhref').value = 90;
-    document.getElementById('ph-ea').value    = 35;
-    document.getElementById('ph-crit').value  = 2.0;
-    document.getElementById('ph-years').value = 2;
-    document.getElementById('sce-label').value = 'Base Scenario';
+    document.getElementById('mvtr-tref').value  = 38;
+    document.getElementById('mvtr-rhref').value = 90;
+    document.getElementById('mvtr-ea').value    = 35;
+    document.getElementById('mvtr-crit').value  = 2.0;
+    document.getElementById('mvtr-years').value = 2;
+    document.getElementById('mvtr-label').value = 'Base Scenario';
     document.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('invalid'));
-    document.getElementById('manual-toggle').checked = false;
+    document.getElementById('mvtr-manual-toggle').checked = false;
     this.toggleManual(false);
     this.updateBanner();
   },
@@ -859,7 +890,7 @@ const MVTR = {
     if (typeof window.jspdf === 'undefined') { alert('PDF library missing. Reload page.'); return; }
     if (typeof html2canvas === 'undefined') { alert('html2canvas library missing. Reload page.'); return; }
 
-    const btn = document.getElementById('btn-pdf');
+    const btn = document.getElementById('mvtr-btn-pdf');
     if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
 
     try {
@@ -1011,14 +1042,14 @@ const MVTR = {
 
       // CHARTS PAGES
       const chartConfigs = [
-        { id:'ch-overview', title:'Annual Ingress by Zone',         desc:'Total moisture ingress per ICH zone with compliance limit threshold.' },
-        { id:'ch-factors',  title:'Correction Factors (F_T, F_RH)', desc:'Arrhenius thermal factor and RH driving force across climatic zones.' },
-        { id:'ch-wvtr',     title:'WVTR: Reference vs Effective',   desc:'Comparison of measured reference WVTR against zone-corrected effective values.' },
-        { id:'ch-trh',      title:'Zone Map (Temperature vs RH)',   desc:'ICH climatic zones plotted on temperature-humidity coordinate system.' },
-        { id:'ch-ttl',      title:'Years to Critical Limit',        desc:'Time until cumulative moisture ingress reaches M_crit per zone.' },
-        { id:'ch-sce',      title:'Scenario Comparison',            desc:'Total ingress comparison across saved scenarios for all ICH zones.' },
-        { id:'ch-sea',      title:'Sensitivity: Activation Energy', desc:'Impact of Ea variation on max ingress and zone compliance.' },
-        { id:'ch-swvtr',    title:'Sensitivity: WVTR',              desc:'Impact of WVTR variation on max ingress and zone compliance.' }
+        { id:'mvtr-ch-overview', title:'Annual Ingress by Zone',         desc:'Total moisture ingress per ICH zone with compliance limit threshold.' },
+        { id:'mvtr-ch-factors',  title:'Correction Factors (F_T, F_RH)', desc:'Arrhenius thermal factor and RH driving force across climatic zones.' },
+        { id:'mvtr-ch-wvtr',     title:'WVTR: Reference vs Effective',   desc:'Comparison of measured reference WVTR against zone-corrected effective values.' },
+        { id:'mvtr-ch-trh',      title:'Zone Map (Temperature vs RH)',   desc:'ICH climatic zones plotted on temperature-humidity coordinate system.' },
+        { id:'mvtr-ch-ttl',      title:'Years to Critical Limit',        desc:'Time until cumulative moisture ingress reaches M_crit per zone.' },
+        { id:'mvtr-ch-sce',      title:'Scenario Comparison',            desc:'Total ingress comparison across saved scenarios for all ICH zones.' },
+        { id:'mvtr-ch-sea',      title:'Sensitivity: Activation Energy', desc:'Impact of Ea variation on max ingress and zone compliance.' },
+        { id:'mvtr-ch-swvtr',    title:'Sensitivity: WVTR',              desc:'Impact of WVTR variation on max ingress and zone compliance.' }
       ];
       const availableCharts = chartConfigs.filter(cfg => { const c = document.getElementById(cfg.id); return c && c.width > 0 && c.height > 0; });
 
@@ -1107,30 +1138,54 @@ window.saveCalcResult = function(result) {
 
 function renderMVTR() {
   return `
-<div class="grid grid-2" style="align-items:start">
-
+<div class="grid grid-2" style="gap:1.2rem;align-items:start">
+  
+  <!-- === FORM INPUT (left column) === -->
   <div class="card" style="padding:0">
-    <div class="step-block">
-      <div class="step-label blue">1. WVTR Rate Source</div>
-      <div class="src-group">
-        <button class="src-btn active" id="src-calc" onclick="MVTR.setSource('calc')">From Calculator</button>
-        <button class="src-btn" id="src-db" onclick="MVTR.setSource('db')">Community DB</button>
-        <button class="src-btn" id="src-co" onclick="MVTR.setSource('co')" disabled title="Connect to a company first">Company DB &#x1f512;</button>
+    
+    <!-- Header -->
+    <div style="padding:1rem;background:var(--bg);border-bottom:1px solid var(--border)">
+      <h2 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:0.4rem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+        ICH Q1A(R2) MVTR Compliance Engine
+      </h2>
+    </div>
+
+    <!-- STEP 1: BARRIER RATE SOURCE -->
+    <div style="padding:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--primary);font-weight:600;font-size:0.85rem">
+        ▼ 1. Barrier Rate Source
       </div>
-      <div id="panel-calc">
-        <div class="source-panel">
-          <div class="sp-name" id="lam-name">No laminate loaded</div>
-          <div class="sp-struct" id="lam-struct">Run a calculation in the Calculator tab first, then return here.</div>
-          <div class="sp-row"><span>Calculated WVTR:</span><span class="sp-val" id="lam-rate">—</span></div>
-        </div>
-        <div class="alert alert-info" style="margin-top:.45rem">
-          <span>When the Calculator produces a result it automatically populates this field.</span>
+
+      <!-- Source selector buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.75rem">
+        <button id="mvtr-src-btn-calc" class="btn btn-sm" onclick="MVTR.setSource('calc')" 
+          style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
+        <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')" 
+          style="font-size:0.75rem">From Community DB</button>
+        <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')" 
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
+      </div>
+
+      <!-- Panel: From Calculator -->
+      <div id="mvtr-panel-calc">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
+          <div style="font-weight:700;margin-bottom:0.15rem" id="mvtr-lam-name">No laminate loaded</div>
+          <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em" id="mvtr-lam-struct">Run a calculation in the Calculator tab first, then return here.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span>Calculated WVTR:</span>
+            <strong style="color:var(--primary)" id="mvtr-lam-rate">—</strong>
+          </div>
         </div>
       </div>
-      <div id="panel-db" style="display:none">
+
+      <!-- Panel: Community DB -->
+      <div id="mvtr-panel-db" style="display:none">
         <div class="form-group" style="margin:0">
-          <label>Select from Community Database</label>
-          <select class="form-input" id="db-pick" onchange="MVTR.onDBPick(this.value)">
+          <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
+          <select class="form-input" id="mvtr-db-pick" onchange="MVTR.onDBPick(this.value)" style="font-size:0.78rem">
             <option value="">— Select a validated laminate —</option>
             <optgroup label="Pharmaceutical Grade">
               <option value="0.002|38|90">PET 12µm / Al 9µm / LDPE 60µm — 0.002 g/m²·day</option>
@@ -1148,194 +1203,239 @@ function renderMVTR() {
           <div class="hint">All values at 38°C / 90% RH (ASTM F1249) unless noted.</div>
         </div>
       </div>
-      <div id="panel-co" style="display:none">
-        <div class="company-locked">
-          <div class="lock-icon">&#x1f512;</div>
-          <div class="lock-title">Company Database Locked</div>
-          <div class="lock-desc">Access to your organisation's proprietary laminate database requires an active company membership. Connect to your company to unlock custom materials and validated WVTR data.</div>
-          <button class="lock-btn" onclick="MVTR.unlockCompany()">Connect to Company</button>
+
+      <!-- Panel: Company DB -->
+      <div id="mvtr-panel-co" style="display:none">
+        <div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">
+          Join a company to access company laminates. <a href="#" onclick="MVTR.unlockCompany();return false" style="color:var(--primary)">Connect now</a>
         </div>
       </div>
-      <div style="margin-top:.65rem;padding-top:.5rem;border-top:1px dashed var(--border)">
-        <label style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.85rem;color:var(--text-light);font-weight:600">
-          <input type="checkbox" id="manual-toggle" onchange="MVTR.toggleManual(this.checked)">
+
+      <!-- Manual override toggle -->
+      <div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px dashed var(--border)">
+        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--text-light)">
+          <input type="checkbox" id="mvtr-manual-toggle" onchange="MVTR.toggleManual(this.checked)">
           Override with manual WVTR value
         </label>
       </div>
-      <div id="panel-manual" style="display:none;margin-top:.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:.65rem">
-        <div class="alert alert-warning" style="margin:0 0 .5rem 0">
-          <span>Ensure the value matches the reference conditions below.</span>
+
+      <!-- Manual input panel -->
+      <div id="mvtr-panel-manual" style="display:none;margin-top:0.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem">
+        <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">
+          Manual input
         </div>
-        <div class="grid grid-3" style="gap:.4rem">
-          <div class="form-group" style="margin:0"><label>WVTR (g/m²/day)</label><input type="number" id="man-wvtr" class="form-input" value="1.0" step=".001" oninput="MVTR.onManualChange()"></div>
-          <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="man-t" class="form-input" value="38" step=".5" oninput="MVTR.onManualChange()"></div>
-          <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="man-rh" class="form-input" value="90" step="1" oninput="MVTR.onManualChange()"></div>
+        <div class="grid grid-2" style="gap:0.5rem">
+          <div class="form-group" style="margin:0">
+            <label>WVTR Value (g/m²/day)</label>
+            <input type="number" id="mvtr-rate-manual" value="1.0" step="0.001" class="form-input" oninput="MVTR.onManualChange()">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Test Temperature (°C)</label>
+            <input type="number" id="mvtr-rate-temp" value="38" class="form-input">
+          </div>
+          <div class="form-group" style="margin:0;grid-column:1/-1">
+            <label>Test Humidity (%RH)</label>
+            <input type="number" id="mvtr-rate-hum" value="90" class="form-input">
+          </div>
         </div>
       </div>
-      <div class="rate-banner">
-        <span class="rb-label">Active WVTR:</span>
-        <span class="rb-val" id="active-wvtr">— g/m²/day</span>
+
+      <!-- Active rate summary -->
+      <div style="margin-top:0.8rem;background:var(--primary-light);border-radius:6px;padding:0.5rem 0.75rem;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.75rem;font-weight:600">Active WVTR:</span>
+        <strong id="mvtr-active-rate" style="color:var(--primary);font-size:0.9rem">— g/m²/day</strong>
       </div>
     </div>
 
-    <div class="step-block">
-      <div class="step-label warning">2. Reference Conditions & Thermal Correction</div>
-      <div class="grid grid-2" style="gap:.5rem">
-        <div class="form-group" style="margin:0" id="fg-tref">
-          <label>Reference Temperature (°C)</label>
-          <input type="number" id="ph-tref" class="form-input" value="38" step=".5">
-          <div class="err">Valid range: −50 to 100°C</div>
-        </div>
-        <div class="form-group" style="margin:0" id="fg-rhref">
-          <label>Reference RH (%)</label>
-          <input type="number" id="ph-rhref" class="form-input" value="90" step="1" min="0" max="100">
-          <div class="err">0–100%</div>
-        </div>
+    <!-- STEP 2: THERMAL ACCELERATION -->
+    <div style="padding:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
+        ▼ 2. Thermal Acceleration
       </div>
-      <div class="form-group" style="margin-top:.5rem;margin-bottom:0" id="fg-ea">
-        <label>Activation Energy Eₐ (kJ/mol) — set 0 to disable Arrhenius</label>
-        <div class="input-row">
-          <input type="number" id="ph-ea" class="form-input" value="35" step="1" min="0" max="150">
-          <span class="input-unit">kJ/mol</span>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.75rem">
+        <div class="form-group" style="margin:0" id="mvtr-fg-ea">
+          <label>Activation Energy Eₐ (kJ/mol)</label>
+          <div style="display:flex;gap:0.4rem;align-items:center">
+            <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input" style="flex:1">
+          </div>
+          <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
+          <div class="err">0–150 kJ/mol</div>
         </div>
-        <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
-        <div class="err">0–150 kJ/mol</div>
       </div>
     </div>
 
-    <div class="step-block">
-      <div class="step-label purple">3. Packaging Geometry</div>
-      <div class="pkg-mode-row">
-        <label><input type="radio" name="pkg-mode" value="shape" checked onchange="MVTR.togglePkgMode()"> Calculate from shape</label>
-        <label><input type="radio" name="pkg-mode" value="manual" onchange="MVTR.togglePkgMode()"> Enter area manually</label>
+    <!-- STEP 3: PACKAGING DIMENSIONS -->
+    <div style="padding:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--warning);font-weight:600;font-size:0.85rem">
+        ▼ 3. Packaging Dimensions
       </div>
-      <div id="geom-selector">
-        <div class="form-group" style="margin:0 0 .4rem">
-          <label>Package / Container Type</label>
-          <select class="form-input" id="sl-shape" onchange="MVTR.onShapeChange()">
+      <div style="margin-bottom:0.5rem">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:500">
+          <input type="radio" name="mvtr-pkg-mode" value="shape" checked onchange="MVTR.togglePkgMode()">
+          Calculate from shape
+        </label>
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:500;margin-top:0.2rem">
+          <input type="radio" name="mvtr-pkg-mode" value="manual" onchange="MVTR.togglePkgMode()">
+          Enter area manually
+        </label>
+      </div>
+      
+      <!-- Geometry selector -->
+      <div id="mvtr-geom-selector" class="grid grid-2" style="margin-top:0.5rem;gap:0.4rem;align-items:start">
+        <div class="form-group" style="margin:0">
+          <label>Shape Type</label>
+          <select class="form-input" id="mvtr-shape" onchange="MVTR.onShapeChange()">
             <option value="flat">Flat Pouch</option>
             <option value="standup">Stand-Up Pouch</option>
-            <option value="flow">Flow Pack / Pillow Bag</option>
-            <option value="box">Rectangular Box / Carton</option>
-            <option value="cylinder">Cylindrical Jar / Canister</option>
+            <option value="flow">Flow Pack</option>
+            <option value="box">Rectangular Box</option>
+            <option value="cylinder">Cylindrical Jar</option>
             <option value="tray">Tray with Lid</option>
-            <option value="bottle">Bottle (body + shoulder + neck)</option>
-            <option value="blister">Blister Pack (cavity lid area only)</option>
+            <option value="bottle">Bottle</option>
+            <option value="blister">Blister Pack</option>
           </select>
         </div>
-        <div id="dims-std" class="dims-block">
-          <div class="grid grid-3" style="gap:.4rem">
-            <div class="form-group" style="margin:0"><label id="lbl-w">Width (cm)</label><input type="number" id="sl-w" class="form-input" value="12" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label id="lbl-h">Height (cm)</label><input type="number" id="sl-h" class="form-input" value="17" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label id="lbl-d">Depth / Gusset (cm)</label><input type="number" id="sl-d" class="form-input" value="0" step=".1" oninput="MVTR.calcArea()"></div>
-          </div>
-          <div class="form-group" style="margin:.4rem 0 0"><label>Weld / Seal Margin (cm)</label><input type="number" id="sl-margin" class="form-input" value="1.5" step=".5" oninput="MVTR.calcArea()"></div>
-        </div>
-        <div id="dims-blister" class="dims-block" style="display:none">
-          <div class="grid grid-2" style="gap:.4rem">
-            <div class="form-group" style="margin:0"><label>Cavities per strip</label><input type="number" id="bl-count" class="form-input" value="10" step="1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label>Cavity Area (cm²)</label><input type="number" id="bl-area" class="form-input" value="1.5" step=".1" oninput="MVTR.calcArea()"></div>
-          </div>
-          <div class="hint">Exposed area = cavities × cavity area. Lid film only.</div>
-        </div>
-        <div id="dims-bottle" class="dims-block" style="display:none">
-          <div class="grid grid-2" style="gap:.4rem">
-            <div class="form-group" style="margin:0"><label>Body radius (cm)</label><input type="number" id="bt-br" class="form-input" value="3.5" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label>Body height (cm)</label><input type="number" id="bt-bh" class="form-input" value="16" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label>Neck radius (cm)</label><input type="number" id="bt-nr" class="form-input" value="1.2" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0"><label>Neck height (cm)</label><input type="number" id="bt-nh" class="form-input" value="4" step=".1" oninput="MVTR.calcArea()"></div>
-            <div class="form-group" style="margin:0;grid-column:1/-1"><label>Shoulder height (cm)</label><input type="number" id="bt-sh" class="form-input" value="2.5" step=".1" oninput="MVTR.calcArea()"></div>
-          </div>
+        <div class="form-group" style="margin:0">
+          <label>Welding Margin (cm)</label>
+          <input type="number" id="mvtr-margin" value="1.5" step="0.5" class="form-input" oninput="MVTR.calcArea()">
         </div>
       </div>
-      <div id="manual-area" style="display:none">
-        <div class="form-group" style="margin:0"><label>Total Surface Area (m²)</label><input type="number" id="sl-area-man" class="form-input" value="0.0408" step=".001" oninput="MVTR.updateManualArea()"></div>
+      
+      <!-- Dimension inputs -->
+      <div id="mvtr-dims-std" class="grid grid-3" style="margin-top:0.4rem;gap:0.4rem">
+        <div class="form-group" style="margin:0"><label id="mvtr-lbl-w">Width L (cm)</label><input type="number" id="mvtr-w" value="12" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label id="mvtr-lbl-h">Height H (cm)</label><input type="number" id="mvtr-h" value="17" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label id="mvtr-lbl-d">Depth / Diameter (cm)</label><input type="number" id="mvtr-d" value="0" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
       </div>
-      <div class="area-result">
-        <span>Effective surface area:</span>
-        <strong id="area-display">0.0408 m²</strong>
+      
+      <div id="mvtr-dims-bottle" class="grid grid-2" style="margin-top:0.4rem;gap:0.4rem;display:none">
+        <div class="form-group" style="margin:0"><label>Body Radius (cm)</label><input type="number" id="mvtr-bt-br" value="3.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label>Body Height (cm)</label><input type="number" id="mvtr-bt-bh" value="16" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label>Neck Radius (cm)</label><input type="number" id="mvtr-bt-nr" value="1.2" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label>Neck Height (cm)</label><input type="number" id="mvtr-bt-nh" value="4" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0;grid-column:1/-1"><label>Shoulder Height (cm)</label><input type="number" id="mvtr-bt-sh" value="2.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
       </div>
-      <input type="hidden" id="sl-area" value="0.0408">
+      
+      <div id="mvtr-dims-blister" class="grid grid-2" style="margin-top:0.4rem;gap:0.4rem;display:none">
+        <div class="form-group" style="margin:0"><label>Cavities per strip</label><input type="number" id="mvtr-bl-count" value="10" step="1" class="form-input" oninput="MVTR.calcArea()"></div>
+        <div class="form-group" style="margin:0"><label>Cavity Area (cm²)</label><input type="number" id="mvtr-bl-area" value="1.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+      </div>
+      
+      <!-- Manual area input -->
+      <div id="mvtr-manual-area" style="display:none;margin-top:0.5rem">
+        <div class="form-group" style="margin:0">
+          <label>Total Surface Area (m²)</label>
+          <input type="number" id="mvtr-area-man" value="0.0408" step="0.001" class="form-input" oninput="MVTR.updateManualArea()">
+        </div>
+      </div>
+      
+      <!-- Area summary -->
+      <div style="margin-top:0.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--primary-light);padding:0.4rem;border-radius:6px">
+        <span style="font-size:0.75rem;font-weight:500">→ Effective Area:</span>
+        <strong id="mvtr-area-display" style="color:var(--primary)">0.0408 m²</strong>
+      </div>
+      <input type="hidden" id="mvtr-area" value="0.0408">
     </div>
 
-    <div class="step-block">
-      <div class="step-label" style="color:var(--purple)">4. Product & Compliance Limit</div>
-      <div class="grid grid-2" style="gap:.5rem">
-        <div class="form-group" style="margin:0" id="fg-crit">
+    <!-- STEP 4: PRODUCT & COMPLIANCE -->
+    <div style="padding:1rem;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--purple);font-weight:600;font-size:0.85rem">
+        ▼ 4. Product & Compliance
+      </div>
+      <div class="grid grid-2" style="gap:0.5rem">
+        <div class="form-group" style="margin:0" id="mvtr-fg-crit">
           <label>Critical Moisture Gain (mg/package)</label>
-          <div class="input-row"><input type="number" id="ph-crit" class="form-input" value="2.0" step=".1" min=".01"><span class="input-unit">mg</span></div>
+          <div class="input-row"><input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" class="form-input"><span class="input-unit">mg</span></div>
           <div class="hint">Max permissible moisture uptake before product failure.</div>
           <div class="err">Must be > 0</div>
         </div>
-        <div class="form-group" style="margin:0" id="fg-years">
+        <div class="form-group" style="margin:0" id="mvtr-fg-years">
           <label>Target Shelf Life (years)</label>
-          <div class="input-row"><input type="number" id="ph-years" class="form-input" value="2" step=".5" min=".5" max="10"><span class="input-unit">yr</span></div>
+          <div class="input-row"><input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" class="form-input"><span class="input-unit">yr</span></div>
           <div class="err">0.5–10 yr</div>
         </div>
       </div>
-      <div class="form-group" style="margin-top:.5rem;margin-bottom:0">
+      <div class="form-group" style="margin-top:0.5rem;margin-bottom:0">
         <label>Scenario Label</label>
-        <input type="text" id="sce-label" class="form-input" value="Base Scenario" placeholder="e.g. Formulation A">
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="MVTR.calculate()">Calculate ICH Compliance</button>
-        <button class="btn btn-outline btn-sm" onclick="MVTR.resetForm()">Reset</button>
+        <input type="text" id="mvtr-label" value="Base Scenario" placeholder="e.g. Formulation A" class="form-input">
       </div>
     </div>
 
-    <div class="step-block" style="border-bottom:none">
-      <div class="step-label green">5. Save & Export</div>
-      <div class="btn-group" style="margin-top:0">
+    <!-- STEP 5: REFERENCE CONDITIONS -->
+    <div style="padding:1rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
+        ▼ 5. Reference Test Conditions
+      </div>
+      <div class="grid grid-2" style="gap:0.5rem">
+        <div class="form-group" style="margin:0" id="mvtr-fg-tref">
+          <label>Reference Temperature (°C)</label>
+          <input type="number" id="mvtr-tref" value="38" step="0.5" class="form-input">
+          <div class="err">Valid range: −50 to 100°C</div>
+        </div>
+        <div class="form-group" style="margin:0" id="mvtr-fg-rhref">
+          <label>Reference RH (%)</label>
+          <input type="number" id="mvtr-rhref" value="90" step="1" min="0" max="100" class="form-input">
+          <div class="err">0–100%</div>
+        </div>
+      </div>
+      
+      <button class="btn btn-danger btn-full" onclick="MVTR.calculate()" style="margin-top:1rem;padding:0.8rem;font-size:0.9rem">
+        ▶ Calculate ICH Compliance
+      </button>
+      
+      <div class="btn-group" style="margin-top:0.6rem">
+        <button class="btn btn-outline btn-sm" onclick="MVTR.resetForm()">Reset</button>
         <button class="btn btn-success btn-sm" onclick="MVTR.saveScenario()">Save Scenario</button>
         <button class="btn btn-outline btn-sm" onclick="MVTR.exportCSV()">CSV</button>
-        <button class="btn btn-outline btn-sm" id="btn-pdf" onclick="MVTR.exportPDF()">PDF Report</button>
+        <button class="btn btn-outline btn-sm" id="mvtr-btn-pdf" onclick="MVTR.exportPDF()">PDF Report</button>
       </div>
     </div>
   </div>
 
-  <div class="sticky-col">
-    <div class="card" style="margin-bottom:.9rem">
+  <!-- === RESULTS AREA (right column - sticky) === -->
+  <div style="position:sticky;top:1rem;height:fit-content">
+    <div class="card" style="margin-bottom:0.9rem">
       <h2>KPI Dashboard</h2>
       <div class="kpi-grid">
-        <div class="kpi blue" id="kpi-zones">
+        <div class="kpi blue" id="mvtr-kpi-zones">
           <div class="kpi-label">Compliant ICH Zones</div>
-          <div class="kpi-val" id="kv-zones">—</div>
-          <div class="kpi-sub" id="ks-zones">Awaiting calculation</div>
+          <div class="kpi-val" id="mvtr-kv-zones">—</div>
+          <div class="kpi-sub" id="mvtr-ks-zones">Awaiting calculation</div>
         </div>
-        <div class="kpi warning" id="kpi-ingress">
+        <div class="kpi warning" id="mvtr-kpi-ingress">
           <div class="kpi-label">Max Annual Ingress</div>
-          <div class="kpi-val" id="kv-ingress">—</div>
-          <div class="kpi-sub" id="ks-ingress">Most critical zone</div>
+          <div class="kpi-val" id="mvtr-kv-ingress">—</div>
+          <div class="kpi-sub" id="mvtr-ks-ingress">Most critical zone</div>
         </div>
-        <div class="kpi gray" id="kpi-safety">
+        <div class="kpi gray" id="mvtr-kpi-safety">
           <div class="kpi-label">Min Safety Margin</div>
-          <div class="kpi-val" id="kv-safety">—</div>
+          <div class="kpi-val" id="mvtr-kv-safety">—</div>
           <div class="kpi-sub">vs critical limit</div>
         </div>
-        <div class="kpi gray" id="kpi-arr">
+        <div class="kpi gray" id="mvtr-kpi-arr">
           <div class="kpi-label">Avg Arrhenius Factor</div>
-          <div class="kpi-val" id="kv-arr">—</div>
+          <div class="kpi-val" id="mvtr-kv-arr">—</div>
           <div class="kpi-sub">Thermal acceleration</div>
         </div>
       </div>
-      <div style="margin-top:.85rem">
-        <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.25rem">
-          <span id="kpi-status" style="color:var(--text-light)">Waiting for calculation…</span>
-          <span id="kpi-pct" style="font-weight:700">—</span>
+      <div style="margin-top:0.85rem">
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem">
+          <span id="mvtr-kpi-status" style="color:var(--text-light)">Waiting for calculation…</span>
+          <span id="mvtr-kpi-pct" style="font-weight:700">—</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill blue" id="kpi-bar" style="width:0%"></div></div>
+        <div class="progress-bar"><div class="progress-fill blue" id="mvtr-kpi-bar" style="width:0%"></div></div>
       </div>
     </div>
     <div class="card">
       <h2>Quick Results</h2>
-      <div id="quick-results" style="font-size:.9rem;color:var(--text-light);text-align:center;padding:1rem 0">
+      <div id="mvtr-quick-results" style="font-size:0.9rem;color:var(--text-light);text-align:center;padding:1rem 0">
         Configure parameters and click <strong>Calculate ICH Compliance</strong>.
       </div>
     </div>
   </div>
 </div>
 
-<div id="detailed" style="display:none;margin-top:1.2rem">
+<div id="mvtr-detailed" style="display:none;margin-top:1.2rem">
   <div class="tabs">
     <button class="tab active" onclick="MVTR.switchTab('overview',event)">Overview</button>
     <button class="tab" onclick="MVTR.switchTab('tables',event)">Full Tables</button>
@@ -1344,69 +1444,69 @@ function renderMVTR() {
     <button class="tab" onclick="MVTR.switchTab('sensitivity',event)">Sensitivity</button>
   </div>
 
-  <div id="tab-overview" class="tab-pane active">
+  <div id="mvtr-tab-overview" class="tab-pane active">
     <div class="grid grid-2">
-      <div class="card"><h2>Annual Ingress by Zone</h2><div class="chart-wrap"><canvas id="ch-overview"></canvas></div></div>
+      <div class="card"><h2>Annual Ingress by Zone</h2><div class="chart-wrap"><canvas id="mvtr-ch-overview"></canvas></div></div>
       <div class="card">
         <h2>Correction Factors</h2>
-        <div class="chart-wrap sm"><canvas id="ch-factors"></canvas></div>
-        <div id="factors-sum" style="margin-top:.6rem;font-size:.85rem;color:var(--text-light)"></div>
+        <div class="chart-wrap sm"><canvas id="mvtr-ch-factors"></canvas></div>
+        <div id="mvtr-factors-sum" style="margin-top:0.6rem;font-size:0.85rem;color:var(--text-light)"></div>
       </div>
     </div>
     <div class="card"><h2>Summary by ICH Zone</h2>
-      <div class="tbl-wrap"><table class="data-table" id="tbl-summary">
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-summary">
         <thead><tr><th>Zone</th><th>Conditions</th><th>Eff. WVTR</th><th>Annual Ingress</th><th>Total (SL)</th><th>% Limit</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
   </div>
 
-  <div id="tab-tables" class="tab-pane">
+  <div id="mvtr-tab-tables" class="tab-pane">
     <div class="card"><h2>Complete Calculation Table</h2>
-      <div class="tbl-wrap"><table class="data-table" id="tbl-detailed">
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-detailed">
         <thead><tr><th>Zone</th><th>T°C</th><th>RH%</th><th>WVTR ref</th><th>F_T</th><th>F_RH</th><th>WVTR eff</th><th>Area m²</th><th>Daily mg</th><th>Annual mg</th><th>Total mg</th><th>% Limit</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
-    <div class="card"><h2>Active Parameters</h2><div id="params-panel" style="font-size:.88rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
+    <div class="card"><h2>Active Parameters</h2><div id="mvtr-params-panel" style="font-size:0.88rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
   </div>
 
-  <div id="tab-charts" class="tab-pane">
+  <div id="mvtr-tab-charts" class="tab-pane">
     <div class="grid grid-2">
-      <div class="card"><h2>WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="ch-wvtr"></canvas></div></div>
-      <div class="card"><h2>Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="ch-trh"></canvas></div></div>
-      <div class="card"><h2>Years to Critical Limit</h2><div class="chart-wrap"><canvas id="ch-ttl"></canvas></div></div>
+      <div class="card"><h2>WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="mvtr-ch-wvtr"></canvas></div></div>
+      <div class="card"><h2>Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="mvtr-ch-trh"></canvas></div></div>
+      <div class="card"><h2>Years to Critical Limit</h2><div class="chart-wrap"><canvas id="mvtr-ch-ttl"></canvas></div></div>
     </div>
   </div>
 
-  <div id="tab-scenarios" class="tab-pane">
+  <div id="mvtr-tab-scenarios" class="tab-pane">
     <div class="grid grid-2">
-      <div class="card"><div id="sce-comp-list"></div></div>
-      <div class="card"><h2>Comparison Chart</h2><div class="chart-wrap"><canvas id="ch-sce"></canvas></div></div>
+      <div class="card"><div id="mvtr-sce-comp-list"></div></div>
+      <div class="card"><h2>Comparison Chart</h2><div class="chart-wrap"><canvas id="mvtr-ch-sce"></canvas></div></div>
     </div>
     <div class="card"><h2>Comparison Table</h2>
-      <div class="tbl-wrap"><table class="data-table" id="tbl-sce">
-        <thead><tr id="sce-hdr"><th>Parameter</th></tr></thead>
-        <tbody id="sce-body"></tbody>
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-sce">
+        <thead><tr id="mvtr-sce-hdr"><th>Parameter</th></tr></thead>
+        <tbody id="mvtr-sce-body"></tbody>
       </table></div>
     </div>
   </div>
 
-  <div id="tab-sensitivity" class="tab-pane">
+  <div id="mvtr-tab-sensitivity" class="tab-pane">
     <div class="grid grid-2">
       <div class="card"><h2>Sensitivity: Eₐ</h2>
-        <div class="grid grid-2" style="gap:.4rem;align-items:end">
-          <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="s-ea-min" class="form-input" value="20" step="5" oninput="MVTR.runSensEA()"></div>
-          <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="s-ea-max" class="form-input" value="65" step="5" oninput="MVTR.runSensEA()"></div>
+        <div class="grid grid-2" style="gap:0.4rem;align-items:end">
+          <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="mvtr-s-ea-min" value="20" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
+          <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="mvtr-s-ea-max" value="65" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
         </div>
-        <div class="chart-wrap"><canvas id="ch-sea"></canvas></div>
+        <div class="chart-wrap"><canvas id="mvtr-ch-sea"></canvas></div>
       </div>
       <div class="card"><h2>Sensitivity: WVTR</h2>
-        <div class="grid grid-2" style="gap:.4rem;align-items:end">
-          <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="s-wvtr-min" class="form-input" value="0.1" step=".1" oninput="MVTR.runSensWVTR()"></div>
-          <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="s-wvtr-max" class="form-input" value="3.0" step=".1" oninput="MVTR.runSensWVTR()"></div>
+        <div class="grid grid-2" style="gap:0.4rem;align-items:end">
+          <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-min" value="0.1" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
+          <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-max" value="3.0" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
         </div>
-        <div class="chart-wrap"><canvas id="ch-swvtr"></canvas></div>
+        <div class="chart-wrap"><canvas id="mvtr-ch-swvtr"></canvas></div>
       </div>
     </div>
   </div>
@@ -1491,6 +1591,7 @@ function renderMVTRMethodology() {
 </div>
 `;
 }
+
 window.renderPharmaMvtr = function() {
   var c = document.getElementById('app-content');
   if (c) c.innerHTML = renderMVTR();
