@@ -617,7 +617,7 @@ function renderPharmaUptake() {
               <input type="number" id="des-ea" value="${Ea_kJ}" step="1" min="0" class="form-input" placeholder="0 = no correction">
               <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
             </div>
-            <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0</div>
+            <div class="hint"></div>
           </div>
         </div>
 
@@ -640,7 +640,7 @@ function renderPharmaUptake() {
             </select>
             <!-- FIX #5: mostra T/RH del laminate selezionato -->
             <div id="des-db-conditions" style="margin-top:0.3rem;font-size:0.75rem;color:var(--text-light);font-style:italic"></div>
-            <div class="hint">Values at stated test conditions. Arrhenius correction applied automatically.</div>
+            <div class="hint"></div>
           </div>
         </div>
 
@@ -707,7 +707,7 @@ function renderPharmaUptake() {
             <div class="form-group" style="margin:0"><label>Storage T (°C)</label><input type="number" id="des-tstore" value="${T_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>External RH (%)</label><input type="number" id="des-rhstore" value="${RH_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Shelf life (yr)</label><input type="number" id="des-shelf" value="${shelf_years}" step="0.5" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint">Target RH inside container</div></div>
+            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint"></div></div>
           </div>
         </div>
       </div>
@@ -724,11 +724,11 @@ function renderPharmaUptake() {
           </div>
           <div class="grid grid-2" style="gap:0.5rem;margin-top:0.5rem">
             <div class="form-group" style="margin:0"><label>Permeable area (cm²)</label><input type="number" id="des-area" value="${area_cm2}" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Headspace volume (mL)</label><input type="number" id="des-headspace" value="${headspace_ml}" step="0.5" class="form-input"><div class="hint">Air volume at sealing</div></div>
+            <div class="form-group" style="margin:0"><label>Headspace volume (mL)</label><input type="number" id="des-headspace" value="${headspace_ml}" step="0.5" class="form-input"><div class="hint"></div></div>
             <div class="form-group" style="margin:0"><label>RH at fill/sealing (%)</label><input type="number" id="des-rhfill" value="${RH_fill}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product mass (g)</label><input type="number" id="des-drugmass" value="${drug_mass_g}" step="0.1" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product initial MC (%)</label><input type="number" id="des-mcinit" value="${mc_init}" step="0.01" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint">% of initial MC desorbed</div></div>
+            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint"></div></div>
           </div>
         </div>
       </div>
@@ -742,7 +742,7 @@ function renderPharmaUptake() {
           <div class="form-group" style="margin:0">
             <label>Safety factor (×)</label>
             <input type="number" id="des-safety" value="${safety_factor}" step="0.1" min="1" class="form-input">
-            <div class="hint">≥ 1 — typically 2× general, 3–4× for high-value products</div>
+            <div class="hint"></div>
           </div>
         </div>
         <button class="btn btn-danger btn-full" onclick="DES.calculate()" style="padding:0.8rem;font-size:0.9rem">
