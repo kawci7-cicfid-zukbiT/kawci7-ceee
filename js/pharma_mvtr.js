@@ -22,12 +22,12 @@ const ICH_ZONES = [
 ];
 
 const MVTR_SHAPE_CONFIGS = {
-  flat:     { w:12, h:17, d:0,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Depth / Diameter (cm)' },
-  standup:  { w:13, h:22, d:0,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Gusset / Depth (cm)' },
-  flow:     { w:20, h:12, d:0,   lw:'Fin Seal Length (cm)',   lh:'Web Width (cm)',  ld:'—' },
-  box:      { w:10, h:15, d:5,   lw:'Length (cm)',            lh:'Height (cm)',     ld:'Depth (cm)' },
-  cylinder: { w:0,  h:12, d:10,  lw:'—',                      lh:'Height (cm)',     ld:'Diameter (cm)' },
-  tray:     { w:15, h:10, d:3,   lw:'Length (cm)',            lh:'Width (cm)',      ld:'Depth (cm)' },
+  flat:     { w:8,  h:12, d:0,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Depth / Diameter (cm)' },
+  standup:  { w:12, h:18, d:4,   lw:'Width L (cm)',           lh:'Height H (cm)',   ld:'Gusset / Depth (cm)' },
+  flow:     { w:15, h:8,  d:0,   lw:'Fin Seal Length (cm)',   lh:'Web Width (cm)',  ld:'—' },
+  box:      { w:8,  h:12, d:4,   lw:'Length (cm)',            lh:'Height (cm)',     ld:'Depth (cm)' },
+  cylinder: { w:0,  h:10, d:7,   lw:'—',                      lh:'Height (cm)',     ld:'Diameter (cm)' },
+  tray:     { w:12, h:8,  d:3,   lw:'Length (cm)',            lh:'Width (cm)',      ld:'Depth (cm)' },
   bottle:   null,
   blister:  null
 };
@@ -1141,7 +1141,7 @@ const MVTR = {
       [
         { title:'For Research & Development Use Only', body:'This report and the underlying calculations are intended exclusively for internal R&D screening, packaging concept development, and educational purposes. Results must not be used as the sole basis for commercial shelf-life labeling, regulatory submissions, or product safety declarations.' },
         { title:'Laboratory Validation Required', body:'All predictive model outputs require independent validation through accredited laboratory testing. Relevant standards include: ASTM F1249 / ISO 15106-3 (Water Vapor Transmission), ICH Q1A(R2) (Stability Testing), and WHO TRS No. 863 (Climatic Zone Classification).' },
-        { title:'Model Assumptions & Known Limitations', body:'The model assumes: (1) steady-state gas permeation through defect-free films; (2) linear superposition of Arrhenius and RH correction factors; (3) uniform, constant storage conditions; (4) no seal degradation, pinholes, or mechanical damage; (5) negligible back-diffusion. Real-world performance may deviate significantly due to package geometry, seal integrity, humidity cycling, and supply chain variability.' },
+        { title:'Model Assumptions & Known Limitations', body:'The model assumes:  steady-state gas permeation through defect-free films; linear superposition of Arrhenius and RH correction factors; uniform, constant storage conditions; no seal degradation, pinholes, or mechanical damage; negligible back-diffusion. Real-world performance may deviate significantly due to package geometry, seal integrity, humidity cycling, and supply chain variability.' },
         { title:'Regulatory Compliance', body:'This tool does not constitute regulatory advice. Commercial shelf-life declarations must comply with applicable regulations including FDA 21 CFR, EU guidelines, ICH Q1A(R2), and any applicable sector-specific guidelines. Consult a qualified regulatory specialist before product launch.' }
       ].forEach(sec => {
         if (y > PH - 45) newPage();
@@ -1338,24 +1338,24 @@ function renderMVTR() {
         </label>
       </div>
       
-      <!-- Geometry selector -->
+            <!-- Geometry selector -->
       <div id="mvtr-geom-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Shape Type</label>
           <select id="mvtr-shape" onchange="MVTR.onShapeChange()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
-            <option value="flat">Flat Pouch</option>
-            <option value="standup">Stand-Up Pouch</option>
-            <option value="flow">Flow Pack</option>
-            <option value="box">Rectangular Box</option>
-            <option value="cylinder">Cylindrical Jar</option>
-            <option value="tray">Tray with Lid</option>
-            <option value="bottle">Bottle</option>
-            <option value="blister">Blister Pack</option>
+            <option value="flat">Flat Pouch (8×12 cm)</option>
+            <option value="standup">Stand-Up Pouch (12×18×4 cm)</option>
+            <option value="flow">Flow Pack (15×8 cm)</option>
+            <option value="box">Rectangular Box (8×12×4 cm)</option>
+            <option value="cylinder">Cylindrical Jar (Ø7×10 cm)</option>
+            <option value="tray">Tray with Lid (12×8×3 cm)</option>
+            <option value="bottle">Bottle (Ø6×10 cm)</option>
+            <option value="blister">Blister Pack (14 cavities)</option>
           </select>
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Welding Margin (cm)</label>
-          <input type="number" id="mvtr-margin" value="1.5" step="0.5" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-margin" value="1.0" step="0.5" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
@@ -1363,11 +1363,11 @@ function renderMVTR() {
       <div id="mvtr-dims-std" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.75rem">
         <div>
           <label id="mvtr-lbl-w" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Width L (cm)</label>
-          <input type="number" id="mvtr-w" value="12" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-w" value="8" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label id="mvtr-lbl-h" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Height H (cm)</label>
-          <input type="number" id="mvtr-h" value="17" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-h" value="12" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label id="mvtr-lbl-d" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Depth / Diameter (cm)</label>
@@ -1379,23 +1379,23 @@ function renderMVTR() {
       <div id="mvtr-dims-bottle" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Body Radius (cm)</label>
-          <input type="number" id="mvtr-bt-br" value="3.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bt-br" value="3" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Body Height (cm)</label>
-          <input type="number" id="mvtr-bt-bh" value="16" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bt-bh" value="10" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Neck Radius (cm)</label>
-          <input type="number" id="mvtr-bt-nr" value="1.2" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bt-nr" value="1" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Neck Height (cm)</label>
-          <input type="number" id="mvtr-bt-nh" value="4" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bt-nh" value="2" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div style="grid-column:1/-1">
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Shoulder Height (cm)</label>
-          <input type="number" id="mvtr-bt-sh" value="2.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bt-sh" value="1.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
@@ -1403,11 +1403,11 @@ function renderMVTR() {
       <div id="mvtr-dims-blister" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Cavities per strip</label>
-          <input type="number" id="mvtr-bl-count" value="10" step="1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bl-count" value="14" step="1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Cavity Area (cm²)</label>
-          <input type="number" id="mvtr-bl-area" value="1.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-bl-area" value="1.2" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
@@ -1415,7 +1415,7 @@ function renderMVTR() {
       <div id="mvtr-manual-area" style="display:none">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Total Surface Area (m²)</label>
-          <input type="number" id="mvtr-area-man" value="0.0408" step="0.001" oninput="MVTR.updateManualArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+          <input type="number" id="mvtr-area-man" value="0.0200" step="0.0001" oninput="MVTR.updateManualArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
