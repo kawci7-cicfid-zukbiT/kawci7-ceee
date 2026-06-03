@@ -342,7 +342,7 @@ const DES = {
             const ea   = l.Ea ?? l.ea ?? l.activationEnergy ?? 35;
             return `<option value="${wvtr}|${t}|${rh}|${ea}">${l.name || 'Unnamed'} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
           }).join('');
-        if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded from community database.`;
+        if (hint) hint.textContent = ``;
         return;
       }
     }
@@ -700,7 +700,7 @@ function renderPharmaUptake() {
                 placeholder="Pre-filled on selection">
               <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
             </div>
-            <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0 · auto-filled on selection</div>
+            <div class="hint"></div>
           </div>
         </div>
 
