@@ -44,7 +44,9 @@ const MVTR = {
   _scenarios: [],
   _charts: {},
   _companyLinked: false,
-  _selectedDBRate: null, // 🔥 FIX: Salva il rate selezionato dal DB
+  _selectedDBRate: null,
+  _tRef: 38,     // 🔥 Reference temperature (internal)
+  _rhRef: 90,    // 🔥 Reference RH (internal)
 
   // ------------------------------------------------------------------
   // 🔧 INIT
@@ -75,13 +77,16 @@ const MVTR = {
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
       if (saved) {
-        if (saved.Tref)        document.getElementById('mvtr-tref').value  = saved.Tref;
-        if (saved.RHref)       document.getElementById('mvtr-rhref').value = saved.RHref;
+        if (saved.Tref)        this._tRef = saved.Tref;
+        if (saved.RHref)       this._rhRef = saved.RHref;
         if (saved.Ea != null)  document.getElementById('mvtr-ea').value    = saved.Ea;
         if (saved.Mcrit)       document.getElementById('mvtr-crit').value  = saved.Mcrit;
         if (saved.shelf_years) document.getElementById('mvtr-years').value = saved.shelf_years;
       }
     } catch(e){}
+
+    // Aggiorna UI condizioni iniziali
+    this._updateConditionsDisplay();
 
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
@@ -137,7 +142,13 @@ const MVTR = {
         if (structEl) structEl.textContent = structureStr || saved.structure || '';
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
         this._updateRateSummary(saved.total.toFixed(5));
-        console.log('✅ MVTR loaded Calculator result:', saved.total);
+        
+        // 🔥 Aggiorna automaticamente T_ref e RH_ref dal Calculator
+        if (saved.tRef)  this._tRef  = saved.tRef;
+        if (saved.rhRef) this._rhRef = saved.rhRef;
+        this._updateConditionsDisplay();
+        
+        console.log('✅ MVTR loaded Calculator result:', saved.total, '@', this._tRef + '°C/' + this._rhRef + '%RH');
       } else {
         const n = document.getElementById('mvtr-lam-name');
         const s = document.getElementById('mvtr-lam-struct');
@@ -158,6 +169,19 @@ const MVTR = {
     if (el) el.textContent = rateStr + ' g/m²/day';
   },
 
+  // 🔥 Aggiorna il display delle condizioni di test nell'UI
+  _updateConditionsDisplay() {
+    const condEl = document.getElementById('mvtr-calc-conditions');
+    if (condEl) {
+      condEl.textContent = `Test conditions: ${this._tRef}°C / ${this._rhRef}% RH`;
+    }
+    // Aggiorna anche i campi nel pannello manuale
+    const tempEl = document.getElementById('mvtr-rate-temp');
+    const humEl  = document.getElementById('mvtr-rate-hum');
+    if (tempEl) tempEl.value = this._tRef;
+    if (humEl)  humEl.value  = this._rhRef;
+  },
+
   // ------------------------------------------------------------------
   // 🔀 SOURCE SELECTION
   // ------------------------------------------------------------------
@@ -168,7 +192,7 @@ const MVTR = {
       return;
     }
     this._activeSource = s;
-    this._selectedDBRate = null; // 🔥 Reset quando cambi sorgente
+    this._selectedDBRate = null;
     
     ['calc','db','co'].forEach(key => {
       const btn = document.getElementById('mvtr-src-btn-' + key);
@@ -230,11 +254,8 @@ const MVTR = {
     }
     
     console.log('🔍 Loading community laminates...');
-    console.log('🔍 DB object:', typeof DB !== 'undefined' ? DB : 'undefined');
     
     if (typeof DB !== 'undefined' && DB.laminates && DB.laminates.length > 0) {
-      console.log(`📚 Found ${DB.laminates.length} total laminates in DB`);
-      
       const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode === 'wvtr');
       console.log(`📚 Found ${wvtrLaminates.length} WVTR laminates`);
       
@@ -245,15 +266,6 @@ const MVTR = {
         return;
       }
       
-      wvtrLaminates.forEach((l, i) => {
-        console.log(`  [${i}] ${l.name || 'Unnamed'}:`, {
-          total: l.total,
-          temperature: l.temperature,
-          humidity: l.humidity,
-          mode: l.mode
-        });
-      });
-      
       sel.innerHTML = '<option value="">— Select a laminate —</option>' +
         wvtrLaminates.map(l => {
           const wvtr = l.total ? l.total.toFixed(5) : '0.00000';
@@ -261,7 +273,6 @@ const MVTR = {
           const t = l.temperature || 38;
           const rh = l.humidity || 90;
           const value = `${wvtr}|${t}|${rh}`;
-          console.log(`  → Option value: "${value}"`);
           return `<option value="${value}">${name} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
         }).join('');
       
@@ -279,47 +290,39 @@ const MVTR = {
 
   onDBPick(val) {
     if (!val) {
-      console.log('⚠️ Community DB: no value selected');
       this._selectedDBRate = null;
       this.updateBanner();
       return;
     }
     
     const parts = val.split('|');
-    if (parts.length < 3) {
-      console.error('❌ Community DB: invalid format', val);
-      return;
-    }
+    if (parts.length < 3) return;
     
-    const w = parseFloat(parts[0]);
-    const t = parseFloat(parts[1]);
+    const w  = parseFloat(parts[0]);
+    const t  = parseFloat(parts[1]);
     const rh = parseFloat(parts[2]);
     
     console.log('📊 Community DB selected:', { wvtr: w, temp: t, rh: rh });
     
-    // 🔥 FIX: Salva il rate selezionato
+    // 🔥 Salva rate e condizioni
     this._selectedDBRate = w;
+    this._tRef  = t;
+    this._rhRef = rh;
+    this._updateConditionsDisplay();
     
-    // Aggiorna le reference conditions
-    const trefEl = document.getElementById('mvtr-tref');
-    const rhrefEl = document.getElementById('mvtr-rhref');
-    if (trefEl) trefEl.value = t;
-    if (rhrefEl) rhrefEl.value = rh;
-    
-    // Aggiorna il banner
     this._updateRateSummary(w.toFixed(5));
-    
-    const bannerEl = document.getElementById('mvtr-active-rate');
-    if (bannerEl) {
-      bannerEl.textContent = w.toFixed(5) + ' g/m²/day';
-      bannerEl.style.color = 'var(--primary)';
-    }
-    
-    console.log('✅ Active WVTR updated to:', w.toFixed(5), 'g/m²/day');
+    console.log('✅ Active WVTR updated to:', w.toFixed(5), 'g/m²/day @', t + '°C/' + rh + '%RH');
   },
 
   onManualChange() { 
     const rate = parseFloat(document.getElementById('mvtr-rate-manual')?.value) || 0;
+    // 🔥 Aggiorna anche T e RH dal pannello manuale
+    const t  = parseFloat(document.getElementById('mvtr-rate-temp')?.value);
+    const rh = parseFloat(document.getElementById('mvtr-rate-hum')?.value);
+    if (!isNaN(t))  this._tRef  = t;
+    if (!isNaN(rh)) this._rhRef = rh;
+    this._updateConditionsDisplay();
+    
     this._updateRateSummary(rate > 0 ? rate.toFixed(5) : '-');
     this.updateBanner(); 
   },
@@ -330,17 +333,13 @@ const MVTR = {
       return isNaN(v) ? null : v;
     }
     if (this._activeSource === 'db') {
-      // 🔥 FIX: Usa il rate salvato quando selezionato dal DB
       if (this._selectedDBRate !== null && this._selectedDBRate > 0) {
-        console.log('🔍 getActiveRate from DB (saved):', this._selectedDBRate);
         return this._selectedDBRate;
       }
-      // Fallback: leggi dal select
       const sel = document.getElementById('mvtr-db-pick');
       const v = sel?.value;
       if (!v) return null;
       const wvtr = parseFloat(v.split('|')[0]);
-      console.log('🔍 getActiveRate from DB (select):', wvtr);
       return isNaN(wvtr) ? null : wvtr;
     }
     if (this._activeSource === 'calc') {
@@ -487,9 +486,8 @@ const MVTR = {
   // ------------------------------------------------------------------
 
   validate() {
+    // 🔥 RIMOSSI controlli per mvtr-tref e mvtr-rhref (non più nel form)
     const checks = [
-      { id:'mvtr-tref',  fg:'mvtr-fg-tref',  min:-50, max:100 },
-      { id:'mvtr-rhref', fg:'mvtr-fg-rhref', min:0,   max:100 },
       { id:'mvtr-ea',    fg:'mvtr-fg-ea',    min:0,   max:150 },
       { id:'mvtr-crit',  fg:'mvtr-fg-crit',  min:0.001 },
       { id:'mvtr-years', fg:'mvtr-fg-years', min:0.5, max:10 }
@@ -516,8 +514,8 @@ const MVTR = {
     if (!this.validate()) return;
     const params = {
       wRef:        rate,
-      Tref:        parseFloat(document.getElementById('mvtr-tref').value),
-      RHref:       parseFloat(document.getElementById('mvtr-rhref').value),
+      Tref:        this._tRef,   // 🔥 Usa valore interno
+      RHref:       this._rhRef,  // 🔥 Usa valore interno
       Ea:          parseFloat(document.getElementById('mvtr-ea').value) || 0,
       area:        parseFloat(document.getElementById('mvtr-area').value),
       Mcrit:       parseFloat(document.getElementById('mvtr-crit').value),
@@ -835,8 +833,9 @@ const MVTR = {
   loadScenario(id) {
     const s = this._scenarios.find(x => x.id === id);
     if (!s) return;
-    document.getElementById('mvtr-tref').value  = s.params.Tref;
-    document.getElementById('mvtr-rhref').value = s.params.RHref;
+    // 🔥 Imposta valori interni invece del form
+    this._tRef  = s.params.Tref;
+    this._rhRef = s.params.RHref;
     document.getElementById('mvtr-ea').value    = s.params.Ea;
     document.getElementById('mvtr-crit').value  = s.params.Mcrit;
     document.getElementById('mvtr-years').value = s.params.shelf_years;
@@ -844,6 +843,7 @@ const MVTR = {
     document.getElementById('mvtr-manual-toggle').checked = true;
     this.toggleManual(true);
     document.getElementById('mvtr-rate-manual').value = s.params.wRef;
+    this._updateConditionsDisplay();
     this.updateBanner();
     this.calculate();
   },
@@ -994,8 +994,8 @@ const MVTR = {
 
   resetForm() {
     if (!confirm('Reset to defaults?')) return;
-    document.getElementById('mvtr-tref').value  = 38;
-    document.getElementById('mvtr-rhref').value = 90;
+    this._tRef  = 38;
+    this._rhRef = 90;
     document.getElementById('mvtr-ea').value    = 35;
     document.getElementById('mvtr-crit').value  = 2.0;
     document.getElementById('mvtr-years').value = 2;
@@ -1003,6 +1003,7 @@ const MVTR = {
     document.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('invalid'));
     document.getElementById('mvtr-manual-toggle').checked = false;
     this.toggleManual(false);
+    this._updateConditionsDisplay();
     this.updateBanner();
   },
 
@@ -1322,13 +1323,18 @@ function renderMVTR() {
           style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
+            <!-- Panel: From Calculator -->
       <div id="mvtr-panel-calc">
         <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
           <div style="font-weight:700;margin-bottom:0.15rem" id="mvtr-lam-name">No laminate loaded</div>
-          <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em" id="mvtr-lam-struct">Run a calculation in the Calculator tab first, then return here.</div>
+          <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em" id="mvtr-lam-struct">Run a calculation in the Calculator tab first.</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span>Calculated WVTR:</span>
             <strong style="color:var(--primary)" id="mvtr-lam-rate">—</strong>
+          </div>
+          <!-- NUOVO: Mostra condizioni di test -->
+          <div id="mvtr-calc-conditions" style="margin-top:0.4rem;font-size:0.75rem;color:var(--text-light);font-style:italic">
+            Test conditions: —
           </div>
         </div>
       </div>
@@ -1525,22 +1531,6 @@ function renderMVTR() {
       </div>
     </div>
 
-    <div style="padding:1rem">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
-        ▼ 5. Reference Test Conditions
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-        <div class="form-group" style="margin:0" id="mvtr-fg-tref">
-          <label>Reference Temperature (°C)</label>
-          <input type="number" id="mvtr-tref" value="38" step="0.5" class="form-input">
-          <div class="err">Valid range: −50 to 100°C</div>
-        </div>
-        <div class="form-group" style="margin:0" id="mvtr-fg-rhref">
-          <label>Reference RH (%)</label>
-          <input type="number" id="mvtr-rhref" value="90" step="1" min="0" max="100" class="form-input">
-          <div class="err">0–100%</div>
-        </div>
-      </div>
       
       <button class="btn btn-danger btn-full" onclick="MVTR.calculate()" style="margin-top:1rem;padding:0.8rem;font-size:0.9rem">
         ▶ Calculate ICH Compliance
@@ -1678,7 +1668,7 @@ function renderMVTR() {
   <h3>⚠ Regulatory Disclaimer & Model Limitations</h3>
   <div class="disc-item"><strong>For R&D screening and concept development only.</strong> This tool assists packaging engineers during early material selection. It produces predictive estimates from mathematical models and does not replace regulatory stability testing.</div>
   <div class="disc-item"><strong>Real-time and accelerated stability studies are mandatory.</strong> Commercial shelf-life claims submitted to FDA, EMA, PMDA, ANVISA, or any national authority must be supported by experimental data from accredited stability chambers, in full compliance with ICH Q1A(R2) and applicable local regulations.</div>
-  <div class="disc-item"><strong>Model assumptions:</strong> (1) Steady-state permeation through a defect-free uniform film. (2) Linear superposition of Arrhenius and RH correction factors. (3) No seal permeation, pinholes, or mechanical damage. (4) Constant storage conditions throughout shelf life. (5) Negligible back-diffusion as internal moisture approaches external humidity. Real systems may deviate significantly from these idealised conditions.</div>
+  <div class="disc-item"><strong>Model assumptions:</strong>  Steady-state permeation through a defect-free uniform film. Linear superposition of Arrhenius and RH correction factors. No seal permeation, pinholes, or mechanical damage. Constant storage conditions throughout shelf life. Negligible back-diffusion as internal moisture approaches external humidity. Real systems may deviate significantly from these idealised conditions.</div>
   <div class="disc-item"><strong>Source data quality determines output reliability.</strong> When using the Calculator source, accuracy depends on the material database entries. When entering values manually, the user is solely responsible for ensuring the measurement was performed under the stated reference conditions per ASTM F1249 or ISO 15106.</div>
 </div>
 
