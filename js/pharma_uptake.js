@@ -205,6 +205,10 @@ const DES = {
       if (pan) pan.style.display = key === src ? 'block' : 'none';
     });
 
+    if (src === 'db') {
+      this.loadCommunityLaminates();
+    }
+
     if (src === 'calc') {
       // FIX #2: localStorage FIRST, State as fallback
       let rate = 0;
@@ -283,7 +287,11 @@ const DES = {
       const v = document.getElementById('des-db-pick')?.value;
       if (v) {
         const parts = v.split('|');
-        return { T_ref: parseFloat(parts[1]) || 38, RH_ref: parseFloat(parts[2]) || 90, Ea_kJ: parseFloat(parts[3]) || 35 };
+        // Legge Eₐ dal campo editabile des-db-ea (utente può modificarlo)
+        // con fallback al valore nell'option (parts[3])
+        const eaFromField = parseFloat(document.getElementById('des-db-ea')?.value);
+        const Ea_kJ = !isNaN(eaFromField) ? eaFromField : (parseFloat(parts[3]) || 35);
+        return { T_ref: parseFloat(parts[1]) || 38, RH_ref: parseFloat(parts[2]) || 90, Ea_kJ };
       }
     }
 
@@ -301,16 +309,68 @@ const DES = {
     this._updateBanner(rate > 0 ? rate.toFixed(5) : '-');
   },
 
-  // FIX #5: mostra condizioni T/RH nel pannello DB
+  // Carica i laminati dalla community DB (DB.laminates) con fallback hardcoded
+  loadCommunityLaminates() {
+    const sel = document.getElementById('des-db-pick');
+    if (!sel) return;
+
+    // Laminati hardcoded come fallback se DB.laminates non disponibile
+    const HARDCODED = [
+      { group: 'Pharmaceutical Grade', items: [
+        { label: 'PET 12µm / Al 9µm / LDPE 60µm — 0.002 g/m²/day', value: '0.002|38|90|35' },
+        { label: 'OPA 15µm / Al 12µm / LLDPE 80µm — 0.010 g/m²/day', value: '0.01|38|90|35' },
+        { label: 'PET 12µm / EVOH 12µm / PP 50µm — 0.050 g/m²/day', value: '0.05|38|90|50' },
+        { label: 'PVDC / OPA / Al / LDPE Alu-Alu — 0.001 g/m²/day', value: '0.001|38|90|30' },
+      ]},
+      { group: 'HDPE Bottle Wall', items: [
+        { label: 'HDPE 30 mil bottle — 0.300 g/m²/day', value: '0.3|23|50|38' },
+        { label: 'HDPE 20 mil bottle — 0.800 g/m²/day', value: '0.8|23|50|38' },
+      ]},
+    ];
+
+    const hint = document.getElementById('des-db-hint');
+
+    if (typeof DB !== 'undefined' && DB.laminates && DB.laminates.length > 0) {
+      // Filtra per mode wvtr (case-insensitive)
+      const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode.toLowerCase() === 'wvtr');
+      if (wvtrLaminates.length > 0) {
+        sel.innerHTML = '<option value="">— Select a laminate —</option>' +
+          wvtrLaminates.map(l => {
+            const wvtr = l.total ? l.total.toFixed(5) : '0.00000';
+            const t    = l.temperature ?? l.tRef ?? l.testTemp ?? 38;
+            const rh   = l.humidity    ?? l.rhRef ?? l.testRH  ?? 90;
+            const ea   = l.Ea ?? l.ea ?? l.activationEnergy ?? 35;
+            return `<option value="${wvtr}|${t}|${rh}|${ea}">${l.name || 'Unnamed'} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
+          }).join('');
+        if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded from community database.`;
+        return;
+      }
+    }
+
+    // Fallback: opzioni hardcoded
+    sel.innerHTML = '<option value="">— Select a validated laminate —</option>' +
+      HARDCODED.map(g =>
+        `<optgroup label="${g.group}">${g.items.map(i => `<option value="${i.value}">${i.label}</option>`).join('')}</optgroup>`
+      ).join('');
+    if (hint) hint.textContent = 'Showing reference laminates. Add laminates in Calculator to see your data here.';
+  },
+
+  // FIX #5: mostra condizioni T/RH nel pannello DB + pre-popola Eₐ
   onDBPick(val) {
     if (!val) return;
     const parts = val.split('|');
-    // Mostra le condizioni di test nel pannello DB (FIX #5)
+    const t  = parts[1] || '38';
+    const rh = parts[2] || '90';
+    const ea = parts[3] || '35';
+
+    // Mostra le condizioni di test
     const dbCond = document.getElementById('des-db-conditions');
-    if (dbCond) {
-      const t = parts[1] || '38', rh = parts[2] || '90';
-      dbCond.textContent = `Test conditions: ${t}°C / ${rh}% RH`;
-    }
+    if (dbCond) dbCond.textContent = `Test conditions: ${t}°C / ${rh}% RH`;
+
+    // Pre-popola il campo Eₐ editabile del pannello DB
+    const eaEl = document.getElementById('des-db-ea');
+    if (eaEl) eaEl.value = ea;
+
     this._updateBanner(parts[0]);
     DES.calculate();
   },
@@ -617,30 +677,30 @@ function renderPharmaUptake() {
               <input type="number" id="des-ea" value="${Ea_kJ}" step="1" min="0" class="form-input" placeholder="0 = no correction">
               <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
             </div>
-            <div class="hint"></div>
+            <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0</div>
           </div>
         </div>
 
         <!-- Panel: Community DB -->
         <div id="des-panel-db" style="display:none">
-          <div class="form-group" style="margin:0">
+          <div class="form-group" style="margin:0 0 0.5rem">
             <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
             <select class="form-input" id="des-db-pick" onchange="DES.onDBPick(this.value)" style="font-size:0.78rem">
-              <option value="">— Select a validated laminate —</option>
-              <optgroup label="Pharmaceutical Grade">
-                <option value="0.002|38|90|35">PET 12µm / Al 9µm / LDPE 60µm — 0.002 g/m²/day</option>
-                <option value="0.01|38|90|35">OPA 15µm / Al 12µm / LLDPE 80µm — 0.010 g/m²/day</option>
-                <option value="0.05|38|90|50">PET 12µm / EVOH 12µm / PP 50µm — 0.050 g/m²/day</option>
-                <option value="0.001|38|90|30">PVDC / OPA / Al / LDPE Alu-Alu — 0.001 g/m²/day</option>
-              </optgroup>
-              <optgroup label="HDPE Bottle Wall">
-                <option value="0.3|23|50|38">HDPE 30 mil bottle — 0.300 g/m²/day</option>
-                <option value="0.8|23|50|38">HDPE 20 mil bottle — 0.800 g/m²/day</option>
-              </optgroup>
+              <option value="">— Loading laminates… —</option>
             </select>
-            <!-- FIX #5: mostra T/RH del laminate selezionato -->
+            <!-- Feedback condizioni di test del laminate selezionato -->
             <div id="des-db-conditions" style="margin-top:0.3rem;font-size:0.75rem;color:var(--text-light);font-style:italic"></div>
-            <div class="hint"></div>
+            <div class="hint" id="des-db-hint" style="margin-top:0.25rem"></div>
+          </div>
+          <!-- Campo Eᴀ editabile: pre-popolato dall'opzione selezionata, modificabile dall'utente -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:0.72rem">Activation energy E<sub>a</sub> (kJ/mol) — editable override</label>
+            <div style="display:flex;align-items:center;gap:0.4rem">
+              <input type="number" id="des-db-ea" value="35" step="1" min="0" class="form-input"
+                placeholder="Pre-filled on selection">
+              <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
+            </div>
+            <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0 · auto-filled on selection</div>
           </div>
         </div>
 
@@ -707,7 +767,7 @@ function renderPharmaUptake() {
             <div class="form-group" style="margin:0"><label>Storage T (°C)</label><input type="number" id="des-tstore" value="${T_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>External RH (%)</label><input type="number" id="des-rhstore" value="${RH_store}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Shelf life (yr)</label><input type="number" id="des-shelf" value="${shelf_years}" step="0.5" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>Max internal RH (%)</label><input type="number" id="des-rhcrit" value="${RH_crit}" class="form-input"><div class="hint">Target RH inside container</div></div>
           </div>
         </div>
       </div>
@@ -724,11 +784,11 @@ function renderPharmaUptake() {
           </div>
           <div class="grid grid-2" style="gap:0.5rem;margin-top:0.5rem">
             <div class="form-group" style="margin:0"><label>Permeable area (cm²)</label><input type="number" id="des-area" value="${area_cm2}" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Headspace volume (mL)</label><input type="number" id="des-headspace" value="${headspace_ml}" step="0.5" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>Headspace volume (mL)</label><input type="number" id="des-headspace" value="${headspace_ml}" step="0.5" class="form-input"><div class="hint">Air volume at sealing</div></div>
             <div class="form-group" style="margin:0"><label>RH at fill/sealing (%)</label><input type="number" id="des-rhfill" value="${RH_fill}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product mass (g)</label><input type="number" id="des-drugmass" value="${drug_mass_g}" step="0.1" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Product initial MC (%)</label><input type="number" id="des-mcinit" value="${mc_init}" step="0.01" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint"></div></div>
+            <div class="form-group" style="margin:0"><label>MC release fraction (%)</label><input type="number" id="des-mcrelease" value="${mc_release_frac}" class="form-input"><div class="hint">% of initial MC desorbed</div></div>
           </div>
         </div>
       </div>
@@ -742,7 +802,7 @@ function renderPharmaUptake() {
           <div class="form-group" style="margin:0">
             <label>Safety factor (×)</label>
             <input type="number" id="des-safety" value="${safety_factor}" step="0.1" min="1" class="form-input">
-            <div class="hint"></div>
+            <div class="hint">≥ 1 — typically 2× general, 3–4× for high-value products</div>
           </div>
         </div>
         <button class="btn btn-danger btn-full" onclick="DES.calculate()" style="padding:0.8rem;font-size:0.9rem">
