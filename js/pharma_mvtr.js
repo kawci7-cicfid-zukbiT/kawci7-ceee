@@ -156,7 +156,7 @@ const MVTR = {
     this.updateBanner();
   },
 
-  // ------------------------------------------------------------------
+   // ------------------------------------------------------------------
   // 🔀 SOURCE SELECTION
   // ------------------------------------------------------------------
 
@@ -185,6 +185,7 @@ const MVTR = {
     });
     
     if (s === 'calc') this.refreshCalcPanel();
+    else if (s === 'db') this.loadCommunityLaminates();
     else this.updateBanner();
   },
 
@@ -214,7 +215,7 @@ const MVTR = {
     else this.setSource(this._activeSource);
   },
 
-    onDBPick(val) {
+  onDBPick(val) {
     if (!val) return;
     const [w, t, rh] = val.split('|').map(Number);
     document.getElementById('mvtr-tref').value  = t;
@@ -229,34 +230,46 @@ const MVTR = {
     this.updateBanner(); 
   },
 
-  getActiveRate() {
-    if (this._manualOverride) {
-      const v = parseFloat(document.getElementById('mvtr-rate-manual')?.value);
-      return isNaN(v) ? null : v;
-    }
-    if (this._activeSource === 'db') {
-      const v = document.getElementById('mvtr-db-pick')?.value;
-      return v ? parseFloat(v.split('|')[0]) : null;
-    }
-    if (this._activeSource === 'calc') {
-      // 🔥 FIX: Prima prova State.calcResult (come shelf life)
-      if (typeof State !== 'undefined' && State.calcResult?.total > 0) {
-        return State.calcResult.total;
+  // ------------------------------------------------------------------
+  // 🗄️ COMMUNITY DB LOADER
+  // ------------------------------------------------------------------
+  
+  loadCommunityLaminates() {
+    const sel = document.getElementById('mvtr-db-pick');
+    if (!sel) return;
+    
+    // Controlla se esiste un database globale (come in shelf life)
+    if (typeof DB !== 'undefined' && DB.laminates && DB.laminates.length > 0) {
+      // Filtra solo i laminati WVTR
+      const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode === 'wvtr');
+      
+      if (wvtrLaminates.length === 0) {
+        sel.innerHTML = '<option value="">No WVTR laminates in community DB</option>';
+        const hint = document.getElementById('mvtr-db-hint');
+        if (hint) hint.textContent = 'No WVTR laminates found.';
+        return;
       }
-      // Fallback su localStorage
-      try {
-        const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
-        if (saved && saved.total > 0) return saved.total;
-      } catch(e){}
-      return null;
+      
+      sel.innerHTML = '<option value="">— Select a laminate —</option>' +
+        wvtrLaminates.map(l => {
+          const wvtr = l.total ? l.total.toFixed(5) : '?';
+          const name = l.name || 'Unnamed';
+          const t = l.temperature || 38;
+          const rh = l.humidity || 90;
+          return `<option value="${wvtr}|${t}|${rh}">${name} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
+        }).join('');
+      
+      console.log(`✅ Loaded ${wvtrLaminates.length} WVTR laminates from community DB`);
+      const hint = document.getElementById('mvtr-db-hint');
+      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded from community database.`;
+      
+    } else {
+      // Fallback: nessun database disponibile
+      sel.innerHTML = '<option value="">No community database available</option>';
+      const hint = document.getElementById('mvtr-db-hint');
+      if (hint) hint.textContent = 'Create laminates in the Calculator tab first.';
+      console.warn('⚠️ No DB.laminates available for Community DB');
     }
-    return null;
-  },
-
-  updateBanner() {
-    const r = this.getActiveRate();
-    const el = document.getElementById('mvtr-active-rate');
-    if (el) el.textContent = r != null ? r.toFixed(5) + ' g/m²/day' : '— g/m²/day';
   },
 
   // ------------------------------------------------------------------
@@ -1239,25 +1252,14 @@ function renderMVTR() {
       </div>
 
       <!-- Panel: Community DB -->
+           <!-- Panel: Community DB -->
       <div id="mvtr-panel-db" style="display:none">
         <div class="form-group" style="margin:0">
           <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
           <select class="form-input" id="mvtr-db-pick" onchange="MVTR.onDBPick(this.value)" style="font-size:0.78rem">
-            <option value="">— Select a validated laminate —</option>
-            <optgroup label="Pharmaceutical Grade">
-              <option value="0.002|38|90">PET 12µm / Al 9µm / LDPE 60µm — 0.002 g/m²·day</option>
-              <option value="0.01|38|90">OPA 15µm / Al 12µm / LLDPE 80µm — 0.010 g/m²·day</option>
-              <option value="0.05|38|90">PET 12µm / EVOH 12µm / PP 50µm — 0.050 g/m²·day</option>
-              <option value="0.001|38|90">PVDC 40µm / OPA 15µm / Al 9µm / LDPE 50µm — 0.001 g/m²·day</option>
-            </optgroup>
-            <optgroup label="Food Grade">
-              <option value="0.5|38|90">OPP 20µm / LDPE 40µm — 0.500 g/m²·day</option>
-              <option value="1.0|38|90">PET 12µm / LDPE 60µm — 1.000 g/m²·day</option>
-              <option value="2.5|38|90">OPP 20µm / Met.OPP 20µm — 2.500 g/m²·day</option>
-              <option value="0.2|38|90">PET 12µm / EVOH 6µm / LLDPE 70µm — 0.200 g/m²·day</option>
-            </optgroup>
+            <option value="">— Loading laminates... —</option>
           </select>
-          <div class="hint"></div>
+          <div class="hint" id="mvtr-db-hint">Laminates loaded from your community database.</div>
         </div>
       </div>
 
@@ -1689,7 +1691,7 @@ function renderMVTRMethodology() {
 </div>
 `;
 }
-
+ 
 window.renderPharmaMvtr = function() {
   var c = document.getElementById('app-content');
   if (c) c.innerHTML = renderMVTR();
