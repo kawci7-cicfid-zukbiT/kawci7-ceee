@@ -45,6 +45,9 @@
 
       // ── Biomedical Analysis — COMING SOON ────────────────────────
       case 'pharma-uptake':
+  if (typeof window.renderPharmaUptake === 'function')
+    window.renderPharmaUptake();
+  break;
       // ── Regulatory — COMING SOON ─────────────────────────────────
       case 'ppwr-label':
         var c = document.getElementById('app-content');
