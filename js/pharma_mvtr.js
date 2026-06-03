@@ -73,6 +73,22 @@ const MVTR = {
       }
     } catch(e){}
 
+    // 🔥 FIX: Listen for localStorage changes from Calculator
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'mvtr_calc_result') {
+        console.log('🔄 MVTR detected Calculator result change');
+        this.refreshCalcPanel();
+      }
+    });
+
+    // 🔥 FIX: Refresh when page becomes visible again
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        console.log('🔄 MVTR page visible - refreshing Calculator data');
+        this.refreshCalcPanel();
+      }
+    });
+
     window.addEventListener('beforeunload', () => {
       if (this._results) try { localStorage.setItem('mvtr_last_params', JSON.stringify(this._results.params)); } catch(e){}
     });
@@ -85,6 +101,8 @@ const MVTR = {
   refreshCalcPanel() {
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+      console.log('🔍 MVTR refreshCalcPanel - localStorage:', saved);
+      
       if (saved && saved.total > 0) {
         const nameEl   = document.getElementById('mvtr-lam-name');
         const structEl = document.getElementById('mvtr-lam-struct');
@@ -93,6 +111,7 @@ const MVTR = {
         if (structEl) structEl.textContent = saved.structure    || '';
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
         this._updateRateSummary(saved.total.toFixed(5));
+        console.log('✅ MVTR loaded Calculator result:', saved.total);
       } else {
         const n = document.getElementById('mvtr-lam-name');
         const s = document.getElementById('mvtr-lam-struct');
@@ -102,7 +121,9 @@ const MVTR = {
         if (r) r.textContent = '—';
         this._updateRateSummary('-');
       }
-    } catch(e){}
+    } catch(e){
+      console.error('❌ MVTR refreshCalcPanel error:', e);
+    }
     this.updateBanner();
   },
 
@@ -1127,7 +1148,13 @@ const MVTR = {
 
 // Global bridge for Calculator → Compliance
 window.saveCalcResult = function(result) {
-  try { localStorage.setItem('mvtr_calc_result', JSON.stringify(result)); } catch(e){}
+  console.log('💾 MVTR saveCalcResult called:', result);
+  try { 
+    localStorage.setItem('mvtr_calc_result', JSON.stringify(result));
+    console.log('✅ Saved to localStorage');
+  } catch(e){
+    console.error('❌ Error saving to localStorage:', e);
+  }
   MVTR.refreshCalcPanel();
 };
 
@@ -1166,7 +1193,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')" 
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')" 
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
       </div>
 
       <!-- Panel: From Calculator -->
@@ -1224,7 +1251,7 @@ function renderMVTR() {
         <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">
           Manual input
         </div>
-        <div class="grid grid-2" style="gap:0.5rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
           <div class="form-group" style="margin:0">
             <label>WVTR Value (g/m²/day)</label>
             <input type="number" id="mvtr-rate-manual" value="1.0" step="0.001" class="form-input" oninput="MVTR.onManualChange()">
@@ -1281,7 +1308,7 @@ function renderMVTR() {
       </div>
       
       <!-- Geometry selector -->
-      <div id="mvtr-geom-selector" class="grid grid-2" style="margin-top:0.5rem;gap:0.4rem;align-items:start">
+      <div id="mvtr-geom-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem">
         <div class="form-group" style="margin:0">
           <label>Shape Type</label>
           <select class="form-input" id="mvtr-shape" onchange="MVTR.onShapeChange()">
@@ -1301,14 +1328,24 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Dimension inputs -->
-      <div id="mvtr-dims-std" class="grid grid-3" style="margin-top:0.4rem;gap:0.4rem">
-        <div class="form-group" style="margin:0"><label id="mvtr-lbl-w">Width L (cm)</label><input type="number" id="mvtr-w" value="12" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
-        <div class="form-group" style="margin:0"><label id="mvtr-lbl-h">Height H (cm)</label><input type="number" id="mvtr-h" value="17" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
-        <div class="form-group" style="margin:0"><label id="mvtr-lbl-d">Depth / Diameter (cm)</label><input type="number" id="mvtr-d" value="0" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
+      <!-- Dimension inputs STANDARD -->
+      <div id="mvtr-dims-std" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.4rem;margin-top:0.4rem">
+        <div class="form-group" style="margin:0">
+          <label id="mvtr-lbl-w">Width L (cm)</label>
+          <input type="number" id="mvtr-w" value="12" step="0.1" class="form-input" oninput="MVTR.calcArea()">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label id="mvtr-lbl-h">Height H (cm)</label>
+          <input type="number" id="mvtr-h" value="17" step="0.1" class="form-input" oninput="MVTR.calcArea()">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label id="mvtr-lbl-d">Depth / Diameter (cm)</label>
+          <input type="number" id="mvtr-d" value="0" step="0.1" class="form-input" oninput="MVTR.calcArea()">
+        </div>
       </div>
       
-      <div id="mvtr-dims-bottle" class="grid grid-2" style="margin-top:0.4rem;gap:0.4rem;display:none">
+      <!-- Dimension inputs BOTTLE -->
+      <div id="mvtr-dims-bottle" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.4rem;margin-top:0.4rem">
         <div class="form-group" style="margin:0"><label>Body Radius (cm)</label><input type="number" id="mvtr-bt-br" value="3.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
         <div class="form-group" style="margin:0"><label>Body Height (cm)</label><input type="number" id="mvtr-bt-bh" value="16" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
         <div class="form-group" style="margin:0"><label>Neck Radius (cm)</label><input type="number" id="mvtr-bt-nr" value="1.2" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
@@ -1316,7 +1353,8 @@ function renderMVTR() {
         <div class="form-group" style="margin:0;grid-column:1/-1"><label>Shoulder Height (cm)</label><input type="number" id="mvtr-bt-sh" value="2.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
       </div>
       
-      <div id="mvtr-dims-blister" class="grid grid-2" style="margin-top:0.4rem;gap:0.4rem;display:none">
+      <!-- Dimension inputs BLISTER -->
+      <div id="mvtr-dims-blister" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.4rem;margin-top:0.4rem">
         <div class="form-group" style="margin:0"><label>Cavities per strip</label><input type="number" id="mvtr-bl-count" value="10" step="1" class="form-input" oninput="MVTR.calcArea()"></div>
         <div class="form-group" style="margin:0"><label>Cavity Area (cm²)</label><input type="number" id="mvtr-bl-area" value="1.5" step="0.1" class="form-input" oninput="MVTR.calcArea()"></div>
       </div>
@@ -1330,9 +1368,9 @@ function renderMVTR() {
       </div>
       
       <!-- Area summary -->
-      <div style="margin-top:0.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--primary-light);padding:0.4rem;border-radius:6px">
-        <span style="font-size:0.75rem;font-weight:500">→ Effective Area:</span>
-        <strong id="mvtr-area-display" style="color:var(--primary)">0.0408 m²</strong>
+      <div style="margin-top:0.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--primary-light);padding:0.6rem 0.8rem;border-radius:6px">
+        <span style="font-size:0.8rem;font-weight:600">→ Effective Area:</span>
+        <strong id="mvtr-area-display" style="color:var(--primary);font-size:0.95rem">0.0408 m²</strong>
       </div>
       <input type="hidden" id="mvtr-area" value="0.0408">
     </div>
@@ -1342,16 +1380,22 @@ function renderMVTR() {
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--purple);font-weight:600;font-size:0.85rem">
         ▼ 4. Product & Compliance
       </div>
-      <div class="grid grid-2" style="gap:0.5rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
         <div class="form-group" style="margin:0" id="mvtr-fg-crit">
           <label>Critical Moisture Gain (mg/package)</label>
-          <div class="input-row"><input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" class="form-input"><span class="input-unit">mg</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:center">
+            <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" class="form-input" style="flex:1">
+            <span style="font-size:0.85rem;color:var(--text-light);font-weight:600">mg</span>
+          </div>
           <div class="hint"></div>
           <div class="err">Must be > 0</div>
         </div>
         <div class="form-group" style="margin:0" id="mvtr-fg-years">
           <label>Target Shelf Life (years)</label>
-          <div class="input-row"><input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" class="form-input"><span class="input-unit">yr</span></div>
+          <div style="display:flex;gap:0.4rem;align-items:center">
+            <input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" class="form-input" style="flex:1">
+            <span style="font-size:0.85rem;color:var(--text-light);font-weight:600">yr</span>
+          </div>
           <div class="err">0.5–10 yr</div>
         </div>
       </div>
@@ -1366,7 +1410,7 @@ function renderMVTR() {
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 5. Reference Test Conditions
       </div>
-      <div class="grid grid-2" style="gap:0.5rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
         <div class="form-group" style="margin:0" id="mvtr-fg-tref">
           <label>Reference Temperature (°C)</label>
           <input type="number" id="mvtr-tref" value="38" step="0.5" class="form-input">
@@ -1495,14 +1539,14 @@ function renderMVTR() {
   <div id="mvtr-tab-sensitivity" class="tab-pane">
     <div class="grid grid-2">
       <div class="card"><h2>Sensitivity: Eₐ</h2>
-        <div class="grid grid-2" style="gap:0.4rem;align-items:end">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end">
           <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="mvtr-s-ea-min" value="20" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
           <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="mvtr-s-ea-max" value="65" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
         </div>
         <div class="chart-wrap"><canvas id="mvtr-ch-sea"></canvas></div>
       </div>
       <div class="card"><h2>Sensitivity: WVTR</h2>
-        <div class="grid grid-2" style="gap:0.4rem;align-items:end">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end">
           <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-min" value="0.1" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
           <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-max" value="3.0" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
         </div>
