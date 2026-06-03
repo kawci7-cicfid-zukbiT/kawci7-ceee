@@ -14,6 +14,9 @@
 //  #C loadCommunityLaminates() - ?? operator per T/RH, tutti i nomi campo
 //  #D switchTab()              - render lazy con doppio rAF per tutti i tab
 //  #E renderCharts()           - rimossi chart 'hidden-at-render' (wvtr/trh/ttl)
+//  #F init()                   - rimossa lettura Tref/RHref da mvtr_last_params
+//  #G exportPDF()              - pre-render forzato tutti i chart prima del PDF
+//  #H renderMVTRMethodology()  - ripristinato testo completo
 // ====================================================================
 
 const R_GAS = 8.314e-3;
@@ -77,10 +80,12 @@ const MVTR = {
     setTimeout(() => { this.refreshCalcPanel(); }, 400);
 
     try {
+      // FIX 1: Tref/RHref NON vengono letti da mvtr_last_params.
+      // Appartengono all'ultima sessione/sorgente e sovrascriverebbero
+      // i valori corretti prima che la sorgente attuale sia stata selezionata.
+      // I T/RH vengono impostati solo da: calc→refreshCalcPanel, db→onDBPick, manual→onManualChange.
       const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
       if (saved) {
-        if (saved.Tref)        this._tRef = saved.Tref;
-        if (saved.RHref)       this._rhRef = saved.RHref;
         if (saved.Ea != null)  { const el = document.getElementById('mvtr-ea');    if(el) el.value = saved.Ea; }
         if (saved.Mcrit)       { const el = document.getElementById('mvtr-crit');  if(el) el.value = saved.Mcrit; }
         if (saved.shelf_years) { const el = document.getElementById('mvtr-years'); if(el) el.value = saved.shelf_years; }
@@ -280,7 +285,7 @@ const MVTR = {
         }).join('');
 
       const hint = document.getElementById('mvtr-db-hint');
-      if (hint) hint.textContent = ``;
+      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded.`;
     } else {
       sel.innerHTML = '<option value="">No community database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
@@ -1078,6 +1083,26 @@ const MVTR = {
     if (typeof html2canvas === 'undefined') { alert('html2canvas library missing. Reload page.'); return; }
     const btn = document.getElementById('mvtr-btn-pdf');
     if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+
+    // FIX 2: forzare il render di TUTTI i chart prima di procedere col PDF.
+    // I chart lazy (wvtr, trh, ttl, sce, sea, swvtr) vengono renderizzati
+    // solo al click del tab corrispondente — se l'utente non li ha mai aperti,
+    // i canvas sono 0×0 e html2canvas non li cattura.
+    // Li rendiamo ora in un contenitore offscreen così il PDF li include sempre.
+    this.renderWVTRChart();
+    this.renderTRHChart();
+    this.renderTTLChart();
+    this.renderOverviewChart();
+    this.renderFactorsChart();
+    this.renderScenarioComparisonChart();
+    // sensitivity: run solo se esistono i canvas
+    if (document.getElementById('mvtr-ch-sea') && document.getElementById('mvtr-ch-swvtr')) {
+      this.runSensEA();
+      this.runSensWVTR();
+    }
+    // Attendi due frame per dare al browser tempo di completare il layout dei chart
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
     try {
       const { jsPDF } = window.jspdf;
       const p = this._results.params, res = this._results.zones;
@@ -1201,7 +1226,9 @@ const MVTR = {
         {id:'mvtr-ch-sea',     title:'Sensitivity: Activation Energy',desc:'Impact of Ea variation on max ingress and zone compliance.'},
         {id:'mvtr-ch-swvtr',   title:'Sensitivity: WVTR',desc:'Impact of WVTR variation on max ingress and zone compliance.'}
       ];
-      const avail=chartConfigs.filter(cfg=>{const c=document.getElementById(cfg.id); return c&&c.width>0&&c.height>0;});
+      // FIX 2b: dopo il pre-render forzato, tutti i canvas esistono.
+      // Non filtrare più per width/height (erano 0 prima del fix, ora sono ok).
+      const avail=chartConfigs.filter(cfg=>!!document.getElementById(cfg.id));
       for(let i=0;i<avail.length;i+=2){
         newPage();
         const pair=avail.slice(i,i+2);
@@ -1315,7 +1342,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')"
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')"
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
       </div>
 
       <!-- Panel: From Calculator -->
@@ -1393,7 +1420,7 @@ function renderMVTR() {
         <div class="form-group" style="margin:0" id="mvtr-fg-ea">
           <label>Activation Energy Eₐ (kJ/mol)</label>
           <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input">
-          <div class="hint"></div>
+          <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
           <div class="err">0–150 kJ/mol</div>
         </div>
       </div>
@@ -1631,24 +1658,56 @@ function renderMVTRMethodology() {
   <div class="mc-inner">
     <h2>Mechanics of MVTR Analysis & ICH Q1A(R2) Compliance</h2>
     <div class="mc-body">
-      <p>The Moisture Vapor Transmission Rate (MVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
+      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. In pharmaceutical packaging science, quantifying this rate and projecting its cumulative effect over the product's intended shelf life is not optional. It is the foundation upon which stability assessments under ICH Q1A(R2) are built. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
+
       <h3>The ICH Climatic Zone Framework</h3>
+      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life in that region. These are not arbitrary categories. They encode real thermodynamic stress that packaging must survive.</p>
       <div class="callout blue">
-        <strong>Zone Definitions (ICH Q1A(R2) / WHO TRS No. 863):</strong><br>
-        Zone I (21°C / 45% RH) · Zone II (25°C / 60% RH) · Zone IIIa (40°C / 15% RH)<br>
-        Zone IVa (40°C / 75% RH) · Zone IVb (30°C / 75% RH)<br>
-        Accelerated (40°C / 75% RH) · Intermediate (30°C / 65% RH)
+        <strong>Zone Definitions (ICH Q1A(R2) / WHO Technical Report Series No. 863):</strong><br>
+        Zone I (21°C / 45% RH): Temperate, Europe, Canada, Russia<br>
+        Zone II (25°C / 60% RH): Subtropical / Mediterranean, USA, Japan<br>
+        Zone IIIa (40°C / 15% RH): Hot/Dry, Middle East, arid Africa<br>
+        Zone IVa (40°C / 75% RH): Hot/Humid, South-East Asia, tropical regions<br>
+        Zone IVb (30°C / 75% RH): Hot/Very Humid (ASEAN harmonised protocol)<br>
+        Accelerated (40°C / 75% RH): ICH Q1A(R2) stress testing, Section 2.1.2<br>
+        Intermediate (30°C / 65% RH): ICH Q1A(R2) bridging condition
       </div>
+
       <h3>Arrhenius Temperature Correction</h3>
-      <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br>F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
-      <h3>Cumulative Ingress & Compliance</h3>
-      <div class="formula-block">Ingress_daily (mg) = WVTR_eff × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
-      <h3>Standards</h3>
+      <p>Water vapor permeation through a polymer film is a thermally activated diffusion process. As temperature rises, polymer chain segmental mobility increases, free volume grows, and the diffusion coefficient of water molecules through the matrix accelerates exponentially. This relationship is described by the Arrhenius equation:</p>
+      <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br><br>Eₐ = activation energy of permeation (kJ/mol)<br>R = 8.314 × 10⁻³ kJ/(mol·K) · T in Kelvin</div>
+      <p>When F_T &gt; 1 the target zone is hotter than the reference and permeation is accelerated. F_T &lt; 1 means the zone is cooler and the film performs better than its measured value. Setting Eₐ = 0 treats WVTR as temperature-independent, which is appropriate only when no activation energy data exists.</p>
+      <div class="callout warning">
+        <strong>Literature Eₐ guidance:</strong> Polyolefins (LDPE, PP) ≈ 28–42 kJ/mol. Polar films (EVOH, Nylon) ≈ 45–70 kJ/mol due to stronger hydrogen-bonding with water. Aluminium foil laminates: near zero when foil is intact, because transport occurs through defects (pinholes, seals), not through the metal lattice itself. Metallised films fall between 10–30 kJ/mol depending on metallisation quality.
+      </div>
+
+      <h3>Relative Humidity Driving Force</h3>
+      <p>Permeation is driven by the partial pressure differential of water vapour across the film. At the same temperature, the ratio of partial pressures simplifies to the ratio of relative humidities, giving a linear first-order correction:</p>
+      <div class="formula-block">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
+      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied. The Community DB laminates have been validated to contain hygroscopic-grade corrections where applicable.</p>
+
+      <h3>Cumulative Ingress and Compliance Evaluation</h3>
+      <p>Once the effective WVTR is established for each ICH zone, cumulative ingress over the shelf life follows from a steady-state linear model:</p>
+      <div class="formula-block">Ingress_daily (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
+      <div class="callout success">
+        <strong>Worked example (pharmaceutical blister pack):</strong> WVTR_ref = 1.0 g/m²/day at 38°C/90%RH, Eₐ = 35 kJ/mol, cavity area = 2 cm². Zone IVa (40°C/75%RH): F_T = exp[(35/0.008314)×(1/311.15 − 1/313.15)] = 1.088; F_RH = 75/90 = 0.833; WVTR_eff = 0.907 g/m²/day. Daily ingress = 0.907 × 0.0002 × 1000 = 0.000181 mg. Over 2 years (730 days) = 0.133 mg, well within a 2.0 mg M_crit.
+      </div>
+      <p>The critical moisture limit M_crit must be established through independent product characterisation. Moisture sorption isotherm testing (ISO 18787, DVS method) combined with accelerated degradation experiments identifies the threshold beyond which physicochemical or microbiological failure initiates.</p>
+
+      <h3>Packaging Geometry & Exposed Area</h3>
+      <p>The surface area A is the single geometric parameter coupling the barrier value to the mass of water entering the package. For blister packs, only the polymer lid foil area over the cavity is moisture-active. The aluminium base contributes negligibly. For pouches and bags, both faces and any gusset area contribute. Bottles require numerical integration over the body, shoulder, and neck surfaces, which this tool performs automatically when the "Bottle" shape is selected. Seal areas and induction-welded surfaces are excluded by default and should be accounted for separately if seal permeation is a known concern.</p>
+
+      <h3>Safety Margin and Sensitivity Analysis</h3>
+      <p>A compliance pass is a necessary but not sufficient condition for robust packaging. The safety margin, defined as the fraction of M_crit not consumed at end of shelf life, quantifies engineering headroom against real-world variability: batch-to-batch WVTR variation (±15–25% is typical for commercial films), seal integrity degradation during distribution, cyclic humidity in transit, and measurement uncertainty in the reference WVTR. A margin below 20% warrants a design review. The sensitivity analysis identifies which input parameters have the greatest leverage on the compliance outcome, directing experimental validation effort efficiently.</p>
+
+      <h3>Alignment with International Standards</h3>
       <div class="mc-refs">
-        • <strong>ASTM F1249-20</strong> — WVTR measurement<br>
-        • <strong>ISO 15106-3:2003</strong> — Water vapour transmission rate<br>
-        • <strong>ICH Q1A(R2) (2003)</strong> — Stability Testing<br>
-        • <strong>WHO TRS No. 863 (1996)</strong> — Climatic zone classification
+        • <strong>ASTM F1249-20</strong>: WVTR through plastic film and sheeting, modulated infrared sensor method<br>
+        • <strong>ISO 15106-3:2003</strong>: Water vapour transmission rate, electrolytic detection sensor method<br>
+        • <strong>ICH Q1A(R2) (2003)</strong>: Stability Testing of New Drug Substances and Pharmaceutical Products<br>
+        • <strong>WHO TRS No. 863 (1996)</strong>: Climatic zone classification for global stability testing<br>
+        • <strong>ASTM E1641</strong>: Decomposition kinetics by thermogravimetry (Arrhenius parameter determination)<br>
+        • <strong>ISO 18787:2017</strong>: Determination of water activity in food and food products
       </div>
     </div>
   </div>
