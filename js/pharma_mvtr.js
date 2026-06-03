@@ -285,7 +285,7 @@ const MVTR = {
         }).join('');
 
       const hint = document.getElementById('mvtr-db-hint');
-      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded.`;
+      if (hint) hint.textContent = ``;
     } else {
       sel.innerHTML = '<option value="">No community database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
@@ -1327,7 +1327,7 @@ function renderMVTR() {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
           <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
         </svg>
-        ICH Q1A(R2) MVTR Compliance Engine
+        ICH Q1A(R2) MVTR 
       </h2>
     </div>
 
@@ -1342,7 +1342,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')"
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')"
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
       <!-- Panel: From Calculator -->
@@ -1420,7 +1420,7 @@ function renderMVTR() {
         <div class="form-group" style="margin:0" id="mvtr-fg-ea">
           <label>Activation Energy Eₐ (kJ/mol)</label>
           <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input">
-          <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
+          <div class="hint"></div>
           <div class="err">0–150 kJ/mol</div>
         </div>
       </div>
