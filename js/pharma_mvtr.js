@@ -44,11 +44,12 @@ const MVTR = {
   _scenarios: [],
   _charts: {},
   _companyLinked: false,
+  _selectedDBRate: null, // 🔥 FIX: Salva il rate selezionato dal DB
 
   // ------------------------------------------------------------------
   // 🔧 INIT
   // ------------------------------------------------------------------
-   init() {
+  init() {
     try { this._scenarios = JSON.parse(localStorage.getItem('mvtr_sce') || '[]'); } catch(e) { this._scenarios = []; }
 
     if (this._scenarios.length === 0) {
@@ -62,7 +63,6 @@ const MVTR = {
     this.renderScenariosList();
     this.refreshCalcPanel();
 
-    // 🔥 FIX: Refresh ritardato per catturare State dopo che Calculator ha popolato
     setTimeout(() => {
       console.log('🔄 MVTR delayed refresh - checking State.calcResult');
       this.refreshCalcPanel();
@@ -83,7 +83,6 @@ const MVTR = {
       }
     } catch(e){}
 
-    // 🔥 FIX: Refresh quando si torna alla pagina MVTR
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         console.log('🔄 MVTR page visible - refreshing Calculator data');
@@ -91,7 +90,6 @@ const MVTR = {
       }
     });
 
-    // 🔥 FIX: Ascolta cambiamenti nel Calculator (se usa saveCalcResult)
     window.addEventListener('storage', (e) => {
       if (e.key === 'mvtr_calc_result') {
         console.log('🔄 MVTR detected localStorage change');
@@ -103,13 +101,13 @@ const MVTR = {
       if (this._results) try { localStorage.setItem('mvtr_last_params', JSON.stringify(this._results.params)); } catch(e){}
     });
   },
+
   // ------------------------------------------------------------------
   // 🔀 CALCULATOR ↔ COMPLIANCE BRIDGE (localStorage)
   // ------------------------------------------------------------------
 
-    refreshCalcPanel() {
+  refreshCalcPanel() {
     try {
-      // 🔥 FIX: Leggi da State.calcResult (come fa shelf life), NON da localStorage
       const stateResult = (typeof State !== 'undefined' && State.calcResult) ? State.calcResult : null;
       const saved = stateResult || JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
       
@@ -121,7 +119,6 @@ const MVTR = {
         const structEl = document.getElementById('mvtr-lam-struct');
         const rateEl   = document.getElementById('mvtr-lam-rate');
         
-        // Costruisci la stringa della struttura dai layer di State
         let structureStr = '';
         if (stateResult && typeof State !== 'undefined' && State.layers?.length) {
           const layers = State.layers
@@ -156,7 +153,12 @@ const MVTR = {
     this.updateBanner();
   },
 
-   // ------------------------------------------------------------------
+  _updateRateSummary(rateStr) {
+    const el = document.getElementById('mvtr-active-rate');
+    if (el) el.textContent = rateStr + ' g/m²/day';
+  },
+
+  // ------------------------------------------------------------------
   // 🔀 SOURCE SELECTION
   // ------------------------------------------------------------------
 
@@ -166,6 +168,7 @@ const MVTR = {
       return;
     }
     this._activeSource = s;
+    this._selectedDBRate = null; // 🔥 Reset quando cambi sorgente
     
     ['calc','db','co'].forEach(key => {
       const btn = document.getElementById('mvtr-src-btn-' + key);
@@ -215,33 +218,25 @@ const MVTR = {
     else this.setSource(this._activeSource);
   },
 
-  onDBPick(val) {
-    if (!val) return;
-    const [w, t, rh] = val.split('|').map(Number);
-    document.getElementById('mvtr-tref').value  = t;
-    document.getElementById('mvtr-rhref').value = rh;
-    console.log('📊 Community DB selected:', { wvtr: w, temp: t, rh: rh });
-    this.updateBanner();
-  },
-
-  onManualChange() { 
-    const rate = parseFloat(document.getElementById('mvtr-rate-manual')?.value) || 0;
-    this._updateRateSummary(rate > 0 ? rate.toFixed(5) : '-');
-    this.updateBanner(); 
-  },
-
   // ------------------------------------------------------------------
   // 🗄️ COMMUNITY DB LOADER
   // ------------------------------------------------------------------
   
   loadCommunityLaminates() {
     const sel = document.getElementById('mvtr-db-pick');
-    if (!sel) return;
+    if (!sel) {
+      console.error('❌ mvtr-db-pick element not found');
+      return;
+    }
     
-    // Controlla se esiste un database globale (come in shelf life)
+    console.log('🔍 Loading community laminates...');
+    console.log('🔍 DB object:', typeof DB !== 'undefined' ? DB : 'undefined');
+    
     if (typeof DB !== 'undefined' && DB.laminates && DB.laminates.length > 0) {
-      // Filtra solo i laminati WVTR
+      console.log(`📚 Found ${DB.laminates.length} total laminates in DB`);
+      
       const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode === 'wvtr');
+      console.log(`📚 Found ${wvtrLaminates.length} WVTR laminates`);
       
       if (wvtrLaminates.length === 0) {
         sel.innerHTML = '<option value="">No WVTR laminates in community DB</option>';
@@ -250,26 +245,121 @@ const MVTR = {
         return;
       }
       
+      wvtrLaminates.forEach((l, i) => {
+        console.log(`  [${i}] ${l.name || 'Unnamed'}:`, {
+          total: l.total,
+          temperature: l.temperature,
+          humidity: l.humidity,
+          mode: l.mode
+        });
+      });
+      
       sel.innerHTML = '<option value="">— Select a laminate —</option>' +
         wvtrLaminates.map(l => {
-          const wvtr = l.total ? l.total.toFixed(5) : '?';
+          const wvtr = l.total ? l.total.toFixed(5) : '0.00000';
           const name = l.name || 'Unnamed';
           const t = l.temperature || 38;
           const rh = l.humidity || 90;
-          return `<option value="${wvtr}|${t}|${rh}">${name} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
+          const value = `${wvtr}|${t}|${rh}`;
+          console.log(`  → Option value: "${value}"`);
+          return `<option value="${value}">${name} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
         }).join('');
       
       console.log(`✅ Loaded ${wvtrLaminates.length} WVTR laminates from community DB`);
       const hint = document.getElementById('mvtr-db-hint');
-      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded from community database.`;
+      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded.`;
       
     } else {
-      // Fallback: nessun database disponibile
       sel.innerHTML = '<option value="">No community database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
       if (hint) hint.textContent = 'Create laminates in the Calculator tab first.';
       console.warn('⚠️ No DB.laminates available for Community DB');
     }
+  },
+
+  onDBPick(val) {
+    if (!val) {
+      console.log('⚠️ Community DB: no value selected');
+      this._selectedDBRate = null;
+      this.updateBanner();
+      return;
+    }
+    
+    const parts = val.split('|');
+    if (parts.length < 3) {
+      console.error('❌ Community DB: invalid format', val);
+      return;
+    }
+    
+    const w = parseFloat(parts[0]);
+    const t = parseFloat(parts[1]);
+    const rh = parseFloat(parts[2]);
+    
+    console.log('📊 Community DB selected:', { wvtr: w, temp: t, rh: rh });
+    
+    // 🔥 FIX: Salva il rate selezionato
+    this._selectedDBRate = w;
+    
+    // Aggiorna le reference conditions
+    const trefEl = document.getElementById('mvtr-tref');
+    const rhrefEl = document.getElementById('mvtr-rhref');
+    if (trefEl) trefEl.value = t;
+    if (rhrefEl) rhrefEl.value = rh;
+    
+    // Aggiorna il banner
+    this._updateRateSummary(w.toFixed(5));
+    
+    const bannerEl = document.getElementById('mvtr-active-rate');
+    if (bannerEl) {
+      bannerEl.textContent = w.toFixed(5) + ' g/m²/day';
+      bannerEl.style.color = 'var(--primary)';
+    }
+    
+    console.log('✅ Active WVTR updated to:', w.toFixed(5), 'g/m²/day');
+  },
+
+  onManualChange() { 
+    const rate = parseFloat(document.getElementById('mvtr-rate-manual')?.value) || 0;
+    this._updateRateSummary(rate > 0 ? rate.toFixed(5) : '-');
+    this.updateBanner(); 
+  },
+
+  getActiveRate() {
+    if (this._manualOverride) {
+      const v = parseFloat(document.getElementById('mvtr-rate-manual')?.value);
+      return isNaN(v) ? null : v;
+    }
+    if (this._activeSource === 'db') {
+      // 🔥 FIX: Usa il rate salvato quando selezionato dal DB
+      if (this._selectedDBRate !== null && this._selectedDBRate > 0) {
+        console.log('🔍 getActiveRate from DB (saved):', this._selectedDBRate);
+        return this._selectedDBRate;
+      }
+      // Fallback: leggi dal select
+      const sel = document.getElementById('mvtr-db-pick');
+      const v = sel?.value;
+      if (!v) return null;
+      const wvtr = parseFloat(v.split('|')[0]);
+      console.log('🔍 getActiveRate from DB (select):', wvtr);
+      return isNaN(wvtr) ? null : wvtr;
+    }
+    if (this._activeSource === 'calc') {
+      if (typeof State !== 'undefined' && State.calcResult?.total > 0) {
+        return State.calcResult.total;
+      }
+      try {
+        const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+        if (saved && saved.total > 0) return saved.total;
+      } catch(e){}
+      return null;
+    }
+    return null;
+  },
+
+  updateBanner() {
+    const r = this.getActiveRate();
+    const el = document.getElementById('mvtr-active-rate');
+    if (el) el.textContent = r != null ? r.toFixed(5) + ' g/m²/day' : '— g/m²/day';
   },
 
   // ------------------------------------------------------------------
@@ -1035,7 +1125,6 @@ const MVTR = {
         pdf.setTextColor(...C.black); y += rowH;
       };
 
-      // PAGE 1 — COVER
       pageNum++;
       pdf.setFillColor(...C.blueDark); pdf.rect(0, 0, PW, 55, 'F');
       pdf.setFillColor(...C.blue); pdf.rect(0, 40, PW, 18, 'F');
@@ -1104,7 +1193,6 @@ const MVTR = {
       pdf.setTextColor(...C.black); y += 3;
       drawFooter();
 
-      // CHARTS PAGES
       const chartConfigs = [
         { id:'mvtr-ch-overview', title:'Annual Ingress by Zone',         desc:'Total moisture ingress per ICH zone with compliance limit threshold.' },
         { id:'mvtr-ch-factors',  title:'Correction Factors (F_T, F_RH)', desc:'Arrhenius thermal factor and RH driving force across climatic zones.' },
@@ -1149,7 +1237,6 @@ const MVTR = {
         }
       }
 
-      // DISCLAIMER PAGE
       newPage();
       sectionTitle('Important Disclaimer & Model Limitations', C.red);
       [
@@ -1210,10 +1297,8 @@ function renderMVTR() {
   return `
 <div class="grid grid-2" style="gap:1.2rem;align-items:start">
   
-  <!-- === FORM INPUT (left column) === -->
   <div class="card" style="padding:0">
     
-    <!-- Header -->
     <div style="padding:1rem;background:var(--bg);border-bottom:1px solid var(--border)">
       <h2 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:0.4rem">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
@@ -1223,13 +1308,11 @@ function renderMVTR() {
       </h2>
     </div>
 
-    <!-- STEP 1: BARRIER RATE SOURCE -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 1. Barrier Rate Source
       </div>
 
-      <!-- Source selector buttons -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.75rem">
         <button id="mvtr-src-btn-calc" class="btn btn-sm" onclick="MVTR.setSource('calc')" 
           style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
@@ -1239,7 +1322,6 @@ function renderMVTR() {
           style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
-      <!-- Panel: From Calculator -->
       <div id="mvtr-panel-calc">
         <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
           <div style="font-weight:700;margin-bottom:0.15rem" id="mvtr-lam-name">No laminate loaded</div>
@@ -1251,8 +1333,6 @@ function renderMVTR() {
         </div>
       </div>
 
-      <!-- Panel: Community DB -->
-           <!-- Panel: Community DB -->
       <div id="mvtr-panel-db" style="display:none">
         <div class="form-group" style="margin:0">
           <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
@@ -1263,14 +1343,12 @@ function renderMVTR() {
         </div>
       </div>
 
-      <!-- Panel: Company DB -->
       <div id="mvtr-panel-co" style="display:none">
         <div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">
           Join a company to access company laminates. <a href="#" onclick="MVTR.unlockCompany();return false" style="color:var(--primary)">Connect now</a>
         </div>
       </div>
 
-      <!-- Manual override toggle -->
       <div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px dashed var(--border)">
         <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--text-light)">
           <input type="checkbox" id="mvtr-manual-toggle" onchange="MVTR.toggleManual(this.checked)">
@@ -1278,7 +1356,6 @@ function renderMVTR() {
         </label>
       </div>
 
-      <!-- Manual input panel -->
       <div id="mvtr-panel-manual" style="display:none;margin-top:0.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem">
         <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">
           Manual input
@@ -1299,14 +1376,12 @@ function renderMVTR() {
         </div>
       </div>
 
-      <!-- Active rate summary -->
       <div style="margin-top:0.8rem;background:var(--primary-light);border-radius:6px;padding:0.5rem 0.75rem;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:0.75rem;font-weight:600">Active WVTR:</span>
         <strong id="mvtr-active-rate" style="color:var(--primary);font-size:0.9rem">— g/m²/day</strong>
       </div>
     </div>
 
-    <!-- STEP 2: THERMAL ACCELERATION -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 2. Thermal Acceleration
@@ -1323,13 +1398,11 @@ function renderMVTR() {
       </div>
     </div>
 
-        <!-- STEP 3: PACKAGING DIMENSIONS -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--warning);font-weight:600;font-size:0.85rem">
         ▼ 3. Packaging Dimensions
       </div>
       
-      <!-- Radio buttons -->
       <div style="margin-bottom:0.75rem;display:flex;flex-direction:column;gap:0.4rem">
         <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem">
           <input type="radio" name="mvtr-pkg-mode" value="shape" checked onchange="MVTR.togglePkgMode()" style="width:16px;height:16px;accent-color:var(--warning)">
@@ -1341,7 +1414,6 @@ function renderMVTR() {
         </label>
       </div>
       
-            <!-- Geometry selector -->
       <div id="mvtr-geom-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Shape Type</label>
@@ -1362,7 +1434,6 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Dimension inputs STANDARD -->
       <div id="mvtr-dims-std" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.75rem">
         <div>
           <label id="mvtr-lbl-w" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Width L (cm)</label>
@@ -1378,7 +1449,6 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Dimension inputs BOTTLE -->
       <div id="mvtr-dims-bottle" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Body Radius (cm)</label>
@@ -1402,7 +1472,6 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Dimension inputs BLISTER -->
       <div id="mvtr-dims-blister" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Cavities per strip</label>
@@ -1414,7 +1483,6 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Manual area input -->
       <div id="mvtr-manual-area" style="display:none">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Total Surface Area (m²)</label>
@@ -1422,15 +1490,13 @@ function renderMVTR() {
         </div>
       </div>
       
-      <!-- Area summary -->
       <div style="margin-top:1rem;background:linear-gradient(135deg,var(--primary-light),#e0f2fe);padding:0.75rem 1rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:0.9rem;font-weight:600;color:var(--text)">→ Effective Area:</span>
-        <strong id="mvtr-area-display" style="color:var(--primary);font-size:1.1rem">0.0408 m²</strong>
+        <strong id="mvtr-area-display" style="color:var(--primary);font-size:1.1rem">0.0200 m²</strong>
       </div>
-      <input type="hidden" id="mvtr-area" value="0.0408">
+      <input type="hidden" id="mvtr-area" value="0.0200">
     </div>
     
-       <!-- STEP 4: PRODUCT & COMPLIANCE -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--purple);font-weight:600;font-size:0.85rem">
         ▼ 4. Product & Compliance
@@ -1443,7 +1509,6 @@ function renderMVTR() {
             <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">mg</span>
           </div>
-          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)"></div>
         </div>
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Target Shelf Life (years)</label>
@@ -1451,7 +1516,6 @@ function renderMVTR() {
             <input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">yr</span>
           </div>
-          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)"></div>
         </div>
       </div>
       
@@ -1461,7 +1525,6 @@ function renderMVTR() {
       </div>
     </div>
 
-    <!-- STEP 5: REFERENCE CONDITIONS -->
     <div style="padding:1rem">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 5. Reference Test Conditions
@@ -1492,7 +1555,6 @@ function renderMVTR() {
     </div>
   </div>
 
-  <!-- === RESULTS AREA (right column - sticky) === -->
   <div style="position:sticky;top:1rem;height:fit-content">
     <div class="card" style="margin-bottom:0.9rem">
       <h2>KPI Dashboard</h2>
@@ -1691,7 +1753,7 @@ function renderMVTRMethodology() {
 </div>
 `;
 }
- 
+
 window.renderPharmaMvtr = function() {
   var c = document.getElementById('app-content');
   if (c) c.innerHTML = renderMVTR();
