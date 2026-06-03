@@ -195,11 +195,24 @@ const DES = {
 
   _getRefCond() {
     const get = (id, fb) => { const el = document.getElementById(id); return el ? (parseFloat(el.value) || fb) : fb; };
+
+    // From Calculator: WVTR in State is already at test conditions stored in State.selCond.
+    // Apply Arrhenius only from those test conditions to storage conditions.
+    if (!this._manualOverride && this._barrierSource === 'calc') {
+      const T_ref  = (typeof State !== 'undefined' && State.selCond) ? (State.selCond.temperature || 23) : 23;
+      const RH_ref = (typeof State !== 'undefined' && State.selCond) ? (State.selCond.humidity    || 50) : 50;
+      const Ea_kJ  = get('des-ea', 0);
+      return { T_ref, RH_ref, Ea_kJ };
+    }
+
+    // From Community DB: test conditions encoded in option value (wvtr|T|RH|Ea)
     if (this._barrierSource === 'db' && !this._manualOverride) {
       const v = document.getElementById('des-db-pick')?.value;
       if (v) { const parts = v.split('|'); return { T_ref: parseFloat(parts[1])||38, RH_ref: parseFloat(parts[2])||90, Ea_kJ: parseFloat(parts[3])||35 }; }
     }
-    return { T_ref: get('des-tref',38), RH_ref: get('des-rhref',90), Ea_kJ: get('des-ea',35) };
+
+    // Manual: use fields directly
+    return { T_ref: get('des-tref', 38), RH_ref: get('des-rhref', 90), Ea_kJ: get('des-ea-man', 35) };
   },
 
   _updateBanner(rateStr) {
@@ -269,7 +282,7 @@ const DES = {
     if (typeof State !== 'undefined') State.pharmaUptake = p;
 
     const res = des_calc(p);
-    this._updateBanner(res.wvtr_eff.toFixed(5));
+    this._updateBanner(res.wvtr_eff.toFixed(5) + ' (at ' + p.T_store + '°C)');
     this._renderResults(p, res);
     this._renderIsothermBars(res.des);
 
@@ -486,13 +499,23 @@ function renderPharmaUptake() {
           <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
             <div style="font-weight:700;margin-bottom:0.15rem">${lamName}</div>
             <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em">${lamStruct}</div>
-            <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.2rem">
               <span>Calculated WVTR:</span>
               <strong style="color:var(--primary)">${calcRate > 0 ? calcRate.toFixed(5) : '-'} g/m²·day</strong>
             </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;color:var(--text-light)">
+              <span>Test conditions:</span>
+              <span>${(typeof State !== 'undefined' && State.selCond) ? State.selCond.temperature+'°C / '+State.selCond.humidity+'% RH' : '—'}</span>
+            </div>
           </div>
-          <div class="alert alert-info" style="margin-top:0.45rem;font-size:0.8rem">
-            <span>Run a calculation in the Calculator tab first, then return here.</span>
+          ${calcRate <= 0 ? '<div class="alert alert-info" style="margin-top:0.45rem;font-size:0.8rem"><span>Run a calculation in the Calculator tab first, then return here.</span></div>' : ''}
+          <div style="margin-top:0.5rem" class="form-group">
+            <label style="font-size:0.72rem">Activation energy E<sub>a</sub> (kJ/mol) — for T correction to storage</label>
+            <div style="display:flex;align-items:center;gap:0.4rem">
+              <input type="number" id="des-ea" value="${Ea_kJ}" step="1" min="0" class="form-input" placeholder="0 = no correction">
+              <span style="font-size:0.7rem;color:var(--text-light);white-space:nowrap">kJ/mol</span>
+            </div>
+            <div class="hint">0 = use WVTR as-is · LDPE≈35 · EVOH≈55 · Al≈0</div>
           </div>
         </div>
 
@@ -535,12 +558,12 @@ function renderPharmaUptake() {
             <div class="form-group" style="margin:0"><label>WVTR (g/m²/day)</label><input type="number" id="des-rate-manual" value="0.5" step="any" class="form-input" oninput="DES.onManualRateChange()"></div>
             <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="des-tref" value="${T_ref}" class="form-input"></div>
             <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="des-rhref" value="${RH_ref}" class="form-input"></div>
-            <div class="form-group" style="margin:0"><label>Eₐ (kJ/mol)</label><input type="number" id="des-ea" value="${Ea_kJ}" class="form-input"><div class="hint">LDPE≈35 · EVOH≈55 · Al≈0</div></div>
+            <div class="form-group" style="margin:0"><label>Eₐ (kJ/mol)</label><input type="number" id="des-ea-man" value="${Ea_kJ}" class="form-input"><div class="hint">LDPE≈35 · EVOH≈55 · Al≈0</div></div>
           </div>
         </div>
 
         <div style="margin-top:0.8rem;background:var(--primary-light);border-radius:6px;padding:0.5rem 0.75rem;display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:0.75rem;font-weight:600">Active WVTR:</span>
+          <span style="font-size:0.75rem;font-weight:600">WVTR at storage conditions:</span>
           <strong id="des-active-rate" style="color:var(--primary);font-size:0.9rem">${calcRate > 0 ? calcRate.toFixed(5) : '-'} g/m²·day</strong>
         </div>
       </div>
