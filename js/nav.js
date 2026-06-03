@@ -32,7 +32,7 @@ var NAV_GROUPS = [
     label: ' Biomedical Analysis',
     tabs: [
       { id: 'pharma-mvtr',   label: 'MVTR / ICH Conditions'},
-      { id: 'pharma-uptake', label: 'Drug Moisture Uptake' }
+      { id: 'pharma-uptake', label: 'Desiccant Sizing Calculator' }
     ]
   },
   {
