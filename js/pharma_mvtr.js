@@ -11,7 +11,9 @@
 //  #7 renderMVTR() HTML        - buttons wrapped inside proper padding div
 //  #A refreshCalcPanel()       - _tRef/_rhRef aggiornati SOLO se source='calc'
 //  #B onDBPick()               - chiama _updateConditionsDisplay() dopo selezione
-//  #C loadCommunityLaminates() - ?? operator per T/RH (evita falsy 0), tutti i nomi campo
+//  #C loadCommunityLaminates() - ?? operator per T/RH, tutti i nomi campo
+//  #D switchTab()              - render lazy con doppio rAF per tutti i tab
+//  #E renderCharts()           - rimossi chart 'hidden-at-render' (wvtr/trh/ttl)
 // ====================================================================
 
 const R_GAS = 8.314e-3;
@@ -278,7 +280,7 @@ const MVTR = {
         }).join('');
 
       const hint = document.getElementById('mvtr-db-hint');
-      if (hint) hint.textContent = `${wvtrLaminates.length} laminates loaded.`;
+      if (hint) hint.textContent = ``;
     } else {
       sel.innerHTML = '<option value="">No community database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
@@ -647,11 +649,12 @@ const MVTR = {
   // 📈 CHART RENDERING
   // ------------------------------------------------------------------
   renderCharts() {
+    // Solo overview charts: questi canvas sono visibili durante calculate()
+    // perché il tab 'overview' è quello attivo di default.
+    // I canvas del tab 'charts' (wvtr, trh, ttl) sono hidden → render lazy
+    // in switchTab('charts') tramite requestAnimationFrame.
     this.renderOverviewChart();
     this.renderFactorsChart();
-    this.renderWVTRChart();
-    this.renderTRHChart();
-    this.renderTTLChart();
   },
 
   _dc(key) {
@@ -982,8 +985,41 @@ const MVTR = {
     if (event) event.target.classList.add('active');
     const tc = document.getElementById('mvtr-tab-' + name);
     if (tc) tc.classList.add('active');
-    if (name === 'sensitivity' && this._results) { setTimeout(() => { this.runSensEA(); this.runSensWVTR(); }, 80); }
-    if (name === 'charts' && this._results) { setTimeout(() => Object.values(this._charts).forEach(c => { try { c.resize(); } catch(e){} }), 80); }
+
+    if (!this._results) return;
+
+    // FIX: doppio requestAnimationFrame garantisce che il browser abbia
+    // completato il layout del tab (display:block) prima di fare render.
+    // Con setTimeout(80ms) il layout poteva non essere ancora pronto.
+    const afterLayout = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
+
+    if (name === 'overview') {
+      // I canvas overview erano visibili al primo render ma dopo un cambio
+      // tab perdono le dimensioni se Chart.js non riesce a fare resize.
+      // Re-render completo garantisce dimensioni corrette.
+      afterLayout(() => {
+        this.renderOverviewChart();
+        this.renderFactorsChart();
+      });
+    }
+
+    if (name === 'charts') {
+      // I canvas del tab charts erano hidden (display:none) durante
+      // calculate() → Chart.js li rendeva a 0x0. Render lazy al click.
+      afterLayout(() => {
+        this.renderWVTRChart();
+        this.renderTRHChart();
+        this.renderTTLChart();
+      });
+    }
+
+    if (name === 'scenarios') {
+      afterLayout(() => this.renderScenarioComparisonChart());
+    }
+
+    if (name === 'sensitivity') {
+      afterLayout(() => { this.runSensEA(); this.runSensWVTR(); });
+    }
   },
 
   // ------------------------------------------------------------------
@@ -1279,7 +1315,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')"
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')"
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
       <!-- Panel: From Calculator -->
