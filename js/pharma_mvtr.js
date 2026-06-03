@@ -1166,7 +1166,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')" 
           style="font-size:0.75rem">From Community DB</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')" 
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
       </div>
 
       <!-- Panel: From Calculator -->
