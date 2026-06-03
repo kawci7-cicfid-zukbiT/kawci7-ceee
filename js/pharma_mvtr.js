@@ -1,14 +1,17 @@
 // ====================================================================
-// 🧪 MVTR.JS - ICH Q1A(R2) Compliance Engine  [PATCHED]
+// 🧪 MVTR.JS - ICH Q1A(R2) Compliance Engine  [PATCHED v2]
 // ====================================================================
 // FIX APPLIED:
-//  #1 getActiveRate()      - localStorage FIRST, State as fallback
-//  #2 refreshCalcPanel()   - full try/catch, DOM guard, updateBanner safety
-//  #3 init() setTimeout    - removed redundant 1000ms call, guard on DOM
+//  #1 getActiveRate()          - localStorage FIRST, State as fallback
+//  #2 refreshCalcPanel()       - full try/catch, DOM guard, updateBanner safety
+//  #3 init() setTimeout        - removed redundant 1000ms call, guard on DOM
 //  #4 loadCommunityLaminates() - case-insensitive mode filter
-//  #5 onDBPick()           - visual feedback of T/RH on DB panel
-//  #6 window.saveCalcResult - DOM ready guard
-//  #7 renderMVTR() HTML    - buttons wrapped inside proper padding div
+//  #5 onDBPick()               - visual feedback of T/RH on DB panel
+//  #6 window.saveCalcResult    - DOM ready guard
+//  #7 renderMVTR() HTML        - buttons wrapped inside proper padding div
+//  #A refreshCalcPanel()       - _tRef/_rhRef aggiornati SOLO se source='calc'
+//  #B onDBPick()               - chiama _updateConditionsDisplay() dopo selezione
+//  #C loadCommunityLaminates() - ?? operator per T/RH (evita falsy 0), tutti i nomi campo
 // ====================================================================
 
 const R_GAS = 8.314e-3;
@@ -149,8 +152,13 @@ const MVTR = {
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
         if (condEl)   condEl.textContent   = `Test conditions: ${saved.tRef ?? this._tRef}°C / ${saved.rhRef ?? this._rhRef}% RH`;
 
-        if (saved.tRef)  this._tRef  = saved.tRef;
-        if (saved.rhRef) this._rhRef = saved.rhRef;
+        // FIX A: sovrascrive T/RH SOLO se la sorgente attiva è 'calc'.
+        // Se l'utente ha selezionato DB o Manual, i loro T/RH hanno priorità
+        // e NON devono essere sovrascritti da State/localStorage del Calculator.
+        if (this._activeSource === 'calc') {
+          if (saved.tRef)  this._tRef  = saved.tRef;
+          if (saved.rhRef) this._rhRef = saved.rhRef;
+        }
         this._updateConditionsDisplay();
       } else {
         nameEl.textContent   = 'No laminate loaded';
@@ -261,8 +269,10 @@ const MVTR = {
         wvtrLaminates.map(l => {
           const wvtr = l.total ? l.total.toFixed(5) : '0.00000';
           const name = l.name || 'Unnamed';
-          const t  = l.temperature || l.tRef || 38;
-          const rh = l.humidity    || l.rhRef || 90;
+          // FIX C: ?? operator evita che 0 venga trattato come falsy;
+          // copre tutti i nomi di campo usati dal Calculator
+          const t  = l.temperature ?? l.tRef ?? l.testTemp ?? l.T ?? 38;
+          const rh = l.humidity    ?? l.rhRef ?? l.testRH   ?? l.RH ?? 90;
           const value = `${wvtr}|${t}|${rh}`;
           return `<option value="${value}">${name} — ${wvtr} g/m²·day @ ${t}°C/${rh}%RH</option>`;
         }).join('');
@@ -295,10 +305,13 @@ const MVTR = {
     this._tRef  = t;
     this._rhRef = rh;
 
-    // FIX #5: update conditions display (mvtr-calc-conditions is in the calc panel,
-    // so also update the dedicated DB conditions element if present)
+    // Aggiorna il banner condizioni nel pannello DB
     const dbCond = document.getElementById('mvtr-db-conditions');
     if (dbCond) dbCond.textContent = `Test conditions: ${t}°C / ${rh}% RH`;
+
+    // FIX B: aggiorna anche il banner globale delle condizioni
+    // (mvtr-rate-temp e mvtr-rate-hum nel pannello manual, utili se si passa a manual)
+    this._updateConditionsDisplay();
 
     this._updateRateSummary(w.toFixed(5));
     this.updateBanner();
@@ -1344,7 +1357,7 @@ function renderMVTR() {
         <div class="form-group" style="margin:0" id="mvtr-fg-ea">
           <label>Activation Energy Eₐ (kJ/mol)</label>
           <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input">
-          <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
+          <div class="hint"></div>
           <div class="err">0–150 kJ/mol</div>
         </div>
       </div>
