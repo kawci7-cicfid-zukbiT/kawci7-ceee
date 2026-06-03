@@ -551,6 +551,42 @@ if(scenarios.length === 0) {
   try { localStorage.setItem('mvtr_sce', JSON.stringify(scenarios)); } catch(e){}
 }
 
+/* ============================================================
+   PATCH — Calculator → Compliance localStorage bridge
+   Reads/writes key: "mvtr_calc_result"
+   Schema: { total, laminateName, structure, tRef, rhRef }
+   ============================================================ */
+
+function refreshCalcPanel() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+    if(saved && saved.total > 0) {
+      const nameEl   = document.getElementById('lam-name');
+      const structEl = document.getElementById('lam-struct');
+      const rateEl   = document.getElementById('lam-rate');
+      if(nameEl)   nameEl.textContent   = saved.laminateName || 'Laminate from Calculator';
+      if(structEl) structEl.textContent = saved.structure    || '';
+      if(rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
+      const tEl  = document.getElementById('ph-tref');
+      const rhEl = document.getElementById('ph-rhref');
+      if(saved.tRef  && tEl)  tEl.value  = saved.tRef;
+      if(saved.rhRef && rhEl) rhEl.value = saved.rhRef;
+    } else {
+      document.getElementById('lam-name').textContent   = 'No laminate loaded';
+      document.getElementById('lam-struct').textContent = 'Run a calculation in the Calculator tab first, then return here.';
+      document.getElementById('lam-rate').textContent   = '—';
+    }
+  } catch(e){}
+  updateBanner();
+}
+
+/* Called by the Calculator page after compute:
+   window.saveCalcResult({ total, laminateName, structure, tRef, rhRef }) */
+window.saveCalcResult = function(result) {
+  try { localStorage.setItem('mvtr_calc_result', JSON.stringify(result)); } catch(e){}
+  refreshCalcPanel();
+};
+
 function setSource(s) {
   if(s === 'co' && !companyLinked) {
     alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
@@ -563,7 +599,8 @@ function setSource(s) {
     if(btn) btn.classList.toggle('active', k === s);
     if(panel) panel.style.display = k === s ? 'block' : 'none';
   });
-  updateBanner();
+  if(s === 'calc') refreshCalcPanel();
+  else updateBanner();
 }
 
 function unlockCompany() {
@@ -590,7 +627,11 @@ function getActiveRate() {
   if(manualOverride) { const v = parseFloat(document.getElementById('man-wvtr')?.value); return isNaN(v) ? null : v; }
   if(activeSource === 'db') { const v = document.getElementById('db-pick')?.value; return v ? parseFloat(v.split('|')[0]) : null; }
   if(activeSource === 'calc') {
-    if(typeof State !== 'undefined' && State.calcResult?.total > 0) return State.calcResult.total;
+    /* PATCHED: read from localStorage instead of shared State object */
+    try {
+      const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+      if(saved && saved.total > 0) return saved.total;
+    } catch(e){}
     return null;
   }
   return null;
@@ -1527,13 +1568,8 @@ function resetForm() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderScenariosList();
-  if(typeof State !== 'undefined' && State.calcResult?.total > 0) {
-    const rate = State.calcResult.total;
-    const lamName = State.laminateName || 'Laminate from Calculator';
-    document.getElementById('lam-name').textContent = lamName;
-    document.getElementById('lam-rate').textContent = rate.toFixed(5) + ' g/m2/day';
-  }
-  updateBanner();
+  /* PATCHED: read from localStorage instead of shared State object */
+  refreshCalcPanel();
   try {
     const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
     if(saved) {
