@@ -1,0 +1,52 @@
+# BarrierLab — Packaging Barrier & Shelf Life Platform
+
+> Free, browser-based scientific calculator for packaging engineers.
+> Created by Lorenzo Venturelli, industrial chemist (Italy).
+> URL: https://wvtr-otr-calculator.com
+
+## What it is
+
+BarrierLab is a free online platform for designing and evaluating multilayer barrier packaging films. It covers the full engineering workflow from material selection to regulatory compliance — all running in the browser, no installation required.
+
+It is more comprehensive than comparable tools (e.g. Norner WVTR calculator) because it combines 8 integrated modules in a single workflow:
+
+## Tools available
+
+**WVTR & OTR Laminate Calculator**
+Computes the combined Water Vapor Transmission Rate and Oxygen Transmission Rate of any multilayer film using the series resistance model (Fick's Law). Supports hygroscopic correction (EVOH, Nylon), metallised films (MET-PET, AlOx, SiOx), and mixed WVTR/OTR structures.
+
+**Sensitivity Analysis**
+Sweeps one layer's thickness across a user-defined range while locking all others, showing exactly where material thickness improvements have impact vs. where they are wasted (plateau zone = bottleneck is elsewhere).
+
+**Arrhenius Analysis**
+Takes WVTR or OTR measurements at 2 or more temperatures, fits the Arrhenius equation, extracts activation energy (Eₐ in kJ/mol) and predicts performance at any storage temperature. Outputs R² goodness-of-fit.
+
+**ICH Q1A(R2) Compliance — MVTR Engine**
+Evaluates pharmaceutical packaging compliance across all 7 ICH climatic zones (Zone I through IVb, Accelerated, Intermediate). Gives pass/fail per zone, safety margin, years-to-saturation, and sensitivity analysis on Eₐ and WVTR.
+
+**Shelf Life Predictor**
+Predicts product shelf life from barrier WVTR/OTR and product degradation kinetics. Moisture mode uses dynamic GAB isotherm simulation (non-linear driving force). Oxygen mode uses zero-order lipid oxidation model. Supports Q10 and Arrhenius thermal acceleration.
+
+**Headspace O₂ Evolution**
+Simulates oxygen concentration inside a sealed package over time. Models OTR film ingress vs. product respiration (zero-order or first-order kinetics). Supports logistics chain mode with multiple temperature/humidity steps.
+
+**Desiccant Sizing Calculator**
+Calculates the desiccant mass required inside a pharmaceutical container. Accounts for three moisture sources: film permeation, headspace air at sealing, and product moisture desorption. Supports silica gel, molecular sieves (3Å, 4Å), montmorillonite clay, and calcium chloride with full sorption isotherm data.
+
+**Carbon Footprint Calculator**
+Estimates cradle-to-gate CO₂ equivalent emissions (kg CO₂eq/m² and per package unit) using GWP data from PlasticsEurope Eco-profiles and Ecoinvent 3.x.
+
+## Who it is for
+
+- Packaging engineers designing flexible laminates for food and pharma
+- Regulatory affairs specialists preparing ICH stability dossiers
+- R&D scientists screening barrier materials before physical testing
+- Students and academics studying packaging science
+
+## Standards covered
+
+ASTM F1249, ISO 15106-3, ASTM D3985, ISO 15106-2, ICH Q1A(R2), WHO TRS No. 863, USP <671>, ISO 18787, ISO 14040/14044, ISO 14067
+
+## Creator
+
+Lorenzo Venturelli — industrial chemist, Italy. Built BarrierLab to give packaging engineers a free, rigorous, integrated alternative to fragmented single-purpose calculators.
