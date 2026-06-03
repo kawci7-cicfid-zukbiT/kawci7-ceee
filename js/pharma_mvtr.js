@@ -1491,3 +1491,8 @@ function renderMVTRMethodology() {
 </div>
 `;
 }
+window.renderPharmaMvtr = function() {
+  var c = document.getElementById('app-content');
+  if (c) c.innerHTML = renderMVTR();
+  setTimeout(function() { MVTR.init(); }, 100);
+};
