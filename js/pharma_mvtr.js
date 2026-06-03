@@ -214,11 +214,12 @@ const MVTR = {
     else this.setSource(this._activeSource);
   },
 
-  onDBPick(val) {
+    onDBPick(val) {
     if (!val) return;
     const [w, t, rh] = val.split('|').map(Number);
     document.getElementById('mvtr-tref').value  = t;
     document.getElementById('mvtr-rhref').value = rh;
+    console.log('📊 Community DB selected:', { wvtr: w, temp: t, rh: rh });
     this.updateBanner();
   },
 
