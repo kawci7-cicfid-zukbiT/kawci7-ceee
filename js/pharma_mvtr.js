@@ -1,7 +1,13 @@
 // ====================================================================
-// 🧪 MVTR.JS - ICH Q1A(R2) Compliance Engine  
+// 🧪 MVTR.JS - ICH Q1A(R2) Compliance Engine
+// ====================================================================
+// Dependencies: Chart.js, jsPDF, html2canvas
+// Pattern: Same as shelflife.js (SL object)
 // ====================================================================
 
+// ====================================================================
+// 📐 CONSTANTS
+// ====================================================================
 const R_GAS = 8.314e-3;
 const DAYS  = 365;
 
@@ -26,7 +32,11 @@ const MVTR_SHAPE_CONFIGS = {
   blister:  null
 };
 
+// ====================================================================
+// 📦 MVTR OBJECT - All ICH compliance logic
+// ====================================================================
 const MVTR = {
+  // Internal state
   _activeSource: 'calc',
   _manualOverride: false,
   _currentShape: 'flat',
@@ -35,6 +45,9 @@ const MVTR = {
   _charts: {},
   _companyLinked: false,
 
+  // ------------------------------------------------------------------
+  // 🔧 INIT
+  // ------------------------------------------------------------------
   init() {
     try { this._scenarios = JSON.parse(localStorage.getItem('mvtr_sce') || '[]'); } catch(e) { this._scenarios = []; }
 
@@ -60,18 +73,18 @@ const MVTR = {
       }
     } catch(e){}
 
-    // Listen for storage events
+    // 🔥 FIX: Listen for localStorage changes from Calculator
     window.addEventListener('storage', (e) => {
       if (e.key === 'mvtr_calc_result') {
-        console.log('🔄 Storage event detected:', e.newValue);
+        console.log('🔄 MVTR detected Calculator result change');
         this.refreshCalcPanel();
       }
     });
 
-    // Also check when page becomes visible
+    // 🔥 FIX: Refresh when page becomes visible again
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        console.log('📄 Page visible, refreshing...');
+        console.log('🔄 MVTR page visible - refreshing Calculator data');
         this.refreshCalcPanel();
       }
     });
@@ -81,10 +94,14 @@ const MVTR = {
     });
   },
 
+  // ------------------------------------------------------------------
+  // 🔀 CALCULATOR ↔ COMPLIANCE BRIDGE (localStorage)
+  // ------------------------------------------------------------------
+
   refreshCalcPanel() {
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
-      console.log('🔍 refreshCalcPanel - localStorage data:', saved);
+      console.log('🔍 MVTR refreshCalcPanel - localStorage:', saved);
       
       if (saved && saved.total > 0) {
         const nameEl   = document.getElementById('mvtr-lam-name');
@@ -94,18 +111,18 @@ const MVTR = {
         if (structEl) structEl.textContent = saved.structure    || '';
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
         this._updateRateSummary(saved.total.toFixed(5));
-        console.log('✅ Loaded from Calculator:', saved.total);
+        console.log('✅ MVTR loaded Calculator result:', saved.total);
       } else {
         const n = document.getElementById('mvtr-lam-name');
         const s = document.getElementById('mvtr-lam-struct');
         const r = document.getElementById('mvtr-lam-rate');
         if (n) n.textContent = 'No laminate loaded';
-        if (s) s.textContent = 'Run a calculation in the Calculator tab first.';
+        if (s) s.textContent = 'Run a calculation in the Calculator tab first, then return here.';
         if (r) r.textContent = '—';
         this._updateRateSummary('-');
       }
     } catch(e){
-      console.error('❌ refreshCalcPanel error:', e);
+      console.error('❌ MVTR refreshCalcPanel error:', e);
     }
     this.updateBanner();
   },
@@ -115,9 +132,13 @@ const MVTR = {
     if (el) el.textContent = rateStr + ' g/m²/day';
   },
 
+  // ------------------------------------------------------------------
+  // 🔀 SOURCE SELECTION
+  // ------------------------------------------------------------------
+
   setSource(s) {
     if (s === 'co' && !this._companyLinked) {
-      alert('Company Database is locked.');
+      alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
       return;
     }
     this._activeSource = s;
@@ -144,7 +165,7 @@ const MVTR = {
   },
 
   unlockCompany() {
-    alert('Connect to your company to unlock.');
+    alert('To unlock the Company Database:\n\n1. Go to the main app Settings\n2. Navigate to "Company" section\n3. Join an existing company with an invite code, or create a new company workspace\n4. Your organisation\'s laminates will then appear here automatically\n\nThis feature requires an active company membership.');
   },
 
   toggleManual(on) {
@@ -207,6 +228,10 @@ const MVTR = {
     const el = document.getElementById('mvtr-active-rate');
     if (el) el.textContent = r != null ? r.toFixed(5) + ' g/m²/day' : '— g/m²/day';
   },
+
+  // ------------------------------------------------------------------
+  // 📐 PACKAGING GEOMETRY
+  // ------------------------------------------------------------------
 
   togglePkgMode() {
     const mode = document.querySelector('input[name="mvtr-pkg-mode"]:checked')?.value || 'shape';
@@ -296,6 +321,10 @@ const MVTR = {
     if (hidden)  hidden.value = v;
   },
 
+  // ------------------------------------------------------------------
+  // 🧮 MATHEMATICAL CORE
+  // ------------------------------------------------------------------
+
   calcWVTR(wRef, Ea, Tref, RHref, Ttgt, RHtgt) {
     const Tr = Tref + 273.15, Tt = Ttgt + 273.15;
     const arrF = Ea > 0 ? Math.exp((Ea / R_GAS) * (1/Tr - 1/Tt)) : 1;
@@ -320,6 +349,10 @@ const MVTR = {
     });
   },
 
+  // ------------------------------------------------------------------
+  // ✅ VALIDATION
+  // ------------------------------------------------------------------
+
   validate() {
     const checks = [
       { id:'mvtr-tref',  fg:'mvtr-fg-tref',  min:-50, max:100 },
@@ -340,9 +373,13 @@ const MVTR = {
     return ok;
   },
 
+  // ------------------------------------------------------------------
+  // 🎯 MAIN CALCULATION
+  // ------------------------------------------------------------------
+
   calculate() {
     const rate = this.getActiveRate();
-    if (!rate || rate <= 0) { alert('No valid WVTR. Select a source or enter manually.'); return; }
+    if (!rate || rate <= 0) { alert('No valid WVTR. Select a source or enter a value manually.'); return; }
     if (!this.validate()) return;
     const params = {
       wRef:        rate,
@@ -367,6 +404,10 @@ const MVTR = {
     this.renderScenariosList();
     if (det) det.scrollIntoView({ behavior:'smooth', block:'start' });
   },
+
+  // ------------------------------------------------------------------
+  // 📊 KPI DASHBOARD
+  // ------------------------------------------------------------------
 
   updateKPIs() {
     const zs = this._results.zones;
@@ -409,6 +450,10 @@ const MVTR = {
       (pass === tot ? 'All zones compliant' : pass === 0 ? 'No zones compliant' : pass + '/' + tot + ' zones compliant') +
       '</div><div style="margin-top:.3rem;font-size:.85rem;color:var(--text-light)">See tabs below for detail</div>';
   },
+
+  // ------------------------------------------------------------------
+  // 📊 TABLE RENDERING
+  // ------------------------------------------------------------------
 
   renderOverview() {
     const zs = this._results.zones;
@@ -464,6 +509,10 @@ const MVTR = {
       '<span style="color:var(--text-light)">' + k + ':</span><strong>' + v + '</strong></div>'
     ).join('');
   },
+
+  // ------------------------------------------------------------------
+  // 📈 CHART RENDERING
+  // ------------------------------------------------------------------
 
   renderCharts() {
     this.renderOverviewChart();
@@ -613,6 +662,10 @@ const MVTR = {
     });
   },
 
+  // ------------------------------------------------------------------
+  // 💾 SCENARIOS
+  // ------------------------------------------------------------------
+
   saveScenario() {
     if (!this._results) { alert('Run a calculation first.'); return; }
     this._scenarios.push({ id: Date.now(), name: this._results.params.label, params: this._results.params, zones: this._results.zones, ts: this._results.ts });
@@ -712,6 +765,10 @@ const MVTR = {
     });
   },
 
+  // ------------------------------------------------------------------
+  // 🔬 SENSITIVITY
+  // ------------------------------------------------------------------
+
   runSensEA() {
     if (!this._results) return;
     const min = parseFloat(document.getElementById('mvtr-s-ea-min').value) || 20;
@@ -784,6 +841,10 @@ const MVTR = {
     });
   },
 
+  // ------------------------------------------------------------------
+  // 📋 TABS
+  // ------------------------------------------------------------------
+
   switchTab(name, event) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(c => c.classList.remove('active'));
@@ -793,6 +854,10 @@ const MVTR = {
     if (name === 'sensitivity' && this._results) { setTimeout(() => { this.runSensEA(); this.runSensWVTR(); }, 80); }
     if (name === 'charts' && this._results) { setTimeout(() => Object.values(this._charts).forEach(c => { try { c.resize(); } catch(e){} }), 80); }
   },
+
+  // ------------------------------------------------------------------
+  // 🔄 RESET
+  // ------------------------------------------------------------------
 
   resetForm() {
     if (!confirm('Reset to defaults?')) return;
@@ -807,6 +872,10 @@ const MVTR = {
     this.toggleManual(false);
     this.updateBanner();
   },
+
+  // ------------------------------------------------------------------
+  // 📥 EXPORT CSV
+  // ------------------------------------------------------------------
 
   exportCSV() {
     if (!this._results) { alert('No data to export.'); return; }
@@ -832,6 +901,10 @@ const MVTR = {
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'MVTR_Report_' + new Date().toISOString().slice(0,10) + '.csv' });
     a.click();
   },
+
+  // ------------------------------------------------------------------
+  // 📄 EXPORT PDF
+  // ------------------------------------------------------------------
 
   async exportPDF() {
     if (!this._results) { alert('No data to export. Run a calculation first.'); return; }
@@ -919,6 +992,7 @@ const MVTR = {
         pdf.setTextColor(...C.black); y += rowH;
       };
 
+      // PAGE 1 — COVER
       pageNum++;
       pdf.setFillColor(...C.blueDark); pdf.rect(0, 0, PW, 55, 'F');
       pdf.setFillColor(...C.blue); pdf.rect(0, 40, PW, 18, 'F');
@@ -987,6 +1061,7 @@ const MVTR = {
       pdf.setTextColor(...C.black); y += 3;
       drawFooter();
 
+      // CHARTS PAGES
       const chartConfigs = [
         { id:'mvtr-ch-overview', title:'Annual Ingress by Zone',         desc:'Total moisture ingress per ICH zone with compliance limit threshold.' },
         { id:'mvtr-ch-factors',  title:'Correction Factors (F_T, F_RH)', desc:'Arrhenius thermal factor and RH driving force across climatic zones.' },
@@ -1031,13 +1106,14 @@ const MVTR = {
         }
       }
 
+      // DISCLAIMER PAGE
       newPage();
       sectionTitle('Important Disclaimer & Model Limitations', C.red);
       [
-        { title:'For Research & Development Use Only', body:'This report and the underlying calculations are intended exclusively for internal R&D screening, packaging concept development, and educational purposes.' },
-        { title:'Laboratory Validation Required', body:'All predictive model outputs require independent validation through accredited laboratory testing. Relevant standards include: ASTM F1249 / ISO 15106-3 (Water Vapor Transmission), ICH Q1A(R2) (Stability Testing).' },
-        { title:'Model Assumptions & Known Limitations', body:'The model assumes: (1) steady-state gas permeation through defect-free films; (2) linear superposition of Arrhenius and RH correction factors; (3) uniform, constant storage conditions; (4) no seal degradation, pinholes, or mechanical damage.' },
-        { title:'Regulatory Compliance', body:'This tool does not constitute regulatory advice. Commercial shelf-life declarations must comply with applicable regulations including FDA 21 CFR, EU guidelines, ICH Q1A(R2).' }
+        { title:'For Research & Development Use Only', body:'This report and the underlying calculations are intended exclusively for internal R&D screening, packaging concept development, and educational purposes. Results must not be used as the sole basis for commercial shelf-life labeling, regulatory submissions, or product safety declarations.' },
+        { title:'Laboratory Validation Required', body:'All predictive model outputs require independent validation through accredited laboratory testing. Relevant standards include: ASTM F1249 / ISO 15106-3 (Water Vapor Transmission), ICH Q1A(R2) (Stability Testing), and WHO TRS No. 863 (Climatic Zone Classification).' },
+        { title:'Model Assumptions & Known Limitations', body:'The model assumes: (1) steady-state gas permeation through defect-free films; (2) linear superposition of Arrhenius and RH correction factors; (3) uniform, constant storage conditions; (4) no seal degradation, pinholes, or mechanical damage; (5) negligible back-diffusion. Real-world performance may deviate significantly due to package geometry, seal integrity, humidity cycling, and supply chain variability.' },
+        { title:'Regulatory Compliance', body:'This tool does not constitute regulatory advice. Commercial shelf-life declarations must comply with applicable regulations including FDA 21 CFR, EU guidelines, ICH Q1A(R2), and any applicable sector-specific guidelines. Consult a qualified regulatory specialist before product launch.' }
       ].forEach(sec => {
         if (y > PH - 45) newPage();
         pdf.setFillColor(...C.redL); pdf.setDrawColor(...C.red); pdf.setLineWidth(0.3);
@@ -1072,24 +1148,29 @@ const MVTR = {
 
 // Global bridge for Calculator → Compliance
 window.saveCalcResult = function(result) {
-  console.log('💾 saveCalcResult called with:', result);
+  console.log('💾 MVTR saveCalcResult called:', result);
   try { 
     localStorage.setItem('mvtr_calc_result', JSON.stringify(result));
-    console.log('✅ Saved to localStorage. Key: mvtr_calc_result');
-    // Trigger a storage event manually for same-page updates
-    window.dispatchEvent(new Event('storage'));
+    console.log('✅ Saved to localStorage');
   } catch(e){
     console.error('❌ Error saving to localStorage:', e);
   }
-  if (typeof MVTR !== 'undefined') MVTR.refreshCalcPanel();
+  MVTR.refreshCalcPanel();
 };
+
+
+// ====================================================================
+// 📋 RENDER FUNCTIONS
+// ====================================================================
 
 function renderMVTR() {
   return `
-<div style="display:grid;grid-template-columns:1fr 350px;gap:1.2rem;align-items:start">
+<div class="grid grid-2" style="gap:1.2rem;align-items:start">
   
+  <!-- === FORM INPUT (left column) === -->
   <div class="card" style="padding:0">
     
+    <!-- Header -->
     <div style="padding:1rem;background:var(--bg);border-bottom:1px solid var(--border)">
       <h2 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:0.4rem">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
@@ -1099,12 +1180,13 @@ function renderMVTR() {
       </h2>
     </div>
 
-    <!-- STEP 1 -->
+    <!-- STEP 1: BARRIER RATE SOURCE -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 1. Barrier Rate Source
       </div>
 
+      <!-- Source selector buttons -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.75rem">
         <button id="mvtr-src-btn-calc" class="btn btn-sm" onclick="MVTR.setSource('calc')" 
           style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
@@ -1114,10 +1196,11 @@ function renderMVTR() {
           style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB 🔒</button>
       </div>
 
+      <!-- Panel: From Calculator -->
       <div id="mvtr-panel-calc">
         <div style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.6rem;font-size:0.75rem">
           <div style="font-weight:700;margin-bottom:0.15rem" id="mvtr-lam-name">No laminate loaded</div>
-          <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em" id="mvtr-lam-struct">Run a calculation in the Calculator tab first.</div>
+          <div style="color:var(--text-light);word-break:break-word;margin-bottom:0.3rem;min-height:1.2em" id="mvtr-lam-struct">Run a calculation in the Calculator tab first, then return here.</div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span>Calculated WVTR:</span>
             <strong style="color:var(--primary)" id="mvtr-lam-rate">—</strong>
@@ -1125,30 +1208,37 @@ function renderMVTR() {
         </div>
       </div>
 
+      <!-- Panel: Community DB -->
       <div id="mvtr-panel-db" style="display:none">
-        <div style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">Select from Community Database</label>
-          <select id="mvtr-db-pick" onchange="MVTR.onDBPick(this.value)" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+        <div class="form-group" style="margin:0">
+          <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
+          <select class="form-input" id="mvtr-db-pick" onchange="MVTR.onDBPick(this.value)" style="font-size:0.78rem">
             <option value="">— Select a validated laminate —</option>
             <optgroup label="Pharmaceutical Grade">
               <option value="0.002|38|90">PET 12µm / Al 9µm / LDPE 60µm — 0.002 g/m²·day</option>
               <option value="0.01|38|90">OPA 15µm / Al 12µm / LLDPE 80µm — 0.010 g/m²·day</option>
               <option value="0.05|38|90">PET 12µm / EVOH 12µm / PP 50µm — 0.050 g/m²·day</option>
+              <option value="0.001|38|90">PVDC 40µm / OPA 15µm / Al 9µm / LDPE 50µm — 0.001 g/m²·day</option>
             </optgroup>
             <optgroup label="Food Grade">
               <option value="0.5|38|90">OPP 20µm / LDPE 40µm — 0.500 g/m²·day</option>
               <option value="1.0|38|90">PET 12µm / LDPE 60µm — 1.000 g/m²·day</option>
+              <option value="2.5|38|90">OPP 20µm / Met.OPP 20µm — 2.500 g/m²·day</option>
+              <option value="0.2|38|90">PET 12µm / EVOH 6µm / LLDPE 70µm — 0.200 g/m²·day</option>
             </optgroup>
           </select>
+          <div class="hint"></div>
         </div>
       </div>
 
+      <!-- Panel: Company DB -->
       <div id="mvtr-panel-co" style="display:none">
         <div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">
-          Join a company to access company laminates.
+          Join a company to access company laminates. <a href="#" onclick="MVTR.unlockCompany();return false" style="color:var(--primary)">Connect now</a>
         </div>
       </div>
 
+      <!-- Manual override toggle -->
       <div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px dashed var(--border)">
         <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--text-light)">
           <input type="checkbox" id="mvtr-manual-toggle" onchange="MVTR.toggleManual(this.checked)">
@@ -1156,67 +1246,74 @@ function renderMVTR() {
         </label>
       </div>
 
+      <!-- Manual input panel -->
       <div id="mvtr-panel-manual" style="display:none;margin-top:0.5rem;background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem">
-        <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">Manual input</div>
+        <div style="font-size:0.72rem;font-weight:600;color:var(--text-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">
+          Manual input
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-          <div style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">WVTR Value (g/m²/day)</label>
-            <input type="number" id="mvtr-rate-manual" value="1.0" step="0.001" oninput="MVTR.onManualChange()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+          <div class="form-group" style="margin:0">
+            <label>WVTR Value (g/m²/day)</label>
+            <input type="number" id="mvtr-rate-manual" value="1.0" step="0.001" class="form-input" oninput="MVTR.onManualChange()">
           </div>
-          <div style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">Test Temperature (°C)</label>
-            <input type="number" id="mvtr-rate-temp" value="38" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+          <div class="form-group" style="margin:0">
+            <label>Test Temperature (°C)</label>
+            <input type="number" id="mvtr-rate-temp" value="38" class="form-input">
           </div>
-          <div style="margin:0;grid-column:1/-1">
-            <label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">Test Humidity (%RH)</label>
-            <input type="number" id="mvtr-rate-hum" value="90" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+          <div class="form-group" style="margin:0;grid-column:1/-1">
+            <label>Test Humidity (%RH)</label>
+            <input type="number" id="mvtr-rate-hum" value="90" class="form-input">
           </div>
         </div>
       </div>
 
+      <!-- Active rate summary -->
       <div style="margin-top:0.8rem;background:var(--primary-light);border-radius:6px;padding:0.5rem 0.75rem;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:0.75rem;font-weight:600">Active WVTR:</span>
         <strong id="mvtr-active-rate" style="color:var(--primary);font-size:0.9rem">— g/m²/day</strong>
       </div>
     </div>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2: THERMAL ACCELERATION -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 2. Thermal Acceleration
       </div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.75rem">
-        <div style="margin:0" id="mvtr-fg-ea">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Activation Energy Eₐ (kJ/mol)</label>
+        <div class="form-group" style="margin:0" id="mvtr-fg-ea">
+          <label>Activation Energy Eₐ (kJ/mol)</label>
           <div style="display:flex;gap:0.4rem;align-items:center">
-            <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" style="flex:1;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+            <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input" style="flex:1">
           </div>
-          <div style="font-size:0.7rem;color:var(--text-light);margin-top:0.25rem">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Al foil ≈ 0</div>
-          <div style="font-size:0.7rem;color:var(--danger);margin-top:0.15rem">0–150 kJ/mol</div>
+          <div class="hint"></div>
+          <div class="err">0–150 kJ/mol</div>
         </div>
       </div>
     </div>
 
-    <!-- STEP 3 -->
+        <!-- STEP 3: PACKAGING DIMENSIONS -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--warning);font-weight:600;font-size:0.85rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--warning);font-weight:600;font-size:0.85rem">
         ▼ 3. Packaging Dimensions
       </div>
-      <div style="margin-bottom:0.5rem">
-        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:500;margin-bottom:0.25rem">
-          <input type="radio" name="mvtr-pkg-mode" value="shape" checked onchange="MVTR.togglePkgMode()">
-          Calculate from shape
+      
+      <!-- Radio buttons -->
+      <div style="margin-bottom:0.75rem;display:flex;flex-direction:column;gap:0.4rem">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem">
+          <input type="radio" name="mvtr-pkg-mode" value="shape" checked onchange="MVTR.togglePkgMode()" style="width:16px;height:16px;accent-color:var(--warning)">
+          <span style="font-weight:500">Calculate from shape</span>
         </label>
-        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:500">
-          <input type="radio" name="mvtr-pkg-mode" value="manual" onchange="MVTR.togglePkgMode()">
-          Enter area manually
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem">
+          <input type="radio" name="mvtr-pkg-mode" value="manual" onchange="MVTR.togglePkgMode()" style="width:16px;height:16px;accent-color:var(--warning)">
+          <span style="font-weight:500">Enter area manually</span>
         </label>
       </div>
       
-      <div id="mvtr-geom-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.5rem">
-        <div style="margin:0">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Shape Type</label>
-          <select id="mvtr-shape" onchange="MVTR.onShapeChange()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+      <!-- Geometry selector -->
+      <div id="mvtr-geom-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Shape Type</label>
+          <select id="mvtr-shape" onchange="MVTR.onShapeChange()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <option value="flat">Flat Pouch</option>
             <option value="standup">Stand-Up Pouch</option>
             <option value="flow">Flow Pack</option>
@@ -1227,107 +1324,134 @@ function renderMVTR() {
             <option value="blister">Blister Pack</option>
           </select>
         </div>
-        <div style="margin:0">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Welding Margin (cm)</label>
-          <input type="number" id="mvtr-margin" value="1.5" step="0.5" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Welding Margin (cm)</label>
+          <input type="number" id="mvtr-margin" value="1.5" step="0.5" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
-      <div id="mvtr-dims-std" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.4rem;margin-top:0.4rem">
-        <div style="margin:0">
-          <label id="mvtr-lbl-w" style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Width L (cm)</label>
-          <input type="number" id="mvtr-w" value="12" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+      <!-- Dimension inputs STANDARD -->
+      <div id="mvtr-dims-std" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.75rem">
+        <div>
+          <label id="mvtr-lbl-w" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Width L (cm)</label>
+          <input type="number" id="mvtr-w" value="12" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
-        <div style="margin:0">
-          <label id="mvtr-lbl-h" style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Height H (cm)</label>
-          <input type="number" id="mvtr-h" value="17" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+        <div>
+          <label id="mvtr-lbl-h" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Height H (cm)</label>
+          <input type="number" id="mvtr-h" value="17" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
-        <div style="margin:0">
-          <label id="mvtr-lbl-d" style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Depth / Diameter (cm)</label>
-          <input type="number" id="mvtr-d" value="0" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
-        </div>
-      </div>
-      
-      <div id="mvtr-dims-bottle" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.4rem;margin-top:0.4rem">
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Body Radius (cm)</label><input type="number" id="mvtr-bt-br" value="3.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Body Height (cm)</label><input type="number" id="mvtr-bt-bh" value="16" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Neck Radius (cm)</label><input type="number" id="mvtr-bt-nr" value="1.2" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Neck Height (cm)</label><input type="number" id="mvtr-bt-nh" value="4" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-        <div style="margin:0;grid-column:1/-1"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Shoulder Height (cm)</label><input type="number" id="mvtr-bt-sh" value="2.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-      </div>
-      
-      <div id="mvtr-dims-blister" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.4rem;margin-top:0.4rem">
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Cavities per strip</label><input type="number" id="mvtr-bl-count" value="10" step="1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-        <div style="margin:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Cavity Area (cm²)</label><input type="number" id="mvtr-bl-area" value="1.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-      </div>
-      
-      <div id="mvtr-manual-area" style="display:none;margin-top:0.5rem">
-        <div style="margin:0">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Total Surface Area (m²)</label>
-          <input type="number" id="mvtr-area-man" value="0.0408" step="0.001" oninput="MVTR.updateManualArea()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+        <div>
+          <label id="mvtr-lbl-d" style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Depth / Diameter (cm)</label>
+          <input type="number" id="mvtr-d" value="0" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
         </div>
       </div>
       
-      <div style="margin-top:0.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--primary-light);padding:0.6rem 0.8rem;border-radius:6px">
-        <span style="font-size:0.8rem;font-weight:600">→ Effective Area:</span>
-        <strong id="mvtr-area-display" style="color:var(--primary);font-size:0.95rem">0.0408 m²</strong>
+      <!-- Dimension inputs BOTTLE -->
+      <div id="mvtr-dims-bottle" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Body Radius (cm)</label>
+          <input type="number" id="mvtr-bt-br" value="3.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Body Height (cm)</label>
+          <input type="number" id="mvtr-bt-bh" value="16" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Neck Radius (cm)</label>
+          <input type="number" id="mvtr-bt-nr" value="1.2" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Neck Height (cm)</label>
+          <input type="number" id="mvtr-bt-nh" value="4" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Shoulder Height (cm)</label>
+          <input type="number" id="mvtr-bt-sh" value="2.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+      </div>
+      
+      <!-- Dimension inputs BLISTER -->
+      <div id="mvtr-dims-blister" style="display:none;grid-template-columns:repeat(2, 1fr);gap:0.75rem">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Cavities per strip</label>
+          <input type="number" id="mvtr-bl-count" value="10" step="1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Cavity Area (cm²)</label>
+          <input type="number" id="mvtr-bl-area" value="1.5" step="0.1" oninput="MVTR.calcArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+      </div>
+      
+      <!-- Manual area input -->
+      <div id="mvtr-manual-area" style="display:none">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Total Surface Area (m²)</label>
+          <input type="number" id="mvtr-area-man" value="0.0408" step="0.001" oninput="MVTR.updateManualArea()" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+        </div>
+      </div>
+      
+      <!-- Area summary -->
+      <div style="margin-top:1rem;background:linear-gradient(135deg,var(--primary-light),#e0f2fe);padding:0.75rem 1rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.9rem;font-weight:600;color:var(--text)">→ Effective Area:</span>
+        <strong id="mvtr-area-display" style="color:var(--primary);font-size:1.1rem">0.0408 m²</strong>
       </div>
       <input type="hidden" id="mvtr-area" value="0.0408">
     </div>
-
-    <!-- STEP 4 -->
+    
+       <!-- STEP 4: PRODUCT & COMPLIANCE -->
     <div style="padding:1rem;border-bottom:1px solid var(--border)">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--purple);font-weight:600;font-size:0.85rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;color:var(--purple);font-weight:600;font-size:0.85rem">
         ▼ 4. Product & Compliance
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-        <div style="margin:0" id="mvtr-fg-crit">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Critical Moisture Gain (mg/package)</label>
-          <div style="display:flex;gap:0.4rem;align-items:center">
-            <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" style="flex:1;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
-            <span style="font-size:0.85rem;color:var(--text-light);font-weight:600;white-space:nowrap">mg</span>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Critical Moisture Gain (mg/package)</label>
+          <div style="display:flex;gap:0.5rem;align-items:center">
+            <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+            <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">mg</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--text-light);margin-top:0.25rem">Max permissible moisture uptake before product failure.</div>
-          <div style="font-size:0.7rem;color:var(--danger);margin-top:0.15rem">Must be > 0</div>
+          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)">Must be > 0</div>
         </div>
-        <div style="margin:0" id="mvtr-fg-years">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Target Shelf Life (years)</label>
-          <div style="display:flex;gap:0.4rem;align-items:center">
-            <input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" style="flex:1;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
-            <span style="font-size:0.85rem;color:var(--text-light);font-weight:600;white-space:nowrap">yr</span>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Target Shelf Life (years)</label>
+          <div style="display:flex;gap:0.5rem;align-items:center">
+            <input type="number" id="mvtr-years" value="2" step="0.5" min="0.5" max="10" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+            <span style="font-size:0.9rem;font-weight:600;color:var(--text-light);min-width:30px">yr</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--danger);margin-top:0.15rem">0.5–10 yr</div>
+          <div style="margin-top:0.4rem;font-size:0.75rem;color:var(--danger)">0.5–10 yr</div>
         </div>
       </div>
-      <div style="margin:0;margin-top:0.5rem">
-        <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Scenario Label</label>
-        <input type="text" id="mvtr-label" value="Base Scenario" placeholder="e.g. Formulation A" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
+      
+      <div style="margin-top:0.75rem">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text)">Scenario Label</label>
+        <input type="text" id="mvtr-label" value="Base Scenario" placeholder="e.g. Formulation A" style="width:100%;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
       </div>
     </div>
 
-    <!-- STEP 5 -->
+    <!-- STEP 5: REFERENCE CONDITIONS -->
     <div style="padding:1rem">
       <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--primary);font-weight:600;font-size:0.85rem">
         ▼ 5. Reference Test Conditions
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-        <div style="margin:0" id="mvtr-fg-tref">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Reference Temperature (°C)</label>
-          <input type="number" id="mvtr-tref" value="38" step="0.5" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
-          <div style="font-size:0.7rem;color:var(--danger);margin-top:0.15rem">Valid range: −50 to 100°C</div>
+        <div class="form-group" style="margin:0" id="mvtr-fg-tref">
+          <label>Reference Temperature (°C)</label>
+          <input type="number" id="mvtr-tref" value="38" step="0.5" class="form-input">
+          <div class="err">Valid range: −50 to 100°C</div>
         </div>
-        <div style="margin:0" id="mvtr-fg-rhref">
-          <label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.25rem">Reference RH (%)</label>
-          <input type="number" id="mvtr-rhref" value="90" step="1" min="0" max="100" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem">
-          <div style="font-size:0.7rem;color:var(--danger);margin-top:0.15rem">0–100%</div>
+        <div class="form-group" style="margin:0" id="mvtr-fg-rhref">
+          <label>Reference RH (%)</label>
+          <input type="number" id="mvtr-rhref" value="90" step="1" min="0" max="100" class="form-input">
+          <div class="err">0–100%</div>
         </div>
       </div>
       
-      <button class="btn btn-danger btn-full" onclick="MVTR.calculate()" style="margin-top:1rem;padding:0.8rem;font-size:0.9rem;width:100%">
+      <button class="btn btn-danger btn-full" onclick="MVTR.calculate()" style="margin-top:1rem;padding:0.8rem;font-size:0.9rem">
         ▶ Calculate ICH Compliance
       </button>
       
-      <div style="display:flex;gap:0.4rem;margin-top:0.6rem;flex-wrap:wrap">
+      <div class="btn-group" style="margin-top:0.6rem">
         <button class="btn btn-outline btn-sm" onclick="MVTR.resetForm()">Reset</button>
         <button class="btn btn-success btn-sm" onclick="MVTR.saveScenario()">Save Scenario</button>
         <button class="btn btn-outline btn-sm" onclick="MVTR.exportCSV()">CSV</button>
@@ -1336,30 +1460,30 @@ function renderMVTR() {
     </div>
   </div>
 
-  <!-- RESULTS -->
+  <!-- === RESULTS AREA (right column - sticky) === -->
   <div style="position:sticky;top:1rem;height:fit-content">
     <div class="card" style="margin-bottom:0.9rem">
-      <h2 style="margin:0 0 0.75rem 0;font-size:1rem">KPI Dashboard</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-        <div class="kpi blue" id="mvtr-kpi-zones" style="padding:0.6rem;border-radius:6px;background:var(--primary-light)">
-          <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.2rem">Compliant ICH Zones</div>
-          <div style="font-size:1.1rem;font-weight:700" id="mvtr-kv-zones">—</div>
-          <div style="font-size:0.65rem;color:var(--text-light)" id="mvtr-ks-zones">Awaiting calculation</div>
+      <h2>KPI Dashboard</h2>
+      <div class="kpi-grid">
+        <div class="kpi blue" id="mvtr-kpi-zones">
+          <div class="kpi-label">Compliant ICH Zones</div>
+          <div class="kpi-val" id="mvtr-kv-zones">—</div>
+          <div class="kpi-sub" id="mvtr-ks-zones">Awaiting calculation</div>
         </div>
-        <div class="kpi warning" id="mvtr-kpi-ingress" style="padding:0.6rem;border-radius:6px;background:var(--warning-light)">
-          <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.2rem">Max Annual Ingress</div>
-          <div style="font-size:1.1rem;font-weight:700" id="mvtr-kv-ingress">—</div>
-          <div style="font-size:0.65rem;color:var(--text-light)" id="mvtr-ks-ingress">Most critical zone</div>
+        <div class="kpi warning" id="mvtr-kpi-ingress">
+          <div class="kpi-label">Max Annual Ingress</div>
+          <div class="kpi-val" id="mvtr-kv-ingress">—</div>
+          <div class="kpi-sub" id="mvtr-ks-ingress">Most critical zone</div>
         </div>
-        <div class="kpi gray" id="mvtr-kpi-safety" style="padding:0.6rem;border-radius:6px;background:var(--bg)">
-          <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.2rem">Min Safety Margin</div>
-          <div style="font-size:1.1rem;font-weight:700" id="mvtr-kv-safety">—</div>
-          <div style="font-size:0.65rem;color:var(--text-light)">vs critical limit</div>
+        <div class="kpi gray" id="mvtr-kpi-safety">
+          <div class="kpi-label">Min Safety Margin</div>
+          <div class="kpi-val" id="mvtr-kv-safety">—</div>
+          <div class="kpi-sub">vs critical limit</div>
         </div>
-        <div class="kpi gray" id="mvtr-kpi-arr" style="padding:0.6rem;border-radius:6px;background:var(--bg)">
-          <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.2rem">Avg Arrhenius Factor</div>
-          <div style="font-size:1.1rem;font-weight:700" id="mvtr-kv-arr">—</div>
-          <div style="font-size:0.65rem;color:var(--text-light)">Thermal acceleration</div>
+        <div class="kpi gray" id="mvtr-kpi-arr">
+          <div class="kpi-label">Avg Arrhenius Factor</div>
+          <div class="kpi-val" id="mvtr-kv-arr">—</div>
+          <div class="kpi-sub">Thermal acceleration</div>
         </div>
       </div>
       <div style="margin-top:0.85rem">
@@ -1367,13 +1491,11 @@ function renderMVTR() {
           <span id="mvtr-kpi-status" style="color:var(--text-light)">Waiting for calculation…</span>
           <span id="mvtr-kpi-pct" style="font-weight:700">—</span>
         </div>
-        <div style="width:100%;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">
-          <div class="progress-fill blue" id="mvtr-kpi-bar" style="width:0%;height:100%;background:var(--primary);transition:width 0.3s ease"></div>
-        </div>
+        <div class="progress-bar"><div class="progress-fill blue" id="mvtr-kpi-bar" style="width:0%"></div></div>
       </div>
     </div>
     <div class="card">
-      <h2 style="margin:0 0 0.5rem 0;font-size:1rem">Quick Results</h2>
+      <h2>Quick Results</h2>
       <div id="mvtr-quick-results" style="font-size:0.9rem;color:var(--text-light);text-align:center;padding:1rem 0">
         Configure parameters and click <strong>Calculate ICH Compliance</strong>.
       </div>
@@ -1391,122 +1513,147 @@ function renderMVTR() {
   </div>
 
   <div id="mvtr-tab-overview" class="tab-pane active">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Annual Ingress by Zone</h2><div style="height:280px"><canvas id="mvtr-ch-overview"></canvas></div></div>
+    <div class="grid grid-2">
+      <div class="card"><h2>Annual Ingress by Zone</h2><div class="chart-wrap"><canvas id="mvtr-ch-overview"></canvas></div></div>
       <div class="card">
-        <h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Correction Factors</h2>
-        <div style="height:200px"><canvas id="mvtr-ch-factors"></canvas></div>
+        <h2>Correction Factors</h2>
+        <div class="chart-wrap sm"><canvas id="mvtr-ch-factors"></canvas></div>
         <div id="mvtr-factors-sum" style="margin-top:0.6rem;font-size:0.85rem;color:var(--text-light)"></div>
       </div>
     </div>
-    <div class="card" style="margin-top:1rem"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Summary by ICH Zone</h2>
-      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.85rem" id="mvtr-tbl-summary">
-        <thead><tr style="background:var(--bg);border-bottom:2px solid var(--border)"><th style="padding:0.6rem;text-align:left">Zone</th><th style="padding:0.6rem;text-align:left">Conditions</th><th style="padding:0.6rem;text-align:left">Eff. WVTR</th><th style="padding:0.6rem;text-align:left">Annual Ingress</th><th style="padding:0.6rem;text-align:left">Total (SL)</th><th style="padding:0.6rem;text-align:left">% Limit</th><th style="padding:0.6rem;text-align:left">Status</th></tr></thead>
+    <div class="card"><h2>Summary by ICH Zone</h2>
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-summary">
+        <thead><tr><th>Zone</th><th>Conditions</th><th>Eff. WVTR</th><th>Annual Ingress</th><th>Total (SL)</th><th>% Limit</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
   </div>
 
   <div id="mvtr-tab-tables" class="tab-pane">
-    <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Complete Calculation Table</h2>
-      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.8rem" id="mvtr-tbl-detailed">
-        <thead><tr style="background:var(--bg);border-bottom:2px solid var(--border)"><th style="padding:0.5rem;text-align:left">Zone</th><th style="padding:0.5rem;text-align:left">T°C</th><th style="padding:0.5rem;text-align:left">RH%</th><th style="padding:0.5rem;text-align:left">WVTR ref</th><th style="padding:0.5rem;text-align:left">F_T</th><th style="padding:0.5rem;text-align:left">F_RH</th><th style="padding:0.5rem;text-align:left">WVTR eff</th><th style="padding:0.5rem;text-align:left">Area m²</th><th style="padding:0.5rem;text-align:left">Daily mg</th><th style="padding:0.5rem;text-align:left">Annual mg</th><th style="padding:0.5rem;text-align:left">Total mg</th><th style="padding:0.5rem;text-align:left">% Limit</th><th style="padding:0.5rem;text-align:left">Status</th></tr></thead>
+    <div class="card"><h2>Complete Calculation Table</h2>
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-detailed">
+        <thead><tr><th>Zone</th><th>T°C</th><th>RH%</th><th>WVTR ref</th><th>F_T</th><th>F_RH</th><th>WVTR eff</th><th>Area m²</th><th>Daily mg</th><th>Annual mg</th><th>Total mg</th><th>% Limit</th><th>Status</th></tr></thead>
         <tbody></tbody>
       </table></div>
     </div>
-    <div class="card" style="margin-top:1rem"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Active Parameters</h2><div id="mvtr-params-panel" style="font-size:0.88rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
+    <div class="card"><h2>Active Parameters</h2><div id="mvtr-params-panel" style="font-size:0.88rem;line-height:1.9;font-family:'Courier New',monospace"></div></div>
   </div>
 
   <div id="mvtr-tab-charts" class="tab-pane">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">WVTR: Reference vs Effective</h2><div style="height:280px"><canvas id="mvtr-ch-wvtr"></canvas></div></div>
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Zone Map (T vs RH)</h2><div style="height:280px"><canvas id="mvtr-ch-trh"></canvas></div></div>
-      <div class="card" style="grid-column:1/-1"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Years to Critical Limit</h2><div style="height:280px"><canvas id="mvtr-ch-ttl"></canvas></div></div>
+    <div class="grid grid-2">
+      <div class="card"><h2>WVTR: Reference vs Effective</h2><div class="chart-wrap"><canvas id="mvtr-ch-wvtr"></canvas></div></div>
+      <div class="card"><h2>Zone Map (T vs RH)</h2><div class="chart-wrap"><canvas id="mvtr-ch-trh"></canvas></div></div>
+      <div class="card"><h2>Years to Critical Limit</h2><div class="chart-wrap"><canvas id="mvtr-ch-ttl"></canvas></div></div>
     </div>
   </div>
 
   <div id="mvtr-tab-scenarios" class="tab-pane">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="grid grid-2">
       <div class="card"><div id="mvtr-sce-comp-list"></div></div>
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Comparison Chart</h2><div style="height:280px"><canvas id="mvtr-ch-sce"></canvas></div></div>
+      <div class="card"><h2>Comparison Chart</h2><div class="chart-wrap"><canvas id="mvtr-ch-sce"></canvas></div></div>
     </div>
-    <div class="card" style="margin-top:1rem"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Comparison Table</h2>
-      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.85rem" id="mvtr-tbl-sce">
-        <thead><tr style="background:var(--bg);border-bottom:2px solid var(--border)" id="mvtr-sce-hdr"><th style="padding:0.6rem;text-align:left">Parameter</th></tr></thead>
+    <div class="card"><h2>Comparison Table</h2>
+      <div class="tbl-wrap"><table class="data-table" id="mvtr-tbl-sce">
+        <thead><tr id="mvtr-sce-hdr"><th>Parameter</th></tr></thead>
         <tbody id="mvtr-sce-body"></tbody>
       </table></div>
     </div>
   </div>
 
   <div id="mvtr-tab-sensitivity" class="tab-pane">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Sensitivity: Eₐ</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end;margin-bottom:0.5rem">
-          <div style="margin:0"><label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">Eₐ min (kJ/mol)</label><input type="number" id="mvtr-s-ea-min" value="20" step="5" oninput="MVTR.runSensEA()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-          <div style="margin:0"><label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">Eₐ max (kJ/mol)</label><input type="number" id="mvtr-s-ea-max" value="65" step="5" oninput="MVTR.runSensEA()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
+    <div class="grid grid-2">
+      <div class="card"><h2>Sensitivity: Eₐ</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end">
+          <div class="form-group" style="margin:0"><label>Eₐ min (kJ/mol)</label><input type="number" id="mvtr-s-ea-min" value="20" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
+          <div class="form-group" style="margin:0"><label>Eₐ max (kJ/mol)</label><input type="number" id="mvtr-s-ea-max" value="65" step="5" class="form-input" oninput="MVTR.runSensEA()"></div>
         </div>
-        <div style="height:280px"><canvas id="mvtr-ch-sea"></canvas></div>
+        <div class="chart-wrap"><canvas id="mvtr-ch-sea"></canvas></div>
       </div>
-      <div class="card"><h2 style="margin:0 0 0.75rem 0;font-size:0.95rem">Sensitivity: WVTR</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end;margin-bottom:0.5rem">
-          <div style="margin:0"><label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">WVTR min (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-min" value="0.1" step="0.1" oninput="MVTR.runSensWVTR()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
-          <div style="margin:0"><label style="font-size:0.75rem;font-weight:600;display:block;margin-bottom:0.25rem">WVTR max (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-max" value="3.0" step="0.1" oninput="MVTR.runSensWVTR()" style="width:100%;padding:0.5rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.85rem"></div>
+      <div class="card"><h2>Sensitivity: WVTR</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;align-items:end">
+          <div class="form-group" style="margin:0"><label>WVTR min (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-min" value="0.1" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
+          <div class="form-group" style="margin:0"><label>WVTR max (g/m²/d)</label><input type="number" id="mvtr-s-wvtr-max" value="3.0" step="0.1" class="form-input" oninput="MVTR.runSensWVTR()"></div>
         </div>
-        <div style="height:280px"><canvas id="mvtr-ch-swvtr"></canvas></div>
+        <div class="chart-wrap"><canvas id="mvtr-ch-swvtr"></canvas></div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="disclaimer" style="margin-top:1.5rem;padding:1rem;background:var(--warning-light);border-left:4px solid var(--warning);border-radius:6px">
-  <h3 style="margin:0 0 0.5rem 0;font-size:0.95rem;color:var(--warning)">⚠ Regulatory Disclaimer & Model Limitations</h3>
-  <div style="font-size:0.85rem;line-height:1.6;color:var(--text)"><strong>For R&D screening and concept development only.</strong> This tool assists packaging engineers during early material selection. It produces predictive estimates from mathematical models and does not replace regulatory stability testing.</div>
-  <div style="font-size:0.85rem;line-height:1.6;color:var(--text);margin-top:0.4rem"><strong>Real-time and accelerated stability studies are mandatory.</strong> Commercial shelf-life claims submitted to FDA, EMA, PMDA, ANVISA, or any national authority must be supported by experimental data from accredited stability chambers, in full compliance with ICH Q1A(R2) and applicable local regulations.</div>
-  <div style="font-size:0.85rem;line-height:1.6;color:var(--text);margin-top:0.4rem"><strong>Model assumptions:</strong> (1) Steady-state permeation through a defect-free uniform film. (2) Linear superposition of Arrhenius and RH correction factors. (3) No seal permeation, pinholes, or mechanical damage. (4) Constant storage conditions throughout shelf life. (5) Negligible back-diffusion as internal moisture approaches external humidity. Real systems may deviate significantly from these idealised conditions.</div>
-  <div style="font-size:0.85rem;line-height:1.6;color:var(--text);margin-top:0.4rem"><strong>Source data quality determines output reliability.</strong> When using the Calculator source, accuracy depends on the material database entries. When entering values manually, the user is solely responsible for ensuring the measurement was performed under the stated reference conditions per ASTM F1249 or ISO 15106.</div>
+<div class="disclaimer">
+  <h3>⚠ Regulatory Disclaimer & Model Limitations</h3>
+  <div class="disc-item"><strong>For R&D screening and concept development only.</strong> This tool assists packaging engineers during early material selection. It produces predictive estimates from mathematical models and does not replace regulatory stability testing.</div>
+  <div class="disc-item"><strong>Real-time and accelerated stability studies are mandatory.</strong> Commercial shelf-life claims submitted to FDA, EMA, PMDA, ANVISA, or any national authority must be supported by experimental data from accredited stability chambers, in full compliance with ICH Q1A(R2) and applicable local regulations.</div>
+  <div class="disc-item"><strong>Model assumptions:</strong> (1) Steady-state permeation through a defect-free uniform film. (2) Linear superposition of Arrhenius and RH correction factors. (3) No seal permeation, pinholes, or mechanical damage. (4) Constant storage conditions throughout shelf life. (5) Negligible back-diffusion as internal moisture approaches external humidity. Real systems may deviate significantly from these idealised conditions.</div>
+  <div class="disc-item"><strong>Source data quality determines output reliability.</strong> When using the Calculator source, accuracy depends on the material database entries. When entering values manually, the user is solely responsible for ensuring the measurement was performed under the stated reference conditions per ASTM F1249 or ISO 15106.</div>
 </div>
 
 ${renderMVTRMethodology()}
 `;
 }
 
+
+// ====================================================================
+// 📖 METHODOLOGY
+// ====================================================================
+
 function renderMVTRMethodology() {
   return `
-<div class="methodology-card" style="margin-top:1.5rem;padding:1.2rem;background:#fff;border:1px solid var(--border);border-radius:8px">
-  <div>
-    <h2 style="font-family:Georgia, 'Times New Roman', serif; font-size:1.2rem; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:0.5rem; margin-bottom:1rem">Mechanics of MVTR Analysis & ICH Q1A(R2) Compliance</h2>
-    <div style="font-size:0.9rem; line-height:1.7; color:#334155; font-family:Georgia, 'Times New Roman', serif">
-      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity.</p>
-      
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1rem; color:var(--primary-dark); margin-top:1.2rem; font-weight:700">The ICH Climatic Zone Framework</h3>
-      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into zones representing mean kinetic temperature and relative humidity conditions.</p>
-      <div style="background:var(--primary-light); padding:0.7rem 0.9rem; border-radius:6px; border-left:3px solid var(--primary); margin:0.8rem 0; font-family:sans-serif; font-size:0.85rem">
-        <strong>Zone Definitions (ICH Q1A(R2) / WHO TRS No. 863):</strong><br>
-        Zone I (21°C / 45% RH): Temperate<br>
-        Zone II (25°C / 60% RH): Subtropical / Mediterranean<br>
-        Zone IIIa (40°C / 15% RH): Hot/Dry<br>
-        Zone IVa (40°C / 75% RH): Hot/Humid<br>
-        Zone IVb (30°C / 75% RH): Hot/Very Humid (ASEAN)<br>
-        Accelerated (40°C / 75% RH): ICH stress testing<br>
-        Intermediate (30°C / 65% RH): ICH bridging condition
+<div class="methodology-card">
+  <div class="mc-inner">
+    <h2>Mechanics of MVTR Analysis & ICH Q1A(R2) Compliance</h2>
+    <div class="mc-body">
+      <p>The Moisture Vapor Transmission Rate (MVTR, also written WVTR) is the steady-state flux of water vapor through a unit area of packaging film under defined conditions of temperature and relative humidity. In pharmaceutical packaging science, quantifying this rate and projecting its cumulative effect over the product's intended shelf life is not optional. It is the foundation upon which stability assessments under ICH Q1A(R2) are built. This system implements the full analytical chain from measured barrier values through zone-specific thermal and humidity corrections to compliance predictions against a user-defined critical limit.</p>
+
+      <h3> The ICH Climatic Zone Framework</h3>
+      <p>The International Council for Harmonisation (ICH) codified the global climatic landscape into five zones, each representing the mean kinetic temperature and relative humidity conditions a pharmaceutical product encounters during its commercial life in that region. These are not arbitrary categories. They encode real thermodynamic stress that packaging must survive.</p>
+      <div class="callout blue">
+        <strong>Zone Definitions (ICH Q1A(R2) / WHO Technical Report Series No. 863):</strong><br>
+        Zone I (21°C / 45% RH): Temperate, Europe, Canada, Russia<br>
+        Zone II (25°C / 60% RH): Subtropical / Mediterranean, USA, Japan<br>
+        Zone IIIa (40°C / 15% RH): Hot/Dry, Middle East, arid Africa<br>
+        Zone IVa (40°C / 75% RH): Hot/Humid, South-East Asia, tropical regions<br>
+        Zone IVb (30°C / 75% RH): Hot/Very Humid (ASEAN harmonised protocol)<br>
+        Accelerated (40°C / 75% RH): ICH Q1A(R2) stress testing, Section 2.1.2<br>
+        Intermediate (30°C / 65% RH): ICH Q1A(R2) bridging condition
       </div>
 
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1rem; color:var(--primary-dark); margin-top:1.2rem; font-weight:700">Arrhenius Temperature Correction</h3>
-      <div style="background:#f8fafc; padding:0.9rem; border-radius:6px; font-family:monospace; font-size:0.9rem; text-align:center; border:1px dashed var(--border); margin:0.8rem 0; color:#0f172a">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]</div>
-      
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1rem; color:var(--primary-dark); margin-top:1.2rem; font-weight:700">Relative Humidity Driving Force</h3>
-      <div style="background:#f8fafc; padding:0.9rem; border-radius:6px; font-family:monospace; font-size:0.9rem; text-align:center; border:1px dashed var(--border); margin:0.8rem 0; color:#0f172a">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
+      <h3> Arrhenius Temperature Correction</h3>
+      <p>Water vapor permeation through a polymer film is a thermally activated diffusion process. As temperature rises, polymer chain segmental mobility increases, free volume grows, and the diffusion coefficient of water molecules through the matrix accelerates exponentially. This relationship is described by the Arrhenius equation:</p>
+      <div class="formula-block">F_T = exp [ (Eₐ / R) × (1/T_ref − 1/T_target) ]<br><br>Eₐ = activation energy of permeation (kJ/mol)<br>R = 8.314 × 10⁻³ kJ/(mol·K) · T in Kelvin</div>
+      <p>When F_T &gt; 1 the target zone is hotter than the reference and permeation is accelerated. F_T &lt; 1 means the zone is cooler and the film performs better than its measured value. Setting Eₐ = 0 treats WVTR as temperature-independent, which is appropriate only when no activation energy data exists.</p>
+      <div class="callout warning">
+        <strong>Literature Eₐ guidance:</strong> Polyolefins (LDPE, PP) ≈ 28–42 kJ/mol. Polar films (EVOH, Nylon) ≈ 45–70 kJ/mol due to stronger hydrogen-bonding with water. Aluminium foil laminates: near zero when foil is intact, because transport occurs through defects (pinholes, seals), not through the metal lattice itself. Metallised films fall between 10–30 kJ/mol depending on metallisation quality.
+      </div>
 
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1rem; color:var(--primary-dark); margin-top:1.2rem; font-weight:700">Cumulative Ingress and Compliance</h3>
-      <div style="background:#f8fafc; padding:0.9rem; border-radius:6px; font-family:monospace; font-size:0.9rem; text-align:center; border:1px dashed var(--border); margin:0.8rem 0; color:#0f172a">Ingress_daily (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
+      <h3> Relative Humidity Driving Force</h3>
+      <p>Permeation is driven by the partial pressure differential of water vapour across the film. At the same temperature, the ratio of partial pressures simplifies to the ratio of relative humidities, giving a linear first-order correction:</p>
+      <div class="formula-block">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
+      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied. See the hygroscopic correction module in the WVTR/OTR Calculator. The Community DB laminates listed in Step 1 have been validated to contain hygroscopic-grade corrections where applicable.</p>
 
-      <h3 style="font-family:-apple-system, BlinkMacSystemFont, sans-serif; font-size:1rem; color:var(--primary-dark); margin-top:1.2rem; font-weight:700">Alignment with Standards</h3>
-      <p style="margin-left:1rem; color:var(--text-light); font-size:0.85rem; font-family:sans-serif">
-        • <strong>ASTM F1249-20</strong>: WVTR through plastic film<br>
-        • <strong>ISO 15106-3:2003</strong>: Water vapour transmission rate<br>
-        • <strong>ICH Q1A(R2) (2003)</strong>: Stability Testing<br>
-        • <strong>WHO TRS No. 863 (1996)</strong>: Climatic zone classification
-      </p>
+      <h3> Cumulative Ingress and Compliance Evaluation</h3>
+      <p>Once the effective WVTR is established for each ICH zone, cumulative ingress over the shelf life follows from a steady-state linear model:</p>
+      <div class="formula-block">Ingress_daily (mg) = WVTR_eff (g/m²/day) × A (m²) × 1000<br>Ingress_total (mg) = Ingress_daily × t_shelf (days)<br>Compliance: Ingress_total ≤ M_crit</div>
+      <div class="callout success">
+        <strong>Worked example (pharmaceutical blister pack):</strong> WVTR_ref = 1.0 g/m²/day at 38°C/90%RH, Eₐ = 35 kJ/mol, cavity area = 2 cm². Zone IVa (40°C/75%RH): F_T = exp[(35/0.008314)×(1/311.15 − 1/313.15)] = 1.088; F_RH = 75/90 = 0.833; WVTR_eff = 0.907 g/m²/day. Daily ingress = 0.907 × 0.0002 × 1000 = 0.000181 mg. Over 2 years (730 days) = 0.133 mg, well within a 2.0 mg M_crit.
+      </div>
+      <p>The critical moisture limit M_crit must be established through independent product characterisation. Moisture sorption isotherm testing (ISO 18787, DVS method) combined with accelerated degradation experiments identifies the threshold beyond which physicochemical or microbiological failure initiates.</p>
+
+      <h3> Packaging Geometry & Exposed Area</h3>
+      <p>The surface area A is the single geometric parameter coupling the barrier value to the mass of water entering the package. For blister packs, only the polymer lid foil area over the cavity is moisture-active. The aluminium base contributes negligibly. For pouches and bags, both faces and any gusset area contribute. Bottles require numerical integration over the body, shoulder, and neck surfaces, which this tool performs automatically when the "Bottle" shape is selected. Seal areas and induction-welded surfaces are excluded by default and should be accounted for separately if seal permeation is a known concern for the laminate in question.</p>
+
+      <h3>Safety Margin and Sensitivity Analysis</h3>
+      <p>A compliance pass is a necessary but not sufficient condition for robust packaging. The safety margin, defined as the fraction of M_crit not consumed at end of shelf life, quantifies engineering headroom against real-world variability: batch-to-batch WVTR variation (±15–25% is typical for commercial films), seal integrity degradation during distribution, cyclic humidity in transit, and measurement uncertainty in the reference WVTR. A margin below 20% warrants a design review. The sensitivity analysis identifies which input parameters have the greatest leverage on the compliance outcome, directing experimental validation effort efficiently.</p>
+
+      <h3> Alignment with International Standards</h3>
+      <div class="mc-refs">
+        • <strong>ASTM F1249-20</strong>: WVTR through plastic film and sheeting, modulated infrared sensor method<br>
+        • <strong>ISO 15106-3:2003</strong>: Water vapour transmission rate, electrolytic detection sensor method<br>
+        • <strong>ICH Q1A(R2) (2003)</strong>: Stability Testing of New Drug Substances and Pharmaceutical Products<br>
+        • <strong>WHO TRS No. 863 (1996)</strong>: Climatic zone classification for global stability testing<br>
+        • <strong>ASTM E1641</strong>: Decomposition kinetics by thermogravimetry (Arrhenius parameter determination)<br>
+        • <strong>ISO 18787:2017</strong>: Determination of water activity in food and food products
+      </div>
     </div>
   </div>
 </div>
