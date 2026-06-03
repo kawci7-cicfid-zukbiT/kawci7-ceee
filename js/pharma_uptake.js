@@ -47,11 +47,11 @@ const DESICCANT_DB = {
 // ── Container geometry presets ────────────────────────────────────────
 // NOTE: these define GEOMETRY only — the barrier film is selected separately in Step 1
 const CONTAINER_GEOMETRY = {
-  hdpe_30:     { name: 'HDPE Bottle 30 mL',              area_cm2: 42,  headspace_ml: 8  },
-  hdpe_60:     { name: 'HDPE Bottle 60 mL',              area_cm2: 62,  headspace_ml: 15 },
-  hdpe_120:    { name: 'HDPE Bottle 120 mL',             area_cm2: 96,  headspace_ml: 25 },
-  hdpe_200:    { name: 'HDPE Bottle 200 mL',             area_cm2: 140, headspace_ml: 40 },
-  hdpe_500:    { name: 'HDPE Bottle 500 mL',             area_cm2: 260, headspace_ml: 80 },
+  hdpe_30:     { name: 'Round Bottle 30 mL',             area_cm2: 42,  headspace_ml: 8  },
+  hdpe_60:     { name: 'Round Bottle 60 mL',             area_cm2: 62,  headspace_ml: 15 },
+  hdpe_120:    { name: 'Round Bottle 120 mL',            area_cm2: 96,  headspace_ml: 25 },
+  hdpe_200:    { name: 'Round Bottle 200 mL',            area_cm2: 140, headspace_ml: 40 },
+  hdpe_500:    { name: 'Round Bottle 500 mL',            area_cm2: 260, headspace_ml: 80 },
   blister_10:  { name: 'Blister Strip — 10 cavities',    area_cm2: 20,  headspace_ml: 1  },
   blister_30:  { name: 'Blister Strip — 30 cavities',    area_cm2: 60,  headspace_ml: 3  },
   sachet_5g:   { name: 'Foil Sachet 5 g',                area_cm2: 30,  headspace_ml: 3  },
@@ -661,7 +661,6 @@ function renderPharmaUptake() {
   `;
 
   DES._renderIsothermBars(DESICCANT_DB[des_type]);
-  setTimeout(() => DES.calculate(), 60);
 }
 
 // ── Methodology ───────────────────────────────────────────────────────
