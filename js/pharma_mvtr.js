@@ -48,7 +48,7 @@ const MVTR = {
   // ------------------------------------------------------------------
   // 🔧 INIT
   // ------------------------------------------------------------------
-  init() {
+   init() {
     try { this._scenarios = JSON.parse(localStorage.getItem('mvtr_sce') || '[]'); } catch(e) { this._scenarios = []; }
 
     if (this._scenarios.length === 0) {
@@ -62,6 +62,16 @@ const MVTR = {
     this.renderScenariosList();
     this.refreshCalcPanel();
 
+    // 🔥 FIX: Refresh ritardato per catturare State dopo che Calculator ha popolato
+    setTimeout(() => {
+      console.log('🔄 MVTR delayed refresh - checking State.calcResult');
+      this.refreshCalcPanel();
+    }, 300);
+    
+    setTimeout(() => {
+      this.refreshCalcPanel();
+    }, 1000);
+
     try {
       const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
       if (saved) {
@@ -73,18 +83,18 @@ const MVTR = {
       }
     } catch(e){}
 
-    // 🔥 FIX: Listen for localStorage changes from Calculator
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'mvtr_calc_result') {
-        console.log('🔄 MVTR detected Calculator result change');
+    // 🔥 FIX: Refresh quando si torna alla pagina MVTR
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        console.log('🔄 MVTR page visible - refreshing Calculator data');
         this.refreshCalcPanel();
       }
     });
 
-    // 🔥 FIX: Refresh when page becomes visible again
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        console.log('🔄 MVTR page visible - refreshing Calculator data');
+    // 🔥 FIX: Ascolta cambiamenti nel Calculator (se usa saveCalcResult)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'mvtr_calc_result') {
+        console.log('🔄 MVTR detected localStorage change');
         this.refreshCalcPanel();
       }
     });
@@ -93,22 +103,41 @@ const MVTR = {
       if (this._results) try { localStorage.setItem('mvtr_last_params', JSON.stringify(this._results.params)); } catch(e){}
     });
   },
-
   // ------------------------------------------------------------------
   // 🔀 CALCULATOR ↔ COMPLIANCE BRIDGE (localStorage)
   // ------------------------------------------------------------------
 
-  refreshCalcPanel() {
+    refreshCalcPanel() {
     try {
-      const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+      // 🔥 FIX: Leggi da State.calcResult (come fa shelf life), NON da localStorage
+      const stateResult = (typeof State !== 'undefined' && State.calcResult) ? State.calcResult : null;
+      const saved = stateResult || JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
+      
+      console.log('🔍 MVTR refreshCalcPanel - State.calcResult:', stateResult);
       console.log('🔍 MVTR refreshCalcPanel - localStorage:', saved);
       
       if (saved && saved.total > 0) {
         const nameEl   = document.getElementById('mvtr-lam-name');
         const structEl = document.getElementById('mvtr-lam-struct');
         const rateEl   = document.getElementById('mvtr-lam-rate');
-        if (nameEl)   nameEl.textContent  = saved.laminateName || 'Laminate from Calculator';
-        if (structEl) structEl.textContent = saved.structure    || '';
+        
+        // Costruisci la stringa della struttura dai layer di State
+        let structureStr = '';
+        if (stateResult && typeof State !== 'undefined' && State.layers?.length) {
+          const layers = State.layers
+            .filter(l => l.mid !== null && l.thick > 0)
+            .map(l => {
+              const mat = (typeof DB !== 'undefined' && DB.materials) ? DB.materials.find(m => m.id === l.mid) : null;
+              return mat ? `${mat.name} (${l.thick}µm)` : null;
+            })
+            .filter(Boolean);
+          structureStr = layers.join(' / ') || '';
+        }
+        
+        const lamName = (typeof State !== 'undefined' && State.laminateName) ? State.laminateName : (saved.laminateName || 'Laminate from Calculator');
+        
+        if (nameEl)   nameEl.textContent  = lamName;
+        if (structEl) structEl.textContent = structureStr || saved.structure || '';
         if (rateEl)   rateEl.textContent   = saved.total.toFixed(5) + ' g/m²/day';
         this._updateRateSummary(saved.total.toFixed(5));
         console.log('✅ MVTR loaded Calculator result:', saved.total);
@@ -125,11 +154,6 @@ const MVTR = {
       console.error('❌ MVTR refreshCalcPanel error:', e);
     }
     this.updateBanner();
-  },
-
-  _updateRateSummary(rateStr) {
-    const el = document.getElementById('mvtr-active-rate');
-    if (el) el.textContent = rateStr + ' g/m²/day';
   },
 
   // ------------------------------------------------------------------
@@ -214,6 +238,11 @@ const MVTR = {
       return v ? parseFloat(v.split('|')[0]) : null;
     }
     if (this._activeSource === 'calc') {
+      // 🔥 FIX: Prima prova State.calcResult (come shelf life)
+      if (typeof State !== 'undefined' && State.calcResult?.total > 0) {
+        return State.calcResult.total;
+      }
+      // Fallback su localStorage
       try {
         const saved = JSON.parse(localStorage.getItem('mvtr_calc_result') || 'null');
         if (saved && saved.total > 0) return saved.total;
