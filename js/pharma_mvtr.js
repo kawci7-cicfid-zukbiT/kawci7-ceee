@@ -1200,7 +1200,7 @@ function renderMVTR() {
               <option value="0.2|38|90">PET 12µm / EVOH 6µm / LLDPE 70µm — 0.200 g/m²·day</option>
             </optgroup>
           </select>
-          <div class="hint">All values at 38°C / 90% RH (ASTM F1249) unless noted.</div>
+          <div class="hint"></div>
         </div>
       </div>
 
@@ -1258,7 +1258,7 @@ function renderMVTR() {
           <div style="display:flex;gap:0.4rem;align-items:center">
             <input type="number" id="mvtr-ea" value="35" step="1" min="0" max="150" class="form-input" style="flex:1">
           </div>
-          <div class="hint">LDPE/PP ≈ 30–40 · EVOH ≈ 50–65 · Nylon ≈ 40–55 · Al foil ≈ 0</div>
+          <div class="hint"></div>
           <div class="err">0–150 kJ/mol</div>
         </div>
       </div>
@@ -1346,7 +1346,7 @@ function renderMVTR() {
         <div class="form-group" style="margin:0" id="mvtr-fg-crit">
           <label>Critical Moisture Gain (mg/package)</label>
           <div class="input-row"><input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" class="form-input"><span class="input-unit">mg</span></div>
-          <div class="hint">Max permissible moisture uptake before product failure.</div>
+          <div class="hint"></div>
           <div class="err">Must be > 0</div>
         </div>
         <div class="form-group" style="margin:0" id="mvtr-fg-years">
