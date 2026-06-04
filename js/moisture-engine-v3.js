@@ -12,7 +12,7 @@
 //      (literature range 2-20×; Kempe 2018, Coyle 2013)
 //  (5) Auto-fit: fitTech() minimises log-error vs benchmarks (Nelder-Mead)
 // ====================================================================
-
+(function() {
 const R = 8.314, T_REF = 298.15, P_ATM = 101325;
 const PO2_EXT = 0.21 * P_ATM;   // partial pressure O2 in air (Pa), constant driving force
 
@@ -404,3 +404,4 @@ if (typeof require !== "undefined" && require.main === module) {
   console.log("\nAuto-fit perovskite k values on benchmarks:\n");
   fitTech('perovskite');
 }
+})();
