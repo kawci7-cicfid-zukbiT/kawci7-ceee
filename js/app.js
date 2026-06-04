@@ -162,6 +162,7 @@ function postNavRender() {
     setTimeout(function() {
         if(State.tab === 'home')        initHomeAnimations();
         if(State.tab === 'pharma-mvtr') MVTR.init();
+        if(State.tab === 'pv-lifetime') { if(typeof PV!=='undefined') PV.init(); } // ← qui
         if(State.tab === 'calc'        && State.calcResult) postCalcRender();
         if(State.tab === 'arrhenius')   postArrheniusRender();
         if(State.tab === 'sensitivity') postSensitivityRender();
@@ -182,6 +183,7 @@ function renderContent() {
             case 'compare':     c.innerHTML = renderCompare();     break;
             case 'shelflife':   c.innerHTML = renderShelfLife();   break;
                case 'pharma-mvtr': c.innerHTML = renderMVTR();        break;
+                case 'pv-lifetime': c.innerHTML = renderPVDegradation(); break;
             case 'materials':   c.innerHTML = renderMaterials();   break;
             case 'laminates':   c.innerHTML = renderLaminates();   break;
             case 'mat-company': c.innerHTML = renderCompanyMaterialsPage(); setTimeout(initCompanyMaterialsPage, 100); break;
