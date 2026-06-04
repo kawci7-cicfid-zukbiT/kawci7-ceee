@@ -207,9 +207,9 @@ const PV = {
       const G=j.properties.parameter.ALLSKY_SFC_SW_DWN;
       const MS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
       monthly=MS.map(m=>({m,t:T[m],rh:RH[m],g:G?G[m]:null}));
-      annualT=T.ANN??monthly.reduce((a,b)=>a+b.t,0)/12;
-      annualRH=RH.ANN??monthly.reduce((a,b)=>a+b.rh,0)/12;
-      annualG=G?(G.ANN??monthly.reduce((a,b)=>a+(b.g||0),0)/12):180;
+      annualT  = T.ANN  != null ? T.ANN  : monthly.reduce(function(a,b){return a+b.t;},0)/12;
+annualRH = RH.ANN != null ? RH.ANN : monthly.reduce(function(a,b){return a+b.rh;},0)/12;
+annualG  = G ? (G.ANN != null ? G.ANN : monthly.reduce(function(a,b){return a+(b.g||0);},0)/12) : 180;
       source='NASA POWER (20-yr MERRA-2 climatology)';
     } catch(e){source='';}
 
