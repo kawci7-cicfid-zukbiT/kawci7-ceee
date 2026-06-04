@@ -82,7 +82,7 @@
       desc:  'Automatic material classification per Decision 97/129/EC and national labelling rules (FR, IT, DE, ES). Generates the labelling specification for each target market based on the laminate layer structure.'
     },
     'pv-lifetime': {
-      icon:  '☀️',
+      icon:  '',
       title: 'PV Module Lifetime & Degradation',
       desc:  'Predicts the operational lifetime and degradation rate of photovoltaic modules based on the moisture and oxygen barrier properties of the encapsulant and backsheet.'
     }
