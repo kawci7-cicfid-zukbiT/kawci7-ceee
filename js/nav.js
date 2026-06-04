@@ -39,7 +39,7 @@ var NAV_GROUPS = [
     id: 'photovoltaic',
     label: ' Photovoltaic ',
     tabs: [
-      { id: 'moistureengine ',   label: 'Photovoltaic Module Degradation'}
+      { id: 'pv-lifetime', label: 'Photovoltaic Module Degradation' }
     ]
   },
   {
