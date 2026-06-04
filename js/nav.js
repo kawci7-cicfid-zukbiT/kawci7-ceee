@@ -19,7 +19,7 @@ var NAV_GROUPS = [
   },
   {
     id: 'food',
-    label: ' Food Analysis',
+    label: ' Food ',
     tabs: [
       { id: 'shelflife',  label: 'Shelf Life'          },
       { id: 'carbonfp',   label: 'Carbon Footprint'    },
@@ -29,10 +29,17 @@ var NAV_GROUPS = [
   },
   {
     id: 'biomedical',
-    label: ' Biomedical Analysis',
+    label: ' Biomedical ',
     tabs: [
       { id: 'pharma-mvtr',   label: 'MVTR / ICH Conditions'},
       { id: 'pharma-uptake', label: 'Desiccant Sizing Calculator' }
+    ]
+  },
+  {
+    id: 'photovoltaic',
+    label: ' Photovoltaic ',
+    tabs: [
+      { id: 'moistureengine ',   label: 'Photovoltaic Module Degradation'}
     ]
   },
   {
