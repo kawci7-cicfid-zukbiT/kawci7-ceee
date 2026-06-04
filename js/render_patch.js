@@ -60,6 +60,19 @@
         break;
     }
   };
+  case 'pv-lifetime':
+        var c = document.getElementById('app-content');
+        if (c) {
+          if (typeof window.renderPVDegradation === 'function') {
+            c.innerHTML = window.renderPVDegradation();
+          } else {
+            c.innerHTML = '<div class="alert alert-error" style="margin:2rem auto;max-width:480px">'
+              + '<strong>Module not loaded.</strong> Check that <code>pv-module.js</code> '
+              + 'and <code>moisture-engine-v3.js</code> are in the <code>js/</code> folder '
+              + 'and referenced in <code>index.html</code>.</div>';
+          }
+        }
+        break;
 
   // ── Coming Soon page ─────────────────────────────────────────────
   var COMING_SOON_META = {
