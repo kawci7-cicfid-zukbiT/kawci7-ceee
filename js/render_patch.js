@@ -1,9 +1,10 @@
 // ====================================================================
-// render_patch.js  v13
+// render_patch.js  v14
 // Load LAST in index.html, after all feature files and nav.js
 //
-// Changes from v12:
+// Changes from v13:
 //   + pharma-mvtr bloccato in modalità OTR (richiede WVTR)
+//   + pv-lifetime impostato su "Coming Soon"
 // ====================================================================
 (function () {
 
@@ -45,26 +46,22 @@
 
       // ── Biomedical Analysis — COMING SOON ────────────────────────
       case 'pharma-uptake':
-  if (typeof window.renderPharmaUptake === 'function')
-    window.renderPharmaUptake();
-  break;
+        if (typeof window.renderPharmaUptake === 'function')
+          window.renderPharmaUptake();
+        break;
+
       // ── Regulatory — COMING SOON ─────────────────────────────────
       case 'ppwr-label':
         var c = document.getElementById('app-content');
         if (c) c.innerHTML = _renderComingSoon(tab);
         break;
-// ── Photovoltaic ─────────────────────────────────── 
+
+      // ── Photovoltaic — COMING SOON ───────────────────────────────
       case 'pv-lifetime':
         var c = document.getElementById('app-content');
-        if (c) {
-          if (typeof window.renderPVDegradation === 'function') {
-            c.innerHTML = window.renderPVDegradation();
-          } else {
-            c.innerHTML = '<div class="alert alert-error" style="margin:2rem auto;max-width:480px">'
-              + '<strong>pv-module.js not loaded.</strong></div>';
-          }
-        }
+        if (c) c.innerHTML = _renderComingSoon(tab);
         break;
+
       // ── All existing tabs ────────────────────────────────────────
       default:
         if (typeof _orig === 'function') _orig();
@@ -83,6 +80,11 @@
       icon:  '',
       title: 'PPWR Label Generator',
       desc:  'Automatic material classification per Decision 97/129/EC and national labelling rules (FR, IT, DE, ES). Generates the labelling specification for each target market based on the laminate layer structure.'
+    },
+    'pv-lifetime': {
+      icon:  '☀️',
+      title: 'PV Module Lifetime & Degradation',
+      desc:  'Predicts the operational lifetime and degradation rate of photovoltaic modules based on the moisture and oxygen barrier properties of the encapsulant and backsheet.'
     }
   };
 
