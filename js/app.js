@@ -167,7 +167,6 @@ function postNavRender() {
         if(State.tab === 'arrhenius')   postArrheniusRender();
         if(State.tab === 'sensitivity') postSensitivityRender();
         if(State.tab === 'compare')     postCompareRender();
-        if(State.tab === 'laminates'   && DB.laminates.length >= 2) drawLamChart();
         if(State.tab === 'materials')   matApplyFilters();
     }, 150);
 }
@@ -216,7 +215,6 @@ function nav(tab) {
         if(tab === 'arrhenius')   postArrheniusRender();
         if(tab === 'sensitivity') postSensitivityRender();
         if(tab === 'compare')     postCompareRender();
-        if(tab === 'laminates'   && DB.laminates.length >= 2) drawLamChart();
     });
 }
 
@@ -647,6 +645,11 @@ async function initApp() {
                 }
                 DB.save();
             }
+        }
+
+        // Auto-load preset laminate library (first run only)
+        if(typeof loadPresetLaminates === 'function') {
+            loadPresetLaminates();
         }
 
         // Clean orphan layer references in laminates
