@@ -632,11 +632,11 @@ for (var di = 0; di < DEFAULT_MATERIALS.length; di++) {
 // ====================================================================
 // 🗂️ DEFAULT LAMINATES
 // ====================================================================
-var DEFAULT_LAMINATES = [
-  { id: 1001, name: "Standard Snack Wrapper",  total: 1.85,  totalThickness: 70,  humidity: 50, temperature: 23, mode: 'wvtr', recyclable: false, monoStructure: false, layerCount: 2, layers: [{ mid: 5, thick: 20 }, { mid: 1, thick: 50 }] },
-  { id: 1002, name: "High-Barrier Coffee Pouch", total: 0.12, totalThickness: 85,  humidity: 50, temperature: 23, mode: 'wvtr', recyclable: false, monoStructure: false, layerCount: 3, layers: [{ mid: 0, thick: 15 }, { mid: 2, thick: 20 }, { mid: 3, thick: 50 }] },
-  { id: 1003, name: "Mono-PE Recyclable Pouch",  total: 4.20, totalThickness: 120, humidity: 60, temperature: 25, mode: 'wvtr', recyclable: true,  monoStructure: true,  layerCount: 2, layers: [{ mid: 4, thick: 70 }, { mid: 1, thick: 50 }] }
-];
+// Note: legacy hardcoded laminates removed. The curated preset library is
+// now defined in materials.js (PRESET_LAMINATES) and loaded once at first
+// launch via loadPresetLaminates(), referencing real material IDs from
+// materials.json. This avoids "ghost" laminates with broken material refs.
+var DEFAULT_LAMINATES = [];
 
 // ====================================================================
 // 🗄️ DB - Local database with localStorage persistence
