@@ -133,7 +133,7 @@ const Engine = {
   findCommonConditions: function(layers, materials, testMethodFilter) {
     var mats = layers
       .filter(function(l) { return l.mid !== null; })
-      .map(function(l) { return materials.find(function(m) { return m.id === l.mid; }); })
+      .map(function(l) { return materials.find(function(m) { return String(m.id) === String(l.mid); }); })
       .filter(Boolean);
     if (mats.length === 0) return { conditions: [], error: null, warning: null, matInfo: null };
 
@@ -279,8 +279,9 @@ const Engine = {
       if (layer.mid === null || layer.thick <= 0)
         return { error: 'All layers must have material and thickness > 0' };
       var mat = null;
+      var lmidStr = String(layer.mid);
       for (var j = 0; j < materials.length; j++) {
-        if (materials[j].id === layer.mid) { mat = materials[j]; break; }
+        if (String(materials[j].id) === lmidStr) { mat = materials[j]; break; }
       }
       if (!mat) return { error: 'Material not found for layer ' + (i + 1) };
       var res = Engine.calcLayerResistance(layer, mat, condition);
@@ -421,8 +422,12 @@ const Engine = {
     var targetLayer = layers[targetLayerIdx];
     if (!targetLayer || targetLayer.mid === null) return { error: 'Invalid target layer' };
     var mat = null;
+    // FIX: ID comparison via String() — Firebase materials have string IDs ('fb_xyz')
+    // while DEFAULT_MATERIALS and JSON-loaded materials have numeric IDs.
+    // Using strict === would fail when types don't match.
+    var targetMidStr = String(targetLayer.mid);
     for (var m = 0; m < materials.length; m++) {
-      if (materials[m].id === targetLayer.mid) { mat = materials[m]; break; }
+      if (String(materials[m].id) === targetMidStr) { mat = materials[m]; break; }
     }
     if (!mat) return { error: 'Material not found' };
 
@@ -478,8 +483,9 @@ const Engine = {
     var barrier = layers[barrierLayerIdx];
     if (!barrier || barrier.mid === null) return { error: 'Invalid barrier layer' };
     var mat = null;
+    var barrierMidStr = String(barrier.mid);
     for (var m = 0; m < materials.length; m++) {
-      if (materials[m].id === barrier.mid) { mat = materials[m]; break; }
+      if (String(materials[m].id) === barrierMidStr) { mat = materials[m]; break; }
     }
     if (!mat) return { error: 'Material not found' };
     var vals    = this.getValues(mat);
@@ -526,8 +532,9 @@ const Engine = {
       var l = layers[j2];
       if (l.mid === null || l.thick <= 0) continue;
       var mm = null;
+      var lMidStr2 = String(l.mid);
       for (var k = 0; k < materials.length; k++) {
-        if (materials[k].id === l.mid) { mm = materials[k]; break; }
+        if (String(materials[k].id) === lMidStr2) { mm = materials[k]; break; }
       }
       if (!mm) continue;
       var res2 = this.calcLayerResistance(l, mm, condition);
@@ -545,8 +552,9 @@ const Engine = {
     for (var i = 0; i < layers.length; i++) {
       if (layers[i].mid === null) continue;
       var mat = null;
+      var lMidStr3 = String(layers[i].mid);
       for (var j = 0; j < materials.length; j++) {
-        if (materials[j].id === layers[i].mid) { mat = materials[j]; break; }
+        if (String(materials[j].id) === lMidStr3) { mat = materials[j]; break; }
       }
       if (!mat) continue;
       if (mat.family) families[mat.family] = true;
