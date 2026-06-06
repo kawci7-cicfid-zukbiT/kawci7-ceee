@@ -47,10 +47,10 @@ function renderCalc() {
         '<div class="form-group" style="margin-top:0.5rem">' +
         '<label>Materials Source</label>' +
         '<select class="form-input" id="filter-matsource" onchange="onMatSourceChange(this.value)">' +
-        '<option value="general"' + (State.matSource !== 'company' ? ' selected' : '') + '>General Database</option>' +
-        (CompanyState.isActive() ? '<option value="company"' + (State.matSource === 'company' ? ' selected' : '') + '>Company DB (' + CompanyState.companyName + ')</option>' : '') +
+        '<option value="general"' + (State.matSource !== 'company' ? ' selected' : '') + '>Database</option>' +
+        ((typeof CompanyState !== 'undefined' && CompanyState.isActive()) ? '<option value="company"' + (State.matSource === 'company' ? ' selected' : '') + '>My Database (' + CompanyState.companyName + ')</option>' : '') +
         '</select>' +
-        (!CompanyState.isActive() ? '<span style="font-size:0.65rem;color:var(--text-light)"><a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join a company</a> to access private materials</span>' : '') +
+        ((typeof CompanyState === 'undefined' || !CompanyState.isActive()) ? '<span style="font-size:0.65rem;color:var(--text-light)"><a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join a company</a> to access private materials</span>' : '') +
         '</div>';
 
     var testMethodFilter =
@@ -217,8 +217,8 @@ function renderCalc() {
         '<div class="card"><h2>Save Laminate</h2>' +
         '<div class="form-group"><label>Name</label><input type="text" class="form-input" id="lam-name" value="'+State.laminateName+'" placeholder="e.g. Coffee pouch structure..." oninput="State.laminateName=this.value;updateSaveBtn()"></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">' +
-        '<button class="btn btn-primary" id="save-btn-general" onclick="saveLaminateWithChoice()" title="Save to your personal laminates library">Save to General DB</button>' +
-        '<button class="btn btn-outline" id="save-btn-company" onclick="saveLaminateToCompany()" style="opacity:' + (CompanyState.isActive()?'1':'0.4') + ';cursor:' + (CompanyState.isActive()?'pointer':'not-allowed') + '" ' + (!CompanyState.isActive()?'disabled':'') + ' title="' + (CompanyState.isActive()?'Save to '+CompanyState.companyName:'Join a company first') + '">Save to Company DB</button></div>' +
+        '<button class="btn btn-primary" id="save-btn-general" onclick="saveLaminateWithChoice()" title="Save to your personal laminates library">Save to Database</button>' +
+        '<button class="btn btn-outline" id="save-btn-company" onclick="saveLaminateToCompany()" style="opacity:' + ((typeof CompanyState !== 'undefined' && CompanyState.isActive())?'1':'0.4') + ';cursor:' + ((typeof CompanyState !== 'undefined' && CompanyState.isActive())?'pointer':'not-allowed') + '" ' + (!(typeof CompanyState !== 'undefined' && CompanyState.isActive())?'disabled':'') + ' title="' + ((typeof CompanyState !== 'undefined' && CompanyState.isActive())?'Save to '+CompanyState.companyName:'Join a company first') + '">Save to My Database</button></div>' +
         '<div id="save-feedback"></div></div>' : '')+
         '</div></div>' +
         renderCalcMethodology();
@@ -713,7 +713,7 @@ function renderLaminates() {
             '<svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="width:30px;height:30px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>' +
             '</div>' +
             '<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 .5rem">Your saved laminates will appear here</h3>' +
-            '<p style="font-size:.82rem;color:var(--text-light);margin:0 0 1.25rem;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6">Build a structure in the Calculator tab, compute the result, then click "Save to General DB" to add it to this library.</p>' +
+            '<p style="font-size:.82rem;color:var(--text-light);margin:0 0 1.25rem;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6">Build a structure in the Calculator tab, compute the result, then click "Save to Database" to add it to this library.</p>' +
             '<button class="btn btn-primary" onclick="State.tab=\'calc\';renderContent();if(typeof postNavRender===\'function\')postNavRender()">Open Calculator</button>' +
             '</div>';
     }
