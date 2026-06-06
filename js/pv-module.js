@@ -146,7 +146,7 @@ const PV = {
     const otrRatio = parseFloat(document.getElementById('pv-otr-ratio')?.value)||300;
     const $ = id => document.getElementById(id);
 
-    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100;
+    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100, eaWvtr=0, eaOtr=0;
 
     if (src === 'calc') {
       try { wvtr = parseFloat(State.calcResult?.total)||0; } catch(e) {}
@@ -155,11 +155,16 @@ const PV = {
       wvtr = parseFloat($('pv-'+which+'-m-wvtr')?.value)||0;
       tt   = parseFloat($('pv-'+which+'-m-tt')?.value)||38;
       rht  = parseFloat($('pv-'+which+'-m-rh')?.value)||90;
+      // PV Fix 4: read user-supplied Ea_perm (kJ/mol → J/mol for makeBarrier)
+      const eaWvtrInput = parseFloat($('pv-'+which+'-m-ea-wvtr')?.value);
+      if (!isNaN(eaWvtrInput) && eaWvtrInput > 0) eaWvtr = eaWvtrInput * 1000;
       const manOtr = parseFloat($('pv-'+which+'-m-otr')?.value)||0;
       if (manOtr > 0) {
         otr = manOtr;
         ott = parseFloat($('pv-'+which+'-m-ott')?.value)||23;
         o2t = parseFloat($('pv-'+which+'-m-o2')?.value)||100;
+        const eaOtrInput = parseFloat($('pv-'+which+'-m-ea-otr')?.value);
+        if (!isNaN(eaOtrInput) && eaOtrInput > 0) eaOtr = eaOtrInput * 1000;
       }
     } else {
       const c = this['_'+which+'Cached']||{};
@@ -167,7 +172,7 @@ const PV = {
     }
 
     if (otr === 0) otr = wvtr * otrRatio;  // auto-estimate
-    return { wvtr, tt, rht, otr, ott, o2t };
+    return { wvtr, tt, rht, otr, ott, o2t, Ea: eaWvtr||undefined, EaO: eaOtr||undefined };
   },
 
   _refreshSummary(which) {
@@ -412,12 +417,29 @@ const PV = {
       source:'Synthetic (annual mean)'};
     const mid=this._sample(sim.series,sim.t80?sim.t80/2:5);
     const intRH=mid.RHint*100;
-    const Kfaces=(sim.wFront+sim.wBack)/(24*0.9*Psat(38));
-    const dPref=0.9*Psat(23)*1000;
+
+    // PV Fix 3: Use K(T) from makeBarrier (aligned with the simulation engine)
+    // instead of the approximate Kfaces derived from raw WVTR values.
+    // Flux is expressed in g/m²/day (multiply hourly K by 24) — no longer a.u.
+    // K(Tm) [g/(m²·h·Pa)] × ΔpH₂O [Pa] × 24 [h/day] = g/(m²·day)
+    let KwFaces_h = 0;
+    if(typeof window.MoistureEngine!=='undefined' && sim.wFront > 0) {
+      const fp = this._barrierParams('front');
+      const bp = this._barrierParams('back');
+      const bF = window.MoistureEngine.makeBarrier(fp.wvtr||sim.wFront, fp.tt||38, fp.rht||90, null, 'wvtr');
+      const bB = window.MoistureEngine.makeBarrier(bp.wvtr||sim.wBack,  bp.tt||38, bp.rht||90, null, 'wvtr');
+      KwFaces_h = (bF.K(sim.Tmod) + bB.K(sim.Tmod));
+    } else {
+      // Fallback: use Kfaces from raw WVTR (qualitative only)
+      KwFaces_h = (sim.wFront+sim.wBack)/(24*0.9*Psat(38));
+    }
+
     const flux=[],extRH=[];
     for(let h=0;h<24;h++){
       const Th=prof.T[h]??sim.Tamb, RHh=prof.RH[h]??(sim.rhFrac*100), Tm=Th+18;
-      flux.push(+((Kfaces*((RHh/100)*Psat(Tm)*1000-(intRH/100)*Psat(Tm)*1000)/dPref)).toFixed(4));
+      // Net flux [g/m²/day]: positive = moisture entering, negative = leaving
+      const dP = (RHh/100)*Psat(Tm) - (intRH/100)*Psat(Tm);
+      flux.push(+(KwFaces_h * dP * 24).toFixed(5));
       extRH.push(+RHh.toFixed(1));
     }
     if(!window.chartInstances)window.chartInstances={};
@@ -428,7 +450,9 @@ const PV = {
       ]},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:9}}}},
-        scales:{x:{ticks:{maxTicksLimit:12,font:{size:8}}},y:{title:{display:true,text:'Flux (a.u.)'}},y1:{position:'right',min:0,max:100,title:{display:true,text:'RH %'},grid:{drawOnChartArea:false}}}}});
+        scales:{x:{ticks:{maxTicksLimit:12,font:{size:8}}},
+                y:{title:{display:true,text:'Flux (g/m²/day)'}},
+                y1:{position:'right',min:0,max:100,title:{display:true,text:'RH %'},grid:{drawOnChartArea:false}}}}});
   },
 
   _drawMonthly() {
@@ -505,11 +529,32 @@ function renderPVDegradation() {
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-tt" class="form-input" value="38" step="1" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="pv-${which}-m-rh" class="form-input" value="90" step="1" oninput="PV._refreshSummary('${which}')"></div>
         </div>
+        <!-- PV Fix 4: Ea_perm field for WVTR. Default 30 kJ/mol underestimates
+             thermal effect for barrier films with PA/EVOH (Ea 40–60 kJ/mol).
+             Typical values: PE/PP 25–35, PET 30–45, PA 45–60, EVOH 50–65 kJ/mol. -->
+        <div class="grid grid-2" style="gap:.35rem;margin-bottom:.5rem">
+          <div class="form-group" style="margin:0">
+            <label>Eₐ WVTR (kJ/mol) <span style="font-size:.62rem;color:var(--text-light)">optional — default 30</span></label>
+            <input type="number" id="pv-${which}-m-ea-wvtr" class="form-input" step="1" min="10" max="100" placeholder="30 (PE/PP) · 45 (PET) · 55 (PA/EVOH)">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.68rem;color:var(--text-light);line-height:1.4;margin-top:.5rem;display:block">
+              Sets temperature scaling from test to service conditions.<br>
+              Leave blank to use literature default (30 kJ/mol).
+            </label>
+          </div>
+        </div>
         <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">OTR — optional (leave blank to auto-estimate)</div>
         <div class="grid grid-3" style="gap:.35rem">
           <div class="form-group" style="margin:0"><label>OTR (cc/m²·day)</label><input type="number" id="pv-${which}-m-otr" class="form-input" step="any" placeholder="blank = auto" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-ott" class="form-input" value="23" step="1"></div>
           <div class="form-group" style="margin:0"><label>O₂ fraction (%)</label><input type="number" id="pv-${which}-m-o2" class="form-input" value="100" step="1"></div>
+        </div>
+        <div class="grid grid-2" style="gap:.35rem;margin-top:.35rem">
+          <div class="form-group" style="margin:0">
+            <label>Eₐ OTR (kJ/mol) <span style="font-size:.62rem;color:var(--text-light)">optional — default 30</span></label>
+            <input type="number" id="pv-${which}-m-ea-otr" class="form-input" step="1" min="10" max="100" placeholder="30 default">
+          </div>
         </div>
       </div>
 
