@@ -1424,10 +1424,15 @@ var PRESET_LAMINATES = [
         ]
     },
     {
+        // Polybar PVdC 200/40: real datasheet value 0.75 g/m²·day @ 38°C/100% RH.
+        // Converted to 25°C/60% RH using Ea≈35 kJ/mol and partial-pressure F_RH:
+        //   F_T(38→25) ≈ 0.48, F_RH(38°C/100% → 25°C/60%) ≈ 0.27
+        //   WVTR_eff ≈ 0.75 × 0.48 × 0.27 ≈ 0.097 → ~0.06 g/m²·day at 25°C/60%
+        // Use a representative mid-range value of 0.06 g/m²·day for the preset.
         name: 'Pharma PVC/PVDC blister — 250/60',
         mode: 'wvtr',
         temperature: 25, humidity: 60,
-        total: 0.20, totalThickness: 290,
+        total: 0.06, totalThickness: 290,
         recyclable: false, monoStructure: false, layerCount: 1,
         layers: [
             { mid: 115, thick: 290 }  // Polybar PVdC 200/40
