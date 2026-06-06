@@ -39,13 +39,23 @@ const Engine = {
     var rhDiff = condition.humidity - refRH;
     if (Math.abs(rhDiff) < 2) return { factor: 1, correction: 0, message: null };
 
-    var factor        = Math.exp(beta * rhDiff);
+    // FIX 6: Quadratic hygroscopic correction.
+    // Linear β underestimates EVOH above 75–80% RH where diffusivity rises
+    // super-linearly. Model: P_corrected = P_ref × exp(β·ΔRH + β₂·ΔRH²)
+    // β₂ (hygroscopicBeta2) defaults to 0 → identical to original linear model.
+    // Literature values for EVOH 32 mol% ethylene (Lagaron et al. 2001):
+    //   β  ≈ 0.030 %RH⁻¹  β₂ ≈ 0.0003 %RH⁻² (significant above 75% RH)
+    var beta2Key = mode === 'wvtr' ? 'hygroscopicBeta2WVTR' : 'hygroscopicBeta2OTR';
+    var beta2    = mat[beta2Key] || mat.hygroscopicBeta2 || 0;
+
+    var factor        = Math.exp(beta * rhDiff + beta2 * rhDiff * rhDiff);
     var correctionPct = (factor - 1) * 100;
+    var quadNote      = beta2 > 0 ? ' (quadratic β₂ active)' : '';
     return {
       factor:        factor,
       correction:    correctionPct,
       message:       mat.name + ': +' + correctionPct.toFixed(1) + '% permeability at ' +
-                     condition.humidity + '% RH vs ' + refRH + '% RH reference',
+                     condition.humidity + '% RH vs ' + refRH + '% RH reference' + quadNote,
       isSignificant: Math.abs(correctionPct) > 10
     };
   },
@@ -220,12 +230,25 @@ const Engine = {
       return { resistance: Infinity, transmissionAtThickness: 0, isBarrier: true, hygroCorrection: null };
 
     if (material.isMetallized) {
+      // FIX 5: Metal thickness correction via empirical pinhole density model.
+      // WVTR_eff = WVTR_ref × exp(−k_ph × (t_nm − t_ref_nm))
+      // where k_ph ≈ 0.04 nm⁻¹ (Chatham 1996; Yanaka 2001 empirical fit).
+      // t_ref_nm = 30 nm (typical measurement thickness for AlOx/SiOx data).
+      // If metalThickness_nm is not set, falls back to original behaviour.
+      var metalNm = material.metalThickness_nm || 0;
       var surfacePermeability = permeabilityCoeff;
+      if (metalNm > 0) {
+        var k_ph    = material.metalPinholeK || 0.04;   // nm⁻¹, literature default
+        var t_ref   = material.metalRefThickness_nm || 30; // nm reference
+        surfacePermeability = permeabilityCoeff * Math.exp(-k_ph * (metalNm - t_ref));
+        if (surfacePermeability <= 0) surfacePermeability = 1e-9;
+      }
       return {
         resistance:              1 / surfacePermeability,
         transmissionAtThickness: surfacePermeability,
         isBarrier:               surfacePermeability < 0.1,
         isMetallized:            true,
+        metalThickness_nm:       metalNm,
         hygroCorrection:         null,
         pointsUsed:              matchingPoints.length
       };
@@ -294,8 +317,16 @@ const Engine = {
     for (var i = 0; i < availConds.length; i++) temps[availConds[i].temperature] = true;
     if (Object.keys(temps).length < 2) return { valid: false, error: 'Need 2+ different temperatures' };
     var hums = availConds.map(function(c) { return c.humidity; });
-    if (Math.max.apply(null, hums) - Math.min.apply(null, hums) > 5)
-      return { valid: false, error: 'Humidity must be same (max 5% diff)' };
+    // FIX 8: tighter RH tolerance (2%) for hygroscopic materials (EVOH, Nylon,
+    // regenerated cellulose) where 5% ΔRH can cause 30-40% variation in P,
+    // confounding temperature effect with humidity effect in the regression.
+    var isHygroscopic = false;
+    var valsCheck = this.getValues(mat);
+    if (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBetaOTR > 0 || mat.hygroscopicBeta > 0)
+      isHygroscopic = true;
+    var rhTol = isHygroscopic ? 2 : 5;
+    if (Math.max.apply(null, hums) - Math.min.apply(null, hums) > rhTol)
+      return { valid: false, error: 'Humidity must be same (max ' + rhTol + '% diff' + (isHygroscopic ? ' — tighter tolerance for hygroscopic materials' : '') + ')' };
     for (var w = 0; w < vals.length; w++)
       if (vals[w].value <= 0) return { valid: false, error: 'All values must be > 0' };
     return { valid: true };
@@ -331,7 +362,34 @@ const Engine = {
       var ya = Math.log(dps[dp].trans), yp = slope * (1 / dps[dp].T_K) + intercept;
       ssT += Math.pow(ya - ym, 2); ssR += Math.pow(ya - yp, 2);
     }
-    return { valid: true, Ea: Ea, A: A, rSquared: ssT > 0 ? 1 - ssR / ssT : 1, dataPoints: dps };
+    var n      = dps.length;
+    var rSq    = ssT > 0 ? 1 - ssR / ssT : 1;
+    // FIX 4: 95% prediction interval on the Arrhenius regression.
+    // In log-space: SE_residual = sqrt(SSR / (n-2))
+    // SE_pred(x0) = SE_res × sqrt(1 + 1/n + (x0 - x_mean)² / Sxx)
+    // PI_95 = t_{n-2,0.975} × SE_pred  (in log-space → factor on linear scale)
+    // t critical values (two-tailed 95%) for small n:
+    var tCrit  = [Infinity, Infinity, 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262];
+    var tc     = n >= 10 ? 1.960 : (tCrit[n] || 1.960);
+    var Sxx    = sx2 - sx * sx / n;   // Σ(xi - x̄)²
+    var xMean  = sx / n;
+    var seRes  = n > 2 ? Math.sqrt(ssR / (n - 2)) : 0;
+    return {
+      valid: true, Ea: Ea, A: A, rSquared: rSq, dataPoints: dps,
+      seResidual: seRes, tCrit: tc, Sxx: Sxx, xMean: xMean,
+      // Helper: returns 95% PI bounds (linear scale) for a given target T [K]
+      predInterval: function(T_K) {
+        if (seRes === 0 || Sxx === 0) return null;
+        var x0  = 1 / T_K;
+        var sePred = seRes * Math.sqrt(1 + 1/n + Math.pow(x0 - xMean, 2) / Sxx);
+        var yHat   = slope * x0 + intercept;
+        return {
+          lower: Math.exp(yHat - tc * sePred),
+          upper: Math.exp(yHat + tc * sePred),
+          seLog: sePred
+        };
+      }
+    };
   },
 
   predict: function(A, Ea, tempC) {
