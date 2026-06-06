@@ -673,10 +673,10 @@ function renderPharmaUptake() {
           <button id="des-src-btn-calc" class="btn btn-sm" onclick="DES.setBarrierSource('calc')"
             style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
           <button id="des-src-btn-db" class="btn btn-sm btn-outline" onclick="DES.setBarrierSource('db')"
-            style="font-size:0.75rem">From Community DB</button>
+            style="font-size:0.75rem">From Database</button>
           <button id="des-src-btn-company" class="btn btn-sm btn-outline" onclick="DES.setBarrierSource('company')"
             style="font-size:0.75rem${companyActive?'':';opacity:0.5;cursor:not-allowed'}"
-            ${companyActive?'':'disabled'}>From Company DB</button>
+            ${companyActive?'':'disabled'}>From My Database</button>
         </div>
 
         <!-- Panel: Calculator -->
