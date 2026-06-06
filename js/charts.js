@@ -383,9 +383,25 @@ function drawLaminateCurveChart() {
     });
   }
 
-  // FIX: removed the redundant "Calculated @ T°C" scatter point — the result
-  // is already shown in the Result panel and it overlapped the measured data
-  // point causing two markers at the same X coordinate.
+  // Red scatter dot at the selected condition showing the laminate total —
+  // taken directly from the Result panel value, so it's always present
+  // even when the laminate curve has too few points to draw a line.
+  if (State.selCond && State.calcResult && State.calcResult.total > 0 && !State.calcResult.isBarrier) {
+    datasets.push({
+      label:                '▶ Calculated @ ' + State.selCond.temperature + '°C',
+      data:                 [{ x: State.selCond.temperature, y: State.calcResult.total }],
+      borderColor:          '#dc2626',
+      backgroundColor:      '#dc2626',
+      borderWidth:          3,
+      pointRadius:          8,
+      pointHoverRadius:     10,
+      pointBackgroundColor: '#fff',
+      pointBorderColor:     '#dc2626',
+      type:                 'scatter',
+      showLine:             false,
+      order:                -1
+    });
+  }
 
   if (datasets.length === 0) return;
 
