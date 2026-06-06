@@ -488,9 +488,12 @@ const SL = {
 
     // FIX 9: for hygroscopic materials, use sequential simulation per segment
     // instead of collapsing to weighted averages. For non-hygroscopic materials
-    // (or when chain is off), weighted averages remain unchanged.
+    // (or when chain is off, or product is oxygen-driven), weighted averages
+    // remain unchanged (the moisture loop is the only place segment-sequential
+    // matters; oxygen ingress doesn't depend on RH).
     let isHygroscopicChain = false;
-    if (isChain && chainSegments.length > 0 && !this._manualOverride && State.layers?.length) {
+    if (isChain && chainSegments.length > 0 && prod.type === 'moisture' &&
+        !this._manualOverride && State.layers?.length) {
       for (const layer of State.layers) {
         if (!layer.mid) continue;
         const mat = DB.materials?.find(m => m.id === layer.mid);
@@ -502,16 +505,17 @@ const SL = {
 
     if (isChain && chainSegments.length > 0) {
       if (!isHygroscopicChain) {
-        // Non-hygroscopic: weighted average (original behaviour)
+        // Non-hygroscopic or oxygen product: weighted average (original behaviour)
         let totD = 0, wT = 0, wRH = 0;
         chainSegments.forEach(s => { wT += s.T * s.days; wRH += s.RH * s.days; totD += s.days; });
         if (totD > 0) { T_store = wT / totD; RH_out = wRH / totD; }
       } else {
-        // Hygroscopic: use first segment as representative T/RH for the
-        // single-pass effectiveRate calculation below; the full sequential
-        // simulation runs later inside the moisture loop (see segment loop).
-        T_store = chainSegments[0].T;
-        RH_out  = chainSegments[0].RH;
+        // Hygroscopic moisture: use averages as representative for the
+        // single-pass effectiveRate (display only); the segment loop later
+        // recomputes per-segment rates and runs the real sequential sim.
+        let totD = 0, wT = 0, wRH = 0;
+        chainSegments.forEach(s => { wT += s.T * s.days; wRH += s.RH * s.days; totD += s.days; });
+        if (totD > 0) { T_store = wT / totD; RH_out = wRH / totD; }
       }
     } else {
       T_store = parseFloat(document.getElementById('sl-temp')?.value) || 25;
