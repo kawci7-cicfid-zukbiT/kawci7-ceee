@@ -363,9 +363,24 @@ function drawLaminateCurveChart() {
   }
 
   if (laminateCurve.length > 0) {
-    datasets.push({ label: '▶ LAMINATE TOTAL', data: laminateCurve,
-      borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.1)',
-      borderWidth: 2.5, pointRadius: 0, type: 'line', fill: false, order: 0 });
+    // When we have many points (Arrhenius interpolation available) → smooth line.
+    // When we have few points (only measured temperatures) → render as visible
+    // dots so the user can still see the total laminate value.
+    var isLine = laminateCurve.length >= 4;
+    datasets.push({
+      label:           '▶ LAMINATE TOTAL',
+      data:            laminateCurve,
+      borderColor:     '#dc2626',
+      backgroundColor: isLine ? 'rgba(220,38,38,0.1)' : '#dc2626',
+      borderWidth:     isLine ? 2.5 : 2,
+      pointRadius:     isLine ? 0 : 7,
+      pointHoverRadius: isLine ? 4 : 9,
+      pointStyle:      'rectRot',           // diamond shape — visually distinct from material dots
+      type:            'line',
+      showLine:        isLine,
+      fill:            false,
+      order:           0
+    });
   }
 
   // FIX: removed the redundant "Calculated @ T°C" scatter point — the result
