@@ -870,6 +870,14 @@ function renderPharmaUptake() {
     }, 500);
   </script>
 
+  <div class="disclaimer">
+    <h3>⚠ Regulatory Disclaimer & Model Limitations</h3>
+    <div class="disc-item"><strong>For R&D screening and concept development only.</strong> This calculator assists packaging engineers and formulators during early desiccant sizing and primary packaging selection. It produces predictive estimates from mathematical models and does not replace experimental moisture-balance validation studies.</div>
+    <div class="disc-item"><strong>Real-time and accelerated stability studies are mandatory.</strong> Commercial shelf-life claims and desiccant specifications submitted to FDA, EMA, PMDA, ANVISA, or any national authority must be supported by experimental data from validated stability chambers, in full compliance with ICH Q1A(R2), USP &lt;671&gt;, and applicable local regulations.</div>
+    <div class="disc-item"><strong>Model assumptions:</strong> Steady-state moisture permeation through a defect-free uniform film. Headspace humidity and product moisture release modelled as one-time events at sealing. Sorption isotherm is interpolated linearly between published data points and assumes thermodynamic equilibrium. No allowance for desiccant deactivation, channeling, or non-uniform distribution inside the container. Calcium chloride deliquesces above ~32% RH and is unsuitable above this limit.</div>
+    <div class="disc-item"><strong>Source data quality determines output reliability.</strong> The WVTR value must be measured per ASTM F1249 or ISO 15106 at clearly stated reference conditions. The desiccant sorption capacity must come from the supplier datasheet at the relevant RH; pharmacopoeial grade desiccants should be used for any product in direct contact with pharmaceuticals (USP-NF, EP, JP).</div>
+  </div>
+
   ${renderDesiccantMethodology()}
   `;
 
