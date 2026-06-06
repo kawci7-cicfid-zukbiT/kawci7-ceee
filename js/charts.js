@@ -247,14 +247,17 @@ function drawLaminateCurveChart() {
 
     var dataPoints = [];
     for (var key in grouped) {
-      var g       = grouped[key];
-      var avgVal  = g.values.reduce(function(a, b) { return a + b; }, 0) / g.values.length;
-      var avgThick = g.thicknesses.reduce(function(a, b) { return a + b; }, 0) / g.thicknesses.length;
-      var product = avgVal * avgThick;
-      var res     = layer.thick / product;
-      var trans   = res > 0 ? 1 / res : 0;
-      dataPoints.push({ x: g.cond.temperature, y: trans });
-      allTemps.push(g.cond.temperature);
+      var g = grouped[key];
+      // FIX: use Engine.calcLayerResistance so metallized materials are handled
+      // correctly (fixed surface permeability, independent of thickness).
+      // Without this, the chart point disagreed with the main result panel.
+      var lres = Engine.calcLayerResistance(layer, mat, g.cond);
+      var trans = (lres && lres.transmissionAtThickness != null && lres.transmissionAtThickness !== Infinity)
+                  ? lres.transmissionAtThickness : 0;
+      if (trans > 0) {
+        dataPoints.push({ x: g.cond.temperature, y: trans });
+        allTemps.push(g.cond.temperature);
+      }
     }
 
     if (dataPoints.length > 0) {
@@ -272,11 +275,22 @@ function drawLaminateCurveChart() {
       }
       tMin2 -= 10; tMax2 += 10;
       var curveData = [];
+      var refVals = Engine.getValues(mat);
+      var refThick = (refVals[0] && refVals[0].thickness) || 25;
       for (var tt = tMin2; tt <= tMax2; tt += 0.5) {
         var transMat = Engine.predict(p.A, p.Ea, tt);
-        var prod2    = transMat * Engine.getValues(mat)[0].thickness;
-        var res2     = layer.thick / prod2;
-        curveData.push({ x: tt, y: res2 > 0 ? 1 / res2 : 0 });
+        // FIX: for metallized films the chart value is the predicted surface
+        // permeability directly (independent of layer thickness). For normal
+        // films, scale by the reference / actual layer thickness ratio.
+        var yVal;
+        if (mat.isMetallized) {
+          yVal = transMat;
+        } else {
+          var prod2 = transMat * refThick;
+          var res2  = layer.thick / prod2;
+          yVal = res2 > 0 ? 1 / res2 : 0;
+        }
+        curveData.push({ x: tt, y: yVal });
         allTemps.push(tt);
       }
       if (curveData.length > 0) {
@@ -288,13 +302,15 @@ function drawLaminateCurveChart() {
     }
   }
 
-  // Laminate total curve
+  // Laminate total curve — uses Engine.calcLayerResistance for full consistency
+  // with the main calculator result (correctly handles metallized films).
   var laminateCurve = [];
   if (allTemps.length > 0) {
     var tMin3 = Math.min.apply(null, allTemps) - 5;
     var tMax3 = Math.max.apply(null, allTemps) + 5;
     for (var t3 = tMin3; t3 <= tMax3; t3 += 0.5) {
       var totalR = 0, valid = true;
+      var condForT = { temperature: t3, humidity: selectedHumidity || 50 };
       for (var li = 0; li < State.layers.length; li++) {
         var ly = State.layers[li];
         if (ly.mid === null || ly.thick <= 0) { valid = false; break; }
@@ -303,6 +319,8 @@ function drawLaminateCurveChart() {
           if (String(DB.materials[mi].id) === String(ly.mid)) { mt = DB.materials[mi]; break; }
         }
         if (!mt) { valid = false; break; }
+
+        // Try exact-temperature match first (uses measured data when available)
         var condIdx = -1;
         for (var ci = 0; ci < mt.validConditions.length; ci++) {
           var ciCond = Engine._getCondFromVal(Engine.getValues(mt)[ci], mt, ci);
@@ -312,19 +330,31 @@ function drawLaminateCurveChart() {
             condIdx = ci; break;
           }
         }
+
         if (condIdx >= 0) {
-          var wv = Engine.getValues(mt)[condIdx];
-          if (!wv || wv.value <= 0.00001) { valid = false; break; }
-          totalR += ly.thick / (wv.value * wv.thickness);
+          // Direct measurement at this temperature — use calcLayerResistance
+          // for proper metallized/non-metallized handling
+          var ciCond2 = Engine._getCondFromVal(Engine.getValues(mt)[condIdx], mt, condIdx);
+          var lr = Engine.calcLayerResistance(ly, mt, ciCond2);
+          if (lr && lr.resistance !== Infinity && lr.resistance > 0) {
+            totalR += lr.resistance;
+          } else { valid = false; break; }
         } else {
+          // No direct measurement — use Arrhenius prediction
           var pp = Engine.calcArrheniusParams(mt);
           var hasHumData = mt.validConditions.some(function(cc) {
             return selectedHumidity === null || cc.humidity === selectedHumidity;
           });
           if (pp.valid && hasHumData) {
             var transMat2 = Engine.predict(pp.A, pp.Ea, t3);
-            var prod3     = transMat2 * Engine.getValues(mt)[0].thickness;
-            totalR += ly.thick / prod3;
+            // For metallized films, predicted value IS the surface transmission;
+            // for normal films, scale by reference thickness ratio.
+            if (mt.isMetallized) {
+              totalR += 1 / transMat2;
+            } else {
+              var refT = Engine.getValues(mt)[0].thickness || 25;
+              totalR += ly.thick / (transMat2 * refT);
+            }
           } else { valid = false; break; }
         }
       }
