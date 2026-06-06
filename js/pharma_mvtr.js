@@ -1523,7 +1523,7 @@ function renderMVTR() {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem">Critical Moisture Gain (mg/package)
-            <span style="font-weight:400;color:var(--text-light);font-size:0.72rem"> — auto: 5 mg × n_cavities</span>
+            <span style="font-weight:400;color:var(--text-light);font-size:0.72rem"></span>
           </label>
           <div style="display:flex;gap:0.5rem;align-items:center">
             <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01"
