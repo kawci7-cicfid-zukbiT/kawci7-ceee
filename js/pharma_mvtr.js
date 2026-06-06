@@ -276,7 +276,7 @@ const MVTR = {
       const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode.toLowerCase() === 'wvtr');
 
       if (wvtrLaminates.length === 0) {
-        sel.innerHTML = '<option value="">No WVTR laminates in community DB</option>';
+        sel.innerHTML = '<option value="">No WVTR laminates in Database</option>';
         const hint = document.getElementById('mvtr-db-hint');
         if (hint) hint.textContent = 'No WVTR laminates found.';
         return;
@@ -297,7 +297,7 @@ const MVTR = {
       const hint = document.getElementById('mvtr-db-hint');
       if (hint) hint.textContent = ``;
     } else {
-      sel.innerHTML = '<option value="">No community database available</option>';
+      sel.innerHTML = '<option value="">No database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
       if (hint) hint.textContent = 'Create laminates in the Calculator tab first.';
     }
@@ -1368,9 +1368,9 @@ function renderMVTR() {
         <button id="mvtr-src-btn-calc" class="btn btn-sm" onclick="MVTR.setSource('calc')"
           style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')"
-          style="font-size:0.75rem">From Community DB</button>
+          style="font-size:0.75rem">From Database</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')"
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From Company DB </button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From My Database </button>
       </div>
 
       <!-- Panel: From Calculator -->
