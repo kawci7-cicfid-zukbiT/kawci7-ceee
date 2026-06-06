@@ -468,7 +468,16 @@ const MVTR = {
   calcWVTR(wRef, Ea, Tref, RHref, Ttgt, RHtgt) {
     const Tr = Tref + 273.15, Tt = Ttgt + 273.15;
     const arrF = Ea > 0 ? Math.exp((Ea / R_GAS) * (1/Tr - 1/Tt)) : 1;
-    const rhF  = RHref > 0 ? RHtgt / RHref : 1;
+    // FIX 2: F_RH based on water vapour partial pressure (Magnus equation),
+    // not a linear RH ratio. The driving force for WVTR is ΔpH₂O, which
+    // depends on Psat(T) — varying exponentially with temperature.
+    // F_RH_correct = [Psat(Ttgt)×RHtgt] / [Psat(Tref)×RHref]
+    // vs. F_RH_linear = RHtgt / RHref  (old — incorrect at different T).
+    // Example: Zone I (21°C/45%) vs Zone IVa (40°C/75%) with ref 38°C/90%:
+    //   Linear:  0.833  |  Partial pressure: ~0.90  → 8% difference
+    //   Zone I vs ref:  Linear: 0.50  |  PP: 0.31  → 38% error (safe zones seem safer than they are)
+    const Psat = (T) => 610.94 * Math.exp(17.625 * T / (T + 243.04)); // Pa
+    const rhF  = RHref > 0 ? (Psat(Ttgt) * RHtgt) / (Psat(Tref) * RHref) : 1;
     return { eff: wRef * arrF * rhF, arrF, rhF };
   },
 
@@ -1212,7 +1221,7 @@ const MVTR = {
       ['MVTR compliance is evaluated across 7 ICH climatic zones using Arrhenius thermal correction',
        'and linear RH driving force. The model assumes steady-state permeation through a defect-free',
        'film with constant storage conditions. Compliance criterion: total ingress <= M_crit over shelf life.',
-       'F_T = exp[(Ea/R) x (1/Tref - 1/Ttgt)]  |  F_RH = RHtgt / RHref  |  WVTR_eff = WVTR_ref x F_T x F_RH'
+       'F_T = exp[(Ea/R) x (1/Tref - 1/Ttgt)]  |  F_RH = [Psat(Ttgt)×RHtgt] / [Psat(Tref)×RHref]  |  WVTR_eff = WVTR_ref x F_T x F_RH'
       ].forEach(line=>{pdf.setFontSize(8); pdf.setFont('helvetica','normal'); pdf.setTextColor(...C.slate); pdf.text(safe(line),ML,y); y+=5;});
       pdf.setTextColor(...C.black); y+=3;
       drawFooter();
