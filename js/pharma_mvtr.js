@@ -87,12 +87,22 @@ const MVTR = {
       const saved = JSON.parse(localStorage.getItem('mvtr_last_params') || 'null');
       if (saved) {
         if (saved.Ea != null)  { const el = document.getElementById('mvtr-ea');    if(el) el.value = saved.Ea; }
-        if (saved.Mcrit)       { const el = document.getElementById('mvtr-crit');  if(el) el.value = saved.Mcrit; }
+        if (saved.Mcrit)       {
+          const el = document.getElementById('mvtr-crit');
+          if(el) {
+            el.value = saved.Mcrit;
+            // Mark as user-edited so calcArea() won't overwrite the restored value
+            el.dataset.userEdited = '1';
+          }
+        }
         if (saved.shelf_years) { const el = document.getElementById('mvtr-years'); if(el) el.value = saved.shelf_years; }
       }
     } catch(e){}
 
     this._updateConditionsDisplay();
+    // Trigger auto-calculation of M_crit suggestion for blister shape
+    // (only if user hasn't already edited it — flag set above when restoring)
+    try { this.calcArea(); } catch(e) {}
 
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) this.refreshCalcPanel();
@@ -430,6 +440,15 @@ const MVTR = {
         const count = parseFloat(document.getElementById('mvtr-bl-count')?.value) || 10;
         const ca    = parseFloat(document.getElementById('mvtr-bl-area')?.value)  || 1.5;
         area = count * ca / 10000;
+        // Auto-suggest M_crit based on cavity count (5 mg × n_cavities is
+        // typical for moderately hygroscopic solid dosage forms — see ICH Q1A(R2)
+        // and Waterman & MacDonald 2010). Only updates if user hasn't manually
+        // edited the field (tracked by mvtr-crit-user-edited flag).
+        const critEl = document.getElementById('mvtr-crit');
+        if (critEl && !critEl.dataset.userEdited) {
+          const suggested = Math.max(1, Math.round(count * 5));
+          critEl.value = suggested;
+        }
       } else {
         const w = parseFloat(document.getElementById('mvtr-w')?.value) || 0;
         const h = parseFloat(document.getElementById('mvtr-h')?.value) || 0;
@@ -1503,10 +1522,17 @@ function renderMVTR() {
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
         <div>
-          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem">Critical Moisture Gain (mg/package)</label>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem">Critical Moisture Gain (mg/package)
+            <span style="font-weight:400;color:var(--text-light);font-size:0.72rem"> — auto: 5 mg × n_cavities</span>
+          </label>
           <div style="display:flex;gap:0.5rem;align-items:center">
-            <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01" style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
+            <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01"
+              oninput="this.dataset.userEdited='1'"
+              style="flex:1;padding:0.55rem 0.6rem;border:1.5px solid var(--border);border-radius:6px;font-size:0.9rem;background:#fff">
             <span style="font-size:0.9rem;font-weight:600;color:var(--text-light)">mg</span>
+            <button type="button" onclick="document.getElementById('mvtr-crit').dataset.userEdited='';MVTR.calcArea()"
+              title="Reset to auto-suggested value"
+              style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.55rem;font-size:0.7rem;color:var(--text-light);cursor:pointer">↻ Auto</button>
           </div>
         </div>
         <div>
