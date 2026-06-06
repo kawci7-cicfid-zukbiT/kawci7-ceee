@@ -11,10 +11,10 @@
 // materials with application='photovoltaic'+'neutral').
 // ====================================================================
 var APPLICATION_DOMAINS = [
-    { key: 'pharma',       label: 'Pharma',         color: '#dc2626', bg: '#fee2e2', icon: '⚕' },
-    { key: 'food',         label: 'Food',           color: '#16a34a', bg: '#dcfce7', icon: '🍃' },
-    { key: 'photovoltaic', label: 'Photovoltaic',   color: '#d97706', bg: '#fef3c7', icon: '☀' },
-    { key: 'neutral',      label: 'Neutral',        color: '#64748b', bg: '#f1f5f9', icon: '○' }
+    { key: 'pharma',       label: 'Pharma',         color: '#dc2626', bg: '#fee2e2', icon: '' },
+    { key: 'food',         label: 'Food',           color: '#16a34a', bg: '#dcfce7', icon: '' },
+    { key: 'photovoltaic', label: 'Photovoltaic',   color: '#d97706', bg: '#fef3c7', icon: '' },
+    { key: 'neutral',      label: 'Neutral',        color: '#64748b', bg: '#f1f5f9', icon: '' }
 ];
 
 // Map legacy values from JSON ('general', 'industrial', null) to the new taxonomy
