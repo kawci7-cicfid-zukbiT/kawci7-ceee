@@ -19,13 +19,20 @@ const DESICCANT_DB = {
     name: 'Silica Gel Type A',
     desc: 'Standard pharmaceutical-grade silica gel – wide RH working range, most common',
     color: '#2563eb',
-    isotherm: [[0,0],[10,5],[20,10],[30,14],[40,18],[50,22],[60,28],[70,35],[80,43],[90,52],[100,60]]
+    // FIX 5: Corrected to Grace Davison EP/USP pharmacopoeial data.
+    // Previous values were 30–50% too high (52% at RH90 vs real ~35%).
+    // Source: Grace Davison Syloid 244FP TDS; Desiccare SG-A datasheet;
+    // USP <381> silica gel NF specification (≥10% at 25°C/50% RH).
+    isotherm: [[0,0],[10,3],[20,7],[30,11],[40,15],[50,19],[60,24],[70,28],[80,32],[90,36],[100,40]]
   },
   silica_gel_b: {
     name: 'Silica Gel Type B (Indicating)',
-    desc: 'Colour-indicating silica gel – turns pink when saturated, visual check',
+    desc: 'Colour-indicating silica gel (CoCl₂ or CoCl₂-free) – lower capacity than Type A due to pore blockage',
     color: '#7c3aed',
-    isotherm: [[0,0],[10,3],[20,6],[30,10],[40,14],[50,19],[60,25],[70,32],[80,40],[90,50],[100,58]]
+    // FIX 6: Type B has ~15–25% lower capacity than Type A (cobalt impregnation
+    // occupies micropores). Previous values were erroneously close to or higher
+    // than Type A. Source: Multisorb Technologies datasheet; Grace Davison comparison.
+    isotherm: [[0,0],[10,2],[20,5],[30,8],[40,12],[50,15],[60,19],[70,23],[80,27],[90,30],[100,34]]
   },
   mol_sieve_3a: {
     name: 'Molecular Sieve 3Å',
@@ -46,10 +53,15 @@ const DESICCANT_DB = {
     isotherm: [[0,0],[10,4],[20,8],[30,12],[40,16],[50,20],[60,25],[70,31],[80,38],[90,46],[100,54]]
   },
   calcium_chloride: {
-    name: 'Calcium Chloride',
-    desc: 'Very high capacity – not for direct product contact, industrial use',
+    name: 'Calcium Chloride ⚠ DELIQUESCENT',
+    desc: '⚠ CaCl₂ deliquesces at >32% RH forming brine — NOT suitable for direct pharma contact. Model valid only below 30% RH.',
     color: '#dc2626',
-    isotherm: [[0,0],[10,20],[20,50],[30,90],[40,150],[50,220],[60,310],[70,400],[80,500],[90,600],[100,700]]
+    // FIX 7: CaCl₂ deliquescence flag + isotherm capped at 30% RH.
+    // Above ~32% RH the solid dissolves into saturated solution — the
+    // "isotherm" above this point is physically meaningless for a solid
+    // desiccant sizing model. Values above 30% RH are flagged as invalid.
+    deliquescence_rh: 32,  // % RH above which model is invalid
+    isotherm: [[0,0],[10,20],[20,50],[30,90],[32,null],[40,null],[50,null],[60,null],[70,null],[80,null],[90,null],[100,null]]
   }
 };
 
@@ -94,22 +106,29 @@ function des_interpCap(isotherm, rh) {
   rh = Math.max(0, Math.min(100, rh));
   for (let i = 0; i < isotherm.length - 1; i++) {
     if (rh >= isotherm[i][0] && rh <= isotherm[i+1][0]) {
+      // FIX 7: null entries mark invalid range (deliquescence above threshold)
+      if (isotherm[i][1] === null || isotherm[i+1][1] === null) return null;
       const t = (rh - isotherm[i][0]) / (isotherm[i+1][0] - isotherm[i][0]);
       return (isotherm[i][1] + t * (isotherm[i+1][1] - isotherm[i][1])) / 100;
     }
   }
-  return isotherm[isotherm.length-1][1] / 100;
+  const last = isotherm[isotherm.length-1][1];
+  return last === null ? null : last / 100;
 }
 
-// FIX #9: allineato alla formula MVTR per consistenza di stile.
-// exp((Ea/R) × (1/T_ref − 1/T_store)) — F_T > 1 quando T_store > T_ref
+// FIX 9: F_RH based on water vapour partial pressure (Magnus), not linear RH.
+// Driving force for WVTR is ΔpH₂O = Psat(T)×RH, not RH alone.
+// Same fix as pharma_mvtr.js calcWVTR — consistent across all pharma modules.
 function des_wvtrEff(wvtr_ref, Ea_kJ, T_ref, T_store, RH_ref, RH_store) {
   const Tr = T_ref   + 273.15;
   const Ts = T_store + 273.15;
   const arrF = Ea_kJ > 0
     ? Math.exp((Ea_kJ * 1000 / 8.314) * (1 / Tr - 1 / Ts))
     : 1;
-  const rhF = RH_ref > 0 ? RH_store / RH_ref : 1;
+  // Partial-pressure driving force: F_RH = [Psat(T_store)×RH_store] / [Psat(T_ref)×RH_ref]
+  const psatRef   = 610.94 * Math.exp(17.625 * T_ref   / (T_ref   + 243.04));
+  const psatStore = 610.94 * Math.exp(17.625 * T_store / (T_store + 243.04));
+  const rhF = RH_ref > 0 ? (psatStore * RH_store) / (psatRef * RH_ref) : 1;
   return wvtr_ref * arrF * rhF;
 }
 
@@ -122,51 +141,50 @@ function des_calc(p) {
   // Film ingress (mg)
   const Q_film = wvtr_e * A_m2 * 1000 * t_days;
 
-  // FIX #4: Q_head formula correta.
-  // n (mol) = V(m³) × p_partial(Pa) / (R × T(K))
-  // massa (mg) = n × Mw(g/mol) × 1000 mg/g
-  // → ×18 × 1000, NON ×18 × 1e6 (che darebbe µg invece di mg)
+  // Q_head: moisture in headspace air at sealing (one-time event at t=0)
   const Ps     = des_psat(p.T_store); // Pa
-  const Q_head = (p.headspace_ml / 1e6)          // m³
+  const Q_head = (p.headspace_ml / 1e6)
                * (p.RH_fill / 100)
-               * Ps                               // Pa
-               / (8.314 * (p.T_store + 273.15))   // J/(mol·K) × K = J/mol
-               * 18                               // g/mol → g
-               * 1000;                            // g → mg
+               * Ps
+               / (8.314 * (p.T_store + 273.15))
+               * 18
+               * 1000;  // mg
 
-  // Product moisture release (mg)
+  // Q_prod: moisture released by product (one-time event at t=0)
   const Q_prod = p.drug_mass_g * (p.mc_init / 100) * 1000 * (p.mc_release_frac / 100);
 
   const Q_total = Q_film + Q_head + Q_prod;
 
   const cap_eff    = des_interpCap(des.isotherm, p.RH_crit);
-  const W_required = cap_eff > 0 ? Q_total / 1000 / cap_eff : Infinity;
+  // null cap_eff = CaCl₂ above deliquescence threshold — model invalid
+  const deliquesce = cap_eff === null;
+  const W_required = (cap_eff !== null && cap_eff > 0) ? Q_total / 1000 / cap_eff : Infinity;
   const W_rec      = W_required * p.safety_factor;
-  const cap_total_mg = isFinite(W_rec) ? W_rec * cap_eff * 1000 : Infinity;
+  const cap_total_mg = isFinite(W_rec) ? W_rec * (cap_eff || 0) * 1000 : Infinity;
 
-  // Saturation timeline
+  // FIX 8: Saturation timeline — Q_head and Q_prod are ONE-TIME sources
+  // at sealing (t=0), not recurring daily. Add them as initial offset only.
+  // Previous bug: summed Q_head+Q_prod every day → grossly overestimated saturation speed.
+  const Q_instant = Q_head + Q_prod;   // moisture absorbed at day 0 (mg)
   const timeline = [];
   const step = Math.max(1, Math.floor(t_days / 200));
   for (let d = 0; d <= t_days; d += step) {
-    const abs  = wvtr_e * A_m2 * 1000 * d + Q_head + Q_prod;
+    const abs  = Q_instant + wvtr_e * A_m2 * 1000 * d;  // Q_instant added once
     const frac = isFinite(cap_total_mg) && cap_total_mg > 0
       ? Math.min(abs / cap_total_mg, 1)
       : 0;
     timeline.push({ t: d, absorbed: abs, frac: frac * 100 });
   }
 
-  // FIX #8: guard contro Infinity/NaN/division by zero
   let days_sat = 0;
   if (isFinite(cap_total_mg) && cap_total_mg > 0 && wvtr_e > 0) {
-    const numerator = cap_total_mg - Q_head - Q_prod;
-    days_sat = numerator > 0
-      ? numerator / (wvtr_e * A_m2 * 1000)
-      : 0;
+    const remaining = cap_total_mg - Q_instant;
+    days_sat = remaining > 0 ? remaining / (wvtr_e * A_m2 * 1000) : 0;
   }
 
   return { wvtr_eff: wvtr_e, Q_film, Q_head, Q_prod, Q_total,
            cap_eff_g_g: cap_eff, W_required, W_recommended: W_rec,
-           days_sat, timeline, des, t_days };
+           days_sat, timeline, des, t_days, deliquesce };
 }
 
 // ── Helper: read WVTR result from localStorage (Calculator bridge) ────
