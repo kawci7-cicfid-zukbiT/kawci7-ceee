@@ -209,7 +209,7 @@ const MVTR = {
   // ------------------------------------------------------------------
   setSource(s) {
     if (s === 'co' && !this._companyLinked) {
-      alert('Company Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
+      alert('My Database is locked.\n\nConnect to your organisation to unlock proprietary laminate data.');
       return;
     }
     this._activeSource = s;
@@ -238,7 +238,7 @@ const MVTR = {
   },
 
   unlockCompany() {
-    alert('To unlock the Company Database:\n\n1. Go to the main app Settings\n2. Navigate to "Company" section\n3. Join an existing company with an invite code, or create a new company workspace\n4. Your organisation\'s laminates will then appear here automatically\n\nThis feature requires an active company membership.');
+    alert('To unlock My Database:\n\n1. Go to the main app Settings\n2. Navigate to "Company" section\n3. Join an existing company with an invite code, or create a new company workspace\n4. Your organisation\'s laminates will then appear here automatically\n\nThis feature requires an active company membership.');
   },
 
   toggleManual(on) {
@@ -276,7 +276,7 @@ const MVTR = {
       const wvtrLaminates = DB.laminates.filter(l => !l.mode || l.mode.toLowerCase() === 'wvtr');
 
       if (wvtrLaminates.length === 0) {
-        sel.innerHTML = '<option value="">No WVTR laminates in Database</option>';
+        sel.innerHTML = '<option value="">No WVTR laminates in community DB</option>';
         const hint = document.getElementById('mvtr-db-hint');
         if (hint) hint.textContent = 'No WVTR laminates found.';
         return;
@@ -297,7 +297,7 @@ const MVTR = {
       const hint = document.getElementById('mvtr-db-hint');
       if (hint) hint.textContent = ``;
     } else {
-      sel.innerHTML = '<option value="">No database available</option>';
+      sel.innerHTML = '<option value="">No community database available</option>';
       const hint = document.getElementById('mvtr-db-hint');
       if (hint) hint.textContent = 'Create laminates in the Calculator tab first.';
     }
@@ -1370,7 +1370,7 @@ function renderMVTR() {
         <button id="mvtr-src-btn-db" class="btn btn-sm btn-outline" onclick="MVTR.setSource('db')"
           style="font-size:0.75rem">From Database</button>
         <button id="mvtr-src-btn-co" class="btn btn-sm btn-outline" onclick="MVTR.setSource('co')"
-          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From My Database </button>
+          style="font-size:0.75rem;opacity:0.5;cursor:not-allowed" disabled>From My Database</button>
       </div>
 
       <!-- Panel: From Calculator -->
@@ -1388,10 +1388,10 @@ function renderMVTR() {
         </div>
       </div>
 
-      <!-- Panel: Community DB -->
+      <!-- Panel: Database -->
       <div id="mvtr-panel-db" style="display:none">
         <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600">Select from Community Database</label>
+          <label style="font-size:0.75rem;font-weight:600">Select from Database</label>
           <select class="form-input" id="mvtr-db-pick" onchange="MVTR.onDBPick(this.value)" style="font-size:0.78rem">
             <option value="">— Loading laminates... —</option>
           </select>
@@ -1401,7 +1401,7 @@ function renderMVTR() {
         </div>
       </div>
 
-      <!-- Panel: Company DB -->
+      <!-- Panel: My Database -->
       <div id="mvtr-panel-co" style="display:none">
         <div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">
           Join a company to access company laminates. <a href="#" onclick="MVTR.unlockCompany();return false" style="color:var(--primary)">Connect now</a>
@@ -1523,7 +1523,7 @@ function renderMVTR() {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
         <div>
           <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.4rem">Critical Moisture Gain (mg/package)
-            <span style="font-weight:400;color:var(--text-light);font-size:0.72rem"></span>
+            <span style="font-weight:400;color:var(--text-light);font-size:0.72rem"> — auto: 5 mg × n_cavities</span>
           </label>
           <div style="display:flex;gap:0.5rem;align-items:center">
             <input type="number" id="mvtr-crit" value="2.0" step="0.1" min="0.01"
