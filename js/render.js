@@ -883,11 +883,6 @@ function renderLaminates() {
     }
     html += '</div>';
 
-    // ── 8. Comparison chart (when ≥2) ─────────────────────────────────
-    if (filtered.length >= 2) {
-        html += '<div class="card" style="margin-top:.75rem"><h2 style="font-size:.95rem">Comparison</h2><div class="chart-container"><canvas id="lamChart"></canvas></div></div>';
-    }
-
     html += '</div>';
     return html;
 }
