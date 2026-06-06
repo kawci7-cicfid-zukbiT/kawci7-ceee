@@ -478,6 +478,11 @@ const DES = {
 
     panel.innerHTML = `
     <div style="animation:fadeIn 0.3s ease">
+      ${res.deliquesce ? `
+      <div style="background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #dc2626;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;font-size:0.82rem;color:#7f1d1d">
+        <div style="font-weight:700;margin-bottom:0.25rem">⚠ Deliquescence regime — model invalid</div>
+        <div>Calcium chloride deliquesces above ~32% RH, dissolving into saturated brine. The sorption model used here treats CaCl₂ as a solid sorbent and is physically valid only below 30% RH. Above this point you cannot size the desiccant from an isotherm — use a different sorbent (silica gel, molecular sieve) or lower the critical RH target.</div>
+      </div>` : ''}
       <div style="text-align:center;padding:1.25rem;background:linear-gradient(135deg,var(--primary-light),#e0f2fe);border-radius:12px;margin-bottom:1rem">
         <div style="font-size:2.2rem;font-weight:800;color:var(--primary);line-height:1.2">${isFinite(res.W_recommended) ? res.W_recommended.toFixed(2) + ' g' : '—'}</div>
         <div style="font-size:0.82rem;color:var(--text-light);margin-top:0.4rem;font-weight:500">${res.des.name}</div>
