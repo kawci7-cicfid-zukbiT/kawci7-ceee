@@ -1691,9 +1691,9 @@ function renderMVTRMethodology() {
       </div>
 
       <h3>Relative Humidity Driving Force</h3>
-      <p>Permeation is driven by the partial pressure differential of water vapour across the film. At the same temperature, the ratio of partial pressures simplifies to the ratio of relative humidities, giving a linear first-order correction:</p>
-      <div class="formula-block">F_RH = RH_target / RH_ref<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
-      <p>This linear approximation holds well for non-hygroscopic films (polyolefins, PET). For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient increases non-linearly with humidity. In those cases an exponential beta-correction should be applied. The Community DB laminates have been validated to contain hygroscopic-grade corrections where applicable.</p>
+      <p>Permeation is driven by the partial pressure differential of water vapour across the film. Because the saturation vapour pressure varies exponentially with temperature (Magnus equation), the correct correction factor uses partial pressures, not RH ratios alone:</p>
+      <div class="formula-block">P_sat(T) = 610.94 × exp[17.625·T / (T+243.04)]  (Pa)<br>F_RH = [P_sat(T_target) × RH_target] / [P_sat(T_ref) × RH_ref]<br>WVTR_eff = WVTR_ref × F_T × F_RH</div>
+      <p>This correctly captures the much higher driving force in hot/humid zones (Zone IVa: 40°C/75% RH) compared to cold zones (Zone I: 21°C/45% RH). A pure RH ratio would understate the difference by 30–60%. For hygroscopic films (EVOH, Nylon, regenerated cellulose), the diffusion coefficient itself also increases non-linearly with humidity; an exponential beta-correction should be applied to the base WVTR before the F_RH scaling.</p>
 
       <h3>Cumulative Ingress and Compliance Evaluation</h3>
       <p>Once the effective WVTR is established for each ICH zone, cumulative ingress over the shelf life follows from a steady-state linear model:</p>
