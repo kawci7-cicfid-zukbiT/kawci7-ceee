@@ -202,16 +202,36 @@ function drawLaminateCurveChart() {
   var allTemps         = [];
   var selectedHumidity = State.selCond ? State.selCond.humidity : null;
 
-  for (var i = 0; i < State.layers.length; i++) {
-    var layer = State.layers[i];
-    if (layer.mid === null || layer.thick <= 0) continue;
+  // FIX: deduplicate materials — if two layers use the same material, render
+  // a single dataset (with merged thickness). Without this, identical
+  // materials produced overlapping points and duplicated legend entries.
+  var seenMats = {};        // mid → { matLayer, totalThick, count, colorIdx }
+  var uniqueMatOrder = [];  // preserve first-seen order for stable colours
+  for (var li = 0; li < State.layers.length; li++) {
+    var L = State.layers[li];
+    if (L.mid === null || L.thick <= 0) continue;
+    var key = String(L.mid);
+    if (!seenMats[key]) {
+      seenMats[key] = { layer: L, totalThick: L.thick, count: 1, colorIdx: uniqueMatOrder.length };
+      uniqueMatOrder.push(key);
+    } else {
+      seenMats[key].totalThick += L.thick;
+      seenMats[key].count++;
+    }
+  }
+
+  for (var u = 0; u < uniqueMatOrder.length; u++) {
+    var key2 = uniqueMatOrder[u];
+    var entry = seenMats[key2];
+    var layer = { mid: entry.layer.mid, thick: entry.totalThick };  // combined thickness
     var mat = null;
     for (var m = 0; m < DB.materials.length; m++) {
-      if (DB.materials[m].id === layer.mid) { mat = DB.materials[m]; break; }
+      if (String(DB.materials[m].id) === key2) { mat = DB.materials[m]; break; }
     }
     if (!mat) continue;
 
-    var color = LAYER_COLORS[i % LAYER_COLORS.length];
+    var color = LAYER_COLORS[entry.colorIdx % LAYER_COLORS.length];
+    var matLabel = mat.name + (entry.count > 1 ? ' (×' + entry.count + ' layers, ' + entry.totalThick.toFixed(0) + ' µm total)' : '');
     var vals  = Engine.getValues(mat);
     var grouped = {};
     for (var j = 0; j < vals.length; j++) {
@@ -238,7 +258,7 @@ function drawLaminateCurveChart() {
     }
 
     if (dataPoints.length > 0) {
-      datasets.push({ label: mat.name, data: dataPoints,
+      datasets.push({ label: matLabel, data: dataPoints,
         borderColor: color, backgroundColor: color, borderWidth: 2,
         showLine: true, type: 'scatter', order: 2, pointRadius: 5, pointHoverRadius: 7 });
     }
@@ -260,7 +280,7 @@ function drawLaminateCurveChart() {
         allTemps.push(tt);
       }
       if (curveData.length > 0) {
-        datasets.push({ label: mat.name + ' (Fit)', data: curveData,
+        datasets.push({ label: matLabel + ' (Fit)', data: curveData,
           borderColor: color, backgroundColor: 'transparent',
           borderWidth: 1.5, borderDash: [5, 3], pointRadius: 0,
           type: 'line', order: 1, showLine: true });
@@ -280,7 +300,7 @@ function drawLaminateCurveChart() {
         if (ly.mid === null || ly.thick <= 0) { valid = false; break; }
         var mt = null;
         for (var mi = 0; mi < DB.materials.length; mi++) {
-          if (DB.materials[mi].id === ly.mid) { mt = DB.materials[mi]; break; }
+          if (String(DB.materials[mi].id) === String(ly.mid)) { mt = DB.materials[mi]; break; }
         }
         if (!mt) { valid = false; break; }
         var condIdx = -1;
@@ -391,7 +411,7 @@ function drawHygroscopicTimeChart() {
 
   var hasHygro = State.layers.some(function(l) {
     if (l.mid === null) return false;
-    var mat = DB.materials.find(function(m) { return m.id === l.mid; });
+    var mat = DB.materials.find(function(m) { return String(m.id) === String(l.mid); });
     if (!mat) return false;
     return (mat[betaKey] || mat.hygroscopicBeta || 0) > 0;
   });
@@ -402,7 +422,7 @@ function drawHygroscopicTimeChart() {
   for (var li2 = 0; li2 < State.layers.length; li2++) {
     var layer2 = State.layers[li2];
     if (!layer2.mid || layer2.thick <= 0) continue;
-    var mat2 = DB.materials.find(function(m) { return m.id === layer2.mid; });
+    var mat2 = DB.materials.find(function(m) { return String(m.id) === String(layer2.mid); });
     if (!mat2 || !(mat2[betaKey] || 0)) continue;
     if (mat2.validConditions && mat2.validConditions.length > 0) {
       var bestCond = mat2.validConditions[0];
@@ -427,7 +447,7 @@ function drawHygroscopicTimeChart() {
   for (var li = 0; li < State.layers.length; li++) {
     var layer = State.layers[li];
     if (!layer.mid || layer.thick <= 0) continue;
-    var mat = DB.materials.find(function(m) { return m.id === layer.mid; });
+    var mat = DB.materials.find(function(m) { return String(m.id) === String(layer.mid); });
     if (!mat) continue;
     var vals = Engine.getValues(mat);
     var idx  = -1;
