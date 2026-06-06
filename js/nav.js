@@ -44,7 +44,7 @@ var NAV_GROUPS = [
   },
   {
     id: 'community',
-    label: ' Community Database',
+    label: ' Database',
     tabs: [
       { id: 'materials', label: 'Materials'},
       { id: 'laminates', label: 'Laminates'}
@@ -52,7 +52,7 @@ var NAV_GROUPS = [
   },
   {
     id: 'company',
-    label: ' Company Database',
+    label: ' My Database',
     tabs: [
       { id: 'mat-company', label: 'Materials'},
       { id: 'lam-company', label: 'Laminates'}
