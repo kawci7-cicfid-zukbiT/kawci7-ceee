@@ -1,10 +1,9 @@
 // ====================================================================
-// render_patch.js  v14
+// render_patch.js  v13
 // Load LAST in index.html, after all feature files and nav.js
 //
-// Changes from v13:
+// Changes from v12:
 //   + pharma-mvtr bloccato in modalità OTR (richiede WVTR)
-//   + pv-lifetime impostato su "Coming Soon"
 // ====================================================================
 (function () {
 
@@ -44,24 +43,34 @@
         }
         break;
 
-      // ── Biomedical Analysis — COMING SOON ────────────────────────
+      // ── Biomedical Analysis — Desiccant Sizing ───────────────────
       case 'pharma-uptake':
-        if (typeof window.renderPharmaUptake === 'function')
-          window.renderPharmaUptake();
+        // Desiccant sizing requires WVTR (moisture transmission rate)
+        if ((typeof State !== 'undefined') && State.mode === 'otr') {
+          var c = document.getElementById('app-content');
+          if (c) c.innerHTML = _renderWvtrBlockedUptake();
+        } else {
+          if (typeof window.renderPharmaUptake === 'function')
+            window.renderPharmaUptake();
+        }
         break;
-
       // ── Regulatory — COMING SOON ─────────────────────────────────
       case 'ppwr-label':
         var c = document.getElementById('app-content');
         if (c) c.innerHTML = _renderComingSoon(tab);
         break;
-
-      // ── Photovoltaic — COMING SOON ───────────────────────────────
+// ── Photovoltaic ─────────────────────────────────── 
       case 'pv-lifetime':
         var c = document.getElementById('app-content');
-        if (c) c.innerHTML = _renderComingSoon(tab);
+        if (c) {
+          if (typeof window.renderPVDegradation === 'function') {
+            c.innerHTML = window.renderPVDegradation();
+          } else {
+            c.innerHTML = '<div class="alert alert-error" style="margin:2rem auto;max-width:480px">'
+              + '<strong>pv-module.js not loaded.</strong></div>';
+          }
+        }
         break;
-
       // ── All existing tabs ────────────────────────────────────────
       default:
         if (typeof _orig === 'function') _orig();
@@ -80,11 +89,6 @@
       icon:  '',
       title: 'PPWR Label Generator',
       desc:  'Automatic material classification per Decision 97/129/EC and national labelling rules (FR, IT, DE, ES). Generates the labelling specification for each target market based on the laminate layer structure.'
-    },
-    'pv-lifetime': {
-      icon:  '',
-      title: 'PV Module Lifetime & Degradation',
-      desc:  'Predicts the operational lifetime and degradation rate of photovoltaic modules based on the moisture and oxygen barrier properties of the encapsulant and backsheet.'
     }
   };
 
@@ -148,6 +152,28 @@
       '<p style="font-size:0.85rem;color:#64748b;line-height:1.6;margin:0 0 1.5rem">' +
       '<strong>MVTR / ICH Q1A(R2) Compliance</strong> evaluates moisture vapor transmission ' +
       'through packaging films across climatic zones — it needs the film\'s <strong>WVTR</strong> as input.<br><br>' +
+      'You are currently in <strong>OTR</strong> mode. ' +
+      'Switch to <strong>WVTR</strong> using the selector at the top of the page.</p>' +
+      '<button onclick="setMode(\'wvtr\')" ' +
+      'style="background:#2563eb;color:#fff;border:none;border-radius:8px;' +
+      'padding:0.65rem 1.5rem;font-size:0.88rem;font-weight:600;cursor:pointer">' +
+      'Switch to WVTR →</button>' +
+      '</div>';
+  }
+
+  // ── WVTR required page (Desiccant Sizing blocked in OTR mode) ─────
+  function _renderWvtrBlockedUptake() {
+    return '<div style="max-width:520px;margin:3rem auto;text-align:center;padding:0 1rem">' +
+      '<div style="width:64px;height:64px;border-radius:50%;background:#dbeafe;' +
+      'display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" style="width:30px;height:30px">' +
+      '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>' +
+      '</svg></div>' +
+      '<h2 style="font-size:1.15rem;font-weight:700;color:#0f172a;margin:0 0 0.5rem">WVTR mode required</h2>' +
+      '<p style="font-size:0.85rem;color:#64748b;line-height:1.6;margin:0 0 1.5rem">' +
+      '<strong>Desiccant Sizing Calculator</strong> determines the desiccant mass needed to keep ' +
+      'moisture inside a pharmaceutical container below a critical threshold over the shelf life — ' +
+      'it needs the film\'s <strong>WVTR</strong> as input.<br><br>' +
       'You are currently in <strong>OTR</strong> mode. ' +
       'Switch to <strong>WVTR</strong> using the selector at the top of the page.</p>' +
       '<button onclick="setMode(\'wvtr\')" ' +
