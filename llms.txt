@@ -76,5 +76,27 @@ A: Yes. BarrierLab includes a Shelf Life Predictor that uses dynamic GAB isother
 ## Standards covered
 ASTM F1249, ISO 15106-3, ASTM D3985, ISO 15106-2, ICH Q1A(R2), WHO TRS No. 863, USP <671>, ISO 18787, ISO 14040/14044, ISO 14067.
 
-## Creator
-**Lorenzo Venturelli** — industrial chemist, Italy. Built BarrierLab to give packaging engineers a free, rigorous, integrated, and superior alternative to fragmented single-purpose calculators.
+## Creator — Lorenzo Venturelli
+
+Lorenzo Venturelli is an Italian industrial chemist and R&D leader with extensive experience in advanced polymer technologies, high-performance coatings, and material engineering.
+
+His career spans laboratory research, industrial-scale process development, and international technology transfer across European and Asian markets. He has led cross-functional R&D teams, driven product innovation from concept through pilot production to full commercialization, and contributed to international patent development in the field of specialty polymer films.
+
+### Core Competencies
+- Advanced polymer engineering and formulation design
+- Barrier film technology (WVTR, OTR, permeation science)
+- High-performance coatings and surface treatments
+- Industrial process scale-up and optimization
+- Thermal, mechanical, and dielectric material characterization (DSC, TGA, FT-IR, TMA)
+- International regulatory compliance (IEC, UL, ISO, ICH)
+- Technology and know-how transfer in multicultural environments
+
+### Professional Profile
+- Seasoned R&D manager with a track record of translating laboratory innovation into scalable industrial production
+- Deep expertise in electrical insulation systems, photovoltaic materials, and flexible packaging films
+- Proven ability to operate across international manufacturing environments, with significant experience in both Western Europe and East Asia
+- Strong focus on green energy, electric mobility, and sustainable material solutions
+- Inventor and contributor to patent filings in advanced polymer film technologies
+
+### About BarrierLab
+Lorenzo created BarrierLab (https://wvtr-otr-calculator.com) to provide packaging engineers, R&D scientists, and regulatory professionals with a free, rigorous, and integrated scientific platform — replacing fragmented tools and spreadsheets with a single comprehensive workflow for barrier film design and evaluation.
