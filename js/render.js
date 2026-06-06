@@ -622,26 +622,292 @@ function renderCompare() {
 // ====================================================================
 // LAMINATES DB
 // ====================================================================
+// ====================================================================
+// LAMINATES DB — redesigned
+// ====================================================================
+// Filters/sort state — survives across renders within the session
+if (typeof State !== 'undefined' && !State.lamFilters) {
+    State.lamFilters = { search: '', recyclable: '', layerCount: '', application: '', sort: 'name' };
+}
+if (!window._lamExpanded) window._lamExpanded = {};
+
+function lamGetMatById(mid) {
+    if (!DB || !DB.materials) return null;
+    for (var i = 0; i < DB.materials.length; i++) {
+        if (String(DB.materials[i].id) === String(mid)) return DB.materials[i];
+    }
+    return null;
+}
+
+// Dominant application of a laminate = the application of the majority of its layers (by thickness)
+function lamDominantApplication(lam) {
+    if (!lam.layers || !lam.layers.length) return 'neutral';
+    var weights = {};
+    for (var i = 0; i < lam.layers.length; i++) {
+        var L = lam.layers[i];
+        var mat = lamGetMatById(L.mid);
+        if (!mat) continue;
+        var app = (typeof normalizeApplication === 'function') ? normalizeApplication(mat.application) : (mat.application || 'neutral');
+        weights[app] = (weights[app] || 0) + (L.thick || 0);
+    }
+    var best = 'neutral', bestW = 0;
+    for (var k in weights) {
+        // Skip 'neutral' if any other application present; surface domain-specific apps
+        if (k === 'neutral') continue;
+        if (weights[k] > bestW) { bestW = weights[k]; best = k; }
+    }
+    if (bestW === 0 && weights.neutral) return 'neutral';
+    return best;
+}
+
+function lamUpdateFilter(field, value) {
+    State.lamFilters[field] = value;
+    DB.saveState(State);
+    renderContent();
+}
+
+function lamToggleExpanded(id) {
+    window._lamExpanded[id] = !window._lamExpanded[id];
+    renderContent();
+}
+
+function lamClearFilters() {
+    State.lamFilters = { search: '', recyclable: '', layerCount: '', application: '', sort: 'name' };
+    DB.saveState(State);
+    renderContent();
+}
+
+function _lamLayerListHTML(lam, unit) {
+    if (!lam.layers || !lam.layers.length) return '<div style="font-size:.72rem;color:var(--text-light)">No layer data</div>';
+    var html = '<div style="display:flex;flex-direction:column;gap:4px">';
+    for (var i = 0; i < lam.layers.length; i++) {
+        var L = lam.layers[i];
+        var mat = lamGetMatById(L.mid);
+        var nm  = mat ? mat.name : ('Material #' + L.mid + ' (deleted)');
+        var fam = mat ? (mat.family || '') : '';
+        var appMeta = (typeof getApplicationMeta === 'function' && mat) ? getApplicationMeta(mat.application) : null;
+        var dot = appMeta ? '<span style="width:7px;height:7px;border-radius:50%;background:' + appMeta.color + ';display:inline-block;flex-shrink:0;margin-right:5px"></span>' : '';
+        var matMissing = !mat;
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;background:' + (matMissing ? '#fef2f2' : '#f8fafc') + ';border-radius:6px;font-size:.75rem">' +
+            '<div style="font-weight:700;color:var(--text-light);min-width:18px;font-size:.7rem">' + (i + 1) + '</div>' +
+            dot +
+            '<div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + _escAttr(nm) + '">' + _escHtml(nm) + (fam ? ' <span style="color:var(--text-light);font-size:.66rem">· ' + _escHtml(fam) + '</span>' : '') + '</div>' +
+            '<div style="font-weight:600;font-size:.72rem;color:var(--text-light);white-space:nowrap">' + (L.thick || 0).toFixed(0) + ' µm</div>' +
+            '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
 function renderLaminates() {
     var unit = getUnit();
-    var filteredLams = DB.laminates.filter(function(l){ return l.mode === State.mode; });
-    if(!filteredLams.length) return '<div class="card"><div class="empty-state"><p>No ' + State.mode.toUpperCase() + ' laminates saved yet</p></div></div>';
-    var colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
-    var html = '<div class="card"><h2>Laminates <span class="badge badge-purple">'+filteredLams.length+'</span></h2><div class="grid grid-2">';
-    for(var i=0; i<filteredLams.length; i++){
-        var l = filteredLams[i];
-        html += '<div style="border:1.5px solid var(--border);border-radius:10px;padding:.85rem;border-top:4px solid '+colors[i%colors.length]+'">' +
-            '<div style="font-weight:600;font-size:.85rem;margin-bottom:.35rem">'+l.name+'</div>' +
-            '<div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">' +
-            '<div><div style="font-size:.65rem;color:var(--text-light)">'+(l.mode||State.mode).toUpperCase()+'</div><div style="font-size:1.2rem;font-weight:700;color:var(--primary)">'+l.total.toFixed(5)+'</div><div style="font-size:.65rem;color:var(--text-light)">'+unit+'</div></div>' +
-            '<div><div style="font-size:.65rem;color:var(--text-light)">Thickness</div><div style="font-weight:600">'+l.totalThickness.toFixed(0)+' um</div></div>' +
-            '<div><div style="font-size:.65rem;color:var(--text-light)">Conditions</div><div style="font-weight:600">'+l.temperature+'\u00b0C / '+l.humidity+'%</div></div>' +
-            '<div><div style="font-size:.65rem;color:var(--text-light)">Recyclable</div><span class="sustainability-flag '+(l.recyclable?'yes':'no')+'">'+(l.recyclable?'Yes':'No')+'</span></div>' +
-            '</div><div style="margin-top:.45rem;text-align:right"><button class="btn btn-sm btn-danger" onclick="DB.deleteLam('+l.id+');render()">Delete</button></div></div>';
+    var modeUpper = State.mode.toUpperCase();
+    var filters = State.lamFilters;
+
+    // ── 1. Base filter on current mode (WVTR/OTR) ─────────────────────
+    var pool = DB.laminates.filter(function(l) { return l.mode === State.mode; });
+
+    if (!DB.laminates.length) {
+        return '<div class="card" style="text-align:center;padding:3rem 1.5rem">' +
+            '<div style="width:64px;height:64px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="width:30px;height:30px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>' +
+            '</div>' +
+            '<h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 .5rem">Your saved laminates will appear here</h3>' +
+            '<p style="font-size:.82rem;color:var(--text-light);margin:0 0 1.25rem;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6">Build a structure in the Calculator tab, compute the result, then click "Save to General DB" to add it to this library.</p>' +
+            '<button class="btn btn-primary" onclick="State.tab=\'calc\';renderContent();if(typeof postNavRender===\'function\')postNavRender()">Open Calculator</button>' +
+            '</div>';
     }
-    html += '</div></div>';
-    if(filteredLams.length >= 2) html += '<div class="card"><h2>Comparison</h2><div class="chart-container"><canvas id="lamChart"></canvas></div></div>';
+
+    // ── 2. Apply filters ──────────────────────────────────────────────
+    var q = (filters.search || '').trim().toLowerCase();
+    var filtered = pool.filter(function(l) {
+        if (filters.recyclable === 'yes' && !l.recyclable) return false;
+        if (filters.recyclable === 'no'  &&  l.recyclable) return false;
+        if (filters.layerCount) {
+            var nc = parseInt(filters.layerCount, 10);
+            var actual = (l.layers && l.layers.length) || l.layerCount || 0;
+            if (nc === 5 ? actual < 5 : actual !== nc) return false;
+        }
+        if (filters.application) {
+            if (lamDominantApplication(l) !== filters.application) return false;
+        }
+        if (q) {
+            var hay = (l.name || '').toLowerCase();
+            if (l.layers) {
+                for (var i = 0; i < l.layers.length; i++) {
+                    var mat = lamGetMatById(l.layers[i].mid);
+                    if (mat) hay += ' ' + (mat.name || '').toLowerCase() + ' ' + (mat.family || '').toLowerCase();
+                }
+            }
+            if (hay.indexOf(q) < 0) return false;
+        }
+        return true;
+    });
+
+    // ── 3. Sort ───────────────────────────────────────────────────────
+    if (filters.sort === 'name')         filtered.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    else if (filters.sort === 'perf')    filtered.sort(function(a,b){ return a.total - b.total; });
+    else if (filters.sort === 'thick')   filtered.sort(function(a,b){ return a.totalThickness - b.totalThickness; });
+    else if (filters.sort === 'layers')  filtered.sort(function(a,b){ return ((a.layers&&a.layers.length)||0) - ((b.layers&&b.layers.length)||0); });
+    else if (filters.sort === 'recent')  filtered.sort(function(a,b){ return (b.id||0) - (a.id||0); });
+
+    // ── 4. Header ─────────────────────────────────────────────────────
+    var html = '<div style="padding:.25rem 0">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">' +
+            '<div style="font-size:1rem;font-weight:600">Laminates <span class="badge badge-purple">' + filtered.length + ' / ' + pool.length + '</span></div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                '<button class="btn btn-sm btn-primary" onclick="State.tab=\'calc\';renderContent();if(typeof postNavRender===\'function\')postNavRender()">+ New laminate</button>' +
+            '</div>' +
+        '</div>';
+
+    // ── 5. Filter bar ─────────────────────────────────────────────────
+    html += '<div class="card" style="margin-bottom:0.75rem">' +
+        '<div style="font-size:0.75rem;font-weight:600;color:var(--text-light);margin-bottom:0.6rem">Filters</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:0.6rem">' +
+            '<div class="form-group" style="margin:0"><label>Recyclable</label>' +
+                '<select class="form-input" id="lf-recyc" onchange="lamUpdateFilter(\'recyclable\',this.value)" style="font-size:0.78rem">' +
+                '<option value=""' + (filters.recyclable === '' ? ' selected' : '') + '>Any</option>' +
+                '<option value="yes"' + (filters.recyclable === 'yes' ? ' selected' : '') + '>Yes only</option>' +
+                '<option value="no"' + (filters.recyclable === 'no' ? ' selected' : '') + '>No only</option>' +
+                '</select></div>' +
+            '<div class="form-group" style="margin:0"><label>Layers</label>' +
+                '<select class="form-input" id="lf-layers" onchange="lamUpdateFilter(\'layerCount\',this.value)" style="font-size:0.78rem">' +
+                '<option value=""' + (filters.layerCount === '' ? ' selected' : '') + '>Any</option>' +
+                '<option value="1"' + (filters.layerCount === '1' ? ' selected' : '') + '>1 (mono)</option>' +
+                '<option value="2"' + (filters.layerCount === '2' ? ' selected' : '') + '>2 (duplex)</option>' +
+                '<option value="3"' + (filters.layerCount === '3' ? ' selected' : '') + '>3 (triplex)</option>' +
+                '<option value="4"' + (filters.layerCount === '4' ? ' selected' : '') + '>4</option>' +
+                '<option value="5"' + (filters.layerCount === '5' ? ' selected' : '') + '>5+</option>' +
+                '</select></div>' +
+            '<div class="form-group" style="margin:0"><label>Application</label>' +
+                '<select class="form-input" id="lf-app" onchange="lamUpdateFilter(\'application\',this.value)" style="font-size:0.78rem">' +
+                '<option value=""' + (filters.application === '' ? ' selected' : '') + '>Any</option>' +
+                (typeof APPLICATION_DOMAINS !== 'undefined'
+                    ? APPLICATION_DOMAINS.map(function(a){ return '<option value="' + a.key + '"' + (filters.application === a.key ? ' selected' : '') + '>' + a.icon + ' ' + a.label + '</option>'; }).join('')
+                    : '') +
+                '</select></div>' +
+            '<div class="form-group" style="margin:0"><label>Sort by</label>' +
+                '<select class="form-input" id="lf-sort" onchange="lamUpdateFilter(\'sort\',this.value)" style="font-size:0.78rem">' +
+                '<option value="name"'   + (filters.sort === 'name'   ? ' selected' : '') + '>Name (A→Z)</option>' +
+                '<option value="perf"'   + (filters.sort === 'perf'   ? ' selected' : '') + '>Best ' + modeUpper + ' first</option>' +
+                '<option value="thick"'  + (filters.sort === 'thick'  ? ' selected' : '') + '>Thinnest first</option>' +
+                '<option value="layers"' + (filters.sort === 'layers' ? ' selected' : '') + '>Fewest layers</option>' +
+                '<option value="recent"' + (filters.sort === 'recent' ? ' selected' : '') + '>Most recent</option>' +
+                '</select></div>' +
+        '</div>' +
+        '<div style="position:relative">' +
+            '<input type="text" class="form-input" id="lf-search" style="font-size:0.82rem"' +
+            ' placeholder="Search by name or contained material…"' +
+            ' value="' + _escAttr(filters.search) + '"' +
+            ' oninput="State.lamFilters.search=this.value;clearTimeout(window._lamSearchT);window._lamSearchT=setTimeout(function(){DB.saveState(State);renderContent()},220)">' +
+        '</div>' +
+        ((filters.recyclable || filters.layerCount || filters.application || filters.search)
+            ? '<div style="margin-top:.5rem"><button class="btn btn-sm btn-outline" onclick="lamClearFilters()" style="font-size:.72rem">× Clear all filters</button></div>'
+            : '') +
+        '</div>';
+
+    // ── 6. Empty result state ─────────────────────────────────────────
+    if (!filtered.length) {
+        html += '<div class="card" style="text-align:center;padding:2rem 1rem"><p style="color:var(--text-light);margin:0">No laminates match these filters.</p></div></div>';
+        return html;
+    }
+
+    // ── 7. Cards grid ─────────────────────────────────────────────────
+    var accentColors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#14b8a6','#ec4899'];
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px">';
+
+    for (var idx = 0; idx < filtered.length; idx++) {
+        var l        = filtered[idx];
+        var accent   = accentColors[idx % accentColors.length];
+        var expanded = !!window._lamExpanded[l.id];
+        var nLayers  = (l.layers && l.layers.length) || l.layerCount || 0;
+        var dominant = lamDominantApplication(l);
+        var domMeta  = (typeof getApplicationMeta === 'function') ? getApplicationMeta(dominant) : null;
+
+        // Performance class colour bucket
+        var perfClass = 'low', perfLabel = 'Standard';
+        if (l.total < 0.1)      { perfClass = 'ultra'; perfLabel = 'Ultra-high barrier'; }
+        else if (l.total < 1)   { perfClass = 'high';  perfLabel = 'High barrier'; }
+        else if (l.total < 10)  { perfClass = 'med';   perfLabel = 'Medium barrier'; }
+
+        var perfColors = { ultra:'#7c3aed', high:'#2563eb', med:'#0891b2', low:'#64748b' };
+        var perfBg     = { ultra:'#ede9fe', high:'#eff6ff', med:'#ecfeff', low:'#f1f5f9' };
+
+        html += '<div style="border:1.5px solid var(--border);border-radius:12px;background:#fff;overflow:hidden;transition:box-shadow .15s" onmouseover="this.style.boxShadow=\'0 4px 14px rgba(0,0,0,.08)\'" onmouseout="this.style.boxShadow=\'none\'">' +
+            // Top stripe with accent
+            '<div style="height:4px;background:' + accent + '"></div>' +
+            '<div style="padding:.9rem 1rem">' +
+                // Title row + badges
+                '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:.6rem">' +
+                    '<div style="flex:1;min-width:0">' +
+                        '<div style="font-weight:700;font-size:.92rem;color:#0f172a;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical" title="' + _escAttr(l.name) + '">' + _escHtml(l.name) + '</div>' +
+                    '</div>' +
+                    '<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0">' +
+                        (domMeta ? '<span class="badge" style="font-size:0.6rem;background:' + domMeta.bg + ';color:' + domMeta.color + ';border:1px solid ' + domMeta.color + '33;white-space:nowrap">' + domMeta.icon + ' ' + domMeta.label + '</span>' : '') +
+                        '<span class="sustainability-flag ' + (l.recyclable ? 'yes' : 'no') + '" style="font-size:.6rem;white-space:nowrap">' + (l.recyclable ? '♻ Recyclable' : '⊘ Not recyclable') + '</span>' +
+                    '</div>' +
+                '</div>' +
+                // KPI row
+                '<div style="display:flex;align-items:flex-end;gap:14px;padding:.6rem .75rem;background:' + perfBg[perfClass] + ';border-radius:8px;margin-bottom:.55rem">' +
+                    '<div style="flex:1">' +
+                        '<div style="font-size:.6rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;font-weight:600">' + modeUpper + '</div>' +
+                        '<div style="font-size:1.4rem;font-weight:800;color:' + perfColors[perfClass] + ';line-height:1.1;font-variant-numeric:tabular-nums">' + l.total.toFixed(l.total < 0.01 ? 5 : (l.total < 1 ? 4 : 3)) + '</div>' +
+                        '<div style="font-size:.62rem;color:var(--text-light)">' + unit + '</div>' +
+                    '</div>' +
+                    '<div style="text-align:right">' +
+                        '<div style="font-size:.6rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;font-weight:600">' + perfLabel + '</div>' +
+                        '<div style="font-size:.7rem;color:var(--text-light);margin-top:2px">' + l.temperature + '°C / ' + l.humidity + '% RH</div>' +
+                    '</div>' +
+                '</div>' +
+                // Stats row
+                '<div style="display:flex;justify-content:space-between;gap:8px;font-size:.72rem;color:var(--text-light);padding:0 .25rem .35rem">' +
+                    '<span><strong style="color:#0f172a">' + nLayers + '</strong> layer' + (nLayers !== 1 ? 's' : '') + '</span>' +
+                    '<span><strong style="color:#0f172a">' + (l.totalThickness || 0).toFixed(0) + '</strong> µm total</span>' +
+                '</div>' +
+                // Expandable layer structure
+                (nLayers > 0 ?
+                    '<div style="border-top:1px solid var(--border);margin-top:.4rem;padding-top:.55rem">' +
+                        '<button onclick="lamToggleExpanded(' + l.id + ')" style="background:none;border:none;padding:0;color:var(--primary);font-size:.72rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;margin-bottom:' + (expanded ? '.5rem' : '0') + '">' +
+                            '<span style="display:inline-block;transition:transform .2s;transform:rotate(' + (expanded ? '90' : '0') + 'deg)">▸</span>' +
+                            (expanded ? 'Hide structure' : 'Show structure') +
+                        '</button>' +
+                        (expanded ? _lamLayerListHTML(l, unit) : '') +
+                    '</div>' : '') +
+                // Action footer
+                '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:.6rem;padding-top:.5rem;border-top:1px solid var(--border)">' +
+                    '<button class="btn btn-sm btn-outline" onclick="lamLoadIntoCalculator(' + l.id + ')" title="Load this laminate into the Calculator">Load</button>' +
+                    '<button class="btn btn-sm btn-danger"  onclick="if(confirm(\'Delete this laminate?\'))DB.deleteLam(' + l.id + '),render()">Delete</button>' +
+                '</div>' +
+            '</div>' +
+            '</div>';
+    }
+    html += '</div>';
+
+    // ── 8. Comparison chart (when ≥2) ─────────────────────────────────
+    if (filtered.length >= 2) {
+        html += '<div class="card" style="margin-top:.75rem"><h2 style="font-size:.95rem">Comparison</h2><div class="chart-container"><canvas id="lamChart"></canvas></div></div>';
+    }
+
+    html += '</div>';
     return html;
+}
+
+// Load a saved laminate back into the Calculator tab
+function lamLoadIntoCalculator(lamId) {
+    var lam = null;
+    for (var i = 0; i < DB.laminates.length; i++) {
+        if (DB.laminates[i].id === lamId) { lam = DB.laminates[i]; break; }
+    }
+    if (!lam || !lam.layers) return;
+    State.mode = lam.mode || State.mode;
+    State.layers = JSON.parse(JSON.stringify(lam.layers));
+    State.selCond = { temperature: lam.temperature, humidity: lam.humidity };
+    State.laminateName = lam.name + ' (copy)';
+    State.tab = 'calc';
+    DB.saveState(State);
+    renderNav();
+    renderContent();
+    if (typeof postNavRender === 'function') postNavRender();
 }
 
 // ====================================================================
