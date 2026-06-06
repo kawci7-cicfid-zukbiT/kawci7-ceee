@@ -321,7 +321,6 @@ const Engine = {
     // regenerated cellulose) where 5% ΔRH can cause 30-40% variation in P,
     // confounding temperature effect with humidity effect in the regression.
     var isHygroscopic = false;
-    var valsCheck = this.getValues(mat);
     if (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBetaOTR > 0 || mat.hygroscopicBeta > 0)
       isHygroscopic = true;
     var rhTol = isHygroscopic ? 2 : 5;
