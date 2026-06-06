@@ -4,6 +4,40 @@
 // ====================================================================
 
 // ====================================================================
+// APPLICATION TAXONOMY
+// Each material belongs to one application domain. Used for filtering
+// the DB view and (later) for restricting which materials can be picked
+// in domain-specific modules (e.g. PV encapsulant selector pulls only
+// materials with application='photovoltaic'+'neutral').
+// ====================================================================
+var APPLICATION_DOMAINS = [
+    { key: 'pharma',       label: 'Pharma',         color: '#dc2626', bg: '#fee2e2', icon: '' },
+    { key: 'food',         label: 'Food',           color: '#16a34a', bg: '#dcfce7', icon: '' },
+    { key: 'photovoltaic', label: 'Photovoltaic',   color: '#d97706', bg: '#fef3c7', icon: '' },
+    { key: 'neutral',      label: 'Neutral',        color: '#64748b', bg: '#f1f5f9', icon: '' }
+];
+
+// Map legacy values from JSON ('general', 'industrial', null) to the new taxonomy
+function normalizeApplication(value) {
+    if (!value) return 'neutral';
+    var v = String(value).toLowerCase().trim();
+    if (v === 'general' || v === 'industrial' || v === 'other') return 'neutral';
+    if (v === 'pharma' || v === 'pharmaceutical') return 'pharma';
+    if (v === 'food')         return 'food';
+    if (v === 'photovoltaic' || v === 'pv' || v === 'solar') return 'photovoltaic';
+    if (v === 'neutral')      return 'neutral';
+    return 'neutral';
+}
+
+function getApplicationMeta(key) {
+    var norm = normalizeApplication(key);
+    for (var i = 0; i < APPLICATION_DOMAINS.length; i++) {
+        if (APPLICATION_DOMAINS[i].key === norm) return APPLICATION_DOMAINS[i];
+    }
+    return APPLICATION_DOMAINS[3]; // fallback to neutral
+}
+
+// ====================================================================
 // SOFT DELETE / TRASH  (persisted in localStorage)
 // ====================================================================
 var _matTrash = (function() {
@@ -536,6 +570,8 @@ function matCardHTML(m, q) {
     }
 
     var badges = '';
+    var appMeta = getApplicationMeta(m.application);
+    badges += '<span class="badge" style="font-size:0.65rem;background:'+appMeta.bg+';color:'+appMeta.color+';border:1px solid '+appMeta.color+'33">'+appMeta.icon+' '+appMeta.label+'</span> ';
     if(isComm)         badges += '<span class="badge badge-purple" style="font-size:0.65rem">Community</span> ';
     if(verified)       badges += '<span class="badge-verified" title="Verified by ' + _escAttr(verified.by) + '">Verified</span> ';
     if(m.isMetallized) badges += '<span class="badge badge-yellow" style="font-size:0.65rem">Metallized</span> ';
@@ -647,6 +683,7 @@ function matApplyFilters() {
     var fperf   = (document.getElementById('ft-perf')     ? document.getElementById('ft-perf').value     : '');
     var fmethod = (document.getElementById('ft-method')   ? document.getElementById('ft-method').value   : '');
     var ffamily = (document.getElementById('ft-family')   ? document.getElementById('ft-family').value   : '');
+    var fapp    = (document.getElementById('ft-app')      ? document.getElementById('ft-app').value      : '');
     var ftype   = (document.getElementById('ft-type')     ? document.getElementById('ft-type').value     : '');
 
     var chipsEl = document.getElementById('ft-chips');
@@ -656,6 +693,10 @@ function matApplyFilters() {
         if(fperf)   chips.push({ label:State.mode.toUpperCase()+': '+fperf, clear:"document.getElementById('ft-perf').value='';matApplyFilters()" });
         if(fmethod) chips.push({ label:'Method: '+fmethod,                  clear:"document.getElementById('ft-method').value='';matApplyFilters()" });
         if(ffamily) chips.push({ label:'Family: '+ffamily,                  clear:"document.getElementById('ft-family').value='';matApplyFilters()" });
+        if(fapp) {
+            var meta = getApplicationMeta(fapp);
+            chips.push({ label:'Application: '+meta.icon+' '+meta.label,    clear:"document.getElementById('ft-app').value='';matApplyFilters()" });
+        }
         if(ftype)   chips.push({ label:'Type: '+ftype,                      clear:"document.getElementById('ft-type').value='';matApplyFilters()" });
         chipsEl.innerHTML = chips.map(function(c){
             return '<span onclick="' + c.clear + '" style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-size:0.72rem;font-weight:600;cursor:pointer">\u00d7 ' + _escHtml(c.label) + '</span>';
@@ -674,6 +715,7 @@ function matApplyFilters() {
         }
         if(fmethod) { var tm = State.mode==='wvtr'?(m.testMethodWVTR||''):(m.testMethodOTR||''); if(tm.trim() !== fmethod) return false; }
         if(ffamily && m.family !== ffamily) return false;
+        if(fapp && normalizeApplication(m.application) !== fapp) return false;
         if(ftype==='community' && !m.isCommunity) return false;
         if(ftype==='verified'  && !isVerifiedMaterial(m)) return false;
         if(ftype==='metallized'&& !m.isMetallized) return false;
@@ -768,6 +810,11 @@ function renderMaterials() {
                     '<select class="form-input" id="ft-method" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All methods</option>' + methOpts + '</select></div>' +
                 '<div class="form-group" style="margin:0"><label>Family</label>' +
                     '<select class="form-input" id="ft-family" onchange="matApplyFilters()" style="font-size:0.78rem"><option value="">All families</option>' + famOpts + '</select></div>' +
+                '<div class="form-group" style="margin:0"><label>Application</label>' +
+                    '<select class="form-input" id="ft-app" onchange="matApplyFilters()" style="font-size:0.78rem">' +
+                    '<option value="">All applications</option>' +
+                    APPLICATION_DOMAINS.map(function(a){ return '<option value="'+a.key+'">'+a.icon+' '+a.label+'</option>'; }).join('') +
+                    '</select></div>' +
                 '<div class="form-group" style="margin:0"><label>Type</label>' +
                     '<select class="form-input" id="ft-type" onchange="matApplyFilters()" style="font-size:0.78rem">' +
                     '<option value="">All types</option>' +
@@ -980,9 +1027,16 @@ function showMatModal(editId) {
     var modalBody =
         banner +
         '<div class="form-group"><label>Name *</label><input type="text" class="form-input" id="mm-name" value="'+_escAttr(mat?mat.name:'')+'"'+RO+'></div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">' +
             '<div class="form-group" style="margin:0"><label>Material family</label><select class="form-input" id="mm-family"'+RO+'>'+familyOpts+'</select></div>' +
             '<div class="form-group" style="margin:0"><label>Company name</label><input type="text" class="form-input" id="mm-company" value="'+_escAttr(mat?mat.company||'':'')+'" placeholder="e.g. DuPont, 3M..."'+RO+'></div>' +
+            '<div class="form-group" style="margin:0"><label>Application</label>' +
+                '<select class="form-input" id="mm-application"'+RO+'>' +
+                APPLICATION_DOMAINS.map(function(a){
+                    var sel = (normalizeApplication(mat?mat.application:'neutral') === a.key) ? ' selected' : '';
+                    return '<option value="'+a.key+'"'+sel+'>'+a.icon+' '+a.label+'</option>';
+                }).join('') +
+                '</select></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">' +
             '<div class="form-group" style="margin:0"><label>Contact email <span style="font-size:0.65rem;color:var(--text-light)">(always editable)</span></label>' +
@@ -1040,6 +1094,7 @@ function showMatModal(editId) {
             if(!name){ alert('Enter material name'); return false; }
             var family        = document.getElementById('mm-family').value;
             var company       = document.getElementById('mm-company').value.trim();
+            var application   = document.getElementById('mm-application') ? document.getElementById('mm-application').value : 'neutral';
             var tdsLink       = document.getElementById('mm-tdslink').value.trim();
             var supplierEmail = document.getElementById('mm-email') ? document.getElementById('mm-email').value.trim() : '';
             var density       = parseFloat(document.getElementById('mm-density').value) || null;
@@ -1135,6 +1190,7 @@ function showMatModal(editId) {
 
             var matData = {
                 name: name, family: family || getFamily(name), company: company,
+                application: normalizeApplication(application),
                 tdsLink: tdsLink, supplierEmail: supplierEmail, isMetallized: isMetallized,
                 density: density, gwp: gwp, haze: haze, meltingTemp: meltingTemp,
                 hygroscopicBetaWVTR: betaWVTR, hygroscopicRefRHWVTR: refRHWVTR,
@@ -1271,6 +1327,7 @@ async function loadExternalMaterialsDB() {
                 newMat.id = (numericIds.length ? Math.max.apply(null,numericIds) : 0) + 1 + addedCount;
             }
             newMat.family           = em.family || getFamily(em.name);
+            newMat.application      = normalizeApplication(em.application);
             newMat.isMetallized     = em.isMetallized || false;
             newMat.reliabilityVotes = em.reliabilityVotes || { up:0, down:0 };
             if(!newMat.co2Values) newMat.co2Values = [];
@@ -1288,6 +1345,21 @@ async function loadExternalMaterialsDB() {
             console.log('materials.json: added ' + addedCount);
         }
     } catch(e) { console.log('materials.json not loaded:', e.message); }
+}
+
+// ====================================================================
+// PUBLIC HELPER — filter DB by application domain
+// Usage:
+//   getMaterialsByApplication('photovoltaic')        → only PV materials
+//   getMaterialsByApplication('photovoltaic', true)  → PV + neutral (recommended for selectors)
+// ====================================================================
+function getMaterialsByApplication(appKey, includeNeutral) {
+    var norm = normalizeApplication(appKey);
+    return DB.materials.filter(function(m) {
+        var a = normalizeApplication(m.application);
+        if (includeNeutral && a === 'neutral') return true;
+        return a === norm;
+    });
 }
 
 // ====================================================================
