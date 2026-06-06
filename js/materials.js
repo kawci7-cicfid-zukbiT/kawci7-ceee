@@ -11,10 +11,10 @@
 // materials with application='photovoltaic'+'neutral').
 // ====================================================================
 var APPLICATION_DOMAINS = [
-    { key: 'pharma',       label: 'Pharma',         color: '#dc2626', bg: '#fee2e2', icon: '' },
-    { key: 'food',         label: 'Food',           color: '#16a34a', bg: '#dcfce7', icon: '' },
-    { key: 'photovoltaic', label: 'Photovoltaic',   color: '#d97706', bg: '#fef3c7', icon: '' },
-    { key: 'neutral',      label: 'General',        color: '#64748b', bg: '#f1f5f9', icon: '' }
+    { key: 'pharma',       label: 'Pharma',         color: '#dc2626', bg: '#fee2e2', icon: '⚕' },
+    { key: 'food',         label: 'Food',           color: '#16a34a', bg: '#dcfce7', icon: '🍃' },
+    { key: 'photovoltaic', label: 'Photovoltaic',   color: '#d97706', bg: '#fef3c7', icon: '☀' },
+    { key: 'neutral',      label: 'Neutral',        color: '#64748b', bg: '#f1f5f9', icon: '○' }
 ];
 
 // Map legacy values from JSON ('general', 'industrial', null) to the new taxonomy
@@ -788,8 +788,6 @@ function renderMaterials() {
             '<div style="font-size:1rem;font-weight:600">Materials <span class="badge badge-blue">' + DB.materials.length + '</span></div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
                 '<button class="btn btn-sm btn-primary" onclick="showMatModal()">+ Add material</button>' +
-                '<button class="btn btn-sm btn-outline" onclick="showBulkImport()">Import CSV</button>' +
-                '<button class="btn btn-sm btn-outline" onclick="runConsolidation()" title="Merge materials that differ only by thickness">Consolidate</button>' +
                 '<button class="btn btn-sm btn-outline" onclick="showTrashPanel()" style="' + (_matTrash.length > 0 ? 'border-color:var(--danger);color:var(--danger)' : '') + '">' +
                     'Trash' + (_matTrash.length > 0 ? ' (' + _matTrash.length + ')' : '') + '</button>' +
             '</div>' +
