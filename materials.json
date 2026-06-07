@@ -13945,7 +13945,7 @@
     "application": "photovoltaic",
     "company": "Pilkington (NSG Group)",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM-1249",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
