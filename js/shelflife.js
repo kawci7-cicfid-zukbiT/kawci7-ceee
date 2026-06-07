@@ -1896,10 +1896,10 @@ const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActi
           <button id="sl-src-btn-calc" class="btn btn-sm" onclick="SL.setBarrierSource('calc')" 
             style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
           <button id="sl-src-btn-db" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('db')" 
-            style="font-size:0.75rem">From Community DB</button>
+            style="font-size:0.75rem">From Database</button>
           <button id="sl-src-btn-company" class="btn btn-sm btn-outline" onclick="SL.setBarrierSource('company')" 
             style="font-size:0.75rem${companyActive ? '' : ';opacity:0.5;cursor:not-allowed'}"
-            ${companyActive ? '' : 'disabled'}>From Company DB</button>
+            ${companyActive ? '' : 'disabled'}>From My Database</button>
         </div>
 
         <!-- Panel: From Calculator -->
@@ -1916,7 +1916,7 @@ const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActi
 <!-- Panel: Laminate DB -->
         <div id="sl-panel-db" style="display:none">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600">Select from Community DB</label>
+            <label style="font-size:0.75rem;font-weight:600">Select from Database</label>
             <select class="form-input" id="sl-db-lam-pick" onchange="SL.onDBLaminatePick(this.value)" style="font-size:0.78rem">
               <option value="">Loading...</option>
             </select>
