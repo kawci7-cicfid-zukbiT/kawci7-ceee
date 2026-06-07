@@ -170,7 +170,9 @@ const PV = {
   // ---- read barrier params (synchronous — async resolved by caching) ----
   _barrierParams(which) {
     const src = this['_'+which+'Source'];
-    const otrRatio = parseFloat(document.getElementById('pv-otr-ratio')?.value)||300;
+    // OTR auto-estimate ratio: hardcoded since UI input was removed
+    // (PV module operates only in WVTR mode — OTR is a derived background value).
+    const otrRatio = 300;
     const $ = id => document.getElementById(id);
 
     let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100;
@@ -380,10 +382,7 @@ const PV = {
 
   _renderResult(sim) {
     const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-    set('pv-t80',this._fmt(sim.t80)); set('pv-t80u',this._unit(sim.t80));
-    set('pv-t90',this._fmt(sim.t90)); set('pv-t90u',this._unit(sim.t90));
-    set('pv-t97',this._fmt(sim.t97)); set('pv-t97u',this._unit(sim.t97));
-    set('pv-tmod',sim.Tmod.toFixed(0)+' °C'); set('pv-yield',(sim.yield25*100).toFixed(1)+' %');
+    set('pv-tmod', sim.Tmod.toFixed(0)+' °C');
 
     // Internal RH at the cells — primary metric
     const rhAt = (yr) => {
@@ -409,17 +408,13 @@ const PV = {
       flagEl.style.color = col;
     }
 
-    if(sim.channelFractions){
-      const cf=sim.channelFractions;
-      set('pv-ch-m',cf.moisture); set('pv-ch-o',cf.oxygen);
-      set('pv-ch-t',cf.thermal);  set('pv-ch-u',cf.uv);
-      const cb=document.getElementById('pv-channels'); if(cb) cb.style.display='block';
-    }
-    const cont=document.getElementById('pv-charts'); if(cont) cont.style.display='block';
-    requestAnimationFrame(()=>setTimeout(()=>{
-      this._drawRH(sim); this._drawPCE(sim);
-      this._drawDailyExchange(sim); this._drawMonthly();
-    },80));
+    const cont = document.getElementById('pv-charts');
+    if (cont) cont.style.display = 'block';
+    requestAnimationFrame(() => setTimeout(() => {
+      this._drawRH(sim);
+      this._drawDailyExchange(sim);
+      this._drawMonthly();
+    }, 80));
   },
 
   // ------------------------------------------------------------------
@@ -715,16 +710,9 @@ function renderPVDegradation() {
       </div>
 
       <!-- 5. BACK BARRIER -->
-      ${barrierBlock('back','▼','5. Back cover / backsheet — WVTR / OTR barrier')}
+      ${barrierBlock('back','▼','5. Back cover / backsheet — WVTR barrier')}
 
-      <!-- 6. OTR RATIO (shown when at least one source is not manual) -->
-      <div class="pv-s">
-        <div class="pv-h" style="color:var(--text-light)">▼ OTR auto-estimate ratio</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:.4rem">When OTR is not entered manually, it is estimated as WVTR × ratio. Typical for polymers: 200–500.</div>
-        <div class="form-group" style="margin:0"><label>WVTR → OTR ratio</label><input type="number" id="pv-otr-ratio" class="form-input" value="300" step="10" min="10"></div>
-      </div>
-
-      <!-- 7. EDGE + GEOMETRY -->
+      <!-- 6. EDGE + GEOMETRY -->
       <div class="pv-s">
         <div class="pv-h">▼ 6. Edge seal &amp; geometry</div>
         <div class="form-group" style="margin:0"><label>Edge seal type</label><select id="pv-edge" class="form-input"></select></div>
@@ -747,10 +735,11 @@ function renderPVDegradation() {
       <div class="card">
         <!-- Explanation of what this tool shows -->
         <div style="background:var(--primary-light);border-radius:8px;padding:.65rem .9rem;margin-bottom:.9rem;font-size:.78rem;line-height:1.55;color:var(--text)">
-          <strong style="display:block;margin-bottom:.2rem">Two questions, two charts</strong>
+          <strong style="display:block;margin-bottom:.2rem">What this tool predicts</strong>
           <span style="color:var(--text-light)">
-            <span style="color:var(--primary);font-weight:600">Chart 1</span> — <b>how much moisture reaches the cells</b>: internal RH (%) at the cell plane over time.<br>
-            <span style="color:#0a4f63;font-weight:600">Chart 2</span> — <b>the power loss</b>: PCE retention (%) and when T80/T90/T97 is crossed.
+            The simulator tracks how much <strong>water vapour</strong> reaches the solar cells through the encapsulation stack
+            over the module's service life. The main metric is the <strong>internal relative humidity</strong> at the cell plane —
+            the physical driver of long-term degradation for every PV technology.
           </span>
         </div>
 
@@ -777,27 +766,10 @@ function renderPVDegradation() {
           <div id="pv-rh-flag" style="font-size:.7rem;font-weight:600;margin-top:.45rem"></div>
         </div>
 
-        <!-- T80/90/97 -->
-        <div class="grid grid-3" style="gap:.65rem">
-          <div class="ro t80"><div class="k">T80</div><div class="v" id="pv-t80">–</div><div class="u"><span id="pv-t80u">years</span><br>80% initial power</div></div>
-          <div class="ro t90"><div class="k">T90</div><div class="v" id="pv-t90">–</div><div class="u"><span id="pv-t90u">years</span><br>90% initial power</div></div>
-          <div class="ro t97"><div class="k">T97</div><div class="v" id="pv-t97">–</div><div class="u"><span id="pv-t97u">years</span><br>97% initial power</div></div>
-        </div>
-
-        <!-- Channel breakdown -->
-        <div id="pv-channels" style="display:none;margin-top:.7rem">
-          <div style="font-size:.68rem;color:var(--text-light);font-weight:600;margin-bottom:.25rem">Degradation driver breakdown</div>
-          <div class="ch4">
-            <div class="ch"><div style="color:var(--primary)">Moisture</div><div class="cv" id="pv-ch-m">–</div></div>
-            <div class="ch"><div style="color:var(--warning)">Oxygen</div><div class="cv" id="pv-ch-o">–</div></div>
-            <div class="ch"><div style="color:#d9622b">Thermal</div><div class="cv" id="pv-ch-t">–</div></div>
-            <div class="ch"><div style="color:#8b5cf6">UV</div><div class="cv" id="pv-ch-u">–</div></div>
-          </div>
-        </div>
-
-        <div class="grid grid-2" style="gap:.5rem;margin-top:.7rem;font-size:.78rem">
-          <div><div style="color:var(--text-light);font-size:.68rem">Operating module T</div><strong id="pv-tmod">–</strong></div>
-          <div><div style="color:var(--text-light);font-size:.68rem">Mean PCE yield (25 yr)</div><strong id="pv-yield">–</strong></div>
+        <!-- Secondary: operating module temperature -->
+        <div style="margin-top:.7rem;font-size:.78rem">
+          <div style="color:var(--text-light);font-size:.68rem">Operating module temperature</div>
+          <strong id="pv-tmod">–</strong>
         </div>
       </div>
 
@@ -805,13 +777,8 @@ function renderPVDegradation() {
       <div id="pv-charts" style="display:none;margin-top:1rem">
         <div class="card" style="margin-bottom:1rem">
           <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Moisture reaching the cell plane (internal RH)</h3>
-          <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem">How much humidity accumulates inside the encapsulation — the physical cause of degradation.</div>
+          <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem">How much humidity accumulates inside the encapsulation over time. This is the physical driver behind every cell-degradation mechanism.</div>
           <div style="height:220px"><canvas id="pvRHChart"></canvas></div>
-        </div>
-        <div class="card" style="margin-bottom:1rem">
-          <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Power output degradation (PCE retention)</h3>
-          <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem">What % of initial power the module delivers over time, and when it crosses industry lifetime thresholds.</div>
-          <div style="height:220px"><canvas id="pvPCEChart"></canvas></div>
         </div>
         <div class="card" style="margin-bottom:1rem">
           <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Daily moisture exchange — the module breathes</h3>
@@ -866,14 +833,11 @@ How this simulation works
 <h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Day-night breathing</h3>
 <p>The direction of moisture flow depends on the vapour pressure difference across the barrier. On a hot afternoon, the module surface is much warmer than the outside air, which raises the saturation pressure inside. If the inside is already humid, water will actually flow <em>out</em> of the module during those hours. After sunset the surface cools, the gradient reverses, and water flows in again. The "daily exchange" chart shows this signed flux hour by hour, using hourly weather data from ERA5 reanalysis. Annual-average models cannot see this effect and tend to overestimate moisture accumulation.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Power-loss estimate (secondary output)</h3>
-<p>The internal humidity drives degradation, but it is not degradation in itself. The simulator combines the modelled humidity with three other ageing channels — thermal stress, UV photo-oxidation, and (for sensitive cells) oxygen ingress — to produce a rough estimate of power output over time. The T80, T90 and T97 figures shown below the main results are the years at which the simulated power drops below 80%, 90% and 97% of the initial value. They follow the IEC 61215 damp-heat convention used in module certification and map onto typical commercial warranties.</p>
-
 <h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Where the data come from</h3>
-<p>Climate values are taken from NASA POWER (20-year MERRA-2 monthly averages of temperature, humidity and irradiance) and from ERA5 hourly reanalysis (ECMWF/Copernicus via the Open-Meteo service) for the diurnal profile. Degradation sensitivities are calibrated against published damp-heat studies on crystalline silicon (Jordan &amp; Kurtz 2016), CIGS (Coyle 2013) and perovskite cells (Tsuji et al. 2024). All coefficients are exposed in the source code and can be re-fitted against private experimental data.</p>
+<p>Climate values are taken from NASA POWER (20-year MERRA-2 monthly averages of temperature, humidity and irradiance) and from ERA5 hourly reanalysis (ECMWF/Copernicus via the Open-Meteo service) for the diurnal profile. The sorption coefficients used in the GAB isotherm come from the published characterisation of each encapsulant family (EVA, POE, TPU, PVB).</p>
 
 <div style="margin-top:1.4rem;padding:.8rem .95rem;background:var(--bg);border-radius:7px;font-size:.8rem;color:var(--text-light);border-left:3px solid var(--warning);font-family:sans-serif;line-height:1.6">
-<strong>Disclaimer.</strong> The numbers shown are screening estimates intended for early design and concept development. Before any module certification, warranty filing or investment decision, the model coefficients should be re-fitted against measured damp-heat or IEC 61215 / ISOS data for the specific cell composition, encapsulant and barrier in use.
+<strong>Disclaimer.</strong> The internal humidity values are screening estimates intended for early-stage design comparison. For module certification or warranty filing, the model should be cross-checked against measured damp-heat or IEC 61215 data on the specific encapsulant and barrier combination in use.
 </div>
 </div>
 </div>
