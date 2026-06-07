@@ -1067,7 +1067,21 @@ function onArrChange() {
     }
     var mat = findMaterialById(matId);
     if(!mat) return;
-    if(!mat.validConditions || mat.validConditions.length === 0) {
+
+    // Build a unified conditions list: use validConditions if present, else
+    // fall back to embedded T/RH in wvtrValues[i] / otrValues[i].
+    // FIX: store the original `vals` index alongside each condition so we
+    // can pair them correctly later — even when some rows have no T/RH
+    // and are skipped. Without this, indices became mis-aligned when
+    // switching to a material with partial condition data, producing
+    // wrong dataPoints and breaking the chart.
+    var vals0 = Engine.getValues(mat) || [];
+    var unifiedConds = [];
+    for (var ic = 0; ic < vals0.length; ic++) {
+      var c0 = Engine._getCondFromVal(vals0[ic], mat, ic);
+      if (c0) unifiedConds.push({ temperature: c0.temperature, humidity: c0.humidity, _valIdx: ic });
+    }
+    if (unifiedConds.length === 0) {
         if(resEl) resEl.innerHTML = '<div class="alert alert-error">No valid conditions found for this material.</div>';
         return;
     }
@@ -1078,9 +1092,18 @@ function onArrChange() {
     var A, EaUsed, rSquared = 1, warn = '', relClass = 'reliability-medium';
     if(isNaN(customEa) || customEa <= 0) {
         var v = Engine.validateArrhenius(mat);
-        if(!v.valid){ if(resEl) resEl.innerHTML='<div class="alert alert-error">'+v.error+'</div>'; return; }
+        if(!v.valid){
+            if(resEl) resEl.innerHTML='<div class="alert alert-error">'+v.error+'</div>';
+            // Clear previous charts so they don't stay stale from the prior material
+            if (typeof destroyChart === 'function') { destroyChart('arrTemp'); destroyChart('arrLin'); }
+            return;
+        }
         var r = Engine.calcArrheniusParams(mat);
-        if(!r.valid){ if(resEl) resEl.innerHTML='<div class="alert alert-error">'+r.error+'</div>'; return; }
+        if(!r.valid){
+            if(resEl) resEl.innerHTML='<div class="alert alert-error">'+r.error+'</div>';
+            if (typeof destroyChart === 'function') { destroyChart('arrTemp'); destroyChart('arrLin'); }
+            return;
+        }
         if(selEa) selEa.value = (r.Ea/1000).toFixed(2);
         EaUsed = r.Ea; A = r.A; rSquared = r.rSquared;
         relClass = rSquared > 0.95 ? 'reliability-high' : rSquared > 0.8 ? 'reliability-medium' : 'reliability-low';
@@ -1089,9 +1112,10 @@ function onArrChange() {
         var vals = Engine.getValues(mat);
         var R = Engine.R_GAS;
         var lnA_values = [];
-        for(var i=0; i<mat.validConditions.length; i++){
-            var tk = mat.validConditions[i].temperature + 273.15;
-            if(vals[i] && vals[i].value > 0) lnA_values.push(Math.log(vals[i].value) + EaUsed/(R*tk));
+        for(var i=0; i<unifiedConds.length; i++){
+            var tk = unifiedConds[i].temperature + 273.15;
+            var vi = unifiedConds[i]._valIdx;
+            if(vals[vi] && vals[vi].value > 0) lnA_values.push(Math.log(vals[vi].value) + EaUsed/(R*tk));
         }
         if(lnA_values.length > 0){
             var lnA_mean = lnA_values.reduce(function(a,b){return a+b;},0) / lnA_values.length;
@@ -1101,8 +1125,8 @@ function onArrChange() {
         } else { if(resEl) resEl.innerHTML='<div class="alert alert-error">Cannot calculate A with custom Ea</div>'; return; }
     }
     var pred = Engine.predict(A, EaUsed, targetTemp);
-    var minT = mat.validConditions[0].temperature, maxT = mat.validConditions[0].temperature;
-    for(var i2=0; i2<mat.validConditions.length; i2++){ var t=mat.validConditions[i2].temperature; if(t<minT) minT=t; if(t>maxT) maxT=t; }
+    var minT = unifiedConds[0].temperature, maxT = unifiedConds[0].temperature;
+    for(var i2=0; i2<unifiedConds.length; i2++){ var t=unifiedConds[i2].temperature; if(t<minT) minT=t; if(t>maxT) maxT=t; }
     var isExtrapolation = targetTemp < minT-1 || targetTemp > maxT+1;
     if(isExtrapolation) warn += '<div class="alert alert-warning">Extrapolation outside measured range ('+minT.toFixed(0)+'-'+maxT.toFixed(0)+'C)</div>';
     if(resEl) {
@@ -1116,8 +1140,10 @@ function onArrChange() {
     }
     var dataPoints = [];
     var vals2 = Engine.getValues(mat);
-    for(var i3=0; i3<mat.validConditions.length; i3++){
-        if(vals2[i3] && vals2[i3].value > 0 && mat.validConditions[i3]) dataPoints.push({T_K: mat.validConditions[i3].temperature+273.15, trans: vals2[i3].value});
+    for(var i3=0; i3<unifiedConds.length; i3++){
+        var vi3 = unifiedConds[i3]._valIdx;
+        if(vals2[vi3] && vals2[vi3].value > 0)
+            dataPoints.push({T_K: unifiedConds[i3].temperature+273.15, trans: vals2[vi3].value});
     }
     drawArrTempChart(mat, {A:A, Ea:EaUsed, predicted:pred, targetTempC:targetTemp, minTemp:minT, maxTemp:maxT, isExtrapolation:isExtrapolation, dataPoints:dataPoints, rSquared:rSquared}, customEaInput !== '');
     drawArrLinChart(mat, {A:A, Ea:EaUsed, dataPoints:dataPoints, rSquared:rSquared}, customEaInput !== '');
