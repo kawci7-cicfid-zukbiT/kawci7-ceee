@@ -1,14 +1,15 @@
 // ====================================================================
-// 🎯 TOUR.JS — Guided onboarding tour for WVTR/OTR Calculator
+// 🎯 TOUR.JS v2 — Guided onboarding tour for WVTR/OTR Calculator
+// Focus: Calculator workflow (dettagliato), altri strumenti (accennati)
 // Aggiungere in index.html DOPO tutti gli altri script:
 //   <script src="js/tour.js"></script>
 // ====================================================================
 
-//(function () {
+(function () {
   'use strict';
 
   // ── Styles ──────────────────────────────────────────────────────────
- // var CSS = `
+  var CSS = `
     #tour-overlay {
       position: fixed; inset: 0; z-index: 9000;
       pointer-events: none;
@@ -17,7 +18,7 @@
 
     .tour-curtain {
       position: fixed; background: rgba(0,0,0,0.52);
-      pointer-events: none; /* FIX: mai bloccare i click */
+      pointer-events: none;
     }
     #tour-curtain-top    { top:0; left:0; right:0; }
     #tour-curtain-bottom { bottom:0; left:0; right:0; }
@@ -130,7 +131,7 @@
 
     @keyframes tour-pulse {
       0%,100% { box-shadow: 0 4px 20px rgba(37,99,235,.45); }
-      50%      { box-shadow: 0 4px 28px rgba(37,99,235,.75); }
+      50%     { box-shadow: 0 4px 28px rgba(37,99,235,.75); }
     }
 
     #tour-done-card {
@@ -157,176 +158,160 @@
   `;
 
   // ── Tour Steps ───────────────────────────────────────────────────────
-  // IMPORTANTE: ogni step con `nav` aspetta che `waitSelector` compaia nel DOM
-  // dopo la navigazione, così il polling non trova mai l'elemento sbagliato.
   var STEPS = [
-    // ── STEP 0: Home ─────────────────────────────────────────────────────
+
+    // ── 0: Welcome + WVTR/OTR mode ────────────────────────────────────
     {
       nav: function () { _goHome(); },
       waitSelector: '#nav-tabs',
       spotSelector: '.mode-toggle',
-      title: 'Choose the gas to measure',
-      icon: '',
-      text: 'Before anything else, select <strong>WVTR</strong> (water vapor) or <strong>OTR</strong> (oxygen). This choice affects every calculation and database filter in the app.',
-      tip: ' WVTR = moisture barrier · OTR = oxygen barrier'
+      title: 'Welcome! Choose your gas',
+      icon: '\uD83D\uDCA7',
+      text: 'First, select <strong>WVTR</strong> (water vapour) or <strong>OTR</strong> (oxygen) at the top. This determines which barrier property the app calculates, and filters every database and tool accordingly.',
+      tip: '\uD83D\uDCA1 WVTR = moisture barrier \u00B7 OTR = oxygen barrier. You can switch at any time.'
     },
-    // ── STEP 1: Main nav ─────────────────────────────────────────────────
+
+    // ── 1: Navigation overview ────────────────────────────────────────
     {
       nav: function () { _goHome(); },
       waitSelector: '#nav-tabs',
       spotSelector: '#nav-tabs',
-      title: 'Main navigation',
-      icon: '',
-      text: 'The top bar has <strong>4 sections</strong>: Home, Analysis, Community Database and Company Database. Click one to explore its tools.',
-      tip: ' Each section reveals a sub-menu below.'
+      title: 'The main menu',
+      icon: '\uD83D\uDDC2\uFE0F',
+      text: 'The top bar groups every tool into sections: <strong>Calculator</strong>, <strong>Food</strong>, <strong>Biomedical</strong>, <strong>Photovoltaic</strong>, and two databases. Click any section to reveal its sub-menu.',
+      tip: '\uD83D\uDCA1 Each section opens a row of sub-tabs right below.'
     },
-    // ── STEP 2: Open Calculator ───────────────────────────────────────────
+
+    // ── 2: Open Calculator ────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '#nav-subtabs',
       title: 'Open the Calculator',
-      icon: '',
-      text: 'Click <strong>Analysis → Calculator</strong> in the sub-menu. This is the main tool: you build a laminate layer by layer and the app computes its total barrier performance.',
+      icon: '\uD83E\uDDEE',
+      text: 'Click <strong>Calculator \u2192 Laminate Calculator</strong>. This is the core tool: you model a multi-layer laminate and the app computes its total barrier performance.',
     },
-    // ── STEP 3: Materials Source ──────────────────────────────────────────
+
+    // ── 3: Materials Source ───────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '#filter-matsource',
-      title: 'Step 1 — Choose the database',
-      icon: '',
-      text: 'Select the <strong>Materials Source</strong>: use the <em>General Database</em> (community materials) or your private <em>Company DB</em> if your company is connected.',
-      tip: ' Most users start with General Database.'
+      title: 'Step 1 \u2014 Choose the database',
+      icon: '\uD83D\uDCE6',
+      text: 'Pick where to source materials from: the <strong>General Database</strong> (community-contributed data) or your private <strong>Company DB</strong> if your organisation is connected.',
+      tip: '\uD83D\uDCA1 Most users start with the General Database.'
     },
-    // ── STEP 4: Test Method filter ────────────────────────────────────────
+
+    // ── 4: Test Method filter ─────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-testmethod',
       spotSelector: '#filter-testmethod',
-      title: 'Step 2 — Filter by test method',
-      icon: '',
-      text: 'Select a <strong>test standard</strong> (e.g. ASTM F1249, ISO 15106) to show only materials tested with the same method — this ensures your results are comparable.',
-      tip: ' Leave "All test methods" if you want the full list.'
+      title: 'Step 2 \u2014 Filter by test method',
+      icon: '\uD83E\uDDEA',
+      text: 'Select a <strong>test standard</strong> (e.g. ASTM F1249, ISO 15106). This filters the material list so only results tested with the same method appear \u2014 ensuring comparability.',
+      tip: '\uD83D\uDCA1 Leave \u201CAll test methods\u201D if you want the full list.'
     },
-    // ── STEP 5: Layer material ────────────────────────────────────────────
+
+    // ── 5: Select material ────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '.layer-card',
-      title: 'Step 3 — Select a material for each layer',
-      icon: '',
-      text: 'In the <strong>Layer 1</strong> row, open the Material dropdown and pick a film (e.g. PET, PE, EVOH). You can add as many layers as you need to model your laminate stack.',
-      tip: ' The dropdown shows only materials compatible with already-selected layers.'
+      title: 'Step 3 \u2014 Select a material',
+      icon: '\uD83C\uDFAF',
+      text: 'In the <strong>Layer 1</strong> row, open the material dropdown and pick a film (e.g. PET, PE, EVOH). Each layer represents one physical film in your laminate stack.',
+      tip: '\uD83D\uDCA1 The dropdown only shows materials compatible with the current filters and test conditions.'
     },
-    // ── STEP 6: Thickness ─────────────────────────────────────────────────
+
+    // ── 6: Enter thickness ────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '.layer-card',
-      title: 'Step 4 — Enter thickness (µm)',
-      icon: '',
-      text: 'Next to the material, type the <strong>thickness in micrometres (µm)</strong>. This is critical: barrier performance scales with thickness.',
-      tip: ' Typical films range from 10 µm (thin coating) to 200 µm (rigid sheet).'
+      title: 'Step 4 \u2014 Enter thickness (\u00B5m)',
+      icon: '\uD83D\uDCCF',
+      text: 'Next to the material, type the <strong>thickness in micrometres</strong>. Barrier performance scales with thickness \u2014 this value is essential for the calculation.',
+      tip: '\uD83D\uDCA1 Typical films range from 10 \u00B5m (thin coating) to 200 \u00B5m (rigid sheet).'
     },
-    // ── STEP 7: Add layer ─────────────────────────────────────────────────
+
+    // ── 7: Add more layers ────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '.btn-full',
-      title: 'Step 5 — Add more layers',
-      icon: '',
-      text: 'Click <strong>+ Add Layer</strong> to add a second (or third…) film to your laminate. Real packaging usually has 2–5 layers: e.g. PET / adhesive / PE.',
-      tip: ' The button is disabled until the current layer is fully configured.'
+      title: 'Step 5 \u2014 Add more layers',
+      icon: '\u2795',
+      text: 'Click <strong>+ Add Layer</strong> to model a multi-layer laminate. Real packaging typically has 2\u20135 layers (e.g. PET / adhesive / EVOH / PE).',
     },
-    // ── STEP 8: Test conditions ───────────────────────────────────────────
+
+    // ── 8: Test conditions ────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '.card:nth-child(2)',
-      title: 'Step 6 — Select test conditions',
-      icon: '',
-      text: 'In the <strong>Test Conditions</strong> panel, choose the temperature and humidity at which you want to evaluate barrier performance (e.g. 23°C / 50% RH).',
-      tip: ' Only conditions available for ALL selected materials appear here.'
+      title: 'Step 6 \u2014 Select test conditions',
+      icon: '\uD83C\uDF21\uFE0F',
+      text: 'In the <strong>Test Conditions</strong> panel, choose the temperature and humidity for the evaluation (e.g. 23\u00B0C / 50% RH).',
+      tip: '\uD83D\uDCA1 Only conditions available for ALL selected materials appear here.'
     },
-    // ── STEP 9: Calculate ────────────────────────────────────────────────
+
+    // ── 9: Calculate ──────────────────────────────────────────────────
     {
       nav: function () { onSubTabClick('calc'); },
       waitSelector: '#filter-matsource',
       spotSelector: '.btn-danger',
-      title: 'Step 7 — Calculate!',
-      icon: '',
-      text: 'Click <strong>Calculate</strong> to run the barrier model. The Result panel on the right shows the total WVTR/OTR of your laminate, plus the resistance contribution of each layer.',
-      tip: ' Enable Auto-calculate to recompute instantly every time you change a value.'
+      title: 'Step 7 \u2014 Calculate!',
+      icon: '\uD83D\uDE80',
+      text: 'Hit <strong>Calculate</strong> to run the barrier model. The Result panel shows the total WVTR or OTR, plus the resistance contribution of each individual layer and interactive charts.',
+      tip: '\uD83D\uDCA1 Enable Auto-calculate to recompute instantly every time you change a value.'
     },
-    // ── STEP 10: Sensitivity ─────────────────────────────────────────────
+
+    // ── 10: Other tools (overview) ────────────────────────────────────
     {
-      nav: function () { onSubTabClick('sensitivity'); },
-      waitSelector: '#sens-layer',
-      spotSelector: '#app-content',
-      title: 'Optimize with Sensitivity',
-      icon: '',
-      text: '<strong>Sensitivity</strong> sweeps thickness across a range and plots how the total barrier changes — perfect for finding the minimum thickness that meets your target.',
+      nav: function () { _goHome(); },
+      waitSelector: '#nav-tabs',
+      spotSelector: '#nav-tabs',
+      title: 'Explore more tools',
+      icon: '\uD83D\uDEE0\uFE0F',
+      text: 'Beyond the Calculator you\u2019ll find many more modules:'
+          + '<br><br><strong>\u00B7 Sensitivity & Arrhenius</strong> \u2014 optimise thickness, predict at other temperatures'
+          + '<br><strong>\u00B7 Shelf Life</strong> \u2014 estimate product shelf life from barrier data'
+          + '<br><strong>\u00B7 Food tools</strong> \u2014 MAP / O\u2082, Carbon Footprint, PPWR labelling'
+          + '<br><strong>\u00B7 Biomedical</strong> \u2014 MVTR per ICH zones, desiccant sizing'
+          + '<br><strong>\u00B7 Photovoltaic</strong> \u2014 PV module moisture degradation'
+          + '<br><strong>\u00B7 Databases</strong> \u2014 community & company material / laminate libraries',
     },
-    // ── STEP 11: Shelf Life ───────────────────────────────────────────────
-    {
-      nav: function () { onSubTabClick('shelflife'); },
-      waitSelector: '#sl-weight',
-      spotSelector: '#app-content',
-      title: 'Shelf Life calculator',
-      icon: '',
-      text: 'Enter product weight, packaging area, critical moisture gain rate and storage conditions — the tool computes the <strong>expected shelf life</strong> of your product.',
-    },
-    // ── STEP 12: Community DB ─────────────────────────────────────────────
-    {
-      nav: function () { onGroupClick('community'); },
-      waitSelector: '#nav-subtabs',
-      spotSelector: '#nav-subtabs',
-      title: 'Community Database',
-      icon: '',
-      text: 'Browse and search <strong>materials & laminates</strong> shared by the community. You can vote on reliability and contribute your own data.',
-      tip: ' The green dot on Company Database means your company data is active.'
-    },
-    // ── STEP 13: Materials search ─────────────────────────────────────────
-    {
-      nav: function () { onSubTabClick('materials'); },
-      waitSelector: '#mat-search',
-      spotSelector: '#mat-search',
-      title: 'Search materials',
-      icon: '',
-      text: 'Type a material name to filter instantly. Click any row to see all its data points, reliability votes, and a link to the original TDS datasheet.',
-    },
-    // ── STEP 14: Done ─────────────────────────────────────────────────────
+
+    // ── 11: Done ──────────────────────────────────────────────────────
     {
       nav: function () { _goHome(); },
       waitSelector: null,
       spotSelector: null,
-      title: "You're ready! ",
-      icon: '',
-      text: 'You know the full workflow: choose gas → pick database → add layers + thickness → set conditions → Calculate. Restart this tour anytime from the button at the bottom right.'
+      title: 'You\u2019re ready! \uD83C\uDF89',
+      icon: '\u2705',
+      text: 'The workflow is simple: <strong>choose gas \u2192 pick database \u2192 add layers + thickness \u2192 set conditions \u2192 Calculate</strong>.<br><br>Restart this tour anytime from the button at the bottom right.'
     }
   ];
 
-  // ── State
-
-  // ── State ────────────────────────────────────────────────────────────
+  // ── State ───────────────────────────────────────────────────────────
   var currentStep     = 0;
   var isRunning       = false;
-  var _pollTimer      = null;  // timer polling attivo
-  var _currentSpotSel = null;  // selettore dell'elemento evidenziato ora
-  var _scrollRAF      = null;  // rAF per aggiornamento scroll
+  var _pollTimer      = null;
+  var _currentSpotSel = null;
+  var _scrollRAF      = null;
 
-  // ── DOM refs ─────────────────────────────────────────────────────────
+  // ── DOM refs ────────────────────────────────────────────────────────
   var overlay, highlight, bubble, arrow;
   var curtainTop, curtainBottom, curtainLeft, curtainRight;
   var startBtn, doneCard;
 
-  // ── Helpers ──────────────────────────────────────────────────────────
+  // ── Helpers ─────────────────────────────────────────────────────────
   function _goHome() {
     try { if (typeof onGroupClick === 'function') onGroupClick('home'); } catch(e){}
   }
 
-  // Ricalcola spotlight + bubble seguendo l'elemento anche dopo lo scroll
   function _refreshPosition() {
     if (!isRunning || !_currentSpotSel) return;
     var el = document.querySelector(_currentSpotSel);
@@ -351,8 +336,7 @@
 
   function _buildDOM() {
     if (document.getElementById('tour-overlay')) {
-      // già costruito: recupera ref
-      overlay      = document.getElementById('tour-overlay');
+      overlay       = document.getElementById('tour-overlay');
       curtainTop    = document.getElementById('tour-curtain-top');
       curtainBottom = document.getElementById('tour-curtain-bottom');
       curtainLeft   = document.getElementById('tour-curtain-left');
@@ -398,7 +382,7 @@
           '<span id="tour-bubble-icon"></span>' +
           '<p id="tour-bubble-title"></p>' +
         '</div>' +
-        '<button id="tour-bubble-close">✕</button>' +
+        '<button id="tour-bubble-close">\u2715</button>' +
       '</div>' +
       '<div id="tour-bubble-body">' +
         '<p id="tour-bubble-text"></p>' +
@@ -407,8 +391,8 @@
       '<div id="tour-bubble-footer">' +
         '<div id="tour-progress-dots"></div>' +
         '<div id="tour-bubble-actions">' +
-          '<button class="tour-btn tour-btn-secondary" id="tour-btn-back">← Back</button>' +
-          '<button class="tour-btn tour-btn-primary"   id="tour-btn-next">Next →</button>' +
+          '<button class="tour-btn tour-btn-secondary" id="tour-btn-back">\u2190 Back</button>' +
+          '<button class="tour-btn tour-btn-primary"   id="tour-btn-next">Next \u2192</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(bubble);
@@ -425,7 +409,7 @@
 
     startBtn = document.createElement('button');
     startBtn.id = 'tour-start-btn';
-    startBtn.innerHTML = '▶ Take the tour';
+    startBtn.innerHTML = '\u25B6 Take the tour';
     startBtn.addEventListener('click', function() { Tour.start(); });
     document.body.appendChild(startBtn);
 
@@ -433,19 +417,19 @@
     doneCard.id = 'tour-done-card';
     doneCard.innerHTML =
       '<div id="tour-done-inner">' +
-        '<span class="done-emoji"></span>' +
+        '<span class="done-emoji">\uD83C\uDF89</span>' +
         '<h3>Tour complete!</h3>' +
-        '<p>You\'ve seen all the main sections of the WVTR/OTR Calculator.<br>Time to run your first analysis!</p>' +
-        '<button id="tour-done-go">Go to Calculator →</button>' +
+        '<p>You\'ve seen the full Calculator workflow and all the available tools.<br>Time to run your first analysis!</p>' +
+        '<button id="tour-done-go">Go to Calculator \u2192</button>' +
       '</div>';
     document.body.appendChild(doneCard);
     document.getElementById('tour-done-go').addEventListener('click', function() {
       Tour.closeDone();
-      try { onGroupClick('analysis'); } catch(e){}
+      try { onGroupClick('calculator'); } catch(e){}
     });
   }
 
-  // ── Spotlight ────────────────────────────────────────────────────────
+  // ── Spotlight ───────────────────────────────────────────────────────
   function _spotlight(rect) {
     var p = 6;
     var t = Math.max(rect.top - p, 0);
@@ -474,7 +458,7 @@
     highlight.style.cssText     = 'width:0;height:0;top:0;left:0';
   }
 
-  // ── Bubble positioning ───────────────────────────────────────────────
+  // ── Bubble positioning ──────────────────────────────────────────────
   function _positionBubble(rect) {
     var bw = 368; var bh = 280;
     var W  = window.innerWidth; var H = window.innerHeight;
@@ -510,23 +494,23 @@
     bubble.style.left = bLeft + 'px';
 
     var ax, ay, ac;
-    if (placement === 'below')  { ac='arrow-top';    ax=cx-9; ay=rect.bottom+pad-11; }
-    else if (placement==='above') { ac='arrow-bottom'; ax=cx-9; ay=rect.top-pad; }
-    else if (placement==='right') { ac='arrow-left';   ax=rect.right+pad-11; ay=bTop+(bh/4); }
-    else                          { ac='arrow-right';  ax=rect.left-pad; ay=bTop+(bh/4); }
+    if (placement === 'below')      { ac='arrow-top';    ax=cx-9; ay=rect.bottom+pad-11; }
+    else if (placement === 'above') { ac='arrow-bottom'; ax=cx-9; ay=rect.top-pad; }
+    else if (placement === 'right') { ac='arrow-left';   ax=rect.right+pad-11; ay=bTop+(bh/4); }
+    else                            { ac='arrow-right';  ax=rect.left-pad; ay=bTop+(bh/4); }
 
-    arrow.className = ac;
+    arrow.className  = ac;
     arrow.style.left = ax + 'px';
     arrow.style.top  = ay + 'px';
   }
 
-  // ── Step rendering ───────────────────────────────────────────────────
+  // ── Step rendering ──────────────────────────────────────────────────
   function _renderStep(idx) {
     var step  = STEPS[idx];
     var total = STEPS.length;
 
     document.getElementById('tour-bubble-step').textContent = 'Step ' + (idx+1) + ' of ' + total;
-    document.getElementById('tour-bubble-icon').textContent = step.icon || '📌';
+    document.getElementById('tour-bubble-icon').textContent = step.icon || '\uD83D\uDCCC';
     document.getElementById('tour-bubble-title').innerHTML  = step.title;
     document.getElementById('tour-bubble-text').innerHTML   = step.text;
 
@@ -543,12 +527,10 @@
     var backBtn = document.getElementById('tour-btn-back');
     var nextBtn = document.getElementById('tour-btn-next');
     backBtn.style.display = idx === 0 ? 'none' : 'inline-block';
-    nextBtn.textContent   = idx === total - 1 ? 'Finish ✓' : 'Next →';
+    nextBtn.textContent   = idx === total - 1 ? 'Finish \u2713' : 'Next \u2192';
   }
 
-  // ── Polling: aspetta che `selector` esista ed abbia dimensioni reali,
-  //    ma SOLO dopo che `nav()` ha cambiato pagina.
-  //    `navTabId` = State.tab atteso dopo la nav, oppure null.
+  // ── Polling: wait for selector ──────────────────────────────────────
   function _waitForElement(selector, timeout, cb) {
     if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
     if (!selector) { cb(null); return; }
@@ -573,35 +555,29 @@
     }, interval);
   }
 
-  // ── Show step ────────────────────────────────────────────────────────
+  // ── Show step ───────────────────────────────────────────────────────
   function _showStep(idx) {
     if (!isRunning) return;
     var step = STEPS[idx];
 
-    // 1. Mostra subito il contenuto nel bubble
     _renderStep(idx);
     bubble.classList.remove('hidden');
-    // Posiziona il bubble al centro mentre aspettiamo il DOM
     bubble.style.top       = '50%';
     bubble.style.left      = '50%';
     bubble.style.transform = 'translate(-50%,-50%)';
     arrow.className = 'hidden';
 
-    // 2. Naviga
     if (typeof step.nav === 'function') {
       try { step.nav(); } catch(e) { /* ignore */ }
     }
 
-    // 3. Aspetta che l'elemento "sentinella" compaia nel DOM
-    //    (distinto dal spotSelector, serve solo a capire che la pagina è pronta)
     _waitForElement(step.waitSelector, 2500, function(sentinel) {
       if (!isRunning) return;
 
-      // 4. Ora cerca l'elemento da evidenziare
       var spotEl = step.spotSelector ? document.querySelector(step.spotSelector) : null;
 
       if (spotEl) {
-        _currentSpotSel = step.spotSelector;  // traccia l'elemento per lo scroll
+        _currentSpotSel = step.spotSelector;
         spotEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setTimeout(function () {
           if (!isRunning) return;
@@ -617,7 +593,7 @@
     });
   }
 
-  // ── Public API ───────────────────────────────────────────────────────
+  // ── Public API ──────────────────────────────────────────────────────
   window.Tour = {
     start: function () {
       _injectCSS();
@@ -654,13 +630,11 @@
       if (_scrollRAF) { cancelAnimationFrame(_scrollRAF); _scrollRAF = null; }
       window.removeEventListener('scroll', _onScroll);
       document.removeEventListener('scroll', _onScroll, { capture: true });
-      // Cancella polling eventualmente attivo
       if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
-      // Nasconde tutto senza mai bloccare i click
-      if (overlay)   overlay.classList.add('hidden');
-      if (bubble)    bubble.classList.add('hidden');
-      if (arrow)     arrow.className = 'hidden';
-      if (highlight) highlight.style.cssText = 'width:0;height:0';
+      if (overlay)      overlay.classList.add('hidden');
+      if (bubble)       bubble.classList.add('hidden');
+      if (arrow)        arrow.className = 'hidden';
+      if (highlight)    highlight.style.cssText = 'width:0;height:0';
       if (curtainTop)    curtainTop.style.cssText    = 'display:none';
       if (curtainBottom) curtainBottom.style.cssText = 'display:none';
       if (curtainLeft)   curtainLeft.style.cssText   = 'display:none';
@@ -674,7 +648,7 @@
     }
   };
 
-  // ── Auto-avvio al primo accesso ──────────────────────────────────────
+  // ── Auto-start on first visit ───────────────────────────────────────
   function _init() {
     _injectCSS();
     _buildDOM();
