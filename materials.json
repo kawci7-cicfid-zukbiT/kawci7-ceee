@@ -13591,7 +13591,7 @@
     "application": "pharma",
     "company": "Honeywell",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13626,9 +13626,9 @@
     "tdsLink": "https://lifesciences.honeywell.com/us/en/products/barrier-packaging/barrier-films/aclar-rx20e-0-78-mil-20-m",
     "density": 2120,
     "gwp": null,
-    "_source": "Honeywell product page for Aclar Rx20e (lifesciences.honeywell.com), WVTR at multiple T/RH conditions, ASTM F1249",
+    "_source": "Honeywell product page for Aclar Rx20e (lifesciences.honeywell.com), WVTR at multiple T/RH conditions, ASTM F-1249",
     "_gwpSource": null,
-    "_notes": "Multiple WVTR temperatures published, enabling Arrhenius fitting. All values ASTM F1249. Note 0.78 mil = 20 µm on Honeywell page but brochure shows 0.78 mil as 'Rx20e'."
+    "_notes": "Multiple WVTR temperatures published, enabling Arrhenius fitting. All values ASTM F-1249. Note 0.78 mil = 20 µm on Honeywell page but brochure shows 0.78 mil as 'Rx20e'."
   },
   {
     "id": 307,
@@ -13637,8 +13637,8 @@
     "application": "pharma",
     "company": "Generic / Pharmapeak specification",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
-    "testMethodOTR": "ASTM D3985",
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
     "testMethodCO2": null,
     "wvtrValues": [
       {
@@ -13661,7 +13661,7 @@
     "tdsLink": "https://www.pharmapeak.net/aluminum-blister-foils/",
     "density": 2700,
     "gwp": 8.24,
-    "_source": "Pharmapeak specification for 20 µm pharmaceutical aluminium blister lidding foil (hard temper alloy 8079/1200); WVTR < 0.010 g/m²/day and OTR < 0.005 cc/m²/day are stated as instrument detection limits, not measured values. Test conditions ASTM F1249-90 at 25°C/60%RH and ASTM D3985-81 at 25°C/100%RH.",
+    "_source": "Pharmapeak specification for 20 µm pharmaceutical aluminium blister lidding foil (hard temper alloy 8079/1200); WVTR < 0.010 g/m²/day and OTR < 0.005 cc/m²/day are stated as instrument detection limits, not measured values. Test conditions ASTM F-1249-90 at 25°C/60%RH and ASTM D-3985-81 at 25°C/100%RH.",
     "_gwpSource": "PlasticsEurope / EAA Aluminium Eco-Profiles 2018: primary aluminium ingot GWP A1-A3 ≈ 8.24 kg CO2-eq/kg (European average smelting mix)",
     "_notes": "Values represent detection limits of the test instrument (not measured values, which are below detection). This is standard for pinhole-free aluminium foil ≥15 µm. Density is for pure aluminium (alloy 1200/8079). GWP is for primary aluminium; recycled content would reduce this significantly."
   },
@@ -13672,7 +13672,7 @@
     "application": "pharma",
     "company": "Generic specification",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13689,7 +13689,7 @@
     "tdsLink": "https://packagingfoils.com/alu-alu-foil-in-blister-packaging/",
     "density": null,
     "gwp": null,
-    "_source": "Multiple industry sources cite WVTR of ~0 g/m²/day for alu-alu cold-form laminate at 38°C/90%RH (e.g., packagingfoils.com blog); 'virtually 0' reflects aluminium foil impermeability. Test standard ASTM F1249 assumed. Structure: 25 µm OPA / adhesive / 45 µm Al foil / adhesive / 60 µm PVC = 130 µm nominal total.",
+    "_source": "Multiple industry sources cite WVTR of ~0 g/m²/day for alu-alu cold-form laminate at 38°C/90%RH (e.g., packagingfoils.com blog); 'virtually 0' reflects aluminium foil impermeability. Test standard ASTM F-1249 assumed. Structure: 25 µm OPA / adhesive / 45 µm Al foil / adhesive / 60 µm PVC = 130 µm nominal total.",
     "_gwpSource": null,
     "_notes": "WVTR recorded as 0.0 reflecting published claim of 'virtually zero' or 'below detection limit'. The actual limit depends on instrument; aluminium foil ≥15 µm is effectively impermeable to water vapour. Density and GWP omitted — composite structure, values would require weighted average not available in public TDS. GWP of individual layers (Al, OPA, PVC) is available separately."
   },
@@ -13700,8 +13700,8 @@
     "application": "pharma",
     "company": "Generic specification",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
-    "testMethodOTR": "ASTM D3985",
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
     "testMethodCO2": null,
     "wvtrValues": [
       {
@@ -13763,8 +13763,8 @@
     "application": "pharma",
     "company": "ICM Packaging",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
-    "testMethodOTR": "ASTM D3985",
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
     "testMethodCO2": null,
     "wvtrValues": [
       {
@@ -13826,7 +13826,7 @@
     "application": "photovoltaic",
     "company": "STR (Specialized Technology Resources)",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13843,7 +13843,7 @@
     "tdsLink": "https://cdn.enfsolar.com/Product/pdf/EVA/5950c9ae19c5e.pdf",
     "density": null,
     "gwp": null,
-    "_source": "STR PHOTOCAP® 15585P HLT Technical Data Sheet (STRSolar.com, 2015-01 SAF). MVTR 18 g/m²/day at 25°C/100%RH per ASTM F1249, 100 sccm flow. Values measured on cured 0.5 mm film.",
+    "_source": "STR PHOTOCAP® 15585P HLT Technical Data Sheet (STRSolar.com, 2015-01 SAF). MVTR 18 g/m²/day at 25°C/100%RH per ASTM F-1249, 100 sccm flow. Values measured on cured 0.5 mm film.",
     "_gwpSource": null,
     "_notes": "WVTR measured at 25°C/100%RH (non-standard condition for MVTR — usually 38°C/90%RH). Temperature and RH recorded as published. EVA encapsulant; GWP not available from public supplier EPD."
   },
@@ -13854,7 +13854,7 @@
     "application": "photovoltaic",
     "company": "DuPont",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodWVTR": "ASTM E96",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13882,7 +13882,7 @@
     "application": "photovoltaic",
     "company": "DuPont",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodWVTR": "ASTM E96",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13910,8 +13910,8 @@
     "application": "photovoltaic",
     "company": "DuPont",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM E96-E-80",
-    "testMethodOTR": "ASTM D3985-80",
+    "testMethodWVTR": "ASTM E96",
+    "testMethodOTR": "ASTM D-3985",
     "testMethodCO2": null,
     "wvtrValues": [
       {
@@ -13945,7 +13945,7 @@
     "application": "photovoltaic",
     "company": "Pilkington (NSG Group)",
     "isMetallized": false,
-    "testMethodWVTR": "Effectively impermeable — below any instrument detection limit",
+    "testMethodWVTR": "ASTM-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -13973,7 +13973,7 @@
     "application": "photovoltaic",
     "company": "AGC / generic solar glass manufacturer",
     "isMetallized": false,
-    "testMethodWVTR": "Effectively impermeable",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -14001,7 +14001,7 @@
     "application": "photovoltaic",
     "company": "DuPont",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodWVTR": "ASTM E96",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -14029,7 +14029,7 @@
     "application": "photovoltaic",
     "company": "DuPont",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249",
+    "testMethodWVTR": "ASTM F-1249",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -14046,7 +14046,7 @@
     "tdsLink": "https://www.dupont.com/solar-photovoltaic-materials/tedlar-backsheets.html",
     "density": 1380,
     "gwp": null,
-    "_source": "DuPont Tedlar® TPT backsheet brochure (referenced in academic literature and DuPont marketing; cited value 1.8 g/m²/day at 38°C/100%RH, ASTM F1249, for 38/38 TPT ≈ 175 µm). Consistent with Peike et al. (ISRN 2012) reporting WVTR for TPT backsheets in module testing.",
+    "_source": "DuPont Tedlar® TPT backsheet brochure (referenced in academic literature and DuPont marketing; cited value 1.8 g/m²/day at 38°C/100%RH, ASTM F-1249, for 38/38 TPT ≈ 175 µm). Consistent with Peike et al. (ISRN 2012) reporting WVTR for TPT backsheets in module testing.",
     "_gwpSource": null,
     "_notes": "Value 1.8 g/m²/day is widely cited in PV literature for TPT backsheet. Original DuPont TPT TDS not publicly accessible but the value is consistent with multiple secondary sources. Thickness 175 µm = ~38 µm PVF / ~100 µm PET core / ~38 µm PVF. No GWP EPD publicly available from DuPont for Tedlar backsheet."
   },
@@ -14078,7 +14078,7 @@
     "application": "photovoltaic",
     "company": "Dunmore Corporation",
     "isMetallized": false,
-    "testMethodWVTR": "ASTM F1249 (implied)",
+    "testMethodWVTR": "ASTM F-1249 ",
     "testMethodOTR": null,
     "testMethodCO2": null,
     "wvtrValues": [
@@ -14097,7 +14097,7 @@
     "gwp": null,
     "_source": "Dunmore Corporation DUN-SOLAR™ TAPE product page (dunmore.com): 'WVTR for the aluminum foil based Tedlar® backsheet is <0.0005 g/m²/day'. Structure: Tedlar/aluminium foil/PE, total thickness 425 µm. RH condition not stated.",
     "_gwpSource": null,
-    "_notes": "Value <0.0005 g/m²/day is a detection-limit upper bound. Aluminium foil makes this construction effectively impermeable. Used for thin-film CIGS modules requiring ultra-low WVTR. RH condition not specified by Dunmore — assumed standard 100%RH per ASTM F1249 convention."
+    "_notes": "Value <0.0005 g/m²/day is a detection-limit upper bound. Aluminium foil makes this construction effectively impermeable. Used for thin-film CIGS modules requiring ultra-low WVTR. RH condition not specified by Dunmore — assumed standard 100%RH per ASTM F-1249 convention."
   }
   ]
 }
