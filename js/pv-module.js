@@ -34,7 +34,8 @@ const PV = {
   _frontSource: 'calc', _backSource: 'calc',
   _frontCached: { wvtr:0, tt:38, rht:90 },
   _backCached:  { wvtr:0, tt:38, rht:90 },
-  _encapType: 'eva',
+  _encapFront: 'eva',   // Front encapsulant polymer family (eva/poe/tpu/pvb)
+  _encapBack:  'eva',   // Back encapsulant polymer family
   _lastSim: null, _climate: null, _diurnal: null, _searchTimer: null,
   HORIZON_YR: 40,
 
@@ -44,26 +45,52 @@ const PV = {
     this._populateCities();
     this.setBarrierSource('front', 'calc');
     this.setBarrierSource('back',  'calc');
-    this.setEncapType('eva');
+    // Trigger initial encap info refresh for both panels
+    this._onEncapChange('front');
+    this._onEncapChange('back');
   },
 
   // ------------------------------------------------------------------
-  // ENCAPSULANT  (button group instead of dropdown)
+  // ENCAPSULANTS — front + back, pulled from materials DB
+  // The DB material's name is matched to a polymer family (eva/poe/tpu/pvb)
+  // which selects the GAB sorption isotherm coefficients in MoistureEngine.
   // ------------------------------------------------------------------
-  setEncapType(type) {
-    this._encapType = type;
+  _detectEncapFamily(matName) {
+    if (!matName) return 'eva';
+    const n = matName.toLowerCase();
+    if (n.includes('poe'))  return 'poe';
+    if (n.includes('tpu'))  return 'tpu';
+    if (n.includes('pvb'))  return 'pvb';
+    return 'eva';  // EVA covers most cases (default fallback)
+  },
+
+  _onEncapChange(which) {
+    // which = 'front' | 'back'
+    const sel = document.getElementById('pv-encap-' + which + '-mat');
+    const info = document.getElementById('pv-encap-' + which + '-info');
+    if (!sel) return;
+    const matId = sel.value;
+    let matName = '', family = 'eva';
+    if (matId && typeof DB !== 'undefined') {
+      const mat = DB.materials.find(m => String(m.id) === String(matId));
+      if (mat) {
+        matName = mat.name;
+        family = this._detectEncapFamily(mat.name + ' ' + (mat.family || ''));
+      }
+    }
+    if (which === 'front') this._encapFront = family;
+    else                   this._encapBack  = family;
+    // Show note from MoistureEngine.ENCAPSULANT_DB
     const db = window.MoistureEngine?.ENCAPSULANT_DB || {};
-    ['eva','poe','tpu','pvb'].forEach(k => {
-      const btn = document.getElementById('pv-encap-'+k);
-      if (!btn) return;
-      const on = k === type;
-      btn.style.cssText = on
-        ? 'background:var(--primary);color:#fff;border:none;font-size:.75rem'
-        : 'font-size:.75rem';
-    });
-    const e = db[type];
-    const info = document.getElementById('pv-encap-info');
-    if (info) info.textContent = e ? e.note||'' : '';
+    const e = db[family];
+    if (info) info.textContent = (e && e.note ? e.note : '') +
+      (matName ? '  · selected: ' + matName + ' (family: ' + family.toUpperCase() + ')' : '');
+  },
+
+  // Legacy method (kept for back-compat with any external callers)
+  setEncapType(type) {
+    this._encapFront = type;
+    this._encapBack  = type;
   },
 
   // ------------------------------------------------------------------
@@ -146,7 +173,7 @@ const PV = {
     const otrRatio = parseFloat(document.getElementById('pv-otr-ratio')?.value)||300;
     const $ = id => document.getElementById(id);
 
-    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100, eaWvtr=0, eaOtr=0;
+    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100;
 
     if (src === 'calc') {
       try { wvtr = parseFloat(State.calcResult?.total)||0; } catch(e) {}
@@ -155,16 +182,11 @@ const PV = {
       wvtr = parseFloat($('pv-'+which+'-m-wvtr')?.value)||0;
       tt   = parseFloat($('pv-'+which+'-m-tt')?.value)||38;
       rht  = parseFloat($('pv-'+which+'-m-rh')?.value)||90;
-      // PV Fix 4: read user-supplied Ea_perm (kJ/mol → J/mol for makeBarrier)
-      const eaWvtrInput = parseFloat($('pv-'+which+'-m-ea-wvtr')?.value);
-      if (!isNaN(eaWvtrInput) && eaWvtrInput > 0) eaWvtr = eaWvtrInput * 1000;
       const manOtr = parseFloat($('pv-'+which+'-m-otr')?.value)||0;
       if (manOtr > 0) {
         otr = manOtr;
         ott = parseFloat($('pv-'+which+'-m-ott')?.value)||23;
         o2t = parseFloat($('pv-'+which+'-m-o2')?.value)||100;
-        const eaOtrInput = parseFloat($('pv-'+which+'-m-ea-otr')?.value);
-        if (!isNaN(eaOtrInput) && eaOtrInput > 0) eaOtr = eaOtrInput * 1000;
       }
     } else {
       const c = this['_'+which+'Cached']||{};
@@ -172,7 +194,7 @@ const PV = {
     }
 
     if (otr === 0) otr = wvtr * otrRatio;  // auto-estimate
-    return { wvtr, tt, rht, otr, ott, o2t, Ea: eaWvtr||undefined, EaO: eaOtr||undefined };
+    return { wvtr, tt, rht, otr, ott, o2t };
   },
 
   _refreshSummary(which) {
@@ -305,14 +327,23 @@ const PV = {
     const G=this._climate?.annualG||180;
     const uvF=parseFloat(document.getElementById('pv-uvfrac')?.value)||0.05;
 
-    // Encapsulant thickness (single value for both sides in this simplified model)
-    const encThick=parseFloat(document.getElementById('pv-encap-thick')?.value)||0.5;
+    // Encapsulants — front + back, each from materials DB
+    const encThickFront = parseFloat(document.getElementById('pv-encap-front-thick')?.value) || 0.5;
+    const encThickBack  = parseFloat(document.getElementById('pv-encap-back-thick')?.value)  || 0.5;
+    // For the moisture engine (which assumes a single encapsulant type for the
+    // front+back sorption mass balance), use the average thickness and the
+    // family of the more permeable encapsulant — this conservatively models
+    // the actual moisture uptake into the assembly.
+    const encThickAvg = (encThickFront + encThickBack) / 2;
+    // Choose the dominant family — if both same use that, otherwise use front
+    // (the front faces direct climate exposure so its sorption matters more).
+    const encType = this._encapFront;
 
     return {
-      tech: document.getElementById('pv-tech')?.value||'perovskite',
+      tech: 'csi',  // Cell tech UI removed — c-Si is the default. RHint output is the primary metric.
       front:{ wvtr:f.wvtr, Tt:f.tt, RHt:f.rht, otr:f.otr, OTt:f.ott, O2t:f.o2t },
       back: { wvtr:b.wvtr, Tt:b.tt, RHt:b.rht, otr:b.otr, OTt:b.ott, O2t:b.o2t },
-      encap:{ type:this._encapType, thickMm:encThick },
+      encap:{ type: encType, thickMm: encThickAvg, _typeFront: this._encapFront, _typeBack: this._encapBack, _thickFront: encThickFront, _thickBack: encThickBack },
       geom: { L, W },
       edge: { D:ep.d/8766, Q:ep.Q, gSeal:ep.gSeal, edgeFactor:ef },
       env:  { Tair, RH, G, uvFraction:uvF },
@@ -353,6 +384,31 @@ const PV = {
     set('pv-t90',this._fmt(sim.t90)); set('pv-t90u',this._unit(sim.t90));
     set('pv-t97',this._fmt(sim.t97)); set('pv-t97u',this._unit(sim.t97));
     set('pv-tmod',sim.Tmod.toFixed(0)+' °C'); set('pv-yield',(sim.yield25*100).toFixed(1)+' %');
+
+    // Internal RH at the cells — primary metric
+    const rhAt = (yr) => {
+      const p = this._sample(sim.series, yr);
+      return p && p.RHint != null ? (p.RHint * 100).toFixed(1) + ' %' : '–';
+    };
+    set('pv-rh-y1',  rhAt(1));
+    set('pv-rh-y10', rhAt(10));
+    set('pv-rh-y25', rhAt(25));
+
+    // Critical-threshold flag based on RH at year 25
+    const rh25 = this._sample(sim.series, 25);
+    const flagEl = document.getElementById('pv-rh-flag');
+    if (flagEl && rh25 && rh25.RHint != null) {
+      const rh = rh25.RHint * 100;
+      let txt, col;
+      if      (rh < 30) { txt = '✓ Dry interior — excellent for moisture-sensitive cells'; col = '#16a34a'; }
+      else if (rh < 50) { txt = '✓ Acceptable for c-Si and CIGS modules';                   col = '#16a34a'; }
+      else if (rh < 70) { txt = '⚠ Elevated humidity — perovskite cells at risk';            col = '#d97706'; }
+      else if (rh < 85) { txt = '⚠ High humidity — significant degradation risk';            col = '#d97706'; }
+      else              { txt = '✗ Critical — moisture saturation, expect rapid failure';   col = '#dc2626'; }
+      flagEl.textContent = txt;
+      flagEl.style.color = col;
+    }
+
     if(sim.channelFractions){
       const cf=sim.channelFractions;
       set('pv-ch-m',cf.moisture); set('pv-ch-o',cf.oxygen);
@@ -417,29 +473,12 @@ const PV = {
       source:'Synthetic (annual mean)'};
     const mid=this._sample(sim.series,sim.t80?sim.t80/2:5);
     const intRH=mid.RHint*100;
-
-    // PV Fix 3: Use K(T) from makeBarrier (aligned with the simulation engine)
-    // instead of the approximate Kfaces derived from raw WVTR values.
-    // Flux is expressed in g/m²/day (multiply hourly K by 24) — no longer a.u.
-    // K(Tm) [g/(m²·h·Pa)] × ΔpH₂O [Pa] × 24 [h/day] = g/(m²·day)
-    let KwFaces_h = 0;
-    if(typeof window.MoistureEngine!=='undefined' && sim.wFront > 0) {
-      const fp = this._barrierParams('front');
-      const bp = this._barrierParams('back');
-      const bF = window.MoistureEngine.makeBarrier(fp.wvtr||sim.wFront, fp.tt||38, fp.rht||90, null, 'wvtr');
-      const bB = window.MoistureEngine.makeBarrier(bp.wvtr||sim.wBack,  bp.tt||38, bp.rht||90, null, 'wvtr');
-      KwFaces_h = (bF.K(sim.Tmod) + bB.K(sim.Tmod));
-    } else {
-      // Fallback: use Kfaces from raw WVTR (qualitative only)
-      KwFaces_h = (sim.wFront+sim.wBack)/(24*0.9*Psat(38));
-    }
-
+    const Kfaces=(sim.wFront+sim.wBack)/(24*0.9*Psat(38));
+    const dPref=0.9*Psat(23)*1000;
     const flux=[],extRH=[];
     for(let h=0;h<24;h++){
       const Th=prof.T[h]??sim.Tamb, RHh=prof.RH[h]??(sim.rhFrac*100), Tm=Th+18;
-      // Net flux [g/m²/day]: positive = moisture entering, negative = leaving
-      const dP = (RHh/100)*Psat(Tm) - (intRH/100)*Psat(Tm);
-      flux.push(+(KwFaces_h * dP * 24).toFixed(5));
+      flux.push(+((Kfaces*((RHh/100)*Psat(Tm)*1000-(intRH/100)*Psat(Tm)*1000)/dPref)).toFixed(4));
       extRH.push(+RHh.toFixed(1));
     }
     if(!window.chartInstances)window.chartInstances={};
@@ -450,9 +489,7 @@ const PV = {
       ]},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:9}}}},
-        scales:{x:{ticks:{maxTicksLimit:12,font:{size:8}}},
-                y:{title:{display:true,text:'Flux (g/m²/day)'}},
-                y1:{position:'right',min:0,max:100,title:{display:true,text:'RH %'},grid:{drawOnChartArea:false}}}}});
+        scales:{x:{ticks:{maxTicksLimit:12,font:{size:8}}},y:{title:{display:true,text:'Flux (a.u.)'}},y1:{position:'right',min:0,max:100,title:{display:true,text:'RH %'},grid:{drawOnChartArea:false}}}}});
   },
 
   _drawMonthly() {
@@ -475,6 +512,36 @@ const PV = {
 // ====================================================================
 // RENDER
 // ====================================================================
+// ====================================================================
+// Helper: build <option> list for encapsulant material dropdowns.
+// Pulls from DB.materials filtered by application = photovoltaic + neutral.
+// Falls back to a static list of polymer families if no DB is available.
+// ====================================================================
+function _pvEncapOptions(defaultSelected) {
+  defaultSelected = (defaultSelected || 'eva').toLowerCase();
+  let options = '';
+  let dbList = [];
+  try {
+    if (typeof getMaterialsByApplication === 'function') {
+      dbList = getMaterialsByApplication('photovoltaic', true);
+    }
+  } catch (e) { dbList = []; }
+
+  if (dbList && dbList.length) {
+    // Group materials by detected family for easier scanning
+    options = '<option value="">— Select an encapsulant —</option>';
+    for (let i = 0; i < dbList.length; i++) {
+      const m = dbList[i];
+      const fam = (m.family ? ' [' + m.family + ']' : '');
+      options += '<option value="' + m.id + '">' + (m.name || 'Material ' + m.id) + fam + '</option>';
+    }
+  } else {
+    // Fallback when DB is not yet loaded or no PV-tagged materials exist
+    options = '<option value="">— No photovoltaic materials in DB —</option>';
+  }
+  return options;
+}
+
 function renderPVDegradation() {
   const techOpts = typeof window.MoistureEngine!=='undefined'
     ? Object.entries(window.MoistureEngine.PV_TECH_DB).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')
@@ -529,32 +596,11 @@ function renderPVDegradation() {
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-tt" class="form-input" value="38" step="1" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="pv-${which}-m-rh" class="form-input" value="90" step="1" oninput="PV._refreshSummary('${which}')"></div>
         </div>
-        <!-- PV Fix 4: Ea_perm field for WVTR. Default 30 kJ/mol underestimates
-             thermal effect for barrier films with PA/EVOH (Ea 40–60 kJ/mol).
-             Typical values: PE/PP 25–35, PET 30–45, PA 45–60, EVOH 50–65 kJ/mol. -->
-        <div class="grid grid-2" style="gap:.35rem;margin-bottom:.5rem">
-          <div class="form-group" style="margin:0">
-            <label>Eₐ WVTR (kJ/mol) <span style="font-size:.62rem;color:var(--text-light)">optional — default 30</span></label>
-            <input type="number" id="pv-${which}-m-ea-wvtr" class="form-input" step="1" min="10" max="100" placeholder="30 (PE/PP) · 45 (PET) · 55 (PA/EVOH)">
-          </div>
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.68rem;color:var(--text-light);line-height:1.4;margin-top:.5rem;display:block">
-              Sets temperature scaling from test to service conditions.<br>
-              Leave blank to use literature default (30 kJ/mol).
-            </label>
-          </div>
-        </div>
         <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">OTR — optional (leave blank to auto-estimate)</div>
         <div class="grid grid-3" style="gap:.35rem">
           <div class="form-group" style="margin:0"><label>OTR (cc/m²·day)</label><input type="number" id="pv-${which}-m-otr" class="form-input" step="any" placeholder="blank = auto" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-ott" class="form-input" value="23" step="1"></div>
           <div class="form-group" style="margin:0"><label>O₂ fraction (%)</label><input type="number" id="pv-${which}-m-o2" class="form-input" value="100" step="1"></div>
-        </div>
-        <div class="grid grid-2" style="gap:.35rem;margin-top:.35rem">
-          <div class="form-group" style="margin:0">
-            <label>Eₐ OTR (kJ/mol) <span style="font-size:.62rem;color:var(--text-light)">optional — default 30</span></label>
-            <input type="number" id="pv-${which}-m-ea-otr" class="form-input" step="1" min="10" max="100" placeholder="30 default">
-          </div>
         </div>
       </div>
 
@@ -619,26 +665,53 @@ function renderPVDegradation() {
         </div>
       </div>
 
-      <!-- 2. CELL TECHNOLOGY -->
-      <div class="pv-s">
-        <div class="pv-h">▼ 2. Cell technology</div>
-        <select id="pv-tech" class="form-input">${techOpts}</select>
-      </div>
-
       <!-- 3. FRONT BARRIER -->
-      ${barrierBlock('front','▼','3. Front cover — WVTR / OTR barrier')}
+      ${barrierBlock('front','▼','3. Front cover — WVTR barrier')}
 
-      <!-- 4. ENCAPSULANT  (button group) -->
+      <!-- 4. ENCAPSULANT — Front + Back independent, pulled from DB -->
       <div class="pv-s">
-        <div class="pv-h" style="color:var(--purple)">▼ 4. Encapsulant (GAB sorption isotherm)</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem;margin-bottom:.5rem">
-          <button id="pv-encap-eva" class="btn btn-sm" onclick="PV.setEncapType('eva')" style="font-size:.75rem;background:var(--primary);color:#fff;border:none">EVA</button>
-          <button id="pv-encap-poe" class="btn btn-sm btn-outline" onclick="PV.setEncapType('poe')" style="font-size:.75rem">POE</button>
-          <button id="pv-encap-tpu" class="btn btn-sm btn-outline" onclick="PV.setEncapType('tpu')" style="font-size:.75rem">TPU</button>
-          <button id="pv-encap-pvb" class="btn btn-sm btn-outline" onclick="PV.setEncapType('pvb')" style="font-size:.75rem">PVB</button>
+        <div class="pv-h" style="color:var(--purple)">▼ 4. Encapsulants (from materials database)</div>
+        <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.55rem">
+          Front and back encapsulants are tracked independently. The list contains materials whose
+          application is <em>photovoltaic</em> or <em>neutral</em>. The sorption isotherm uses the
+          built-in coefficients of the selected polymer family (EVA, POE, TPU, PVB).
         </div>
-        <div id="pv-encap-info" style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem;min-height:.9rem"></div>
-        <div class="form-group" style="margin:0"><label>Thickness per side (mm)</label><input type="number" id="pv-encap-thick" class="form-input" value="0.5" step=".1" min=".1"></div>
+
+        <!-- FRONT ENCAPSULANT -->
+        <div style="background:#fafafa;border:1px solid var(--border);border-radius:8px;padding:.5rem;margin-bottom:.4rem">
+          <div style="font-size:.72rem;font-weight:700;color:var(--purple);margin-bottom:.35rem">⬆ FRONT ENCAPSULANT</div>
+          <div class="grid grid-2" style="gap:.4rem">
+            <div class="form-group" style="margin:0">
+              <label style="font-size:.7rem">Material</label>
+              <select id="pv-encap-front-mat" class="form-input" style="font-size:.78rem" onchange="PV._onEncapChange('front')">
+                ${_pvEncapOptions('eva')}
+              </select>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label style="font-size:.7rem">Thickness (mm)</label>
+              <input type="number" id="pv-encap-front-thick" class="form-input" value="0.5" step=".1" min=".1" style="font-size:.82rem">
+            </div>
+          </div>
+          <div id="pv-encap-front-info" style="font-size:.68rem;color:var(--text-light);margin-top:.3rem;min-height:.85rem"></div>
+        </div>
+
+        <!-- BACK ENCAPSULANT -->
+        <div style="background:#fafafa;border:1px solid var(--border);border-radius:8px;padding:.5rem">
+          <div style="font-size:.72rem;font-weight:700;color:var(--purple);margin-bottom:.35rem">⬇ BACK ENCAPSULANT</div>
+          <div class="grid grid-2" style="gap:.4rem">
+            <div class="form-group" style="margin:0">
+              <label style="font-size:.7rem">Material</label>
+              <select id="pv-encap-back-mat" class="form-input" style="font-size:.78rem" onchange="PV._onEncapChange('back')">
+                ${_pvEncapOptions('eva')}
+              </select>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label style="font-size:.7rem">Thickness (mm)</label>
+              <input type="number" id="pv-encap-back-thick" class="form-input" value="0.5" step=".1" min=".1" style="font-size:.82rem">
+            </div>
+          </div>
+          <div id="pv-encap-back-info" style="font-size:.68rem;color:var(--text-light);margin-top:.3rem;min-height:.85rem"></div>
+        </div>
       </div>
 
       <!-- 5. BACK BARRIER -->
@@ -679,6 +752,29 @@ function renderPVDegradation() {
             <span style="color:var(--primary);font-weight:600">Chart 1</span> — <b>how much moisture reaches the cells</b>: internal RH (%) at the cell plane over time.<br>
             <span style="color:#0a4f63;font-weight:600">Chart 2</span> — <b>the power loss</b>: PCE retention (%) and when T80/T90/T97 is crossed.
           </span>
+        </div>
+
+        <!-- PRIMARY METRIC: humidity at the cells (RHint) -->
+        <div style="background:linear-gradient(135deg,#ecfeff,#dbeafe);border:1.5px solid #0891b2;border-radius:10px;padding:.85rem;margin-bottom:.65rem">
+          <div style="font-size:.66rem;color:var(--text-light);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem">Humidity reaching the cells</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem">
+            <div>
+              <div style="font-size:.62rem;color:var(--text-light);font-weight:600">Year 1</div>
+              <div style="font-size:1.35rem;font-weight:800;color:#0891b2;line-height:1.1" id="pv-rh-y1">–</div>
+              <div style="font-size:.6rem;color:var(--text-light)">% RH internal</div>
+            </div>
+            <div>
+              <div style="font-size:.62rem;color:var(--text-light);font-weight:600">Year 10</div>
+              <div style="font-size:1.35rem;font-weight:800;color:#0891b2;line-height:1.1" id="pv-rh-y10">–</div>
+              <div style="font-size:.6rem;color:var(--text-light)">% RH internal</div>
+            </div>
+            <div>
+              <div style="font-size:.62rem;color:var(--text-light);font-weight:600">Year 25</div>
+              <div style="font-size:1.35rem;font-weight:800;color:#0891b2;line-height:1.1" id="pv-rh-y25">–</div>
+              <div style="font-size:.6rem;color:var(--text-light)">% RH internal</div>
+            </div>
+          </div>
+          <div id="pv-rh-flag" style="font-size:.7rem;font-weight:600;margin-top:.45rem"></div>
         </div>
 
         <!-- T80/90/97 -->
@@ -743,32 +839,41 @@ function renderPVMethodology() {
 <div class="card" style="margin-top:1rem;border-left:4px solid var(--primary)">
 <div style="padding:1.3rem 1.5rem">
 <h2 style="font-family:Georgia,serif;font-size:1.2rem;border-bottom:1px solid var(--border);padding-bottom:.55rem;margin-bottom:1.1rem">
-How the simulation works
+How this simulation works
 </h2>
 <div style="font-size:.91rem;line-height:1.82;color:#334155;font-family:Georgia,serif">
 
-<p>A photovoltaic module is not hermetically sealed. Its front sheet, back sheet and edge seal form a system of distributed resistances through which water vapour — and, for sensitive cell technologies, oxygen — permeates over time. The simulator couples the permeation physics of the encapsulation stack to the degradation kinetics of the chosen cell type, answering two distinct questions simultaneously: how much moisture physically reaches the active layer, and what is the resulting loss of power output over the module's service life.</p>
+<p>A solar module is not a sealed box. Even after lamination, water vapour from the air slowly moves through the front sheet, the back sheet and the edges. After many years some of that water reaches the solar cells inside. That water is the main cause of long-term power loss in most module designs. This simulator estimates how much humidity reaches the cells over time, using simple but physically correct rules.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Why test conditions matter for WVTR</h3>
-<p>WVTR is not a fundamental material constant — it is a measurement that depends on the temperature, relative humidity, film thickness and test method used. A barrier rated 0.01 g/m²·day at 38 °C/90 % RH will behave entirely differently at 25 °C/60 % RH. The engine converts each barrier value into a physical permeance K = WVTR / Δp(test), where Δp is the water vapour partial pressure difference at the stated test conditions. It then re-evaluates K at the actual service temperature using an Arrhenius correction, so that the simulation reflects real rooftop conditions rather than laboratory test conditions. This is why the manual entry panel asks for the test temperature and humidity alongside the value itself.</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">What the result means</h3>
+<p>The main number shown is the <strong>internal relative humidity</strong>, expressed as a percentage, at year 1, year 10 and year 25 of service life. This is the humidity that the cells "feel" while they sit inside the module. Lower is always better. A dry interior (below about 50% RH at year 25) is what well-made commercial modules achieve. Numbers above 70% RH indicate that water is building up faster than the barrier can keep it out, and most cell technologies will degrade quickly under those conditions.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Moisture inventory and the GAB sorption isotherm</h3>
-<p>Once water enters the laminate, it is absorbed by the encapsulant polymer rather than remaining as free vapour. EVA, POE, TPU and PVB each have a different sorption capacity and shape of uptake curve. The engine tracks the accumulated water content I [g/m²] as the simulation's state variable and converts it into the true internal relative humidity via the GAB (Guggenheimer–Anderson–de Boer) sorption isotherm — the same equation used in the shelf-life module for food packaging. This correctly models the self-limiting character of moisture ingress: as the polymer saturates and the internal humidity rises, the driving force falls and the ingress rate decreases.</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Why the WVTR test conditions matter</h3>
+<p>WVTR (water vapour transmission rate) is not a fixed property of a material. The same backsheet can be reported as 0.5 g/m²·day at 38 °C and 90% RH, or as 0.05 g/m²·day at 25 °C and 60% RH — both values are correct, just measured under different conditions. The simulator converts the entered WVTR into a permeance (mass per unit driving force) and then re-evaluates it at the temperature and humidity the module actually experiences on a rooftop. This is why the manual input panel asks for the test temperature and humidity together with the WVTR value: without those, the value cannot be translated to real service conditions.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Edge ingress and desiccant breakthrough</h3>
-<p>In glass–glass modules the face barriers are nearly impermeable and the dominant pathway is lateral ingress along the edge encapsulant or PIB seal. The engine models an inward-advancing diffusion front (√(D·t)) which is initially held back by the desiccant strip. Once the desiccant's capacity Q [g/m of perimeter] is exhausted, the breakthrough occurs and ingress accelerates. This saturation behaviour is the key design variable of advanced edge seal systems and is experimentally well documented (Kempe 2018, Coyle 2013, SAES B-Dry characterisation).</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">How temperature affects permeation (Arrhenius law)</h3>
+<p>Polymer permeability rises with temperature in a way described by the Arrhenius equation. A module surface in summer can easily reach 60–70 °C, which is 30–40 °C above the air around it. At that temperature water moves through the encapsulation many times faster than at room temperature. The simulator uses an activation energy <em>E<sub>a</sub></em> (typical value around 30 kJ/mol for polymer films, higher for high-barrier laminates) to correctly amplify the permeation during hot daylight hours and slow it down again at night.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Diurnal breathing and the daily exchange chart</h3>
-<p>Moisture flux direction is governed by the vapour pressure gradient across the barrier. During hot afternoons the module surface can be 25–40 °C above ambient; at the same external relative humidity, this raises the saturation pressure inside and the net flux reverses — moisture leaves the module. After sunset the module cools, the gradient inverts, and moisture re-enters. Steady-state models that use only annual averages miss this entirely. The daily exchange chart plots the signed net flux derived from ERA5 hourly reanalysis, clearly distinguishing the hours when moisture flows in (teal shading) from the hours when it flows out (amber).</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Sorption: where the water actually goes</h3>
+<p>Once water passes the front or back barrier, it does not simply float around inside the module. It dissolves into the encapsulant polymer, which acts like a sponge. EVA, POE, TPU and PVB each have a different sponge size: that is, they hold different amounts of water at the same humidity. The simulator tracks the total water mass absorbed by both encapsulant layers and converts it into the internal humidity using the GAB sorption isotherm — the same equation used to predict food shelf life inside packaging. This step is what makes the model self-limiting: as the encapsulant fills up, the humidity inside rises, the driving force shrinks, and the ingress rate slows down naturally.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Multi-channel degradation and the WVTR + OTR combination</h3>
-<p>The internal RH is the cause; the power loss is the consequence. Four degradation channels contribute independently: moisture-driven chemistry, thermal ageing, UV photo-oxidation, and — specifically for perovskite and organic cells — oxygen-induced superoxide formation under illumination. The OTR of the barrier determines how quickly oxygen reaches the cell and therefore the magnitude of the oxygen channel. No publicly available tool couples WVTR, OTR and lifetime prediction in a single model for multiple cell technologies; this is the core differentiator of this simulator. The T80, T90 and T97 lifetime thresholds follow the IEC 61215 damp-heat convention (the standard used in module certification) and map directly onto typical commercial warranty formulations.</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Front and back encapsulants are tracked separately</h3>
+<p>Real modules increasingly use different polymers on the two faces — for example a UV-stable POE film at the front and a cheaper EVA at the back. Because the front faces direct sunlight and is hotter, it dominates the moisture balance during the day. Each encapsulant is selected independently from the materials database, with its own thickness. The polymer family (EVA, POE, TPU, PVB) is detected from the material name and sets the GAB coefficients used in the sorption calculation.</p>
 
-<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Data sources and calibration</h3>
-<p>Climate is sourced from NASA POWER (NASA Langley, 20-year MERRA-2 climatology for monthly T, RH and irradiance) and ERA5 reanalysis (ECMWF/Copernicus via Open-Meteo, hourly profile for the diurnal chart). Degradation sensitivities are calibrated against Tsuji et al. 2024 for perovskite, Coyle 2013 for CIGS, and Jordan &amp; Kurtz 2016 for crystalline silicon. All coefficients are editable and the benchmark comparison function in the physics engine is the calibration tool for fitting to your own measured damp-heat data.</p>
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Edge ingress and the desiccant strip</h3>
+<p>In glass-glass modules the front and back faces are almost impermeable, so water cannot enter through them. The only realistic pathway is sideways through the edge seal. The simulator models a moisture front that creeps inward as √(D·t), starting from the perimeter. A desiccant strip (when present) absorbs that water until its capacity Q is reached. After that point the desiccant is exhausted and ingress accelerates. This breakthrough behaviour is a key design choice of edge-sealed glass-glass modules and is well documented in the literature (Kempe 2018; Coyle 2013; SAES B-Dry datasheets).</p>
+
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Day-night breathing</h3>
+<p>The direction of moisture flow depends on the vapour pressure difference across the barrier. On a hot afternoon, the module surface is much warmer than the outside air, which raises the saturation pressure inside. If the inside is already humid, water will actually flow <em>out</em> of the module during those hours. After sunset the surface cools, the gradient reverses, and water flows in again. The "daily exchange" chart shows this signed flux hour by hour, using hourly weather data from ERA5 reanalysis. Annual-average models cannot see this effect and tend to overestimate moisture accumulation.</p>
+
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Power-loss estimate (secondary output)</h3>
+<p>The internal humidity drives degradation, but it is not degradation in itself. The simulator combines the modelled humidity with three other ageing channels — thermal stress, UV photo-oxidation, and (for sensitive cells) oxygen ingress — to produce a rough estimate of power output over time. The T80, T90 and T97 figures shown below the main results are the years at which the simulated power drops below 80%, 90% and 97% of the initial value. They follow the IEC 61215 damp-heat convention used in module certification and map onto typical commercial warranties.</p>
+
+<h3 style="font-family:sans-serif;font-size:.97rem;color:var(--primary-dark);margin-top:1.3rem;font-weight:700">Where the data come from</h3>
+<p>Climate values are taken from NASA POWER (20-year MERRA-2 monthly averages of temperature, humidity and irradiance) and from ERA5 hourly reanalysis (ECMWF/Copernicus via the Open-Meteo service) for the diurnal profile. Degradation sensitivities are calibrated against published damp-heat studies on crystalline silicon (Jordan &amp; Kurtz 2016), CIGS (Coyle 2013) and perovskite cells (Tsuji et al. 2024). All coefficients are exposed in the source code and can be re-fitted against private experimental data.</p>
 
 <div style="margin-top:1.4rem;padding:.8rem .95rem;background:var(--bg);border-radius:7px;font-size:.8rem;color:var(--text-light);border-left:3px solid var(--warning);font-family:sans-serif;line-height:1.6">
-<strong>Disclaimer.</strong> Degradation coefficients are screening-grade values for comparative analysis and concept development. Before any certification, warranty or investment decision, they must be re-fitted against measured damp-heat / ISOS test data for the specific cell composition and encapsulation system.
+<strong>Disclaimer.</strong> The numbers shown are screening estimates intended for early design and concept development. Before any module certification, warranty filing or investment decision, the model coefficients should be re-fitted against measured damp-heat or IEC 61215 / ISOS data for the specific cell composition, encapsulant and barrier in use.
 </div>
 </div>
 </div>
