@@ -2180,7 +2180,7 @@
     "hygroscopicRefRHWVTR": null,
     "hygroscopicBetaOTR": null,
     "hygroscopicRefRHOTR": null,
-    "testMethodOTR": "Jindal internal (23°C/0%RH)",
+    "testMethodOTR": "",
     "testMethodWVTR": "",
     "otrValues": [
       {
@@ -2195,7 +2195,7 @@
         "thickness": 30,
         "temperature": 23,
         "humidity": 0,
-        "testMethod": "Jindal internal (23°C/0%RH)"
+        "testMethod": ""
       }
     ],
     "wvtrValues": [
