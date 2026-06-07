@@ -1184,10 +1184,10 @@ function renderHeadspace() {
           <button id="hs-src-btn-calc" class="btn btn-sm" onclick="HS.setBarrierSource('calc')"
             style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
           <button id="hs-src-btn-db" class="btn btn-sm btn-outline" onclick="HS.setBarrierSource('db')"
-            style="font-size:0.75rem">From Community DB</button>
+            style="font-size:0.75rem">From Database</button>
           <button id="hs-src-btn-company" class="btn btn-sm btn-outline" onclick="HS.setBarrierSource('company')"
             style="font-size:0.75rem${companyActive ? '' : ';opacity:0.5;cursor:not-allowed'}"
-            ${companyActive ? '' : 'disabled'}>From Company DB</button>
+            ${companyActive ? '' : 'disabled'}>From My Database</button>
         </div>
 
         <!-- Panel: From Calculator -->
@@ -1210,7 +1210,7 @@ function renderHeadspace() {
         <!-- Panel: Community DB -->
         <div id="hs-panel-db" style="display:none">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600">Select from Community DB</label>
+            <label style="font-size:0.75rem;font-weight:600">Select from Database</label>
             <select class="form-input" id="hs-db-lam-pick" onchange="HS.onDBLaminatePick?.(this.value)" style="font-size:0.78rem">
               <option value="">Loading...</option>
             </select>
@@ -1220,7 +1220,7 @@ function renderHeadspace() {
         <!-- Panel: Company DB -->
         <div id="hs-panel-company" style="display:none">
           ${companyActive
-            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label><select class="form-input" id="hs-co-lam-pick" onchange="HS.onCompanyLaminatePick?.(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
+            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from My Database</label><select class="form-input" id="hs-co-lam-pick" onchange="HS.onCompanyLaminatePick?.(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
             : '<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access company laminates. <a href="#" onclick="showCompanyModal?.();return false" style="color:var(--primary)">Join now</a></div>'
           }
         </div>
