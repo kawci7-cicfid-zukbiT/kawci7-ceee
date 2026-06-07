@@ -166,7 +166,7 @@
       waitSelector: '#nav-tabs',
       spotSelector: '.mode-toggle',
       title: 'Welcome! Choose your gas',
-      icon: '\uD83D\uDCA7',
+      icon: '',
       text: 'First, select <strong>WVTR</strong> (water vapour) or <strong>OTR</strong> (oxygen) at the top. This determines which barrier property the app calculates, and filters every database and tool accordingly.',
       tip: '\uD83D\uDCA1 WVTR = moisture barrier \u00B7 OTR = oxygen barrier. You can switch at any time.'
     },
@@ -177,7 +177,7 @@
       waitSelector: '#nav-tabs',
       spotSelector: '#nav-tabs',
       title: 'The main menu',
-      icon: '\uD83D\uDDC2\uFE0F',
+      icon: '',
       text: 'The top bar groups every tool into sections: <strong>Calculator</strong>, <strong>Food</strong>, <strong>Biomedical</strong>, <strong>Photovoltaic</strong>, and two databases. Click any section to reveal its sub-menu.',
       tip: '\uD83D\uDCA1 Each section opens a row of sub-tabs right below.'
     },
@@ -188,7 +188,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '#nav-subtabs',
       title: 'Open the Calculator',
-      icon: '\uD83E\uDDEE',
+    icon: '',
       text: 'Click <strong>Calculator \u2192 Laminate Calculator</strong>. This is the core tool: you model a multi-layer laminate and the app computes its total barrier performance.',
     },
 
@@ -198,7 +198,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '#filter-matsource',
       title: 'Step 1 \u2014 Choose the database',
-      icon: '\uD83D\uDCE6',
+     icon: '',
       text: 'Pick where to source materials from: the <strong>General Database</strong> (community-contributed data) or your private <strong>Company DB</strong> if your organisation is connected.',
       tip: '\uD83D\uDCA1 Most users start with the General Database.'
     },
@@ -209,7 +209,7 @@
       waitSelector: '#filter-testmethod',
       spotSelector: '#filter-testmethod',
       title: 'Step 2 \u2014 Filter by test method',
-      icon: '\uD83E\uDDEA',
+     icon: '',
       text: 'Select a <strong>test standard</strong> (e.g. ASTM F1249, ISO 15106). This filters the material list so only results tested with the same method appear \u2014 ensuring comparability.',
       tip: '\uD83D\uDCA1 Leave \u201CAll test methods\u201D if you want the full list.'
     },
@@ -220,7 +220,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '.layer-card',
       title: 'Step 3 \u2014 Select a material',
-      icon: '\uD83C\uDFAF',
+   icon: '',
       text: 'In the <strong>Layer 1</strong> row, open the material dropdown and pick a film (e.g. PET, PE, EVOH). Each layer represents one physical film in your laminate stack.',
       tip: '\uD83D\uDCA1 The dropdown only shows materials compatible with the current filters and test conditions.'
     },
@@ -231,7 +231,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '.layer-card',
       title: 'Step 4 \u2014 Enter thickness (\u00B5m)',
-      icon: '\uD83D\uDCCF',
+     icon: '',
       text: 'Next to the material, type the <strong>thickness in micrometres</strong>. Barrier performance scales with thickness \u2014 this value is essential for the calculation.',
       tip: '\uD83D\uDCA1 Typical films range from 10 \u00B5m (thin coating) to 200 \u00B5m (rigid sheet).'
     },
@@ -242,7 +242,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '.btn-full',
       title: 'Step 5 \u2014 Add more layers',
-      icon: '\u2795',
+     icon: '',
       text: 'Click <strong>+ Add Layer</strong> to model a multi-layer laminate. Real packaging typically has 2\u20135 layers (e.g. PET / adhesive / EVOH / PE).',
     },
 
@@ -252,7 +252,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '.card:nth-child(2)',
       title: 'Step 6 \u2014 Select test conditions',
-      icon: '\uD83C\uDF21\uFE0F',
+      icon: '',
       text: 'In the <strong>Test Conditions</strong> panel, choose the temperature and humidity for the evaluation (e.g. 23\u00B0C / 50% RH).',
       tip: '\uD83D\uDCA1 Only conditions available for ALL selected materials appear here.'
     },
@@ -263,7 +263,7 @@
       waitSelector: '#filter-matsource',
       spotSelector: '.btn-danger',
       title: 'Step 7 \u2014 Calculate!',
-      icon: '\uD83D\uDE80',
+      icon: '',
       text: 'Hit <strong>Calculate</strong> to run the barrier model. The Result panel shows the total WVTR or OTR, plus the resistance contribution of each individual layer and interactive charts.',
       tip: '\uD83D\uDCA1 Enable Auto-calculate to recompute instantly every time you change a value.'
     },
@@ -274,7 +274,7 @@
       waitSelector: '#nav-tabs',
       spotSelector: '#nav-tabs',
       title: 'Explore more tools',
-      icon: '\uD83D\uDEE0\uFE0F',
+     icon: '',
       text: 'Beyond the Calculator you\u2019ll find many more modules:'
           + '<br><br><strong>\u00B7 Sensitivity & Arrhenius</strong> \u2014 optimise thickness, predict at other temperatures'
           + '<br><strong>\u00B7 Shelf Life</strong> \u2014 estimate product shelf life from barrier data'
@@ -290,7 +290,7 @@
       waitSelector: null,
       spotSelector: null,
       title: 'You\u2019re ready! \uD83C\uDF89',
-      icon: '\u2705',
+    icon: '',
       text: 'The workflow is simple: <strong>choose gas \u2192 pick database \u2192 add layers + thickness \u2192 set conditions \u2192 Calculate</strong>.<br><br>Restart this tour anytime from the button at the bottom right.'
     }
   ];
