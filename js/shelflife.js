@@ -474,48 +474,18 @@ const SL = {
     // 3. Storage conditions (single or chain)
     let T_store = 25, RH_out = 65;
     const isChain = document.getElementById('sl-cond-chain')?.style.display !== 'none';
-
-    // Collect chain segments (always, even if isChain=false)
-    const chainSegments = [];
+    
     if (isChain) {
+      let totD = 0, wT = 0, wRH = 0;
       document.querySelectorAll('#sl-chain-rows tr').forEach(r => {
-        const d   = parseFloat(r.querySelector('.sl-cd')?.value) || 0;
-        const T   = parseFloat(r.querySelector('.sl-ct')?.value) || 25;
-        const RH  = parseFloat(r.querySelector('.sl-cr')?.value) || 65;
-        if (d > 0) chainSegments.push({ days: d, T, RH });
+        const d = parseFloat(r.querySelector('.sl-cd')?.value) || 0;
+        wT  += (parseFloat(r.querySelector('.sl-ct')?.value) || 0) * d;
+        wRH += (parseFloat(r.querySelector('.sl-cr')?.value) || 0) * d;
+        totD += d;
       });
-    }
-
-    // FIX 9: for hygroscopic materials, use sequential simulation per segment
-    // instead of collapsing to weighted averages. For non-hygroscopic materials
-    // (or when chain is off, or product is oxygen-driven), weighted averages
-    // remain unchanged (the moisture loop is the only place segment-sequential
-    // matters; oxygen ingress doesn't depend on RH).
-    let isHygroscopicChain = false;
-    if (isChain && chainSegments.length > 0 && prod.type === 'moisture' &&
-        !this._manualOverride && State.layers?.length) {
-      for (const layer of State.layers) {
-        if (!layer.mid) continue;
-        const mat = DB.materials?.find(m => m.id === layer.mid);
-        if (mat && (mat.hygroscopicBetaWVTR > 0 || mat.hygroscopicBeta > 0)) {
-          isHygroscopicChain = true; break;
-        }
-      }
-    }
-
-    if (isChain && chainSegments.length > 0) {
-      if (!isHygroscopicChain) {
-        // Non-hygroscopic or oxygen product: weighted average (original behaviour)
-        let totD = 0, wT = 0, wRH = 0;
-        chainSegments.forEach(s => { wT += s.T * s.days; wRH += s.RH * s.days; totD += s.days; });
-        if (totD > 0) { T_store = wT / totD; RH_out = wRH / totD; }
-      } else {
-        // Hygroscopic moisture: use averages as representative for the
-        // single-pass effectiveRate (display only); the segment loop later
-        // recomputes per-segment rates and runs the real sequential sim.
-        let totD = 0, wT = 0, wRH = 0;
-        chainSegments.forEach(s => { wT += s.T * s.days; wRH += s.RH * s.days; totD += s.days; });
-        if (totD > 0) { T_store = wT / totD; RH_out = wRH / totD; }
+      if (totD > 0) {
+        T_store = wT / totD;
+        RH_out  = wRH / totD;
       }
     } else {
       T_store = parseFloat(document.getElementById('sl-temp')?.value) || 25;
@@ -532,27 +502,13 @@ const q10Raw  = document.getElementById('sl-q10')?.value;
 const eaNum   = parseFloat(eaRaw);
 const q10Num  = parseFloat(q10Raw);
 
-// FIX 3: T_ref from actual test conditions instead of hardcoded 25°C.
-// The WVTR/OTR value is measured at T_test; Arrhenius must scale from
-// T_test → T_store, NOT from 25°C → T_store (which double-counts when
-// the material was measured at 38°C/90%RH per ICH standard).
-// T_test is read from the manual rate panel; falls back to 25°C when
-// rate comes from Calculator (which already stores selCond.temperature).
-let T_ref_K = 298.15; // default 25°C
-if (this._manualOverride) {
-  const T_test_input = parseFloat(document.getElementById('sl-rate-temp')?.value);
-  if (!isNaN(T_test_input)) T_ref_K = T_test_input + 273.15;
-} else if (typeof State !== 'undefined' && State.selCond?.temperature != null) {
-  T_ref_K = State.selCond.temperature + 273.15;
-}
-
+// Se l'utente ha inserito Ea valido (e Q10 non è esplicitamente attivo) → Arrhenius
+// Altrimenti → Q10 (con fallback a prod.Q10 o 2.0)
 let accel = 1;
 if (!isNaN(eaNum) && eaNum > 0 && !(q10Num > 0)) {
   const Ea_use = eaNum * 1000;
-  // Arrhenius relative to the actual measurement temperature
-  accel = Math.exp(-(Ea_use / 8.314) * (1 / (T_store + 273.15) - 1 / T_ref_K));
+  accel = Math.exp(-(Ea_use / 8.314) * (1 / (T_store + 273.15) - 1 / 298.15));
 } else {
-  // Q10 reference is always 25°C by convention
   const q10Use = (q10Num > 0) ? q10Num : (prod.Q10 || 2.0);
   accel = Math.pow(q10Use, (T_store - 25) / 10);
 }
@@ -608,76 +564,29 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       // Moisture ingress simulation
       const M_crit = parseFloat(document.getElementById('sl-mcrit')?.value) || prod.M_crit;
       const M_init = parseFloat(document.getElementById('sl-minit')?.value) || prod.M_init;
-
+      
       if (M_crit <= M_init) { alert('⚠️ Critical moisture must be > initial'); return; }
-
-      const Psat_fn = T => 0.61094 * Math.exp((17.625 * T) / (T + 243.04)) * 1000; // Pa×1000 → same units as before
+      
       const T_test_std = 23;
-      const Psat_std   = Psat_fn(T_test_std);
-      const dP_std     = Psat_std * 0.50;
-
+      const Psat_std = 0.61094 * Math.exp((17.625 * T_test_std) / (T_test_std + 243.04)) * 1000;
+      const dP_std = Psat_std * 0.50;
+      const Psat = 0.61094 * Math.exp((17.625 * T_store) / (T_store + 243.04)) * 1000;
+      
       let M = M_init, t = 0;
       result.history = [{ t: 0, M, quality: 100 }];
-
-      // FIX 9: sequential chain simulation for hygroscopic materials.
-      // Each segment uses its own T/RH, and the moisture state M carries over
-      // to the next segment — the output of one is the input of the next.
-      if (isHygroscopicChain && chainSegments.length > 0) {
-        for (const seg of chainSegments) {
-          const Psat_seg = Psat_fn(seg.T);
-          // Recalculate effectiveRate for this segment's conditions
-          let segAccel = 1;
-          if (!isNaN(eaNum) && eaNum > 0 && !(q10Num > 0)) {
-            const Ea_use = eaNum * 1000;
-            segAccel = Math.exp(-(Ea_use / 8.314) * (1 / (seg.T + 273.15) - 1 / T_ref_K));
-          } else {
-            const q10Use = (q10Num > 0) ? q10Num : (prod.Q10 || 2.0);
-            segAccel = Math.pow(q10Use, (seg.T - 25) / 10);
-          }
-          // Hygroscopic correction for this segment's RH
-          let segHygro = 1;
-          if (!this._manualOverride && State.layers?.length) {
-            for (const layer of State.layers) {
-              if (!layer.mid) continue;
-              const mat = DB.materials?.find(m => m.id === layer.mid);
-              if (!mat) continue;
-              const beta = (State.mode || 'wvtr') === 'wvtr' ? (mat.hygroscopicBetaWVTR || 0) : (mat.hygroscopicBetaOTR || 0);
-              if (beta <= 0) continue;
-              let testRH = 50;
-              if (mat.validConditions?.length > 0) {
-                let bestCond = mat.validConditions[0], minDiff = Math.abs(mat.validConditions[0].temperature - seg.T);
-                for (const cond of mat.validConditions) {
-                  const diff = Math.abs(cond.temperature - seg.T);
-                  if (diff < minDiff) { minDiff = diff; bestCond = cond; }
-                }
-                testRH = bestCond.humidity;
-              }
-              const rhDiff = seg.RH - testRH;
-              if (Math.abs(rhDiff) > 2) segHygro *= Math.exp(beta * rhDiff);
-            }
-          }
-          const segRate = rateInput * segAccel * segHygro;
-          for (let d = 0; d < seg.days && M < M_crit && t < 5000; d++) {
-            const aw = this.solveGAB(M / 100, prod.GAB);
-            const RH_in = aw * 100;
-            const dP = Psat_seg * Math.max((seg.RH - RH_in), 1) / 100;
-            const dM = (segRate * (dP / dP_std) * A) / W * 100;
-            M += dM; t++;
-            result.history.push({ t, M: Math.min(M, M_crit), quality: Math.max(0, 100 - ((M - M_init) / (M_crit - M_init)) * 100) });
-          }
-          if (M >= M_crit) break;
-        }
-      } else {
-        // Single conditions or non-hygroscopic chain: original loop
-        const Psat = Psat_fn(T_store);
-        while (M < M_crit && t < 5000) {
-          const aw = this.solveGAB(M / 100, prod.GAB);
-          const RH_in = aw * 100;
-          const dP = Psat * Math.max((RH_out - RH_in), 1) / 100;
-          const dM = (effectiveRate * (dP / dP_std) * A) / W * 100;
-          M += dM; t++;
-          result.history.push({ t, M: Math.min(M, M_crit), quality: Math.max(0, 100 - ((M - M_init) / (M_crit - M_init)) * 100) });
-        }
+      
+      while (M < M_crit && t < 5000) {
+        const aw = this.solveGAB(M / 100, prod.GAB);
+        const RH_in = aw * 100;
+        const dP = Psat * Math.max((RH_out - RH_in), 1) / 100;
+        const dM = (effectiveRate * (dP / dP_std) * A) / W * 100;
+        
+        M += dM; t++;
+        result.history.push({
+          t,
+          M: Math.min(M, M_crit),
+          quality: Math.max(0, 100 - ((M - M_init) / (M_crit - M_init)) * 100)
+        });
       }
       result.days = t;
       result.M_crit = M_crit;
@@ -685,51 +594,22 @@ if (!this._manualOverride && State.layers?.length && State.selCond) {
       
     } else {
       // Oxygen transmission / oxidation simulation
-      // FIX 1: Euler integration with dynamic driving force correction.
-      // As O2 accumulates inside the package, the partial pressure gradient
-      // between external air (pO2_ext = 0.2095) and internal headspace falls,
-      // reducing the ingress rate. Static dayO2 = OTR×A×0.21 overestimates
-      // shelf life by ignoring this self-limiting effect. Now consistent with
-      // Headspace module: flux = OTR × A × (pO2_ext − pO2_int) / pO2_ext.
-      const fatKg  = prod.fat_kg  || 0.3;
+      const fatKg = prod.fat_kg || 0.3;
       const O2_crit = prod.O2_crit || 400;
-      const totalO2 = O2_crit * fatKg;          // cc O2 total capacity
-      const pO2_ext = 0.2095;                    // atmospheric O2 fraction
-      const V_head  = parseFloat(document.getElementById('sl-headspace')?.value) || 0; // mL, optional
-
-      if (effectiveRate <= 0) {
+      const totalO2 = O2_crit * fatKg;
+      const dayO2 = effectiveRate * A * 0.21; // 21% O2 in air
+      
+      if (dayO2 <= 0) {
         result.days = Infinity;
       } else {
-        // Accumulate O2 daily with declining driving force
-        let cumO2 = 0;          // cc O2 absorbed so far
-        let t = 0;
-        const maxDays = 3650;
-        result.history = [{ t: 0, quality: 100 }];
-
-        while (cumO2 < totalO2 && t < maxDays) {
-          // O2 fraction inside headspace (partial pressure / pO2_ext)
-          // When headspace volume is known we track internal pO2; otherwise
-          // we use the absorbed fraction as proxy for internal concentration.
-          let pO2_int = 0;
-          if (V_head > 0) {
-            // cc O2 in headspace; convert absorbed to headspace concentration
-            pO2_int = Math.min(cumO2 / V_head, pO2_ext);
-          } else {
-            // Without headspace info, approximate using absorbed fraction
-            // of total capacity (conservative — approaches static model at totalO2→∞)
-            pO2_int = pO2_ext * Math.min(cumO2 / totalO2, 0.99);
-          }
-          const drivingFraction = Math.max(0, (pO2_ext - pO2_int) / pO2_ext);
-          const dayO2 = effectiveRate * A * pO2_ext * drivingFraction;
-
-          cumO2 += dayO2;
-          t++;
+        const days = totalO2 / dayO2;
+        for (let d = 0; d <= Math.min(days * 1.2, 3650); d += 5) {
           result.history.push({
-            t,
-            quality: Math.max(0, 100 - (cumO2 / totalO2) * 100)
+            t: d,
+            quality: Math.max(0, 100 - ((dayO2 * d) / totalO2) * 100)
           });
         }
-        result.days = t;
+        result.days = Math.round(days);
       }
       result.type = 'otx';
     }
@@ -1773,7 +1653,7 @@ if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
       const modeLabel = (State.mode || 'wvtr') === 'wvtr' ? 'WVTR' : 'OTR';
       const filtered = lams.filter(l => l.mode === State.mode);
       sel.innerHTML = filtered.length === 0
-        ? `<option value="">No ${State.mode.toUpperCase()} laminates in company DB</option>`
+        ? `<option value="">No ${State.mode.toUpperCase()} laminates in My Database</option>`
         : '<option value="">Select a laminate...</option>' +
           filtered.map(l => `<option value="${l._companyLamId}">${l.name} (${l.total ? l.total.toFixed(5) : '?'} ${modeLabel})</option>`).join('');
     } catch(e) {
@@ -1923,10 +1803,10 @@ const companyActive = typeof CompanyState !== 'undefined' && CompanyState.isActi
           </div>
         </div>
 
-        <!-- Panel: Company DB -->
+        <!-- Panel: My Database -->
         <div id="sl-panel-company" style="display:none">
           ${(typeof CompanyState !== 'undefined' && CompanyState.isActive && CompanyState.isActive())
-            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label><select class="form-input" id="sl-co-lam-pick" onchange="SL.onCompanyLaminatePick(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
+            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from My Database</label><select class="form-input" id="sl-co-lam-pick" onchange="SL.onCompanyLaminatePick(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
             : '<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access company laminates. <a href="#" onclick="showCompanyModal();return false" style="color:var(--primary)">Join now</a></div>'
           }
         </div>
