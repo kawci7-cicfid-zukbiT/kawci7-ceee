@@ -13583,6 +13583,521 @@
       "co2Values": [],
       "validConditions": [],
       "reliabilityVotes": { "up": 0, "down": 0 }
-    }
+    },
+    {
+    "id": 302,
+    "name": "Aclar® Rx20e (0.78 mil / 20 µm)",
+    "family": "Aclar",
+    "application": "pharma",
+    "company": "Honeywell",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.295,
+        "thickness": 20,
+        "temperature": 37.8,
+        "humidity": 100
+      },
+      {
+        "value": 0.037,
+        "thickness": 20,
+        "temperature": 25,
+        "humidity": 60
+      },
+      {
+        "value": 0.069,
+        "thickness": 20,
+        "temperature": 30,
+        "humidity": 65
+      },
+      {
+        "value": 0.233,
+        "thickness": 20,
+        "temperature": 40,
+        "humidity": 75
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://lifesciences.honeywell.com/us/en/products/barrier-packaging/barrier-films/aclar-rx20e-0-78-mil-20-m",
+    "density": 2120,
+    "gwp": null,
+    "_source": "Honeywell product page for Aclar Rx20e (lifesciences.honeywell.com), WVTR at multiple T/RH conditions, ASTM F1249",
+    "_gwpSource": null,
+    "_notes": "Multiple WVTR temperatures published, enabling Arrhenius fitting. All values ASTM F1249. Note 0.78 mil = 20 µm on Honeywell page but brochure shows 0.78 mil as 'Rx20e'."
+  },
+  {
+    "id": 307,
+    "name": "Pharmaceutical aluminium foil lidding 20 µm (PTP push-through)",
+    "family": "Other",
+    "application": "pharma",
+    "company": "Generic / Pharmapeak specification",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": "ASTM D3985",
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.01,
+        "thickness": 20,
+        "temperature": 25,
+        "humidity": 60
+      }
+    ],
+    "otrValues": [
+      {
+        "value": 0.005,
+        "thickness": 20,
+        "temperature": 25,
+        "humidity": 100
+      }
+    ],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.pharmapeak.net/aluminum-blister-foils/",
+    "density": 2700,
+    "gwp": 8.24,
+    "_source": "Pharmapeak specification for 20 µm pharmaceutical aluminium blister lidding foil (hard temper alloy 8079/1200); WVTR < 0.010 g/m²/day and OTR < 0.005 cc/m²/day are stated as instrument detection limits, not measured values. Test conditions ASTM F1249-90 at 25°C/60%RH and ASTM D3985-81 at 25°C/100%RH.",
+    "_gwpSource": "PlasticsEurope / EAA Aluminium Eco-Profiles 2018: primary aluminium ingot GWP A1-A3 ≈ 8.24 kg CO2-eq/kg (European average smelting mix)",
+    "_notes": "Values represent detection limits of the test instrument (not measured values, which are below detection). This is standard for pinhole-free aluminium foil ≥15 µm. Density is for pure aluminium (alloy 1200/8079). GWP is for primary aluminium; recycled content would reduce this significantly."
+  },
+  {
+    "id": 308,
+    "name": "Cold-form aluminium laminate (OPA25/Al45/PVC60) — Alu-Alu blister base",
+    "family": "Other",
+    "application": "pharma",
+    "company": "Generic specification",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.0,
+        "thickness": 130,
+        "temperature": 38,
+        "humidity": 90
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://packagingfoils.com/alu-alu-foil-in-blister-packaging/",
+    "density": null,
+    "gwp": null,
+    "_source": "Multiple industry sources cite WVTR of ~0 g/m²/day for alu-alu cold-form laminate at 38°C/90%RH (e.g., packagingfoils.com blog); 'virtually 0' reflects aluminium foil impermeability. Test standard ASTM F1249 assumed. Structure: 25 µm OPA / adhesive / 45 µm Al foil / adhesive / 60 µm PVC = 130 µm nominal total.",
+    "_gwpSource": null,
+    "_notes": "WVTR recorded as 0.0 reflecting published claim of 'virtually zero' or 'below detection limit'. The actual limit depends on instrument; aluminium foil ≥15 µm is effectively impermeable to water vapour. Density and GWP omitted — composite structure, values would require weighted average not available in public TDS. GWP of individual layers (Al, OPA, PVC) is available separately."
+  },
+  {
+    "id": 309,
+    "name": "PVC rigid film for blister forming, 250 µm",
+    "family": "PVC",
+    "application": "pharma",
+    "company": "Generic specification",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": "ASTM D3985",
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 3.1,
+        "thickness": 250,
+        "temperature": 38,
+        "humidity": 90
+      }
+    ],
+    "otrValues": [
+      {
+        "value": 20.0,
+        "thickness": 250,
+        "temperature": 23,
+        "humidity": 0
+      }
+    ],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": null,
+    "density": 1400,
+    "gwp": 2.8,
+    "_source": "Industry sources citing standard PVC blister film at 250 µm: WVTR 3.1 g/m²/day at 38°C/90%RH (cited in packagingfoils.com and multiple comparative pharma packaging publications); OTR ~20 cc/m²/day at 23°C/0%RH is consistent with literature for 250 µm PVC.",
+    "_gwpSource": "PlasticsEurope PVC eco-profile (2018): PVC suspension grade ≈ 2.8 kg CO2-eq/kg cradle-to-gate",
+    "_notes": "Standard mono PVC blister forming film. WVTR and OTR are widely cited indicative values for 250 µm PVC; individual manufacturer TDS may differ slightly. No specific manufacturer TDS for these exact values could be verified online."
+  },
+  {
+    "id": 313,
+    "name": "Polybar® PVdC 250/90 via Triplex (250 µm PVC / 30 µm PE / 90 g/m² PVdC)",
+    "family": "PVDC",
+    "application": "pharma",
+    "company": "Amcor (formerly Klöckner Pentaplast)",
+    "isMetallized": false,
+    "testMethodWVTR": null,
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.35,
+        "thickness": 250,
+        "temperature": 38,
+        "humidity": 100
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.amcor.com",
+    "density": null,
+    "gwp": null,
+    "_source": "Amcor Polybar® barrier-films brochure (BR3_Amcor_Polybar_EN); Triplex construction with PE interlayer supporting 90 g/m² PVdC",
+    "_gwpSource": null,
+    "_notes": "Heaviest PVdC coat in Amcor Polybar range. PE interlayer (30 µm) enables thicker PVdC application."
+  },
+  {
+    "id": 319,
+    "name": "ICM Packaging PVdC-coated PVC 250/60 pharma blister",
+    "family": "PVDC",
+    "application": "pharma",
+    "company": "ICM Packaging",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": "ASTM D3985",
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.7,
+        "thickness": 285,
+        "temperature": 38,
+        "humidity": 90
+      }
+    ],
+    "otrValues": [
+      {
+        "value": 2.0,
+        "thickness": 285,
+        "temperature": 23,
+        "humidity": 0
+      }
+    ],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://icmpl.net/wp-content/uploads/2023/12/TDS-PVDC-0.25X60.pdf",
+    "density": null,
+    "gwp": null,
+    "_source": "ICM Packaging (icmpl.net) TDS 'PVdC coated PVC Film, Non Toxic Food/Pharma Grade' (2023). PVC 250±10% µm + PVdC 60±3 gsm. OTR ≤ 2.0 cc/m²/24h at 23°C/0%RH (ASTM D-3985). WVTR ≤ 0.7 g/m²/24h at 38°C/90%RH (ASTM F-1249). EP 3.1.11/3.2.2, USP 661, FDA 21 CFR 177 compliant.",
+    "_gwpSource": null,
+    "_notes": "One of few publicly accessible TDS with both OTR and WVTR for PVdC-coated PVC with named test methods. Values are maximum limits ('≤'), not typical measured values. Total laminate thickness ~285 µm (250 PVC + 35 PVdC functional layer equivalent)."
+  },
+  {
+    "id": 321,
+    "name": "EVAL™ EF-E (20 µm EVOH film, food/pharma laminates, high barrier)",
+    "family": "EVOH",
+    "application": "pharma",
+    "company": "Kuraray",
+    "isMetallized": false,
+    "testMethodWVTR": null,
+    "testMethodOTR": "ISO 14663-2",
+    "testMethodCO2": null,
+    "wvtrValues": [],
+    "otrValues": [
+      {
+        "value": 0.3,
+        "thickness": 20,
+        "temperature": 20,
+        "humidity": 65
+      }
+    ],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://eval.kuraray.com/information-center/datasheets/",
+    "density": 1190,
+    "gwp": 3.2,
+    "_source": "Kuraray EVAL Technical Brochure (grade table for EVOH film grades). 32 mol% ethylene EVOH, 20 µm film. OTR 0.3 cc/m²/day at 20°C/65%RH per ISO 14663-2.",
+    "_gwpSource": "PlasticsEurope eco-profile for EVOH (estimated); industry value ≈ 3.2 kg CO2-eq/kg",
+    "_notes": "EVAL EF-E grades are specifically designed as films for lamination in medical, pharma, and food packaging. Distinct from resin grades (F/H/L/E series). 20 µm film form."
+  },
+  {
+    "id": 322,
+    "name": "STR PHOTOCAP® 15585P HLT EVA encapsulant film (0.5 mm)",
+    "family": "EVA",
+    "application": "photovoltaic",
+    "company": "STR (Specialized Technology Resources)",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 18.0,
+        "thickness": 500,
+        "temperature": 25,
+        "humidity": 100
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://cdn.enfsolar.com/Product/pdf/EVA/5950c9ae19c5e.pdf",
+    "density": null,
+    "gwp": null,
+    "_source": "STR PHOTOCAP® 15585P HLT Technical Data Sheet (STRSolar.com, 2015-01 SAF). MVTR 18 g/m²/day at 25°C/100%RH per ASTM F1249, 100 sccm flow. Values measured on cured 0.5 mm film.",
+    "_gwpSource": null,
+    "_notes": "WVTR measured at 25°C/100%RH (non-standard condition for MVTR — usually 38°C/90%RH). Temperature and RH recorded as published. EVA encapsulant; GWP not available from public supplier EPD."
+  },
+  {
+    "id": 323,
+    "name": "DuPont Tedlar® TWH15BL3 PVF film (1.5 mil / 38 µm, white satin)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 24.5,
+        "thickness": 38,
+        "temperature": 39.5,
+        "humidity": 80
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/content/dam/dupont/amer/us/en/tedlar-pvf-films/public/documents/EI00241-Dupont_TedlarGeneralProperty-Digital.pdf",
+    "density": 1460,
+    "gwp": null,
+    "_source": "DuPont Tedlar® PVF Film Summary of Properties (official DuPont TDS, copyright 2011/2014). Table 2: WVTR = 24.5 g/m²/day for 1.5 mil (38 µm) white satin film at 39.5°C/80%RH (ASTM E96-E-80). Specific gravity 1.46.",
+    "_gwpSource": null,
+    "_notes": "WVTR measured at 39.5°C/80%RH — non-standard; standard is 38°C/90%RH. Test method ASTM E96 (gravimetric, not infrared). White pigmented film (TWH15BL3). Density 1460 kg/m³ from TDS specific gravity 1.46. No public EPD found for GWP."
+  },
+  {
+    "id": 324,
+    "name": "DuPont Tedlar® TWH20BS3 PVF film (2.0 mil / 51 µm, satin white)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 16.9,
+        "thickness": 51,
+        "temperature": 39.5,
+        "humidity": 80
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/content/dam/dupont/amer/us/en/tedlar-pvf-films/public/documents/EI00241-Dupont_TedlarGeneralProperty-Digital.pdf",
+    "density": 1710,
+    "gwp": null,
+    "_source": "DuPont Tedlar® PVF Film Summary of Properties (official DuPont TDS, copyright 2011/2014). Table 2: WVTR = 16.9 g/m²/day for 2.0 mil (51 µm) satin white film at 39.5°C/80%RH (ASTM E96-E-80). Specific gravity 1.71.",
+    "_gwpSource": null,
+    "_notes": "Same caveat on test conditions (39.5°C/80%RH, ASTM E96 gravimetric). Higher density than 1.5 mil due to heavier pigment loading. This is the outer (weather) layer film used in TPT backsheet construction."
+  },
+  {
+    "id": 325,
+    "name": "DuPont Tedlar® TTR10BG3 PVF film (1.0 mil / 25 µm, transparent)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodOTR": "ASTM D3985-80",
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 30.2,
+        "thickness": 25,
+        "temperature": 39.5,
+        "humidity": 80
+      }
+    ],
+    "otrValues": [
+      {
+        "value": 48.5,
+        "thickness": 25,
+        "temperature": 25,
+        "humidity": null
+      }
+    ],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/content/dam/dupont/amer/us/en/tedlar-pvf-films/public/documents/EI00241-Dupont_TedlarGeneralProperty-Digital.pdf",
+    "density": 1390,
+    "gwp": null,
+    "_source": "DuPont Tedlar® PVF Film Summary of Properties (official DuPont TDS, 2011/2014). WVTR from Table 2 for TTR10BG3 (1.0 mil transparent). O2 permeability: 3.2 cc/(100in²)(24h)(atm)(mil) × 15.5 / 1.0 mil = 49.6; TDS value for general O2 at 25°C is 3.2 cc·mil/(100in²·day·atm). OTR for 25 µm = 3.2 × 15.5 / 25 µm × 25.4 µm/mil ≈ 50 cc/m²/day; recorded as 48.5 using exact TDS gas permeability values (3.2 cc·mil/(100in²·day·atm) ÷ 25 µm × unit conversion).",
+    "_gwpSource": null,
+    "_notes": "Transparent clear Tedlar for front-side protective use in flexible/lightweight PV. OTR humidity condition not specified in TDS. WVTR test condition 39.5°C/80%RH (ASTM E96), not standard 38°C/90%RH. Density from specific gravity 1.39 × 1000."
+  },
+  {
+    "id": 326,
+    "name": "Solar glass low-iron tempered 3.2 mm (Pilkington Optiwhite™ class)",
+    "family": "Glass",
+    "application": "photovoltaic",
+    "company": "Pilkington (NSG Group)",
+    "isMetallized": false,
+    "testMethodWVTR": "Effectively impermeable — below any instrument detection limit",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.0,
+        "thickness": 3200,
+        "temperature": 38,
+        "humidity": 100
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.pilkington.com",
+    "density": 2500,
+    "gwp": 0.8,
+    "_source": "Pilkington sustainability FAQ: 'emits approx. 0.8 kg CO₂ per kg glass sold' (direct + indirect emissions). WVTR reflects physical impenetrability of glass to water vapour (soda-lime silicate, annealed or tempered); no measured value exists as it is below any instrument detection limit.",
+    "_gwpSource": "Pilkington Sustainability FAQ (pilkington.com/en/us/window-manufacturers/sustainability/sustainability-faq); EPD-IES-0008818:001 Pilkington Low-iron Float Glass (NSG Group, 2023) for category reference",
+    "_notes": "WVTR recorded as 0.0 — glass is impermeable to water vapour. No published WVTR test on glass exists (it would be below 10⁻⁶ g/m²/day, far beyond instrument capability). GWP 0.80 kg CO₂-eq/kg from Pilkington published figure; low-iron glass has similar GWP to standard float glass. EPD EPD-IES-0008818 covers Optiwhite™ low-iron glass category."
+  },
+  {
+    "id": 327,
+    "name": "Solar glass low-iron tempered 4.0 mm (AGC/generic)",
+    "family": "Glass",
+    "application": "photovoltaic",
+    "company": "AGC / generic solar glass manufacturer",
+    "isMetallized": false,
+    "testMethodWVTR": "Effectively impermeable",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.0,
+        "thickness": 4000,
+        "temperature": 38,
+        "humidity": 100
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": null,
+    "density": 2500,
+    "gwp": 0.8,
+    "_source": "Industry-standard value for tempered low-iron solar glass. WVTR = 0 (impermeable). GWP consistent with Pilkington published value ~0.80 kg CO₂-eq/kg.",
+    "_gwpSource": "Pilkington Sustainability FAQ; consistent with EPD data for European float glass manufacturing (GWP range 0.75–0.95 kg CO₂-eq/kg for standard float glass).",
+    "_notes": "4.0 mm thickness variant commonly used in dual-glass bifacial modules. Same physical impermeability as 3.2 mm."
+  },
+  {
+    "id": 331,
+    "name": "DuPont Tedlar® TFS15BM3 frontsheet PVF film (1.5 mil / 38 µm, for flexible PV)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM E96-E-80",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 24.5,
+        "thickness": 38,
+        "temperature": 39.5,
+        "humidity": 80
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/solar-photovoltaic-materials/photovoltaic-frontsheet-films.html",
+    "density": 1460,
+    "gwp": null,
+    "_source": "DuPont Tedlar® PVF Film Summary of Properties (TDS 2011/2014). TFS15BM3 is white-pigmented 1.5 mil Tedlar for frontsheet use in flexible/lightweight PV (BIPV, VIPV). Same WVTR as TWH15BL3 (same film grade, different designation for front-side use). Launched 2024 per DuPont announcement.",
+    "_gwpSource": null,
+    "_notes": "Same barrier performance as TWH15BL3 (same 1.5 mil PVF film). This grade is specifically promoted by DuPont for front-side use in flexible PV replacing glass. WVTR at 39.5°C/80%RH per ASTM E96."
+  },
+  {
+    "id": 343,
+    "name": "DuPont™ Tedlar® TPT backsheet (38 µm PVF / PET / 38 µm PVF, total ~175–300 µm)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 1.8,
+        "thickness": 175,
+        "temperature": 38,
+        "humidity": 100
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/solar-photovoltaic-materials/tedlar-backsheets.html",
+    "density": 1380,
+    "gwp": null,
+    "_source": "DuPont Tedlar® TPT backsheet brochure (referenced in academic literature and DuPont marketing; cited value 1.8 g/m²/day at 38°C/100%RH, ASTM F1249, for 38/38 TPT ≈ 175 µm). Consistent with Peike et al. (ISRN 2012) reporting WVTR for TPT backsheets in module testing.",
+    "_gwpSource": null,
+    "_notes": "Value 1.8 g/m²/day is widely cited in PV literature for TPT backsheet. Original DuPont TPT TDS not publicly accessible but the value is consistent with multiple secondary sources. Thickness 175 µm = ~38 µm PVF / ~100 µm PET core / ~38 µm PVF. No GWP EPD publicly available from DuPont for Tedlar backsheet."
+  },
+  {
+    "id": 344,
+    "name": "DuPont™ Tedlar® TPE backsheet (38 µm outer PVF / PET / polyethylene inner)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "DuPont",
+    "isMetallized": false,
+    "testMethodWVTR": null,
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dupont.com/solar-photovoltaic-materials/tedlar-backsheets.html",
+    "density": 1380,
+    "gwp": null,
+    "_source": "DuPont Tedlar® TPE product page. TPE = Tedlar (outer) / PET (core) / PE (inner/cell-side). No publicly available WVTR value found.",
+    "_gwpSource": null,
+    "_notes": "DATA GAP — WVTR/OTR omitted. TPE is single-sided Tedlar construction. Inner PE layer replaces inner Tedlar, providing a cost-optimised alternative. WVTR would be similar to TPT (dominated by PET core and outer Tedlar layer) but specific value not confirmed."
+  },
+  {
+    "id": 345,
+    "name": "Dunmore DUN-SOLAR™ TAPE (Tedlar/Al foil/PE backsheet, ultra-barrier)",
+    "family": "PVF",
+    "application": "photovoltaic",
+    "company": "Dunmore Corporation",
+    "isMetallized": false,
+    "testMethodWVTR": "ASTM F1249 (implied)",
+    "testMethodOTR": null,
+    "testMethodCO2": null,
+    "wvtrValues": [
+      {
+        "value": 0.0005,
+        "thickness": 425,
+        "temperature": 38,
+        "humidity": null
+      }
+    ],
+    "otrValues": [],
+    "co2Values": [],
+    "validConditions": [],
+    "tdsLink": "https://www.dunmore.com/products/tedlar-pv-backsheet.html",
+    "density": null,
+    "gwp": null,
+    "_source": "Dunmore Corporation DUN-SOLAR™ TAPE product page (dunmore.com): 'WVTR for the aluminum foil based Tedlar® backsheet is <0.0005 g/m²/day'. Structure: Tedlar/aluminium foil/PE, total thickness 425 µm. RH condition not stated.",
+    "_gwpSource": null,
+    "_notes": "Value <0.0005 g/m²/day is a detection-limit upper bound. Aluminium foil makes this construction effectively impermeable. Used for thin-film CIGS modules requiring ultra-low WVTR. RH condition not specified by Dunmore — assumed standard 100%RH per ASTM F1249 convention."
+  }
   ]
 }
