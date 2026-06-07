@@ -14099,6 +14099,215 @@
     "_source": "Dunmore Corporation DUN-SOLAR™ TAPE product page (dunmore.com): 'WVTR for the aluminum foil based Tedlar® backsheet is <0.0005 g/m²/day'. Structure: Tedlar/aluminium foil/PE, total thickness 425 µm. RH condition not stated.",
     "_gwpSource": null,
     "_notes": "Value <0.0005 g/m²/day is a detection-limit upper bound. Aluminium foil makes this construction effectively impermeable. Used for thin-film CIGS modules requiring ultra-low WVTR. RH condition not specified by Dunmore — assumed standard 100%RH per ASTM F-1249 convention."
+  },
+{
+    "id": 346,
+    "name": "PU Adhesive — Solventless (cured)",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Cured two-component solventless polyurethane laminating adhesive (Henkel Liofol / Dow Adcote class). WVTR: Oleyaei et al., Food Eng. Reviews 2020; OTR baseline: Herrera-Alonso et al., Macromolecules 2004. GWP: PlasticsEurope MDI-PU systems.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 1200,
+    "gwp": 4.2,
+    "hygroscopicBetaWVTR": 0.018,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0.003,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 8,  "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 18, "thickness": 25, "temperature": 23, "humidity": 85, "testMethod": "ASTM F-1249" },
+      { "value": 55, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 180, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 200, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 480, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 750, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-1434" },
+      { "value": 850, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
+  },
+
+  {
+    "id": 347,
+    "name": "PU Adhesive — Solvent-based (cured)",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Cured solvent-borne polyurethane laminating adhesive (polyester-polyol / isocyanate). Higher molecular weight pre-polymer than solventless → slightly tighter network. Values from Müller & Schoenweitz, Packaging Technology and Science 2018; TAPPI PlaCE 2006 retort adhesives review.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 1180,
+    "gwp": 5.0,
+    "hygroscopicBetaWVTR": 0.016,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0.003,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 6.5, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 15,  "thickness": 25, "temperature": 23, "humidity": 85, "testMethod": "ASTM F-1249" },
+      { "value": 45,  "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 150, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 170, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 400, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 620, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-1434" },
+      { "value": 710, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
+  },
+
+  {
+    "id": 348,
+    "name": "Acrylic Adhesive — Water-based (cured)",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Cured water-based acrylic pressure-sensitive / laminating adhesive. Acrylics are more hydrophilic than PU → higher WVTR, comparable OTR. Values from Kim et al., J. Adhesion Sci. Technol. 2015; Joo et al., Polymer Testing 2017.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 1100,
+    "gwp": 3.0,
+    "hygroscopicBetaWVTR": 0.022,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0.002,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 12,  "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 28,  "thickness": 25, "temperature": 23, "humidity": 85, "testMethod": "ASTM F-1249" },
+      { "value": 80,  "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 200, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 220, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 520, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 680, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-1434" },
+      { "value": 770, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
+  },
+
+  {
+    "id": 349,
+    "name": "EVA Hot Melt Adhesive",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Ethylene-vinyl acetate hot melt adhesive (18-28% VA content typical for packaging). Barrier similar to LDPE but degraded by VA comonomer. Values from Selke, Culter & Hernandez, Plastics Packaging 3rd ed. 2016; McKeen, Permeability Properties of Plastics and Elastomers, 4th ed. 2017.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 950,
+    "gwp": 2.5,
+    "hygroscopicBetaWVTR": 0.005,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0.001,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 12,  "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 35,  "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 380, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 400, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 900, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 1500, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
+  },
+
+  {
+    "id": 350,
+    "name": "EAA Tie Layer (Ethylene Acrylic Acid)",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Ethylene-acrylic acid copolymer coextruded tie layer (Dow Primacor / SK Primacor class, ~6-9% AA). Barrier close to LDPE, slightly worse due to polar comonomer. Values from Dow Primacor TDS; Selke et al., Plastics Packaging 3rd ed. 2016.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 940,
+    "gwp": 2.3,
+    "hygroscopicBetaWVTR": 0.008,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0.001,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 14,  "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 42,  "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 450, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 470, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 1100, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 1800, "thickness": 25, "temperature": 23, "humidity": 0, "testMethod": "ASTM D1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
+  },
+
+  {
+    "id": 351,
+    "name": "MAH-g-PE Tie Layer (Bynel / Admer class)",
+    "family": "Adhesive",
+    "company": "",
+    "tdsLink": "",
+    "tdsSource": "Maleic-anhydride grafted polyethylene tie-layer resin for coextrusion (Dow Bynel / Mitsui Admer / LyondellBasell Plexar class). Barrier essentially identical to LLDPE base resin — MAH graft level (<1%) has negligible effect on permeation. Values from Dow Bynel 41E710 TDS; McKeen, Permeability Properties 4th ed. 2017.",
+    "isMetallized": false,
+    "application": "general",
+    "foodContact": true,
+    "density": 925,
+    "gwp": 2.2,
+    "hygroscopicBetaWVTR": 0,
+    "hygroscopicRefRHWVTR": 50,
+    "hygroscopicBetaOTR": 0,
+    "hygroscopicRefRHOTR": 50,
+    "testMethodWVTR": "ASTM F-1249",
+    "testMethodOTR": "ASTM D-3985",
+    "wvtrValues": [
+      { "value": 10,  "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM F-1249" },
+      { "value": 28,  "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM F-1249" }
+    ],
+    "otrValues": [
+      { "value": 420, "thickness": 25, "temperature": 23, "humidity": 0,  "testMethod": "ASTM D-3985" },
+      { "value": 420, "thickness": 25, "temperature": 23, "humidity": 50, "testMethod": "ASTM D-3985" },
+      { "value": 980, "thickness": 25, "temperature": 38, "humidity": 90, "testMethod": "ASTM D-3985" }
+    ],
+    "co2Values": [
+      { "value": 1700, "thickness": 25, "temperature": 23, "humidity": 0, "testMethod": "ASTM D-1434" }
+    ],
+    "validConditions": [],
+    "reliabilityVotes": { "up": 0, "down": 0 }
   }
-  ]
+]
 }
