@@ -577,6 +577,11 @@ function drawHygroscopicTimeChart() {
 
   var initialWVTR  = wvtrPoints[0];
   var finalWVTR    = wvtrPoints[wvtrPoints.length - 1];
+
+  // Hide chart when curve is essentially flat (< 2% change)
+  var hygroChange = Math.abs(finalWVTR - initialWVTR) / (initialWVTR || 1);
+  if (hygroChange < 0.02) { if (hygroCard) hygroCard.style.display = 'none'; return; }
+
   var yMax         = Math.max(initialWVTR, finalWVTR) * 1.5;
   if (yMax < 0.1) yMax = 0.1;
 
