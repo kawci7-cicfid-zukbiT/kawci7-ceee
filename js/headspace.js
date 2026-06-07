@@ -59,6 +59,7 @@ const HS = {
   _manualOverride: false,
   _barrierSource: 'calc',
   _currentChainMode: 'single',
+  _dbRate: 0,
 
   // ------------------------------------------------------------------
   // 🔀 UI TOGGLES & STATE MANAGEMENT
@@ -125,6 +126,38 @@ const HS = {
       const rate = parseFloat(State.calcResult?.total || 0);
       this._updateRateSummary(rate > 0 ? rate.toFixed(6) : '-');
     }
+
+    // Populate DB dropdown
+    if (src === 'db') {
+      this._populateLamSelect('hs-db-lam-pick', false);
+    }
+    // Populate Company dropdown
+    if (src === 'company') {
+      this._populateLamSelect('hs-co-lam-pick', true);
+    }
+  },
+
+  /** Populate a laminate <select> from DB.laminates */
+  _populateLamSelect(selectId, companyOnly) {
+    const sel = document.getElementById(selectId);
+    if (!sel || typeof DB === 'undefined') return;
+    var lams = (DB.laminates || []).filter(function(l) {
+      if (!l.total || l.total <= 0) return false;
+      // headspace needs OTR laminates
+      if (l.mode && l.mode !== 'otr') return false;
+      if (companyOnly) return !!l._companyId || !!l.isCompany;
+      return true;
+    });
+    var html = '<option value="">— Select a laminate —</option>';
+    lams.forEach(function(l) {
+      html += '<option value="' + l.id + '">'
+        + (l.name || 'Unnamed') + ' — '
+        + (l.total ? l.total.toFixed(4) : '?') + ' cm\u00B3/m\u00B2\u00B7day'
+        + (l.temperature ? ' @ ' + l.temperature + '\u00B0C' : '')
+        + '</option>';
+    });
+    if (lams.length === 0) html = '<option value="">No OTR laminates found</option>';
+    sel.innerHTML = html;
   },
 
   /** Toggle packaging geometry mode */
@@ -412,10 +445,13 @@ const HS = {
   // 🧮 MATHEMATICAL CORE — Euler integration for O₂ balance
   // ------------------------------------------------------------------
 
-  /** Get the active barrier rate (manual override or calculated) */
+  /** Get the active barrier rate (manual override, calculator, or DB/company) */
   _getActiveRate() {
     if (this._manualOverride) {
       return parseFloat(document.getElementById('hs-rate-manual')?.value || 0);
+    }
+    if (this._barrierSource === 'db' || this._barrierSource === 'company') {
+      return this._dbRate || 0;
     }
     return parseFloat(State.calcResult?.total || 0);
   },
@@ -1184,10 +1220,10 @@ function renderHeadspace() {
           <button id="hs-src-btn-calc" class="btn btn-sm" onclick="HS.setBarrierSource('calc')"
             style="font-size:0.75rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
           <button id="hs-src-btn-db" class="btn btn-sm btn-outline" onclick="HS.setBarrierSource('db')"
-            style="font-size:0.75rem">From Database</button>
+            style="font-size:0.75rem">From Community DB</button>
           <button id="hs-src-btn-company" class="btn btn-sm btn-outline" onclick="HS.setBarrierSource('company')"
             style="font-size:0.75rem${companyActive ? '' : ';opacity:0.5;cursor:not-allowed'}"
-            ${companyActive ? '' : 'disabled'}>From My Database</button>
+            ${companyActive ? '' : 'disabled'}>From Company DB</button>
         </div>
 
         <!-- Panel: From Calculator -->
@@ -1210,7 +1246,7 @@ function renderHeadspace() {
         <!-- Panel: Community DB -->
         <div id="hs-panel-db" style="display:none">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem;font-weight:600">Select from Database</label>
+            <label style="font-size:0.75rem;font-weight:600">Select from Community DB</label>
             <select class="form-input" id="hs-db-lam-pick" onchange="HS.onDBLaminatePick?.(this.value)" style="font-size:0.78rem">
               <option value="">Loading...</option>
             </select>
@@ -1220,7 +1256,7 @@ function renderHeadspace() {
         <!-- Panel: Company DB -->
         <div id="hs-panel-company" style="display:none">
           ${companyActive
-            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from My Database</label><select class="form-input" id="hs-co-lam-pick" onchange="HS.onCompanyLaminatePick?.(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
+            ? '<div class="form-group" style="margin:0"><label style="font-size:0.75rem;font-weight:600">Select from Company Laminates</label><select class="form-input" id="hs-co-lam-pick" onchange="HS.onCompanyLaminatePick?.(this.value)" style="font-size:0.78rem"><option value="">Loading...</option></select></div>'
             : '<div style="font-size:0.75rem;color:var(--text-light);padding:0.4rem 0">Join a company to access company laminates. <a href="#" onclick="showCompanyModal?.();return false" style="color:var(--primary)">Join now</a></div>'
           }
         </div>
@@ -1636,20 +1672,22 @@ function renderHeadspaceMethodology() {
 function onHsPreset() { HS.onProductChange(); }
 function onHsCalc() { HS.calculate(); }
 
-// Optional: load laminate from DB (stub - implement if needed)
+// DB laminate picker — sets the active OTR from the selected laminate
 HS.onDBLaminatePick = function(val) {
-  if (!val) return;
-  // Placeholder: integrate with your laminate DB loader
-  console.log('DB laminate selected:', val);
+  if (!val) { HS._dbRate = 0; HS._updateRateSummary('-'); return; }
+  var lam = (DB.laminates || []).find(function(l) { return String(l.id) === String(val); });
+  if (lam && lam.total > 0) {
+    HS._dbRate = lam.total;
+    HS._updateRateSummary(lam.total.toFixed(6));
+  }
 };
 
-HS.onCompanyLaminatePick = async function(val) {
-  if (!val) return;
-  try {
-    // Placeholder: integrate with your company laminate loader
-    console.log('Company laminate selected:', val);
-  } catch(e) {
-    console.warn('Company laminate pick error:', e);
+HS.onCompanyLaminatePick = function(val) {
+  if (!val) { HS._dbRate = 0; HS._updateRateSummary('-'); return; }
+  var lam = (DB.laminates || []).find(function(l) { return String(l.id) === String(val); });
+  if (lam && lam.total > 0) {
+    HS._dbRate = lam.total;
+    HS._updateRateSummary(lam.total.toFixed(6));
   }
 };
 // ====================================================================
