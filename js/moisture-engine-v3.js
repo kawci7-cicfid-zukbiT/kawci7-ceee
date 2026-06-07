@@ -48,17 +48,18 @@ function solveGAB(M, gab) {
   return (lo + hi) / 2;
 }
 
-// encapsulant mass per m² (g/m²) from thickness (mm) and type
-function encMass(type, thickMm) {
-  const e = ENCAPSULANT_DB[type] || ENCAPSULANT_DB.eva;
-  return e.rho * thickMm;          // ρ [g/m³ * mm → 1000 * g/cm³ * mm/10] = ρ[g/cm³]*100*mm = ρ*thickMm*1000/10 ... 
-  // Actually: rho [g/cm³], thick [mm] → mass = rho [g/cm³] * thick [mm] * 0.1 [cm/mm] * 10000 [cm²/m²] = rho*thick*1000 [g/m²]
-}
-// Fix: rho in g/cm³, thick in mm
+// PV Fix 1: encMass — corrected unit calculation.
+// Previous encMass() returned ρ × thick (wrong units), encMassG() returned
+// ρ × thick × 100 (correct). encMass() was exported in window.MoistureEngine
+// and would return values 100× too small if called externally.
+// Solution: remove the broken encMass, keep only the correct formula.
+// rho [g/cm³], thick [mm] → mass [g/m²] = rho × thick × 100
 function encMassG(type, thickMm) {
   const e = ENCAPSULANT_DB[type] || ENCAPSULANT_DB.eva;
-  return e.rho * thickMm * 100;    // g/cm³ × mm × (10mm/cm) × (1cm²/(100mm²)) × 10000mm²/m² = rho*thickMm*100
+  return e.rho * thickMm * 100;    // g/cm³ × mm × 100 = g/m²
 }
+// Alias for backward compatibility with any external callers
+const encMass = encMassG;
 
 // ================================================================
 // BARRIER — WVTR or OTR — normalised to permeance
@@ -173,12 +174,33 @@ function simulate(cfg) {
   const env  = cfg.env, edge = cfg.edge;
   const tDelta = cfg.tDelta != null ? cfg.tDelta : 18;
 
-  // encapsulant sorption setup (GAB)
-  const encType  = cfg.encap ? cfg.encap.type  : "eva";
-  const encThick = cfg.encap ? cfg.encap.thickMm : 0.5;
-  const enc = ENCAPSULANT_DB[encType] || ENCAPSULANT_DB.eva;
-  const mEnc = encMassG(encType, encThick); // g/m² of encapsulant per layer (one side)
-  const mEncTotal = 2 * mEnc;              // front + back encapsulant
+  // ── encapsulant sorption setup (GAB) ─────────────────────────────────
+  // Support independent front + back encapsulants. If only legacy single-
+  // encapsulant config is provided (cfg.encap.type + cfg.encap.thickMm),
+  // both sides use the same values.
+  const encTypeF  = (cfg.encap && cfg.encap._typeFront)  || (cfg.encap && cfg.encap.type)    || "eva";
+  const encTypeB  = (cfg.encap && cfg.encap._typeBack)   || (cfg.encap && cfg.encap.type)    || "eva";
+  const encThickF = (cfg.encap && cfg.encap._thickFront) || (cfg.encap && cfg.encap.thickMm) || 0.5;
+  const encThickB = (cfg.encap && cfg.encap._thickBack)  || (cfg.encap && cfg.encap.thickMm) || 0.5;
+  const encF = ENCAPSULANT_DB[encTypeF] || ENCAPSULANT_DB.eva;
+  const encB = ENCAPSULANT_DB[encTypeB] || ENCAPSULANT_DB.eva;
+  const mEncF = encMassG(encTypeF, encThickF);   // g/m² front encapsulant
+  const mEncB = encMassG(encTypeB, encThickB);   // g/m² back encapsulant
+  const mEncTotal = mEncF + mEncB;
+  // For GAB sorption we compute the mass-weighted average isotherm response.
+  // This produces a single effective GAB that correctly accounts for the
+  // proportion of water absorbed by each layer.
+  const enc = {
+    Mm:  (encF.Mm  * mEncF + encB.Mm  * mEncB) / mEncTotal,
+    C:   (encF.C   * mEncF + encB.C   * mEncB) / mEncTotal,
+    K:   (encF.K   * mEncF + encB.K   * mEncB) / mEncTotal,
+    rho: (encF.rho * mEncF + encB.rho * mEncB) / mEncTotal,
+    name: (encTypeF === encTypeB) ? encF.name : encF.name + ' / ' + encB.name
+  };
+  // Legacy aliases retained for variables referenced later in this function
+  const encType  = encTypeF;
+  const encThick = (encThickF + encThickB) / 2;
+  const mEnc     = mEncF;  // back-compat for any reference (mEncTotal is the truth)
 
   // barriers
   const fW = cfg.front, bW = cfg.back;
@@ -267,14 +289,26 @@ function simulate(cfg) {
 
     dose += (rM + rO2 + rSyn + rT + rUV) * dt;
   }
-  // channel breakdown at T80
-  const arrMr  = tech.k_m * 0.65 * arrM;  // 0.65 = representative avg RH_int
+  // PV Fix 2: channel breakdown — use mean RHint from simulation series
+  // instead of hardcoded 0.65. For humid climates where RHint reaches
+  // 0.85–0.90, the old value underestimated the moisture channel by ~30%.
+  // Average RHint up to t80 (or full series if t80 not reached).
+  let rhSum = 0, rhCount = 0;
+  for (const pt of series) {
+    if (t80 !== null && pt.t > t80) break;
+    rhSum += pt.RHint;
+    rhCount++;
+  }
+  const avgRHint = rhCount > 0 ? rhSum / rhCount : 0.65;
+
+  const arrMr  = tech.k_m * avgRHint * arrM;  // real avg RH_int from simulation
   const arrO2r = tech.k_o2  * JO2_service * arrO2;
   const rTr    = tech.k_t   * arrT;
   const rUVr   = tech.k_uv  * (G_UV / 1000);
   const totR   = arrMr + arrO2r + rTr + rUVr;
   return {
     t80, t90, t97, series, tBreak,
+    avgRHint,
     channelFractions: totR > 0 ? {
       moisture: (arrMr/totR*100).toFixed(1)+'%',
       oxygen:   (arrO2r/totR*100).toFixed(1)+'%',
