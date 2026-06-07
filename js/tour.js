@@ -289,7 +289,7 @@
       nav: function () { _goHome(); },
       waitSelector: null,
       spotSelector: null,
-      title: 'You\u2019re ready! \uD83C\uDF89',
+      title: 'You\u2019re ready! ',
     icon: '',
       text: 'The workflow is simple: <strong>choose gas \u2192 pick database \u2192 add layers + thickness \u2192 set conditions \u2192 Calculate</strong>.<br><br>Restart this tour anytime from the button at the bottom right.'
     }
