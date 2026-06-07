@@ -51,7 +51,35 @@ const PV = {
   },
 
   // ------------------------------------------------------------------
-  // ENCAPSULANTS — front + back, pulled from materials DB
+  // Auto-suggest activation energy based on the WVTR value entered.
+  // Lower WVTR means a higher-barrier film (typically PA, EVOH, AlOx,
+  // glass) which has a higher activation energy of permeation. The
+  // mapping below is taken from compiled literature values:
+  //   • PE/PP                    : Ea ≈ 30 kJ/mol  (WVTR > 5 g/m²/day)
+  //   • PET                      : Ea ≈ 40 kJ/mol  (WVTR ≈ 1–5)
+  //   • PA / EVOH                : Ea ≈ 50 kJ/mol  (WVTR ≈ 0.1–1)
+  //   • Metallized / coated PET  : Ea ≈ 60 kJ/mol  (WVTR ≈ 0.01–0.1)
+  //   • AlOx / SiOx ultra-barrier: Ea ≈ 70 kJ/mol  (WVTR < 0.01)
+  // The user can override the suggestion freely; once typed, the
+  // `data-userEdited` flag is set and the auto-suggest stops touching
+  // the field. The "↻ Auto" button clears the flag.
+  // ------------------------------------------------------------------
+  _autoSuggestEa(which) {
+    const el = document.getElementById('pv-' + which + '-m-ea');
+    if (!el || el.dataset.userEdited) return;
+    const wvtr = parseFloat(document.getElementById('pv-' + which + '-m-wvtr')?.value);
+    if (!isFinite(wvtr) || wvtr <= 0) {
+      el.value = '';
+      return;
+    }
+    let ea;
+    if      (wvtr > 5)    ea = 30;
+    else if (wvtr > 1)    ea = 40;
+    else if (wvtr > 0.1)  ea = 50;
+    else if (wvtr > 0.01) ea = 60;
+    else                  ea = 70;
+    el.value = ea;
+  },
   // The DB material's name is matched to a polymer family (eva/poe/tpu/pvb)
   // which selects the GAB sorption isotherm coefficients in MoistureEngine.
   // ------------------------------------------------------------------
@@ -175,7 +203,7 @@ const PV = {
     const otrRatio = 300;
     const $ = id => document.getElementById(id);
 
-    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100;
+    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100, eaWvtr=0;
 
     if (src === 'calc') {
       try { wvtr = parseFloat(State.calcResult?.total)||0; } catch(e) {}
@@ -184,19 +212,17 @@ const PV = {
       wvtr = parseFloat($('pv-'+which+'-m-wvtr')?.value)||0;
       tt   = parseFloat($('pv-'+which+'-m-tt')?.value)||38;
       rht  = parseFloat($('pv-'+which+'-m-rh')?.value)||90;
-      const manOtr = parseFloat($('pv-'+which+'-m-otr')?.value)||0;
-      if (manOtr > 0) {
-        otr = manOtr;
-        ott = parseFloat($('pv-'+which+'-m-ott')?.value)||23;
-        o2t = parseFloat($('pv-'+which+'-m-o2')?.value)||100;
-      }
+      // Read user-entered Ea (kJ/mol). Converted to J/mol for makeBarrier.
+      // If empty, default = 0 → engine falls back to its own default of ~30 kJ/mol.
+      const eaIn = parseFloat($('pv-'+which+'-m-ea')?.value);
+      if (isFinite(eaIn) && eaIn > 0) eaWvtr = eaIn * 1000;
     } else {
       const c = this['_'+which+'Cached']||{};
       wvtr = c.wvtr||0; tt = c.tt||38; rht = c.rht||90;
     }
 
     if (otr === 0) otr = wvtr * otrRatio;  // auto-estimate
-    return { wvtr, tt, rht, otr, ott, o2t };
+    return { wvtr, tt, rht, otr, ott, o2t, Ea: eaWvtr || undefined };
   },
 
   _refreshSummary(which) {
@@ -327,7 +353,10 @@ const PV = {
     const L=Math.max(0.1,parseFloat(document.getElementById('pv-len')?.value)||1.6);
     const W=Math.max(0.1,parseFloat(document.getElementById('pv-wid')?.value)||1.0);
     const G=this._climate?.annualG||180;
-    const uvF=parseFloat(document.getElementById('pv-uvfrac')?.value)||0.05;
+    // UV fraction of G — UI input removed; engine still receives this value to
+    // compute its internal UV channel (no longer surfaced to the user since
+    // T80/T90/T97 and PCE chart were removed). Hardcoded standard default.
+    const uvF = 0.05;
 
     // Encapsulants — front + back, each from materials DB
     const encThickFront = parseFloat(document.getElementById('pv-encap-front-thick')?.value) || 0.5;
@@ -343,8 +372,8 @@ const PV = {
 
     return {
       tech: 'csi',  // Cell tech UI removed — c-Si is the default. RHint output is the primary metric.
-      front:{ wvtr:f.wvtr, Tt:f.tt, RHt:f.rht, otr:f.otr, OTt:f.ott, O2t:f.o2t },
-      back: { wvtr:b.wvtr, Tt:b.tt, RHt:b.rht, otr:b.otr, OTt:b.ott, O2t:b.o2t },
+      front:{ wvtr:f.wvtr, Tt:f.tt, RHt:f.rht, otr:f.otr, OTt:f.ott, O2t:f.o2t, Ea:f.Ea },
+      back: { wvtr:b.wvtr, Tt:b.tt, RHt:b.rht, otr:b.otr, OTt:b.ott, O2t:b.o2t, Ea:b.Ea },
       encap:{ type: encType, thickMm: encThickAvg, _typeFront: this._encapFront, _typeBack: this._encapBack, _thickFront: encThickFront, _thickBack: encThickBack },
       geom: { L, W },
       edge: { D:ep.d/8766, Q:ep.Q, gSeal:ep.gSeal, edgeFactor:ef },
@@ -566,6 +595,7 @@ const PV = {
     requestAnimationFrame(() => setTimeout(() => {
       this._drawRH(sim);
       this._drawWater(sim);
+      this._drawArrhenius(sim);
       this._drawDailyExchange(sim);
       this._drawMonthly();
     }, 80));
@@ -698,6 +728,98 @@ const PV = {
     });
   },
 
+  _drawArrhenius(sim) {
+    if (typeof Chart === 'undefined') return;
+    if (typeof destroyChart === 'function') destroyChart('pvArr');
+    const ctx = document.getElementById('pvArrChart')?.getContext('2d');
+    if (!ctx) return;
+    if (typeof window.MoistureEngine === 'undefined') return;
+
+    // Re-create barrier objects (same calls the simulator made internally)
+    const fp = this._barrierParams('front');
+    const bp = this._barrierParams('back');
+    const ME = window.MoistureEngine;
+    const fB = ME.makeBarrier(fp.wvtr || 0.001, fp.tt || 38, fp.rht || 90, fp.Ea, 'wvtr');
+    const bB = ME.makeBarrier(bp.wvtr || 0.001, bp.tt || 38, bp.rht || 90, bp.Ea, 'wvtr');
+
+    // Driving force at the test conditions (Pa) — used to back out the effective
+    // WVTR at any temperature from the permeance K(T) the engine uses internally.
+    const Psat = T => 610.94 * Math.exp((17.625 * T) / (T + 243.04));
+    const dPrefF = (fp.rht / 100) * Psat(fp.tt);
+    const dPrefB = (bp.rht / 100) * Psat(bp.tt);
+
+    // Temperature axis: cover from cold winter night to hot summer surface
+    const labels = [], front = [], back = [];
+    for (let T = -10; T <= 85; T += 5) {
+      labels.push(T);
+      // K is in g/(m²·h·Pa); ΔP_ref in Pa; ×24 hours = g/m²/day
+      front.push(+(fB.K(T) * dPrefF * 24).toFixed(4));
+      back.push (+(bB.K(T) * dPrefB * 24).toFixed(4));
+    }
+
+    // Highlight band for typical module operating temperature
+    const Tmod = sim.Tmod;
+    const TmodBandPlugin = {
+      id: 'tmodBand',
+      beforeDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea) return;
+        const x = scales.x;
+        const xMin = x.getPixelForValue(Tmod - 5);
+        const xMax = x.getPixelForValue(Tmod + 5);
+        ctx.save();
+        ctx.fillStyle = 'rgba(217, 119, 6, 0.10)';
+        ctx.fillRect(xMin, chartArea.top, xMax - xMin, chartArea.bottom - chartArea.top);
+        // Vertical line at Tmod
+        const xLine = x.getPixelForValue(Tmod);
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(xLine, chartArea.top);
+        ctx.lineTo(xLine, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Label
+        ctx.fillStyle = '#d97706';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillText('module operating T (' + Tmod.toFixed(0) + '°C)', xLine + 4, chartArea.top + 12);
+        ctx.restore();
+      }
+    };
+
+    if (!window.chartInstances) window.chartInstances = {};
+    window.chartInstances.pvArr = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Front barrier', data: front,
+            borderColor: '#0891b2', backgroundColor: 'rgba(8,145,178,0.10)',
+            fill: false, tension: 0.3, pointRadius: 0, borderWidth: 2.4 },
+          { label: 'Back barrier',  data: back,
+            borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.10)',
+            fill: false, tension: 0.3, pointRadius: 0, borderWidth: 2.4,
+            borderDash: [6, 3] }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend:  { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } },
+          tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y.toFixed(4) + ' g/m²·day at ' + c.label + '°C' } }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Module temperature (°C)' }, ticks: { font: { size: 9 } } },
+          y: { type: 'logarithmic',
+               title: { display: true, text: 'WVTR (g/m²·day)' },
+               ticks: { font: { size: 9 }, callback: v => v.toFixed(v < 0.01 ? 4 : (v < 1 ? 3 : 1)) } }
+        }
+      },
+      plugins: [TmodBandPlugin]
+    });
+  },
+
   _drawDailyExchange(sim) {
     if(typeof Chart==='undefined') return;
     if(typeof destroyChart==='function') destroyChart('pvDay');
@@ -825,16 +947,27 @@ function renderPVDegradation() {
       <!-- manual — includes test conditions (physically required) -->
       <div id="pv-${which}-panel-manual" style="display:none">
         <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">WVTR — with test conditions</div>
-        <div class="grid grid-3" style="gap:.35rem;margin-bottom:.35rem">
-          <div class="form-group" style="margin:0"><label>WVTR (g/m²·day)</label><input type="number" id="pv-${which}-m-wvtr" class="form-input" step="any" placeholder="e.g. 0.001" oninput="PV._refreshSummary('${which}')"></div>
+        <div class="grid grid-3" style="gap:.35rem;margin-bottom:.55rem">
+          <div class="form-group" style="margin:0"><label>WVTR (g/m²·day)</label><input type="number" id="pv-${which}-m-wvtr" class="form-input" step="any" placeholder="e.g. 0.001" oninput="PV._refreshSummary('${which}');PV._autoSuggestEa('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-tt" class="form-input" value="38" step="1" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="pv-${which}-m-rh" class="form-input" value="90" step="1" oninput="PV._refreshSummary('${which}')"></div>
         </div>
-        <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">OTR — optional (leave blank to auto-estimate)</div>
-        <div class="grid grid-3" style="gap:.35rem">
-          <div class="form-group" style="margin:0"><label>OTR (cc/m²·day)</label><input type="number" id="pv-${which}-m-otr" class="form-input" step="any" placeholder="blank = auto" oninput="PV._refreshSummary('${which}')"></div>
-          <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-ott" class="form-input" value="23" step="1"></div>
-          <div class="form-group" style="margin:0"><label>O₂ fraction (%)</label><input type="number" id="pv-${which}-m-o2" class="form-input" value="100" step="1"></div>
+        <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">Activation energy (Arrhenius — temperature scaling)</div>
+        <div style="display:flex;gap:.4rem;align-items:flex-end">
+          <div class="form-group" style="margin:0;flex:1">
+            <label>Eₐ WVTR (kJ/mol)
+              <span style="font-weight:400;color:var(--text-light);font-size:.65rem"> — auto-suggested by WVTR value</span>
+            </label>
+            <input type="number" id="pv-${which}-m-ea" class="form-input" step="1" min="10" max="100"
+              placeholder="auto"
+              oninput="this.dataset.userEdited='1'">
+          </div>
+          <button type="button" onclick="document.getElementById('pv-${which}-m-ea').dataset.userEdited='';PV._autoSuggestEa('${which}')"
+            title="Reset to auto-suggested value"
+            style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:.45rem .55rem;font-size:.7rem;color:var(--text-light);cursor:pointer;height:fit-content">↻ Auto</button>
+        </div>
+        <div id="pv-${which}-ea-hint" style="font-size:.66rem;color:var(--text-light);margin-top:.25rem;line-height:1.4">
+          Typical: PE/PP 25–35 · PET 30–45 · PA 45–55 · EVOH 50–60 · Metallized/AlOx 60–75 · Glass 80+ kJ/mol.
         </div>
       </div>
 
@@ -945,9 +1078,8 @@ function renderPVDegradation() {
       <div class="pv-s">
         <div class="pv-h">▼ 6. Edge seal &amp; geometry</div>
         <div class="form-group" style="margin:0"><label>Edge seal type</label><select id="pv-edge" class="form-input"></select></div>
-        <div class="grid grid-2" style="gap:.4rem;margin-top:.4rem">
+        <div class="grid grid-3" style="gap:.4rem;margin-top:.4rem">
           <div class="form-group" style="margin:0"><label>Edge factor <span style="font-size:.65rem">(2–20)</span></label><input type="number" id="pv-edgefactor" class="form-input" value="6" step=".5"></div>
-          <div class="form-group" style="margin:0"><label>UV fraction of G</label><input type="number" id="pv-uvfrac" class="form-input" value="0.05" step=".01"></div>
           <div class="form-group" style="margin:0"><label>Length (m)</label><input type="number" id="pv-len" class="form-input" value="1.6" step=".1"></div>
           <div class="form-group" style="margin:0"><label>Width (m)</label><input type="number" id="pv-wid" class="form-input" value="1.0" step=".1"></div>
         </div>
@@ -1014,6 +1146,11 @@ function renderPVDegradation() {
           <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Cumulative water inside the encapsulants</h3>
           <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem">Total mass of water absorbed by the front and back encapsulant layers, in g/m². The curve plateaus when the polymer reaches its saturation capacity.</div>
           <div style="height:210px"><canvas id="pvWaterChart"></canvas></div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Barrier permeation rate vs module temperature</h3>
+          <div style="font-size:.7rem;color:var(--text-light);margin-bottom:.4rem">How fast the front and back barriers actually transmit water vapour at different module temperatures (log scale). The amber band marks the typical operating temperature of this module — that is where the real WVTR sits, often very different from the test value.</div>
+          <div style="height:230px"><canvas id="pvArrChart"></canvas></div>
         </div>
         <div class="card" style="margin-bottom:1rem">
           <h3 style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">Daily moisture exchange — the module breathes</h3>
