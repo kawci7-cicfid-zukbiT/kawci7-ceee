@@ -51,10 +51,74 @@ const PV = {
   },
 
   // ------------------------------------------------------------------
-  // Auto-suggest activation energy based on the WVTR value entered.
-  // Lower WVTR means a higher-barrier film (typically PA, EVOH, AlOx,
-  // glass) which has a higher activation energy of permeation. The
-  // mapping below is taken from compiled literature values:
+  // Estimate the activation energy of the LAMINATE TOTAL (the value the
+  // user gets from the Calculator tab when several layers are stacked).
+  // For a series-of-resistances laminate, the Arrhenius behaviour of the
+  // total transmission rate is dominated by the highest-resistance layer.
+  // We approximate the laminate Ea as the resistance-weighted average of
+  // the individual layer Ea values:
+  //     Ea_lam = Σ(R_i × Ea_i) / Σ(R_i)
+  // For each layer we use:
+  //   • Engine.calcArrheniusParams(mat) if the material has ≥2 measured
+  //     temperatures (real fit), OR
+  //   • the WVTR-based auto-suggest map otherwise (single-temperature data).
+  // Returns kJ/mol (user-facing unit). Returns null when nothing usable.
+  // ------------------------------------------------------------------
+  _estimateLaminateEa() {
+    try {
+      if (typeof State === 'undefined' || !State.layers || !State.layers.length) return null;
+      if (typeof DB === 'undefined' || !DB.materials) return null;
+      const cond = State.selCond || { temperature: 38, humidity: 90 };
+      let wSum = 0, eaSum = 0;
+      for (const L of State.layers) {
+        if (L.mid === null || L.thick <= 0) continue;
+        const mat = DB.materials.find(m => String(m.id) === String(L.mid));
+        if (!mat) continue;
+
+        // Try real Arrhenius fit first
+        let eaJ = null;
+        if (typeof Engine !== 'undefined') {
+          try {
+            const r = Engine.calcArrheniusParams(mat);
+            if (r && r.valid && r.Ea > 0) eaJ = r.Ea;
+          } catch (e) {}
+        }
+        // Fallback: estimate from layer WVTR using the same map as auto-suggest
+        if (eaJ === null) {
+          let layerWvtr = 0;
+          try {
+            const res = Engine.calcLayerResistance(L, mat, cond);
+            if (res && res.transmissionAtThickness > 0) layerWvtr = res.transmissionAtThickness;
+          } catch (e) {}
+          let ea;
+          if      (layerWvtr > 5)    ea = 30;
+          else if (layerWvtr > 1)    ea = 40;
+          else if (layerWvtr > 0.1)  ea = 50;
+          else if (layerWvtr > 0.01) ea = 60;
+          else                       ea = 70;
+          eaJ = ea * 1000;
+        }
+        // Layer resistance (used as weight)
+        let R = 0;
+        try {
+          const res = Engine.calcLayerResistance(L, mat, cond);
+          if (res && isFinite(res.resistance)) R = res.resistance;
+        } catch (e) {}
+        if (R <= 0) R = 1;  // fallback equal weighting
+
+        wSum  += R;
+        eaSum += R * eaJ;
+      }
+      if (wSum <= 0) return null;
+      return (eaSum / wSum) / 1000;  // back to kJ/mol
+    } catch (e) {
+      return null;
+    }
+  },
+  // selected barrier source (calculator, DB, company or manual).
+  // The Ea field is SHARED across all sources, so this needs to be called
+  // every time the user changes source or picks a different material.
+  // Mapping (compiled from literature on barrier-film Arrhenius studies):
   //   • PE/PP                    : Ea ≈ 30 kJ/mol  (WVTR > 5 g/m²/day)
   //   • PET                      : Ea ≈ 40 kJ/mol  (WVTR ≈ 1–5)
   //   • PA / EVOH                : Ea ≈ 50 kJ/mol  (WVTR ≈ 0.1–1)
@@ -67,7 +131,30 @@ const PV = {
   _autoSuggestEa(which) {
     const el = document.getElementById('pv-' + which + '-m-ea');
     if (!el || el.dataset.userEdited) return;
-    const wvtr = parseFloat(document.getElementById('pv-' + which + '-m-wvtr')?.value);
+
+    const src = this['_' + which + 'Source'];
+
+    // Calculator source: compute the actual laminate Ea from its layer
+    // composition (resistance-weighted average of per-layer Ea values).
+    if (src === 'calc') {
+      const eaLam = this._estimateLaminateEa();
+      if (eaLam !== null && eaLam > 0) {
+        el.value = Math.round(eaLam);
+        return;
+      }
+    }
+
+    // All other sources (db, company, manual): map from WVTR value
+    let wvtr = 0;
+    if (src === 'manual') {
+      wvtr = parseFloat(document.getElementById('pv-' + which + '-m-wvtr')?.value) || 0;
+    } else if (src === 'calc') {
+      try { wvtr = parseFloat(State.calcResult?.total) || 0; } catch (e) {}
+    } else {
+      const c = this['_' + which + 'Cached'] || {};
+      wvtr = c.wvtr || 0;
+    }
+
     if (!isFinite(wvtr) || wvtr <= 0) {
       el.value = '';
       return;
@@ -148,6 +235,7 @@ const PV = {
     if (src === 'db')      this._loadDBLams(which);
     if (src === 'company') this._loadCoLams(which);
     this._refreshSummary(which);
+    this._autoSuggestEa(which);
   },
 
   // ---- populate DB laminates dropdown ----
@@ -184,6 +272,7 @@ const PV = {
       if (lam) this['_'+which+'Cached'] = { wvtr:parseFloat(lam.total)||0, tt:lam.temperature||38, rht:lam.humidity||90 };
     } catch(e) {}
     this._refreshSummary(which);
+    this._autoSuggestEa(which);
   },
 
   async onCoPick(which, val) {
@@ -193,6 +282,7 @@ const PV = {
       if (lam) this['_'+which+'Cached'] = { wvtr:parseFloat(lam.total)||0, tt:lam.temperature||38, rht:lam.humidity||90 };
     } catch(e) {}
     this._refreshSummary(which);
+    this._autoSuggestEa(which);
   },
 
   // ---- read barrier params (synchronous — async resolved by caching) ----
@@ -203,7 +293,7 @@ const PV = {
     const otrRatio = 300;
     const $ = id => document.getElementById(id);
 
-    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100, eaWvtr=0;
+    let wvtr=0, tt=38, rht=90, otr=0, ott=23, o2t=100;
 
     if (src === 'calc') {
       try { wvtr = parseFloat(State.calcResult?.total)||0; } catch(e) {}
@@ -212,14 +302,18 @@ const PV = {
       wvtr = parseFloat($('pv-'+which+'-m-wvtr')?.value)||0;
       tt   = parseFloat($('pv-'+which+'-m-tt')?.value)||38;
       rht  = parseFloat($('pv-'+which+'-m-rh')?.value)||90;
-      // Read user-entered Ea (kJ/mol). Converted to J/mol for makeBarrier.
-      // If empty, default = 0 → engine falls back to its own default of ~30 kJ/mol.
-      const eaIn = parseFloat($('pv-'+which+'-m-ea')?.value);
-      if (isFinite(eaIn) && eaIn > 0) eaWvtr = eaIn * 1000;
     } else {
       const c = this['_'+which+'Cached']||{};
       wvtr = c.wvtr||0; tt = c.tt||38; rht = c.rht||90;
     }
+
+    // Activation energy — always read from the shared Ea input regardless of
+    // source (calc / db / company / manual). Empty input → leave undefined so
+    // the engine falls back to its internal default. Converted from kJ/mol
+    // (user-facing unit) to J/mol (engine unit).
+    let eaWvtr = 0;
+    const eaIn = parseFloat($('pv-'+which+'-m-ea')?.value);
+    if (isFinite(eaIn) && eaIn > 0) eaWvtr = eaIn * 1000;
 
     if (otr === 0) otr = wvtr * otrRatio;  // auto-estimate
     return { wvtr, tt, rht, otr, ott, o2t, Ea: eaWvtr || undefined };
@@ -944,19 +1038,23 @@ function renderPVDegradation() {
           onchange="PV.onCoPick('${which}',this.value)"><option value="">Loading…</option></select>
       </div>
 
-      <!-- manual — includes test conditions (physically required) -->
+      <!-- manual — only WVTR + test conditions (Ea moved below, shared by all sources) -->
       <div id="pv-${which}-panel-manual" style="display:none">
         <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">WVTR — with test conditions</div>
-        <div class="grid grid-3" style="gap:.35rem;margin-bottom:.55rem">
+        <div class="grid grid-3" style="gap:.35rem">
           <div class="form-group" style="margin:0"><label>WVTR (g/m²·day)</label><input type="number" id="pv-${which}-m-wvtr" class="form-input" step="any" placeholder="e.g. 0.001" oninput="PV._refreshSummary('${which}');PV._autoSuggestEa('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test T (°C)</label><input type="number" id="pv-${which}-m-tt" class="form-input" value="38" step="1" oninput="PV._refreshSummary('${which}')"></div>
           <div class="form-group" style="margin:0"><label>Test RH (%)</label><input type="number" id="pv-${which}-m-rh" class="form-input" value="90" step="1" oninput="PV._refreshSummary('${which}')"></div>
         </div>
-        <div style="font-size:.7rem;font-weight:600;color:var(--text-light);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em">Activation energy (Arrhenius — temperature scaling)</div>
+      </div>
+
+      <!-- ── ACTIVATION ENERGY — always visible, used for every source ──── -->
+      <div style="margin-top:.65rem;padding:.6rem .7rem;background:#fffbeb;border:1px solid #fde68a;border-radius:6px">
+        <div style="font-size:.68rem;font-weight:700;color:#92400e;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em">Activation energy — Arrhenius temperature scaling</div>
         <div style="display:flex;gap:.4rem;align-items:flex-end">
           <div class="form-group" style="margin:0;flex:1">
-            <label>Eₐ WVTR (kJ/mol)
-              <span style="font-weight:400;color:var(--text-light);font-size:.65rem"> — auto-suggested by WVTR value</span>
+            <label style="font-size:.72rem">Eₐ WVTR (kJ/mol)
+              <span style="font-weight:400;color:var(--text-light);font-size:.62rem"> — auto-suggested · adjustable</span>
             </label>
             <input type="number" id="pv-${which}-m-ea" class="form-input" step="1" min="10" max="100"
               placeholder="auto"
@@ -964,9 +1062,9 @@ function renderPVDegradation() {
           </div>
           <button type="button" onclick="document.getElementById('pv-${which}-m-ea').dataset.userEdited='';PV._autoSuggestEa('${which}')"
             title="Reset to auto-suggested value"
-            style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:.45rem .55rem;font-size:.7rem;color:var(--text-light);cursor:pointer;height:fit-content">↻ Auto</button>
+            style="background:#fff;border:1px solid #fde68a;border-radius:6px;padding:.45rem .55rem;font-size:.7rem;color:#92400e;cursor:pointer;height:fit-content;font-weight:600">↻ Auto</button>
         </div>
-        <div id="pv-${which}-ea-hint" style="font-size:.66rem;color:var(--text-light);margin-top:.25rem;line-height:1.4">
+        <div style="font-size:.64rem;color:var(--text-light);margin-top:.3rem;line-height:1.45">
           Typical: PE/PP 25–35 · PET 30–45 · PA 45–55 · EVOH 50–60 · Metallized/AlOx 60–75 · Glass 80+ kJ/mol.
         </div>
       </div>
