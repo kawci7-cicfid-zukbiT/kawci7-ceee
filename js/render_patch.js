@@ -63,7 +63,10 @@
       case 'pv-lifetime':
         var c = document.getElementById('app-content');
         if (c) {
-          if (typeof window.renderPVDegradation === 'function') {
+          // PV module simulates moisture ingress to the cells — WVTR mode required
+          if ((typeof State !== 'undefined') && State.mode === 'otr') {
+            c.innerHTML = _renderWvtrBlockedPV();
+          } else if (typeof window.renderPVDegradation === 'function') {
             c.innerHTML = window.renderPVDegradation();
           } else {
             c.innerHTML = '<div class="alert alert-error" style="margin:2rem auto;max-width:480px">'
@@ -178,6 +181,30 @@
       'Switch to <strong>WVTR</strong> using the selector at the top of the page.</p>' +
       '<button onclick="setMode(\'wvtr\')" ' +
       'style="background:#2563eb;color:#fff;border:none;border-radius:8px;' +
+      'padding:0.65rem 1.5rem;font-size:0.88rem;font-weight:600;cursor:pointer">' +
+      'Switch to WVTR →</button>' +
+      '</div>';
+  }
+
+  // ── WVTR required page (PV Module blocked in OTR mode) ───────────
+  function _renderWvtrBlockedPV() {
+    return '<div style="max-width:520px;margin:3rem auto;text-align:center;padding:0 1rem">' +
+      '<div style="width:64px;height:64px;border-radius:50%;background:#fef3c7;' +
+      'display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" style="width:30px;height:30px">' +
+      '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>' +
+      '<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>' +
+      '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>' +
+      '</svg></div>' +
+      '<h2 style="font-size:1.15rem;font-weight:700;color:#0f172a;margin:0 0 0.5rem">WVTR mode required</h2>' +
+      '<p style="font-size:0.85rem;color:#64748b;line-height:1.6;margin:0 0 1.5rem">' +
+      '<strong>Photovoltaic Module Simulator</strong> predicts how much humidity reaches the cells ' +
+      'through the encapsulation stack — it needs the front and back sheets\' <strong>WVTR</strong> ' +
+      '(water vapour transmission rate) as input.<br><br>' +
+      'You are currently in <strong>OTR</strong> mode. ' +
+      'Switch to <strong>WVTR</strong> using the selector at the top of the page.</p>' +
+      '<button onclick="setMode(\'wvtr\')" ' +
+      'style="background:#d97706;color:#fff;border:none;border-radius:8px;' +
       'padding:0.65rem 1.5rem;font-size:0.88rem;font-weight:600;cursor:pointer">' +
       'Switch to WVTR →</button>' +
       '</div>';
