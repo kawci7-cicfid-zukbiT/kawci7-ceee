@@ -322,7 +322,7 @@ const PV = {
   _refreshSummary(which) {
     const el = document.getElementById('pv-'+which+'-sum'); if (!el) return;
     const p = this._barrierParams(which);
-    const srcLabel = {calc:'Calculator',db:'Community DB',company:'Company DB',manual:'Manual'}[this['_'+which+'Source']]||'';
+    const srcLabel = {calc:'Calculator',db:'Database',company:'My Database',manual:'Manual'}[this['_'+which+'Source']]||'';
     el.innerHTML = p.wvtr > 0
       ? `<b>${p.wvtr.toFixed(4)}</b> g/m²·day @ ${p.tt}°C/${p.rht}%RH  ·  OTR ~${p.otr.toFixed(2)} cc/m²·day  <span style="color:var(--text-light)">[${srcLabel}]</span>`
       : `<span style="color:var(--danger)">No value — select a laminate or enter manually</span>`;
@@ -1010,8 +1010,8 @@ function renderPVDegradation() {
       <!-- source buttons (style matches ShelfLife) -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.35rem;margin-bottom:.55rem">
         <button id="pv-${which}-src-calc"    class="btn btn-sm" onclick="PV.setBarrierSource('${which}','calc')"    style="font-size:.72rem;background:var(--primary);color:#fff;border:none">From Calculator</button>
-        <button id="pv-${which}-src-db"      class="btn btn-sm btn-outline" onclick="PV.setBarrierSource('${which}','db')"      style="font-size:.72rem">Community DB</button>
-        <button id="pv-${which}-src-company" class="btn btn-sm btn-outline" onclick="PV.setBarrierSource('${which}','company')" style="font-size:.72rem" ${disabledCo}>Company DB</button>
+        <button id="pv-${which}-src-db"      class="btn btn-sm btn-outline" onclick="PV.setBarrierSource('${which}','db')"      style="font-size:.72rem">From Database</button>
+        <button id="pv-${which}-src-company" class="btn btn-sm btn-outline" onclick="PV.setBarrierSource('${which}','company')" style="font-size:.72rem" ${disabledCo}>From My Database</button>
         <button id="pv-${which}-src-manual"  class="btn btn-sm btn-outline" onclick="PV.setBarrierSource('${which}','manual')"  style="font-size:.72rem">Manual</button>
       </div>
 
@@ -1032,7 +1032,7 @@ function renderPVDegradation() {
           onchange="PV.onDBPick('${which}',this.value)"><option value="">Loading…</option></select>
       </div>
 
-      <!-- from company DB -->
+      <!-- from My Database -->
       <div id="pv-${which}-panel-company" style="display:none">
         <select class="form-input" id="pv-${which}-co-pick" style="font-size:.78rem"
           onchange="PV.onCoPick('${which}',this.value)"><option value="">Loading…</option></select>
