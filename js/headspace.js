@@ -651,45 +651,61 @@ const HS = {
     const ctx1 = document.getElementById('hsDecayChart')?.getContext('2d');
     if (ctx1 && res.timeline?.length > 1 && typeof Chart !== 'undefined') {
       if (!window.chartInstances) window.chartInstances = {};
+
+      // Thin out labels to avoid clutter (show ~20 labels max)
+      const step = Math.max(1, Math.floor(res.timeline.length / 20));
+      const labels = res.timeline.map((h, i) => (i % step === 0) ? Math.round(h.t) : '');
+
       window.chartInstances.hsDecay = new Chart(ctx1, {
         type: 'line',
         data: {
-          labels: res.timeline.map(h => h.t),
+          labels: labels,
           datasets: [
             {
               label: 'Headspace O₂ (%)',
               data: res.timeline.map(h => h.o2),
               borderColor: '#2563eb',
-              backgroundColor: 'rgba(37,99,235,0.1)',
+              backgroundColor: 'rgba(37,99,235,0.08)',
               fill: true,
-              tension: 0.35,
-              pointRadius: 2,
-              borderWidth: 2
+              tension: 0.4,
+              pointRadius: 0,
+              pointHitRadius: 8,
+              borderWidth: 2.5
             },
             {
-              label: 'Shelf-life Limit',
+              label: 'Danger Zone (< ' + ctx.o2Limit + '%)',
               data: new Array(res.timeline.length).fill(ctx.o2Limit),
               borderColor: '#ef4444',
+              backgroundColor: 'rgba(239,68,68,0.08)',
               borderDash: [6, 4],
-              borderWidth: 2,
+              borderWidth: 1.5,
               pointRadius: 0,
-              fill: false
+              fill: { target: 'origin', above: 'rgba(239,68,68,0.08)' }
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
           plugins: {
-            legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } }
+            legend: { display: true, position: 'top', labels: { boxWidth: 10, font: { size: 10 }, usePointStyle: true } },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.9)', titleFont: { size: 11 }, bodyFont: { size: 11 },
+              callbacks: { label: function(c) { return c.dataset.label + ': ' + c.parsed.y.toFixed(1) + '%'; } }
+            }
           },
           scales: {
-            x: { title: { display: true, text: 'Days' }, ticks: { font: { size: 9 } } },
+            x: {
+              title: { display: true, text: 'Days', font: { size: 11, weight: 'bold' }, color: '#64748b' },
+              ticks: { font: { size: 9 }, color: '#94a3b8', maxRotation: 0 },
+              grid: { display: false }
+            },
             y: {
               beginAtZero: true,
-              max: 100,
-              title: { display: true, text: 'O₂ Concentration (%)' },
-              ticks: { font: { size: 9 }, callback: v => v + '%' }
+              title: { display: true, text: 'O₂ (%)', font: { size: 11, weight: 'bold' }, color: '#64748b' },
+              ticks: { font: { size: 9 }, color: '#94a3b8', callback: v => v + '%' },
+              grid: { color: '#f1f5f9' }
             }
           }
         }
@@ -699,8 +715,6 @@ const HS = {
     // Temperature Sensitivity Chart
     const ctx2 = document.getElementById('hsTempChart')?.getContext('2d');
     if (ctx2 && typeof Chart !== 'undefined') {
-      const Ea_kJ = parseFloat(document.getElementById('hs-ea')?.value) || 60;
-      const Q10 = parseFloat(document.getElementById('hs-q10')?.value) || 2.0;
       const A = parseFloat(document.getElementById('hs-area')?.value) || 0.1;
       const V = parseFloat(document.getElementById('hs-vol')?.value) || 200;
       const W = parseFloat(document.getElementById('hs-prodkg')?.value) || 0.25;
@@ -709,8 +723,10 @@ const HS = {
       const o2Limit = parseFloat(document.getElementById('hs-o2limit')?.value) || 1;
       const kResp = parseFloat(document.getElementById('hs-kresp')?.value) || 0;
       const respOrder = document.getElementById('hs-order')?.value || 'zero';
+      const maxDays = parseFloat(document.getElementById('hs-days')?.value) || 365;
+      const self = this;
 
-      const temps = Array.from({ length: 36 }, (_, i) => 15 + i);
+      const temps = Array.from({ length: 31 }, (_, i) => 5 + i); // 5–35°C
       const daysArr = temps.map(T => {
         const eaIn = document.getElementById('hs-ea')?.value;
         const q10In = document.getElementById('hs-q10')?.value;
@@ -721,48 +737,66 @@ const HS = {
         if (!isNaN(eaNum2) && eaNum2 > 0 && !(q10Num2 > 0)) {
           acc = Math.exp(-(eaNum2 * 1000 / 8.314) * (1 / (T + 273.15) - 1 / 298.15));
         } else {
-          const q10Use = (q10Num2 > 0) ? q10Num2 : Q10;
+          const q10Use = (q10Num2 > 0) ? q10Num2 : 2.0;
           acc = Math.pow(q10Use, (T - 25) / 10);
         }
-
         const effRate = baseRate * acc;
-        // Quick estimate: days to reach limit
-        const pO2_ext = 0.2095;
-        const o2InitFrac = o2Init / 100;
-        const o2LimitFrac = o2Limit / 100;
 
-        if (respOrder === 'zero') {
-          // Simplified: constant consumption
-          const netRate = effRate * A * (pO2_ext - (o2InitFrac + o2LimitFrac)/2) / pO2_ext - kResp * W;
-          if (netRate <= 0) return Infinity;
-          const deltaO2 = Math.abs(o2LimitFrac - o2InitFrac) * V;
-          return deltaO2 / netRate;
-        } else {
-          // First-order: more complex, use approximation
-          return 365; // placeholder
-        }
+        // Run a quick mini-simulation (same logic as _runSimulation)
+        var simResult = self._runSimulation({
+          otrEff: effRate, area: A, volume: V,
+          o2Init: o2Init / 100, o2Limit: o2Limit / 100,
+          kResp: kResp * acc, productKg: W, respOrder: respOrder,
+          pO2_ext: 0.2095, dt: 0.5, maxDays: maxDays
+        });
+        return simResult.shelfLifeDay !== null ? simResult.shelfLifeDay : maxDays;
       });
+
+      // Find a good Y max (ignore values at maxDays cap)
+      var validDays = daysArr.filter(function(d) { return d < maxDays; });
+      var yMaxT = validDays.length > 0 ? Math.max.apply(null, validDays) * 1.15 : maxDays;
 
       if (!window.chartInstances) window.chartInstances = {};
       window.chartInstances.hsTemp = new Chart(ctx2, {
         type: 'line',
         data: {
-          labels: temps,
+          labels: temps.map(function(t) { return t + '°C'; }),
           datasets: [{
-            label: 'Shelf Life vs Temp',
+            label: 'Shelf Life (days)',
             data: daysArr,
             borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139,92,246,0.08)',
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            pointRadius: 0,
+            pointHitRadius: 8,
+            borderWidth: 2.5
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.9)', titleFont: { size: 11 }, bodyFont: { size: 11 },
+              callbacks: { label: function(c) { return c.parsed.y.toFixed(1) + ' days'; } }
+            }
+          },
           scales: {
-            x: { title: { display: true, text: 'Storage °C' } },
-            y: { title: { display: true, text: 'Days' } }
+            x: {
+              title: { display: true, text: 'Storage Temperature', font: { size: 11, weight: 'bold' }, color: '#64748b' },
+              ticks: { font: { size: 9 }, color: '#94a3b8', maxRotation: 0, autoSkip: true, maxTicksLimit: 12 },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              max: yMaxT,
+              title: { display: true, text: 'Shelf Life (days)', font: { size: 11, weight: 'bold' }, color: '#64748b' },
+              ticks: { font: { size: 9 }, color: '#94a3b8' },
+              grid: { color: '#f1f5f9' }
+            }
           }
         }
       });
@@ -795,17 +829,21 @@ const HS = {
         data: {
           labels,
           datasets: [
-            { label: 'Temperature (°C)', data: temps, backgroundColor: 'rgba(37,99,235,0.7)', yAxisID: 'y' },
-            { label: 'RH (%)', data: rhs, backgroundColor: 'rgba(239,68,68,0.7)', yAxisID: 'y1' }
+            { label: 'Temperature (°C)', data: temps, backgroundColor: 'rgba(37,99,235,0.75)', borderRadius: 6, yAxisID: 'y' },
+            { label: 'RH (%)', data: rhs, backgroundColor: 'rgba(239,68,68,0.65)', borderRadius: 6, yAxisID: 'y1' }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 }, usePointStyle: true } },
+            tooltip: { backgroundColor: 'rgba(15,23,42,0.9)' }
+          },
           scales: {
-            y: { position: 'left', title: { display: true, text: '°C' } },
-            y1: { position: 'right', title: { display: true, text: 'RH %' } }
+            y:  { position: 'left',  title: { display: true, text: '°C', font: { size: 11 }, color: '#64748b' }, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+            y1: { position: 'right', title: { display: true, text: 'RH %', font: { size: 11 }, color: '#64748b' }, grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+            x:  { grid: { display: false }, ticks: { font: { size: 10 } } }
           }
         }
       });
@@ -814,34 +852,62 @@ const HS = {
     // Cumulative Timeline Chart
     const ctx2 = document.getElementById('hsCumulativeChart')?.getContext('2d');
     if (ctx2 && typeof Chart !== 'undefined') {
-      let cum = 0;
-      const cumDays = [], cumLabels = [];
+      if (!window.chartInstances) window.chartInstances = {};
+
+      var perStepDays = [];
+      var cumLine = [];
+      var cumLabels = [];
+      var cum2 = 0;
       rows.forEach((r, i) => {
-        const d = parseFloat(r.querySelector('.hs-cd')?.value) || 0;
-        cum += d;
-        cumDays.push(cum);
-        cumLabels.push(r.querySelector('input[type="text"]')?.value || `Step ${i + 1}`);
+        var d = parseFloat(r.querySelector('.hs-cd')?.value) || 0;
+        perStepDays.push(d);
+        cum2 += d;
+        cumLine.push(cum2);
+        cumLabels.push(r.querySelector('input[type="text"]')?.value || 'Step ' + (i + 1));
       });
 
-      if (!window.chartInstances) window.chartInstances = {};
       window.chartInstances.hsCumulative = new Chart(ctx2, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: cumLabels,
-          datasets: [{
-            label: 'Cumulative Days',
-            data: cumDays,
-            borderColor: '#16a34a',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 5
-          }]
+          datasets: [
+            {
+              label: 'Days per Step',
+              data: perStepDays,
+              backgroundColor: 'rgba(22,163,74,0.7)',
+              borderRadius: 6,
+              yAxisID: 'y',
+              order: 2
+            },
+            {
+              label: 'Cumulative',
+              data: cumLine,
+              type: 'line',
+              borderColor: '#0f172a',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: '#0f172a',
+              tension: 0.3,
+              yAxisID: 'y',
+              order: 1
+            }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { title: { display: true, text: 'Days' } } }
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 }, usePointStyle: true } },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.9)',
+              callbacks: { label: function(c) { return c.dataset.label + ': ' + c.parsed.y + ' days'; } }
+            }
+          },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Days', font: { size: 11 }, color: '#64748b' }, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
         }
       });
     }
