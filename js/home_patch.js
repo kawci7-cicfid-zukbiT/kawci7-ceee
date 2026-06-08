@@ -234,13 +234,16 @@ function renderHome() {
 
     '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.35rem 0.5rem;margin:0.75rem 0;font-size:0.67rem">' +
         '<div><strong>AGC Chemicals:</strong> Fluon&#174;</div>' +
+        '<div><strong>Amcor:</strong> AmLite&#174;, Ceramis&#174;, ULTRA&#8482;</div>' +
         '<div><strong>Arkema:</strong> Pebax&#174;, Rilsan&#174;, Rilsamid&#174;</div>' +
         '<div><strong>BASF:</strong> Ecoflex&#174;, Ecovio&#174;, Elastollan&#174;, Styroflex&#174;, Ultramid&#174;</div>' +
         '<div><strong>Borealis:</strong> Borcycle&#174;, Bornewables&#174;, Borpact&#174;, Borpure&#174;, Borstar&#174;, Queo&#174;</div>' +
+        '<div><strong>Berry Global:</strong> Resinite&#174;, Entira&#174;</div>' +
         '<div><strong>Celanese:</strong> Zytel&#174;</div>' +
         '<div><strong>Chemours:</strong> Teflon&#174;, Tefzel&#174;</div>' +
         '<div><strong>Chevron Phillips:</strong> Marlex&#174;</div>' +
         '<div><strong>Covestro:</strong> Baymedix&#174;, Desmopan&#174;, Makrofol&#174;, Makrolon&#174;</div>' +
+        '<div><strong>Cosmo Films:</strong> Cosmoshine&#8482;</div>' +
         '<div><strong>Cryovac / Sealed Air:</strong> Cryovac&#174;</div>' +
         '<div><strong>Daikin:</strong> Neoflon&#174;</div>' +
         '<div><strong>Danimer Scientific:</strong> Nodax&#174;</div>' +
@@ -252,9 +255,11 @@ function renderHome() {
         '<div><strong>Envalior / Lanxess:</strong> Durethan&#174;</div>' +
         '<div><strong>ExxonMobil:</strong> Escorene&#174;, Exceed&#174;, Vistamaxx&#174;</div>' +
         '<div><strong>FKuR:</strong> BioFlex&#174;</div>' +
+        '<div><strong>Fabbri Group:</strong> Filmon&#174;</div>' +
         '<div><strong>Futamura / Innovia Films:</strong> NatureFlex&#174;</div>' +
         '<div><strong>Hanwha TotalEnergies:</strong> Chemtone&#174;</div>' +
         '<div><strong>Honeywell:</strong> Aclar&#174;, Capran&#174;, Capron&#174;</div>' +
+        '<div><strong>Huhtamaki:</strong> Blueloop&#174;, futuroTM</div>' +
         '<div><strong>Jindal Films:</strong> Bicor&#174;, Treofan&#174;</div>' +
         '<div><strong>Kaneka:</strong> Kaneka PHBH&#174;</div>' +
         '<div><strong>Kuraray Co., Ltd.:</strong> EVAL&#8482;, Exceval&#8482;</div>' +
@@ -264,9 +269,11 @@ function renderHome() {
         '<div><strong>Mitsubishi Chemical / Nippon Gohsei:</strong> Soarnol&#8482;</div>' +
         '<div><strong>Mitsubishi Polyester Film:</strong> Hostaphan&#174;</div>' +
         '<div><strong>Mylar Specialty Films (JV Celanese &amp; Teijin):</strong> Melinex&#174;, Mylar&#174;</div>' +
+        '<div><strong>Mondi:</strong> Advantra&#174;, BarrierPack&#174;</div>' +
         '<div><strong>NatureWorks:</strong> Ingeo&#174;</div>' +
         '<div><strong>Novamont:</strong> Mater-Bi&#174;</div>' +
         '<div><strong>PKN Orlen:</strong> Malen&#174;</div>' +
+        '<div><strong>Polyplex:</strong> Poplene&#8482;</div>' +
         '<div><strong>Prime Polymer:</strong> Evolue&#174;</div>' +
         '<div><strong>PTTGC:</strong> Polene&#174;</div>' +
         '<div><strong>Reliance Industries:</strong> Relene&#174;</div>' +
@@ -274,11 +281,14 @@ function renderHome() {
         '<div><strong>SKC:</strong> Skyrol&#174;</div>' +
         '<div><strong>Solvay / Syensqo:</strong> Ixan&#174;, Technyl&#174;</div>' +
         '<div><strong>Teijin:</strong> Panlite&#174;</div>' +
+        '<div><strong>Taghleef Industries:</strong> Nativia&#174;, Extendo&#174;, Derprosa&#174;</div>' +
         '<div><strong>Terphane LLC:</strong> Terphane&#174;</div>' +
         '<div><strong>Topas Advanced Polymers:</strong> Topas&#174;</div>' +
+        '<div><strong>Toppan Holdings:</strong> GL BARRIER&#8482;, BESELA&#8482;</div>' +
         '<div><strong>Toray Industries:</strong> Lumirror&#174;, Torayfan&#174;</div>' +
         '<div><strong>TotalEnergies:</strong> Lacqtene&#174;</div>' +
         '<div><strong>TotalEnergies Corbion:</strong> Luminy&#174;</div>' +
+        '<div><strong>Uflex / Flex Films:</strong> FlexFresh&#174;, F-Barrier&#8482;</div>' +
         '<div><strong>Unitika / Coveris:</strong> Emblem&#174;</div>' +
         '<div><strong>Versalis:</strong> Riblene&#174;</div>' +
         '<div><strong>W.L. Gore:</strong> Gore-Tex&#174;</div>' +
