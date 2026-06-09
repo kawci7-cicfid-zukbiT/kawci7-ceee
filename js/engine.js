@@ -339,12 +339,53 @@ const Engine = {
     if (!v.valid) return { valid: false, error: v.error };
     var vals = this.getValues(mat);
     var R    = Engine.R_GAS;
-    var dps  = [];
+
+    // Collect all valid points with condition + thickness
+    var allPts = [];
     for (var i = 0; i < vals.length; i++) {
       var c2 = Engine._getCondFromVal(vals[i], mat, i);
       if (!c2) continue;
-      var tk = c2.temperature + 273.15;
-      if (vals[i].value > 0) dps.push({ T_K: tk, trans: vals[i].value });
+      if (vals[i].value > 0 && vals[i].thickness > 0) {
+        allPts.push({
+          T_K:       c2.temperature + 273.15,
+          humidity:  c2.humidity,
+          value:     vals[i].value,
+          thickness: vals[i].thickness
+        });
+      }
+    }
+    if (allPts.length < 2) return { valid: false, error: 'Need 2+ valid points' };
+
+    // FIX: An Arrhenius (temperature) fit is only physically meaningful at a
+    // SINGLE humidity. Group points by humidity and keep the humidity that has
+    // the most distinct temperatures. Mixing RH (e.g. 85% and 90%) corrupts Ea.
+    var byHum = {};
+    for (var a = 0; a < allPts.length; a++) {
+      var hk = allPts[a].humidity;
+      if (!byHum[hk]) byHum[hk] = { pts: [], temps: {} };
+      byHum[hk].pts.push(allPts[a]);
+      byHum[hk].temps[allPts[a].T_K] = true;
+    }
+    var bestHum = null, bestCount = 0;
+    for (var hkey in byHum) {
+      var tcount = 0;
+      for (var tk in byHum[hkey].temps) tcount++;
+      if (tcount > bestCount) { bestCount = tcount; bestHum = hkey; }
+    }
+    if (bestCount < 2)
+      return { valid: false, error: 'Need 2+ temperatures at the same humidity for an Arrhenius fit' };
+
+    var selPts = byHum[bestHum].pts;
+
+    // FIX: normalize every value to a common reference thickness so different
+    // thicknesses at the same temperature don't appear as different "rates".
+    // Permeance P = value × thickness is constant, so value@ref = value × t / ref.
+    var refThick = selPts[0].thickness;
+
+    var dps = [];
+    for (var s = 0; s < selPts.length; s++) {
+      var normVal = selPts[s].value * selPts[s].thickness / refThick;
+      if (normVal > 0) dps.push({ T_K: selPts[s].T_K, trans: normVal });
     }
     if (dps.length < 2) return { valid: false, error: 'Need 2+ valid points' };
     var sx = 0, sy = 0, sxy = 0, sx2 = 0;
@@ -378,6 +419,7 @@ const Engine = {
     var seRes  = n > 2 ? Math.sqrt(ssR / (n - 2)) : 0;
     return {
       valid: true, Ea: Ea, A: A, rSquared: rSq, dataPoints: dps,
+      refThickness: refThick, humidity: parseFloat(bestHum),
       seResidual: seRes, tCrit: tc, Sxx: Sxx, xMean: xMean,
       // Helper: returns 95% PI bounds (linear scale) for a given target T [K]
       predInterval: function(T_K) {
