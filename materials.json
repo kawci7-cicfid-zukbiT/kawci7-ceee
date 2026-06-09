@@ -14308,6 +14308,47 @@
     ],
     "validConditions": [],
     "reliabilityVotes": { "up": 0, "down": 0 }
-  }
+  },
+    {
+  "id": 352,
+  "name": "PET (Standard BOPET, uncoated) — generic",
+  "family": "PET",
+  "company": "",
+  "tdsLink": "",
+  "tdsSource": "Generic uncoated biaxially-oriented PET (BOPET) reference film. Representative barrier values compiled from typical industry data (Selke, Culter & Hernandez, Plastics Packaging 3rd ed. 2016; McKeen, Permeability Properties of Plastics and Elastomers 4th ed. 2017; standard BOPET supplier TDS averages). Use as a baseline reference — replace with a specific branded grade when exact data is available. Water absorption 0.55% (1 week at 23°C, ASTM D570) → effectively non-hygroscopic, no humidity correction applied.",
+  "isMetallized": false,
+  "application": "food",
+  "foodContact": true,
+  "foodContactRegulations": ["EU 1935/2004", "EU 10/2011", "FDA 21 CFR 177.1630"],
+  "density": 1400,
+  "gwp": 2.15,
+  "waterAbsorption": 0.55,
+  "waterAbsorptionMethod": "ASTM D570-81 (1 week at 23°C)",
+  "hygroscopicBetaWVTR": 0,
+  "hygroscopicRefRHWVTR": 50,
+  "hygroscopicBetaOTR": 0,
+  "hygroscopicRefRHOTR": 50,
+  "testMethodWVTR": "ASTM F1249",
+  "testMethodOTR": "ASTM D3985",
+  "otrValues": [
+    { "value": 110, "thickness": 12, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
+    { "value": 57,  "thickness": 23, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
+    { "value": 44,  "thickness": 30, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
+    { "value": 26,  "thickness": 50, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" }
+  ],
+  "wvtrValues": [
+    { "value": 45, "thickness": 12, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
+    { "value": 23, "thickness": 23, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
+    { "value": 18, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
+    { "value": 11, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
+    { "value": 16, "thickness": 12, "temperature": 23, "humidity": 85, "testMethod": "ASTM F1249" }
+  ],
+  "co2Values": [
+    { "value": 500, "thickness": 12, "temperature": 23, "humidity": 0, "testMethod": "ASTM D1434" }
+  ],
+  "validConditions": [],
+  "reliabilityVotes": { "up": 0, "down": 0 }
+}
+
 ]
 }
