@@ -213,15 +213,17 @@ const Engine = {
       // Un solo punto → comportamento originale
       permeabilityCoeff = matchingPoints[0].value * matchingPoints[0].thickness;
     } else {
-      // Più punti → regressione lineare OLS con intercetta zero pesata per thickness
-      // Modello fisico: value = P / thickness  →  value * thickness = P (costante)
-      // Stima ottimale: P = Σ(v_i * t_i²) / Σ(t_i²)
+      // Più punti → regressione lineare OLS attraverso l'origine.
+      // Modello fisico: value = P / thickness  (permeance P costante)
+      // Riscritto come retta y = P·x con y = value, x = 1/thickness.
+      // Stima OLS attraverso l'origine: P = Σ(x_i·y_i) / Σ(x_i²)
+      //                                   = Σ(v_i / t_i) / Σ(1 / t_i²)
       var sumNum = 0, sumDen = 0;
       for (var j = 0; j < matchingPoints.length; j++) {
         var t = matchingPoints[j].thickness;
         var v = matchingPoints[j].value;
-        sumNum += v * t * t;
-        sumDen += t * t;
+        sumNum += v / t;
+        sumDen += 1 / (t * t);
       }
       permeabilityCoeff = sumNum / sumDen;
     }
