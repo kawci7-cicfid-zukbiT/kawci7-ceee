@@ -14309,13 +14309,13 @@
     "validConditions": [],
     "reliabilityVotes": { "up": 0, "down": 0 }
   },
-    {
-  "id": 352,
-  "name": "PET (Standard BOPET, uncoated) — generic",
+   {
+  "id": 353,
+  "name": "PET (Standard BOPET, uncoated) — multi-temp / Arrhenius",
   "family": "PET",
   "company": "",
   "tdsLink": "",
-  "tdsSource": "Generic uncoated biaxially-oriented PET (BOPET) reference film. Representative barrier values compiled from typical industry data (Selke, Culter & Hernandez, Plastics Packaging 3rd ed. 2016; McKeen, Permeability Properties of Plastics and Elastomers 4th ed. 2017; standard BOPET supplier TDS averages). Use as a baseline reference — replace with a specific branded grade when exact data is available. Water absorption 0.55% (1 week at 23°C, ASTM D570) → effectively non-hygroscopic, no humidity correction applied.",
+  "tdsSource": "Generic uncoated BOPET reference with multi-temperature barrier data for Arrhenius analysis. Activation energies from peer-reviewed literature: WVTR Ea ≈ 40 kJ/mol (Erlat et al., SVC 2002, bare 12µm PET Ewv = 41.5 kJ/mol; Hülsmann & Wallner, Polym. Degrad. Stab. 2017, 34–37 kJ/mol for 7 PET films); OTR Ea ≈ 30 kJ/mol (Erlat et al. Eo = 27.3 kJ/mol; Schmid et al. 2015, 28–32 kJ/mol). Values anchored to standard 12µm BOPET (WVTR 45 g/m²·day @ 38°C/90%; OTR 110 cc/m²·day @ 23°C/50%) and extrapolated to other temperatures at constant RH using these Ea. Water absorption 0.55% (ASTM D570) → non-hygroscopic, no RH correction.",
   "isMetallized": false,
   "application": "food",
   "foodContact": true,
@@ -14330,18 +14330,15 @@
   "hygroscopicRefRHOTR": 50,
   "testMethodWVTR": "ASTM F1249",
   "testMethodOTR": "ASTM D3985",
-  "otrValues": [
-    { "value": 110, "thickness": 12, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
-    { "value": 57,  "thickness": 23, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
-    { "value": 44,  "thickness": 30, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
-    { "value": 26,  "thickness": 50, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" }
-  ],
   "wvtrValues": [
+    { "value": 21, "thickness": 12, "temperature": 23, "humidity": 90, "testMethod": "ASTM F1249" },
     { "value": 45, "thickness": 12, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-    { "value": 23, "thickness": 23, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-    { "value": 18, "thickness": 30, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-    { "value": 11, "thickness": 50, "temperature": 38, "humidity": 90, "testMethod": "ASTM F1249" },
-    { "value": 16, "thickness": 12, "temperature": 23, "humidity": 85, "testMethod": "ASTM F1249" }
+    { "value": 80, "thickness": 12, "temperature": 50, "humidity": 90, "testMethod": "ASTM F1249" }
+  ],
+  "otrValues": [
+    { "value": 50,  "thickness": 12, "temperature": 5,  "humidity": 50, "testMethod": "ASTM D3985" },
+    { "value": 110, "thickness": 12, "temperature": 23, "humidity": 50, "testMethod": "ASTM D3985" },
+    { "value": 198, "thickness": 12, "temperature": 38, "humidity": 50, "testMethod": "ASTM D3985" }
   ],
   "co2Values": [
     { "value": 500, "thickness": 12, "temperature": 23, "humidity": 0, "testMethod": "ASTM D1434" }
