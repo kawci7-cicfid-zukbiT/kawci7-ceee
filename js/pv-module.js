@@ -675,8 +675,8 @@ const PV = {
     if (flagEl && rh25 && rh25.RHint != null) {
       const rh = rh25.RHint * 100;
       let txt, col;
-      if      (rh < 30) { txt = '✓ Dry interior — excellent for moisture-sensitive cells'; col = '#16a34a'; }
-      else if (rh < 50) { txt = '✓ Acceptable for c-Si and CIGS modules';                   col = '#16a34a'; }
+      if      (rh < 30) { txt = ''; col = '#16a34a'; }
+      else if (rh < 50) { txt = '';                   col = '#16a34a'; }
       else if (rh < 70) { txt = '⚠ Elevated humidity — perovskite cells at risk';            col = '#d97706'; }
       else if (rh < 85) { txt = '⚠ High humidity — significant degradation risk';            col = '#d97706'; }
       else              { txt = '✗ Critical — moisture saturation, expect rapid failure';   col = '#dc2626'; }
