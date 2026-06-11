@@ -54,10 +54,15 @@
             window.renderPharmaUptake();
         }
         break;
-      // ── Regulatory — COMING SOON ─────────────────────────────────
+      // ── Regulatory — PPWR Label Generator ────────────────────────
       case 'ppwr-label':
         var c = document.getElementById('app-content');
-        if (c) c.innerHTML = _renderComingSoon(tab);
+        if (typeof window.renderPPWRLabel === 'function') {
+          window.renderPPWRLabel();
+        } else if (c) {
+          c.innerHTML = '<div class="alert alert-error" style="margin:2rem auto;max-width:480px">'
+            + '<strong>ppwr_label.js not loaded.</strong> Add &lt;script src="js/ppwr_label.js"&gt;&lt;/script&gt; to index.html.</div>';
+        }
         break;
 // ── Photovoltaic ─────────────────────────────────── 
       case 'pv-lifetime':
