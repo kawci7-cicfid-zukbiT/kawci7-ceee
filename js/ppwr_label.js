@@ -259,7 +259,7 @@ var COUNTRY_RULES = {
     additionalItems:['Triman logo on pack', 'Online sorting instructions (consumer-facing URL or QR code)']
   },
   'IT': {
-    flag:'', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
+    flag:'🇮🇹', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
     requiresMaterialCode: true,
     note:'Italian law (D.Lgs. 116/2020, implementing EU Directive 2018/851) requires the material identification code and collection stream to appear on packaging. The code must be referenced against the CONAI material identification system. Labelling must be in Italian.',
     sorting:{
@@ -271,7 +271,7 @@ var COUNTRY_RULES = {
     additionalItems:['CONAI material code on pack', 'Collection stream indication in Italian']
   },
   'DE': {
-    flag:'', name:'Germany', system:'VerpackG / LUCID',
+    flag:'🇩🇪', name:'Germany', system:'VerpackG / LUCID',
     requiresLUCID: true,
     note:'The Verpackungsgesetz (VerpackG) requires all producers placing packaging on the German market to register in the LUCID Packaging Register and contract a dual-system operator (e.g. Der Grüne Punkt, Interseroh). The Grüner Punkt symbol is commercially widespread but not legally mandatory as a pack marking.',
     sorting:{
@@ -283,7 +283,7 @@ var COUNTRY_RULES = {
     additionalItems:['LUCID registration mandatory before placing on market', 'Dual-system contract required']
   },
   'ES': {
-    flag:'', name:'Spain', system:'Ley 7/2022 / Ecoembes',
+    flag:'🇪🇸', name:'Spain', system:'Ley 7/2022 / Ecoembes',
     requiresMaterialInfo: true,
     note:'Spain\'s Residuos y Suelos Contaminados (Ley 7/2022) requires material identification on packaging. The Punto Verde is managed by Ecoembes for light packaging. Marking must follow the Decision 97/129/EC codes currently in force.',
     sorting:{
@@ -296,9 +296,9 @@ var COUNTRY_RULES = {
   },
   'EU2028': {
     flag:'🇪🇺', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
-    note:'PPWR (Regulation EU 2024/1781) mandates a harmonised labelling system for all packaging placed on the EU single market. The Commission is expected to publish implementing acts specifying the final pictograms and format before the August 2028 transition date. National labels (Triman, CONAI codes, etc.) cannot coexist with the harmonised label after that date.',
+    note:'PPWR (Regulation (EU) 2025/40) mandates a harmonised labelling system for all packaging placed on the EU single market. The Commission is expected to publish implementing acts specifying the final pictograms and format before the August 2028 transition date. National labels (Triman, CONAI codes, etc.) cannot coexist with the harmonised label after that date.',
     status:'pending',
-    additionalItems:['Await Commission implementing act for final pictogram specifications', 'Subscribe below for automatic notification when published']
+    additionalItems:['Await Commission implementing act for final pictogram specifications', 'Until then, Decision 97/129/EC marking remains valid (Art. 8(2))']
   }
 };
 
@@ -327,8 +327,8 @@ function renderPPWRLabel() {
   html += '<div style="background:#fefce8;border:1px solid #fde047;border-radius:10px;padding:0.9rem 1.1rem;margin-bottom:1.25rem;display:flex;gap:0.75rem;align-items:flex-start">';
   html += '<div style="font-size:1.1rem;flex-shrink:0;margin-top:0.05rem">⚖️</div>';
   html += '<div style="font-size:0.8rem;color:#713f12;line-height:1.55">';
-  html += '<strong>Regulatory status:</strong> Decision 97/129/EC codes are currently in force and will remain mandatory until <strong>12 August 2028</strong>, when the PPWR harmonised system replaces national schemes across all EU member states (Regulation EU 2024/1781). ';
-  html += 'This tool implements the current 97/129 classification and national rules. Harmonised PPWR pictograms will be added automatically once the Commission publishes the implementing act.';
+  html += '<strong>PPWR — Regulation (EU) 2025/40</strong> entered into force 11 Feb 2025 and <strong>applies from 12 August 2026</strong>, repealing Directive 94/62/EC. From that date every packaging placed on the EU market needs an <strong>EU Declaration of Conformity</strong> and technical documentation (Art. 38–39), must minimise substances of concern (PFAS limits apply), and meet packaging-minimisation rules. ';
+  html += 'Material marking still follows <strong>Decision 97/129/EC</strong> codes — kept in force under Art. 8(2) until ~30 months after the Commission\'s implementing act (expected ~2028). Recyclability grades (A/B/C) and recycled-content targets phase in from 2030.';
   html += '</div></div>';
 
   // ── No laminate guard ─────────────────────────────────────────────
@@ -451,7 +451,7 @@ function renderPPWRLabel() {
     html += '<div style="background:' + (pfasBad ? '#fef2f2' : '#f8fafc') + ';border:1px solid ' + (pfasBad ? '#fecaca' : 'var(--border)') + ';border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
     html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">PFAS — food-contact ban (from 12 Aug 2026)</div>';
     if (pfasBad) {
-      html += '<div style="font-size:0.85rem;color:#991b1b;font-weight:700;margin-bottom:0.3rem"> PFAS flagged in: ' + pfas.flagged.join(', ') + '</div>';
+      html += '<div style="font-size:0.85rem;color:#991b1b;font-weight:700;margin-bottom:0.3rem">🚫 PFAS flagged in: ' + pfas.flagged.join(', ') + '</div>';
       html += '<div style="font-size:0.78rem;color:#7f1d1d;line-height:1.5">These materials are marked as PFAS-containing and cannot be used in EU food-contact packaging above the regulatory limits.</div>';
     } else {
       html += '<div style="font-size:0.8rem;color:var(--text-light);line-height:1.5">PFAS status not declared for: ' + pfas.unknown.join(', ') + '. Confirm PFAS-free status with the supplier (mark materials with <code>pfasFree: true</code> to clear this notice).</div>';
@@ -459,6 +459,47 @@ function renderPPWRLabel() {
     html += '</div>';
   }
 
+  // ── Compliance action checklist (what to do, based on this structure) ──
+  var recForChecklist = assessRecyclability(cls, layers, allMats);
+  html += '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+  html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.7rem">What this means for you — PPWR action checklist</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:0.55rem">';
+
+  function actionRow(state, title, body) {
+    var clr = state === 'ok' ? '#16a34a' : state === 'action' ? '#d97706' : '#dc2626';
+    var ic  = state === 'ok' ? '✓' : state === 'action' ? '!' : '✗';
+    return '<div style="display:flex;gap:0.6rem;align-items:flex-start">' +
+      '<span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:' + clr + ';color:#fff;font-size:0.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:0.1rem">' + ic + '</span>' +
+      '<div style="font-size:0.82rem;line-height:1.5;color:var(--text)"><strong>' + title + '</strong><br><span style="color:var(--text-light)">' + body + '</span></div></div>';
+  }
+
+  // 1. Declaration of Conformity
+  html += actionRow('action', 'EU Declaration of Conformity (mandatory from 12 Aug 2026)',
+    'Draw up a DoC and technical documentation for this packaging per Art. 38–39 and Annex VII. Without it the pack cannot be legally placed on the EU market.');
+  // 2. Material identification
+  html += actionRow('ok', 'Material identification: ' + cls.abbr + ' (code ' + cls.code + ')',
+    'Mark the pack with the Decision 97/129/EC code shown above. Apply the national sorting rules for each target market below.');
+  // 3. Recyclability
+  if (recForChecklist) {
+    if (recForChecklist.level === 'recyclable')
+      html += actionRow('ok', 'Recyclability: on track',
+        'Mono-material structure — compatible with existing recycling streams. Keep evidence for the recyclability assessment that becomes mandatory from 2030.');
+    else
+      html += actionRow('warn', 'Recyclability: at risk for 2030',
+        'This structure is unlikely to be recyclable in current streams. From 1 Jan 2030 all packaging must meet recyclability grades — consider a mono-material redesign now to avoid a forced reformulation later.');
+  }
+  // 4. PFAS
+  if (pfas.flagged.length > 0)
+    html += actionRow('warn', 'PFAS: not compliant',
+      'Remove PFAS-containing layers — banned in EU food-contact packaging above the limits from 12 Aug 2026.');
+  else
+    html += actionRow('action', 'PFAS / substances of concern',
+      'Confirm with suppliers that all layers are within PFAS limits and obtain written declarations for your technical file.');
+  // 5. Recycled content
+  html += actionRow('action', 'Recycled content (targets from 2030)',
+    'Recorded recycled-content % is not yet required but will be from 2030. Start collecting this data from your film suppliers now.');
+
+  html += '</div></div>';
 
   html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Target Markets</div>';
   html += '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.85rem">Select the markets where this packaging will be placed. The specification below updates accordingly.</div>';
@@ -515,17 +556,6 @@ function renderPPWRLabel() {
       for (var ai2 = 0; ai2 < rule2.additionalItems.length; ai2++)
         html += '<li>' + rule2.additionalItems[ai2] + '</li>';
       html += '</ul></div></div>';
-
-      // Notify form
-      html += '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:0.85rem 1rem">';
-      html += '<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Notify me when the Commission publishes the implementing act</div>';
-      html += '<div style="font-size:0.72rem;color:var(--text-light);margin-bottom:0.6rem">You will receive a single email with a direct link to the updated tool.</div>';
-      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap">';
-      html += '<input type="email" id="ppwr-notify-email" placeholder="your@email.com" style="flex:1;min-width:200px;padding:0.45rem 0.65rem;border:1.5px solid var(--border);border-radius:7px;font-size:0.82rem;outline:none" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
-      html += '<button onclick="ppwrNotifySubmit()" style="background:var(--primary);color:#fff;border:none;border-radius:7px;padding:0.45rem 1rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap">Notify me</button>';
-      html += '</div>';
-      html += '<div id="ppwr-notify-feedback" style="margin-top:0.4rem;font-size:0.72rem;color:var(--success)"></div>';
-      html += '</div>';
     } else {
       // Spec table
       html += '<table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-bottom:0.85rem">';
@@ -546,9 +576,9 @@ function renderPPWRLabel() {
       html += specRow('Material type', cls.isComposite ? 'Composite (' + cls.dominantFamily + '-based)' : cls.dominantFamily.charAt(0).toUpperCase() + cls.dominantFamily.slice(1), false);
       html += specRow('Collection stream', sort2, false);
 
-      if (rule2.requiresTriman)        html += specRow('Triman logo', 'Mandatory on primary packaging', true);
-      if (rule2.requiresMaterialCode)  html += specRow('CONAI identification', ' Mandatory — use code ' + cls.abbr + ' ' + cls.code, true);
-      if (rule2.requiresLUCID)         html += specRow('LUCID registration', ' Mandatory before placing on market', true);
+      if (rule2.requiresTriman)        html += specRow('Triman logo', '✅ Mandatory on primary packaging', true);
+      if (rule2.requiresMaterialCode)  html += specRow('CONAI identification', '✅ Mandatory — use code ' + cls.abbr + ' ' + cls.code, true);
+      if (rule2.requiresLUCID)         html += specRow('LUCID registration', '✅ Mandatory before placing on market', true);
       if (rule2.requiresMaterialInfo)  html += specRow('Material identification', 'Recommended — code ' + cls.abbr + ' ' + cls.code, false);
 
       for (var ai = 0; ai < (rule2.additionalItems || []).length; ai++) {
@@ -571,8 +601,8 @@ function renderPPWRLabel() {
   html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
   html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.5rem">Export Specification</div>';
   html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrCopySpec()" class="btn btn-outline" style="font-size:0.8rem"> Copy text specification</button>';
-  html += '<button onclick="ppwrExportTxt()" class="btn btn-outline" style="font-size:0.8rem"> Download .txt file</button>';
+  html += '<button onclick="ppwrCopySpec()" class="btn btn-outline" style="font-size:0.8rem">📋 Copy text specification</button>';
+  html += '<button onclick="ppwrExportTxt()" class="btn btn-outline" style="font-size:0.8rem">📄 Download .txt file</button>';
   html += '</div>';
   html += '<pre id="ppwr-spec-text" style="display:none"></pre>';
   html += '</div>';
@@ -610,26 +640,6 @@ function ppwrToggleMkt(mk) {
 
   if (typeof DB !== 'undefined' && typeof DB.saveState === 'function') DB.saveState(State);
   _ppwrBuildSpecText(null, State.ppwrMkts);
-}
-
-// ------------------------------------------------------------------
-// Notify submit
-// ------------------------------------------------------------------
-function ppwrNotifySubmit() {
-  var el = document.getElementById('ppwr-notify-email');
-  var fb = document.getElementById('ppwr-notify-feedback');
-  if (!el || !el.value.includes('@')) {
-    if (fb) { fb.style.color = 'var(--danger)'; fb.textContent = 'Please enter a valid email address.'; }
-    return;
-  }
-  // Store locally (no server — user instruction to build backend later)
-  try {
-    var list = JSON.parse(localStorage.getItem('ppwr_notify_list') || '[]');
-    if (list.indexOf(el.value.trim()) < 0) list.push(el.value.trim());
-    localStorage.setItem('ppwr_notify_list', JSON.stringify(list));
-  } catch(e) {}
-  if (fb) { fb.style.color = 'var(--success)'; fb.textContent = '✓ Registered. You will be notified when the Commission publishes the implementing act.'; }
-  el.value = '';
 }
 
 // ------------------------------------------------------------------
@@ -717,9 +727,12 @@ function _ppwrMethodology() {
     '<p><strong>Classification system:</strong> Commission Decision 97/129/EC establishes the identification system for packaging materials. Numeric codes (01–07 for plastics, 41 for aluminium, 22 for paper) and alphabetic abbreviations (PET, PP, ALU, PAP, etc.) appear on the packaging to identify the primary material or, for composites, the dominant material preceded by C/.</p>' +
     '<p><strong>Composite threshold:</strong> When a laminate contains more than one material family, the tool applies a 5% by weight threshold. If metal exceeds 5% of total laminate weight, the structure is classified as C/ALU (code 84). If paper/board exceeds 5%, it is classified as C/PAP (code 82). Multi-layer all-plastic structures are classified as O7 (code 07).</p>' +
     '<p><strong>Weight calculation:</strong> Layer weights are computed from density × thickness, using stored material density values or EPD defaults (same methodology as the Carbon Footprint Estimator). The percentage composition is calculated on a per-unit-area basis (kg/m²).</p>' +
-    '<p><strong>PPWR transition:</strong> Regulation (EU) 2024/1781 (PPWR) mandates a harmonised labelling system from 12 August 2028. National schemes (Triman, CONAI codes, VerpackG) cannot coexist with the harmonised EU label after that date. The Commission is preparing an implementing act specifying the final pictograms. This tool will be updated automatically once that act is published.</p>' +
-    '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.7rem 0.9rem;margin-top:0.85rem;font-family:sans-serif;font-size:0.8rem;color:var(--text-light)">' +
-      '<strong>Disclaimer:</strong> This tool generates indicative labelling specifications for packaging engineering purposes. It does not constitute legal or compliance advice. Requirements vary by product category, market, and pack type. Always verify final labelling obligations with a qualified packaging compliance specialist or legal counsel before placing products on the market.' +
+    '<p><strong>PPWR transition:</strong> Regulation (EU) 2025/40 (PPWR) entered into force on 11 February 2025 and applies from 12 August 2026, repealing Directive 94/62/EC. It mandates a future harmonised EU labelling system; under Article 8(2) the existing Decision 97/129/EC marking continues to apply until 30 months after the Commission adopts the relevant implementing act (expected around 2028). National schemes (Triman, CONAI codes, VerpackG) cannot coexist with the harmonised EU label once it takes effect.</p>' +
+    '<p><strong>Recyclability (indicative):</strong> The recyclability verdict applies current RecyClass and CEFLEX design-for-recycling guidance: a structure that is ≥90% one material family and a single polymer type is treated as compatible with an existing recycling stream; multi-polymer plastic laminates (e.g. PET/EVOH/PE) and composites with >5% aluminium or paper are flagged as not separable in standard streams. This is a proxy — the binding PPWR criteria and A/B/C grades are pending.</p>' +
+    '<p><strong>PFAS / substances of concern:</strong> From 12 August 2026 the PPWR requires substances of concern to be minimised, with PFAS in food-contact packaging restricted above defined limits (aligned with the ESPR definition). The tool reads an optional per-material flag; absence of a declaration is shown as "to confirm with supplier", not as compliant.</p>' +
+    '<div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:0.9rem 1.1rem;margin-top:0.85rem;font-family:sans-serif;font-size:0.82rem;color:#7f1d1d;line-height:1.6">' +
+      '<div style="font-weight:800;font-size:0.9rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.4rem">⚠️ Disclaimer — read before use</div>' +
+      'This tool produces <strong>indicative</strong> labelling and recyclability information for packaging-engineering and screening purposes only. It is <strong>not legal or regulatory compliance advice</strong>. The official PPWR Design-for-Recycling criteria and A/B/C recyclability grades are not yet finalised (delegated acts expected ~2028; grades apply from 2030), so recyclability here is based on current RecyClass / CEFLEX guidance as a proxy. Requirements vary by product category, market and pack type. Always verify final obligations — and the EU Declaration of Conformity — with a qualified packaging-compliance specialist or legal counsel before placing products on the market.' +
     '</div>' +
     '</div></div></div>';
 }
