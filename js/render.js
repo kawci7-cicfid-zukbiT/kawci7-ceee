@@ -180,7 +180,8 @@ function renderCalc() {
         for(var r=0; r<State.calcResult.layers.length; r++){
             var rl = State.calcResult.layers[r];
             var prec2 = getDisplayPrecision();
-            detail += '<div><strong>'+rl.materialName+'</strong> ('+rl.thickness+'um): '+label+' = '+formatWithSigFigs(rl.transmissionAtThickness, prec2)+' '+unit+' R='+formatWithSigFigs(rl.resistance, prec2)+' '+rl.resistancePct.toFixed(1)+'%</div>';
+            var bifStr = (rl.BIF && isFinite(rl.BIF)) ? ' · BIF '+Math.round(rl.BIF)+'×' : '';
+            detail += '<div><strong>'+rl.materialName+'</strong> ('+rl.thickness+'um): '+label+' = '+formatWithSigFigs(rl.transmissionAtThickness, prec2)+' '+unit+' R='+formatWithSigFigs(rl.resistance, prec2)+' '+rl.resistancePct.toFixed(1)+'%'+bifStr+'</div>';
         }
         detail += '<div style="padding-top:.25rem;border-top:2px solid #93c5fd;margin-top:.25rem"><strong>Total R:</strong> '+rStr(State.calcResult.totalResistance)+'</div>';
         resultHTML += '<div class="result-detail">'+detail+'</div>';
@@ -199,6 +200,25 @@ function renderCalc() {
             resultHTML += '<div class="alert alert-warning" style="margin-top:0.75rem;font-size:0.75rem">' +
                 '<strong style="display:block;margin-bottom:0.2rem">Hygroscopic correction applied:</strong>' +
                 warningsHTML + '</div>';
+        }
+
+        // Aroma scalping advisory (Phase 1 — qualitative). OFF by default;
+        // enable with Engine.FEATURES.aromaScalping = true.
+        if (Engine.FEATURES && Engine.FEATURES.aromaScalping) {
+        var scalpHigh = [];
+        for(var s2 = 0; s2 < State.layers.length; s2++) {
+            if(State.layers[s2].mid === null) continue;
+            var sm = findMaterialById(State.layers[s2].mid);
+            var sr = Engine.aromaScalpingRisk(sm);
+            if(sr && sr.level === 'high') scalpHigh.push(sm.name);
+        }
+        if(scalpHigh.length > 0) {
+            resultHTML += '<div class="alert" style="margin-top:0.5rem;font-size:0.74rem;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:8px;padding:0.6rem 0.75rem">' +
+                '<strong style="display:block;margin-bottom:0.15rem">👃 Aroma scalping risk</strong>' +
+                'This laminate contains a high-sorption (polyolefin) layer in contact-prone position: <strong>' +
+                scalpHigh.join(', ') + '</strong>. Such films readily absorb flavour/aroma compounds (limonene, esters). ' +
+                'Consider a polar inner layer (PET, EVOH, PA) for aroma-sensitive products.</div>';
+        }
         }
     }
 
@@ -981,11 +1001,12 @@ function onLayerChange(i, field, val) {
         State.layers[i].thick = parseFloat(val) || 0;
     }
     DB.saveState(State);
-    if(State.autoCalc) doCalcSilent(); else renderContent();
+    if(State.autoCalc) doCalcSilent();
+    else { State.calcResult = null; State.calcError = null; renderContent(); }
 }
 
-function addLayer() { State.layers.push({mid:null, thick:0}); DB.saveState(State); renderContent(); }
-function rmLayer(i) { if(State.layers.length <= 1) return; State.layers.splice(i,1); DB.saveState(State); renderContent(); }
+function addLayer() { State.layers.push({mid:null, thick:0}); State.calcResult = null; State.calcError = null; DB.saveState(State); renderContent(); }
+function rmLayer(i) { if(State.layers.length <= 1) return; State.layers.splice(i,1); State.calcResult = null; State.calcError = null; DB.saveState(State); renderContent(); }
 function toggleAutoCalc() { State.autoCalc = !State.autoCalc; renderContent(); }
 
 function doCalc() {
