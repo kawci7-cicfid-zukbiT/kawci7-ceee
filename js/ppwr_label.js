@@ -169,6 +169,80 @@ function classifyLaminateForPPWR(layers, materials) {
 }
 
 // ------------------------------------------------------------------
+// RECYCLABILITY ASSESSMENT (RecyClass / CEFLEX based — indicative)
+// NOTE: Official PPWR Design-for-Recycling criteria and the A/B/C grades
+// are not finalised (delegated acts expected 2028, grades apply 2030).
+// This is an INDICATIVE assessment based on current RecyClass / CEFLEX
+// guidelines, not a legal recyclability grade.
+// ------------------------------------------------------------------
+function assessRecyclability(cls, layers, materials) {
+  if (!cls) return null;
+  var pct = cls.pct || { plastic: 0, metal: 0, paper: 0 };
+
+  // Mono-material threshold (RecyClass: ≥90–95% one family to be recyclable)
+  var MONO_THRESHOLD = 90;
+  var dominantPct = Math.max(pct.plastic, pct.metal, pct.paper);
+
+  // Distinct plastic families present (PE/PP/PET incompatible in same stream)
+  var plasticFamilies = {};
+  for (var i = 0; i < (cls.layerData || []).length; i++) {
+    var ld = cls.layerData[i];
+    if (ld.family === 'plastic') plasticFamilies[ld.code.abbr] = true;
+  }
+  var nPlasticTypes = Object.keys(plasticFamilies).length;
+
+  var level, score, color, reasons = [];
+
+  if (!cls.isComposite && dominantPct >= MONO_THRESHOLD && nPlasticTypes <= 1) {
+    level = 'recyclable'; score = 'A–B'; color = '#16a34a';
+    reasons.push('Mono-material structure (' + dominantPct.toFixed(0) + '% ' + cls.dominantFamily + ') — compatible with an existing recycling stream.');
+  } else if (pct.metal > 5) {
+    level = 'not-recyclable'; score = 'D–E'; color = '#dc2626';
+    reasons.push('Aluminium content ' + pct.metal.toFixed(1) + '% (>5%) — plastic-metal composite is not separable in standard streams.');
+  } else if (pct.paper > 5 && pct.plastic > 5) {
+    level = 'limited'; score = 'C–D'; color = '#d97706';
+    reasons.push('Paper-plastic composite — recyclable only where dedicated fibre-recovery streams exist.');
+  } else if (nPlasticTypes > 1) {
+    level = 'not-recyclable'; score = 'D'; color = '#dc2626';
+    reasons.push('Multi-material plastic (' + Object.keys(plasticFamilies).join(' + ') + ') — incompatible polymers cannot be separated in mechanical recycling.');
+    reasons.push('Consider a mono-material redesign (e.g. all-PE or all-PP) to reach recyclability.');
+  } else {
+    level = 'limited'; score = 'C'; color = '#d97706';
+    reasons.push('Predominantly one polymer with minor secondary components — verify stream compatibility with the local recycler.');
+  }
+
+  return {
+    level: level,
+    scoreHint: score,
+    color: color,
+    reasons: reasons,
+    monoMaterial: !cls.isComposite && dominantPct >= MONO_THRESHOLD && nPlasticTypes <= 1,
+    dominantPct: dominantPct,
+    plasticTypes: Object.keys(plasticFamilies)
+  };
+}
+
+// ------------------------------------------------------------------
+// PFAS CHECK — flags layers that may contain PFAS (banned in EU
+// food-contact packaging from 12 Aug 2026 above threshold limits).
+// Reads an optional material flag `containsPFAS` / `pfasFree`.
+// ------------------------------------------------------------------
+function assessPFAS(layers, materials) {
+  var flagged = [], unknown = [];
+  for (var i = 0; i < layers.length; i++) {
+    var mat = null;
+    for (var j = 0; j < materials.length; j++) {
+      if (String(materials[j].id) === String(layers[i].mid)) { mat = materials[j]; break; }
+    }
+    if (!mat) continue;
+    if (mat.containsPFAS === true) flagged.push(mat.name);
+    else if (mat.pfasFree === true) { /* explicitly clear */ }
+    else unknown.push(mat.name);
+  }
+  return { flagged: flagged, unknown: unknown };
+}
+
+// ------------------------------------------------------------------
 // National rules
 // ------------------------------------------------------------------
 var COUNTRY_RULES = {
@@ -185,7 +259,7 @@ var COUNTRY_RULES = {
     additionalItems:['Triman logo on pack', 'Online sorting instructions (consumer-facing URL or QR code)']
   },
   'IT': {
-    flag:'🇮🇹', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
+    flag:'', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
     requiresMaterialCode: true,
     note:'Italian law (D.Lgs. 116/2020, implementing EU Directive 2018/851) requires the material identification code and collection stream to appear on packaging. The code must be referenced against the CONAI material identification system. Labelling must be in Italian.',
     sorting:{
@@ -197,7 +271,7 @@ var COUNTRY_RULES = {
     additionalItems:['CONAI material code on pack', 'Collection stream indication in Italian']
   },
   'DE': {
-    flag:'🇩🇪', name:'Germany', system:'VerpackG / LUCID',
+    flag:'', name:'Germany', system:'VerpackG / LUCID',
     requiresLUCID: true,
     note:'The Verpackungsgesetz (VerpackG) requires all producers placing packaging on the German market to register in the LUCID Packaging Register and contract a dual-system operator (e.g. Der Grüne Punkt, Interseroh). The Grüner Punkt symbol is commercially widespread but not legally mandatory as a pack marking.',
     sorting:{
@@ -209,7 +283,7 @@ var COUNTRY_RULES = {
     additionalItems:['LUCID registration mandatory before placing on market', 'Dual-system contract required']
   },
   'ES': {
-    flag:'🇪🇸', name:'Spain', system:'Ley 7/2022 / Ecoembes',
+    flag:'', name:'Spain', system:'Ley 7/2022 / Ecoembes',
     requiresMaterialInfo: true,
     note:'Spain\'s Residuos y Suelos Contaminados (Ley 7/2022) requires material identification on packaging. The Punto Verde is managed by Ecoembes for light packaging. Marking must follow the Decision 97/129/EC codes currently in force.',
     sorting:{
@@ -350,8 +424,42 @@ function renderPPWRLabel() {
   html += '</div>'; // flex row
   html += '</div>'; // classification card
 
-  // ── Market selector ───────────────────────────────────────────────
-  html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+  // ── Recyclability assessment (indicative) ─────────────────────────
+  var rec = assessRecyclability(cls, layers, allMats);
+  if (rec) {
+    var recBg = rec.level === 'recyclable' ? '#f0fdf4' : rec.level === 'limited' ? '#fffbeb' : '#fef2f2';
+    var recIcon = rec.level === 'recyclable' ? '♻️' : rec.level === 'limited' ? '⚠️' : '🚫';
+    var recTitle = rec.level === 'recyclable' ? 'Likely recyclable' :
+                   rec.level === 'limited' ? 'Limited recyclability' : 'Not recyclable (current streams)';
+    html += '<div style="background:' + recBg + ';border:1.5px solid ' + rec.color + '33;border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+    html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.6rem">Recyclability — indicative (RecyClass / CEFLEX)</div>';
+    html += '<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem">';
+    html += '<span style="font-size:1.4rem">' + recIcon + '</span>';
+    html += '<span style="font-size:1.05rem;font-weight:800;color:' + rec.color + '">' + recTitle + '</span>';
+    html += '<span style="margin-left:auto;font-size:0.72rem;font-weight:700;color:' + rec.color + ';background:#fff;border:1px solid ' + rec.color + '55;border-radius:20px;padding:0.2rem 0.7rem">Est. grade ' + rec.scoreHint + '</span>';
+    html += '</div>';
+    for (var ri = 0; ri < rec.reasons.length; ri++)
+      html += '<div style="font-size:0.8rem;color:var(--text);line-height:1.5;margin-bottom:0.3rem">• ' + rec.reasons[ri] + '</div>';
+    html += '<div style="font-size:0.68rem;color:var(--text-light);margin-top:0.6rem;line-height:1.5;font-style:italic">Indicative only. Official PPWR Design-for-Recycling criteria and A/B/C grades are pending (delegated acts expected 2028; recyclability grades apply from 1 Jan 2030).</div>';
+    html += '</div>';
+  }
+
+  // ── PFAS check (food-contact ban from 12 Aug 2026) ────────────────
+  var pfas = assessPFAS(layers, allMats);
+  if (pfas.flagged.length > 0 || pfas.unknown.length > 0) {
+    var pfasBad = pfas.flagged.length > 0;
+    html += '<div style="background:' + (pfasBad ? '#fef2f2' : '#f8fafc') + ';border:1px solid ' + (pfasBad ? '#fecaca' : 'var(--border)') + ';border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
+    html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">PFAS — food-contact ban (from 12 Aug 2026)</div>';
+    if (pfasBad) {
+      html += '<div style="font-size:0.85rem;color:#991b1b;font-weight:700;margin-bottom:0.3rem"> PFAS flagged in: ' + pfas.flagged.join(', ') + '</div>';
+      html += '<div style="font-size:0.78rem;color:#7f1d1d;line-height:1.5">These materials are marked as PFAS-containing and cannot be used in EU food-contact packaging above the regulatory limits.</div>';
+    } else {
+      html += '<div style="font-size:0.8rem;color:var(--text-light);line-height:1.5">PFAS status not declared for: ' + pfas.unknown.join(', ') + '. Confirm PFAS-free status with the supplier (mark materials with <code>pfasFree: true</code> to clear this notice).</div>';
+    }
+    html += '</div>';
+  }
+
+
   html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Target Markets</div>';
   html += '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.85rem">Select the markets where this packaging will be placed. The specification below updates accordingly.</div>';
   html += '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">';
@@ -438,9 +546,9 @@ function renderPPWRLabel() {
       html += specRow('Material type', cls.isComposite ? 'Composite (' + cls.dominantFamily + '-based)' : cls.dominantFamily.charAt(0).toUpperCase() + cls.dominantFamily.slice(1), false);
       html += specRow('Collection stream', sort2, false);
 
-      if (rule2.requiresTriman)        html += specRow('Triman logo', '✅ Mandatory on primary packaging', true);
-      if (rule2.requiresMaterialCode)  html += specRow('CONAI identification', '✅ Mandatory — use code ' + cls.abbr + ' ' + cls.code, true);
-      if (rule2.requiresLUCID)         html += specRow('LUCID registration', '✅ Mandatory before placing on market', true);
+      if (rule2.requiresTriman)        html += specRow('Triman logo', 'Mandatory on primary packaging', true);
+      if (rule2.requiresMaterialCode)  html += specRow('CONAI identification', ' Mandatory — use code ' + cls.abbr + ' ' + cls.code, true);
+      if (rule2.requiresLUCID)         html += specRow('LUCID registration', ' Mandatory before placing on market', true);
       if (rule2.requiresMaterialInfo)  html += specRow('Material identification', 'Recommended — code ' + cls.abbr + ' ' + cls.code, false);
 
       for (var ai = 0; ai < (rule2.additionalItems || []).length; ai++) {
@@ -463,8 +571,8 @@ function renderPPWRLabel() {
   html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
   html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.5rem">Export Specification</div>';
   html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrCopySpec()" class="btn btn-outline" style="font-size:0.8rem">📋 Copy text specification</button>';
-  html += '<button onclick="ppwrExportTxt()" class="btn btn-outline" style="font-size:0.8rem">📄 Download .txt file</button>';
+  html += '<button onclick="ppwrCopySpec()" class="btn btn-outline" style="font-size:0.8rem"> Copy text specification</button>';
+  html += '<button onclick="ppwrExportTxt()" class="btn btn-outline" style="font-size:0.8rem"> Download .txt file</button>';
   html += '</div>';
   html += '<pre id="ppwr-spec-text" style="display:none"></pre>';
   html += '</div>';
