@@ -6,6 +6,137 @@ const Engine = {
   R_GAS: 8.314,
   mode: 'wvtr',
 
+  // Optional features — OFF by default so they don't affect the
+  // existing database or UI until explicitly enabled.
+  //   aromaScalping: shows the scalping advisory under the result
+  //   defectModel:   already inert (only activates if a material has
+  //                  defectDensity_per_cm2 + defectRadius_um fields)
+  FEATURES: {
+    aromaScalping: false
+  },
+
+  // ------------------------------------------------------------------
+  // 💧 ANTOINE — saturation water-vapour pressure vs temperature
+  // log10(P_mmHg) = A − B/(C + T_°C)   (Antoine, water, 1–100°C)
+  // Returns saturation pressure in Pa.
+  // ------------------------------------------------------------------
+  waterVaporPressure: function(tempC) {
+    var A = 8.07131, B = 1730.63, C = 233.426; // water, mmHg, °C (1–100°C)
+    var pmmHg = Math.pow(10, A - B / (C + tempC));
+    return pmmHg * 133.322; // mmHg → Pa
+  },
+
+  // Driving force for water-vapour transmission at (T, RH):
+  //   Δp = P_sat(T) × (RH_in − RH_out)/100
+  // Used to scale WVTR correctly between conditions (complements Arrhenius,
+  // which scales the permeance; Antoine scales the partial-pressure driving force).
+  wvtrDrivingForce: function(tempC, rhInside, rhOutside) {
+    var dRH = (rhInside - (rhOutside || 0)) / 100;
+    return Engine.waterVaporPressure(tempC) * dRH; // Pa
+  },
+
+  // ------------------------------------------------------------------
+  // 💶 LAMINATE COST ESTIMATOR (€/m²)
+  // Inert unless materials carry a `cost_per_kg` (€/kg) and `density`
+  // (kg/m³). Cost of a layer = density × thickness(µm)×1e-6 × cost_per_kg.
+  // Returns total €/m² and per-layer breakdown; null if no cost data.
+  // ------------------------------------------------------------------
+  calcLaminateCost: function(layers, materials) {
+    var total = 0, perLayer = [], anyCost = false;
+    for (var i = 0; i < layers.length; i++) {
+      if (layers[i].mid === null || !layers[i].thick) continue;
+      var mat = null;
+      for (var j = 0; j < materials.length; j++)
+        if (String(materials[j].id) === String(layers[i].mid)) { mat = materials[j]; break; }
+      if (!mat) continue;
+      var costKg = mat.cost_per_kg || 0;
+      var dens   = mat.density || 0;
+      var gsm    = (dens > 0) ? dens * layers[i].thick * 1e-6 : 0; // kg/m²
+      var cost   = costKg * gsm; // €/m²
+      if (costKg > 0) anyCost = true;
+      total += cost;
+      perLayer.push({ name: mat.name, gsm: gsm, costPerM2: cost, hasCost: costKg > 0 });
+    }
+    if (!anyCost) return null;
+    return { totalPerM2: total, layers: perLayer };
+  },
+
+
+  // Sorption of flavour/aroma compounds (limonene, esters...) INTO the
+  // polymer. Polyolefins (PE/PP) absorb strongly; polar/high-barrier
+  // films (PET, EVOH, PA, PVOH) resist sorption. Returns a risk level
+  // for the food-contact (innermost) layer.
+  // ------------------------------------------------------------------
+  AROMA_SCALPING: {
+    high:     ['PE', 'LDPE', 'LLDPE', 'HDPE', 'PP', 'CPP', 'BOPP', 'OPP', 'EVA', 'POLYOLEFIN', 'IONOMER', 'SURLYN'],
+    medium:   ['PLA', 'PS', 'PVC', 'ADHESIVE', 'TIE'],
+    low:      ['PET', 'BOPET', 'PA', 'NYLON', 'OPA', 'EVOH', 'PVOH', 'PVDC', 'PEN', 'PCTFE', 'ACLAR']
+  },
+
+  aromaScalpingRisk: function(material) {
+    if (!material) return null;
+    var map = Engine.AROMA_SCALPING;
+    var fam = String(material.family || '').toUpperCase().trim();
+    var name = String(material.name || '').toUpperCase();
+
+    // 1) Exact family match (most reliable — avoids "PET" matching "PE").
+    function famIn(list) { for (var i = 0; i < list.length; i++) if (fam === list[i]) return true; return false; }
+    // 2) Fallback: whole-token match in the name (split on non-alphanumerics).
+    var tokens = name.split(/[^A-Z0-9]+/).filter(Boolean);
+    function tokenIn(list) {
+      for (var i = 0; i < list.length; i++)
+        for (var j = 0; j < tokens.length; j++)
+          if (tokens[j] === list[i]) return true;
+      return false;
+    }
+    function match(list) { return famIn(list) || tokenIn(list); }
+
+    // Check LOW first (PET, PA, EVOH... are specific), then HIGH, then MEDIUM,
+    // so polar/high-barrier polymers are never misread as polyolefins.
+    if (match(map.low))    return { level: 'low',    label: 'Low scalping risk',   color: '#16a34a',
+                                    note: 'Polar / high-barrier polymer — resists aroma sorption.' };
+    if (match(map.high))   return { level: 'high',   label: 'High scalping risk',  color: '#dc2626',
+                                    note: 'Polyolefin-type layer — readily absorbs flavour/aroma compounds (e.g. limonene, esters).' };
+    if (match(map.medium)) return { level: 'medium', label: 'Moderate scalping risk', color: '#d97706',
+                                    note: 'Intermediate aroma sorption — evaluate for sensitive flavours.' };
+    return null;
+  },
+
+
+
+  // For a coated/metallized film the measured barrier is dominated by
+  // microscopic defects, not the intrinsic coating. Flux through an
+  // isolated circular defect of radius a into a substrate of thickness L
+  // spreads laterally, so effective permeation >> geometric defect area.
+  //
+  //   P_defects ≈ N · 4 · P_sub · a        (lateral "diffusion-to-a-disk")
+  //   1/P_eff   = 1/(P_defects + P_intrinsic)
+  //
+  //   N  = defect density (defects per m²)
+  //   a  = defect radius (m)
+  //   P_sub = substrate permeance (same units as transmission)
+  // Returns effective surface transmission and the Barrier Improvement Factor.
+  // NOTE: engineering estimate — the prefactor needs calibration on real data.
+  // ------------------------------------------------------------------
+  calcDefectBarrier: function(p) {
+    var N_per_m2 = (p.defectDensity_per_cm2 || 0) * 1e4; // /cm² → /m²
+    var a_m      = (p.defectRadius_um || 0) * 1e-6;       // µm → m
+    var pSub     = p.substratePermeance || 0;            // bare-substrate transmission
+    var pIntrins = p.intrinsicPermeance || 0;            // perfect-coating residual
+
+    var pDefects = N_per_m2 * 4 * pSub * a_m;
+    var pEff = pDefects + pIntrins;
+    if (pEff <= 0) pEff = 1e-9;
+
+    var bif = (pSub > 0) ? pSub / pEff : null;
+    return {
+      transmission: pEff,
+      defectContribution: pDefects,
+      intrinsicContribution: pIntrins,
+      BIF: bif
+    };
+  },
+
   calcHygroscopicCorrection: function(mat, condition, mode) {
     mode = mode || Engine.mode;
     var betaKey = mode === 'wvtr' ? 'hygroscopicBetaWVTR' : 'hygroscopicBetaOTR';
@@ -232,6 +363,30 @@ const Engine = {
       return { resistance: Infinity, transmissionAtThickness: 0, isBarrier: true, hygroCorrection: null };
 
     if (material.isMetallized) {
+      // OPTION A: defect-density model (if defect parameters are provided).
+      // More rigorous than the metal-thickness fit: models permeation through
+      // microscopic pinholes/cracks and reports the Barrier Improvement Factor.
+      if (material.defectDensity_per_cm2 > 0 && material.defectRadius_um > 0) {
+        var def = Engine.calcDefectBarrier({
+          defectDensity_per_cm2: material.defectDensity_per_cm2,
+          defectRadius_um:       material.defectRadius_um,
+          substratePermeance:    permeabilityCoeff / (layer.thick || 1),
+          intrinsicPermeance:    material.intrinsicPermeance || 0
+        });
+        var pEffDef = def.transmission > 0 ? def.transmission : 1e-9;
+        return {
+          resistance:              1 / pEffDef,
+          transmissionAtThickness: pEffDef,
+          isBarrier:               pEffDef < 0.1,
+          isMetallized:            true,
+          defectModel:             true,
+          BIF:                     def.BIF,
+          hygroCorrection:         null,
+          pointsUsed:              matchingPoints.length
+        };
+      }
+
+      // OPTION B (default): empirical metal-thickness pinhole correction.
       // FIX 5: Metal thickness correction via empirical pinhole density model.
       // WVTR_eff = WVTR_ref × exp(−k_ph × (t_nm − t_ref_nm))
       // where k_ph ≈ 0.04 nm⁻¹ (Chatham 1996; Yanaka 2001 empirical fit).
@@ -297,6 +452,7 @@ const Engine = {
         transmissionAtThickness: res.transmissionAtThickness,
         isBarrier:               res.isBarrier,
         hygroCorrection:         res.hygroCorrection || null,
+        BIF:                     res.BIF || null,
         pointsUsed:              res.pointsUsed || 1
       });
       if (res.resistance === Infinity)
