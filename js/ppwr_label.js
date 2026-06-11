@@ -306,7 +306,7 @@ function renderPPWRLabel() {
 
   // ── Regulatory status banner ──────────────────────────────────────
   html += '<div style="background:#fefce8;border:1px solid #fde047;border-radius:10px;padding:0.9rem 1.1rem;margin-bottom:1.25rem;display:flex;gap:0.75rem;align-items:flex-start">';
-  html += '<div style="font-size:1.1rem;flex-shrink:0;margin-top:0.05rem">⚖️</div>';
+  html += '<div style="font-size:1.1rem;flex-shrink:0;margin-top:0.05rem"></div>';
   html += '<div style="font-size:0.8rem;color:#713f12;line-height:1.55">';
   html += '<strong>PPWR — Regulation (EU) 2025/40</strong> entered into force 11 Feb 2025 and <strong>applies from 12 August 2026</strong>, repealing Directive 94/62/EC. From that date every packaging placed on the EU market needs an <strong>EU Declaration of Conformity</strong> and technical documentation (Art. 38–39), must minimise substances of concern, and meet packaging-minimisation rules. ';
   html += 'Material marking still follows <strong>Decision 97/129/EC</strong> codes — kept in force under Art. 8(2) until ~30 months after the Commission\'s implementing act (expected ~2028). Recyclability grades (A/B/C) and recycled-content targets phase in from 2030.';
