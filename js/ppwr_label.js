@@ -8,7 +8,7 @@
 //   2. Compute weight per material family using CFP density defaults
 //   3. Classify per Decision 97/129/EC codes
 //   4. Apply national rules (FR / IT / DE / ES / EU-2028)
-//   5. Render output specification + notify form
+//   5. Render classification + recyclability + market requirements table
 // ====================================================================
 
 // ------------------------------------------------------------------
@@ -222,25 +222,6 @@ function assessRecyclability(cls, layers, materials) {
   };
 }
 
-// ------------------------------------------------------------------
-// PFAS CHECK — flags layers that may contain PFAS (banned in EU
-// food-contact packaging from 12 Aug 2026 above threshold limits).
-// Reads an optional material flag `containsPFAS` / `pfasFree`.
-// ------------------------------------------------------------------
-function assessPFAS(layers, materials) {
-  var flagged = [], unknown = [];
-  for (var i = 0; i < layers.length; i++) {
-    var mat = null;
-    for (var j = 0; j < materials.length; j++) {
-      if (String(materials[j].id) === String(layers[i].mid)) { mat = materials[j]; break; }
-    }
-    if (!mat) continue;
-    if (mat.containsPFAS === true) flagged.push(mat.name);
-    else if (mat.pfasFree === true) { /* explicitly clear */ }
-    else unknown.push(mat.name);
-  }
-  return { flagged: flagged, unknown: unknown };
-}
 
 // ------------------------------------------------------------------
 // National rules
@@ -327,7 +308,7 @@ function renderPPWRLabel() {
   html += '<div style="background:#fefce8;border:1px solid #fde047;border-radius:10px;padding:0.9rem 1.1rem;margin-bottom:1.25rem;display:flex;gap:0.75rem;align-items:flex-start">';
   html += '<div style="font-size:1.1rem;flex-shrink:0;margin-top:0.05rem">⚖️</div>';
   html += '<div style="font-size:0.8rem;color:#713f12;line-height:1.55">';
-  html += '<strong>PPWR — Regulation (EU) 2025/40</strong> entered into force 11 Feb 2025 and <strong>applies from 12 August 2026</strong>, repealing Directive 94/62/EC. From that date every packaging placed on the EU market needs an <strong>EU Declaration of Conformity</strong> and technical documentation (Art. 38–39), must minimise substances of concern (PFAS limits apply), and meet packaging-minimisation rules. ';
+  html += '<strong>PPWR — Regulation (EU) 2025/40</strong> entered into force 11 Feb 2025 and <strong>applies from 12 August 2026</strong>, repealing Directive 94/62/EC. From that date every packaging placed on the EU market needs an <strong>EU Declaration of Conformity</strong> and technical documentation (Art. 38–39), must minimise substances of concern, and meet packaging-minimisation rules. ';
   html += 'Material marking still follows <strong>Decision 97/129/EC</strong> codes — kept in force under Art. 8(2) until ~30 months after the Commission\'s implementing act (expected ~2028). Recyclability grades (A/B/C) and recycled-content targets phase in from 2030.';
   html += '</div></div>';
 
@@ -444,21 +425,6 @@ function renderPPWRLabel() {
     html += '</div>';
   }
 
-  // ── PFAS check (food-contact ban from 12 Aug 2026) ────────────────
-  var pfas = assessPFAS(layers, allMats);
-  if (pfas.flagged.length > 0 || pfas.unknown.length > 0) {
-    var pfasBad = pfas.flagged.length > 0;
-    html += '<div style="background:' + (pfasBad ? '#fef2f2' : '#f8fafc') + ';border:1px solid ' + (pfasBad ? '#fecaca' : 'var(--border)') + ';border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
-    html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.5rem">PFAS — food-contact ban (from 12 Aug 2026)</div>';
-    if (pfasBad) {
-      html += '<div style="font-size:0.85rem;color:#991b1b;font-weight:700;margin-bottom:0.3rem">🚫 PFAS flagged in: ' + pfas.flagged.join(', ') + '</div>';
-      html += '<div style="font-size:0.78rem;color:#7f1d1d;line-height:1.5">These materials are marked as PFAS-containing and cannot be used in EU food-contact packaging above the regulatory limits.</div>';
-    } else {
-      html += '<div style="font-size:0.8rem;color:var(--text-light);line-height:1.5">PFAS status not declared for: ' + pfas.unknown.join(', ') + '. Confirm PFAS-free status with the supplier (mark materials with <code>pfasFree: true</code> to clear this notice).</div>';
-    }
-    html += '</div>';
-  }
-
   // ── Compliance action checklist (what to do, based on this structure) ──
   var recForChecklist = assessRecyclability(cls, layers, allMats);
   html += '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
@@ -488,13 +454,6 @@ function renderPPWRLabel() {
       html += actionRow('warn', 'Recyclability: at risk for 2030',
         'This structure is unlikely to be recyclable in current streams. From 1 Jan 2030 all packaging must meet recyclability grades — consider a mono-material redesign now to avoid a forced reformulation later.');
   }
-  // 4. PFAS
-  if (pfas.flagged.length > 0)
-    html += actionRow('warn', 'PFAS: not compliant',
-      'Remove PFAS-containing layers — banned in EU food-contact packaging above the limits from 12 Aug 2026.');
-  else
-    html += actionRow('action', 'PFAS / substances of concern',
-      'Confirm with suppliers that all layers are within PFAS limits and obtain written declarations for your technical file.');
   // 5. Recycled content
   html += actionRow('action', 'Recycled content (targets from 2030)',
     'Recorded recycled-content % is not yet required but will be from 2030. Start collecting this data from your film suppliers now.');
@@ -502,7 +461,7 @@ function renderPPWRLabel() {
   html += '</div></div>';
 
   html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.25rem">Target Markets</div>';
-  html += '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.85rem">Select the markets where this packaging will be placed. The specification below updates accordingly.</div>';
+  html += '<div style="font-size:0.75rem;color:var(--text-light);margin-bottom:0.85rem">Select the markets where this packaging will be placed — the table below shows the labelling requirements for each.</div>';
   html += '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">';
   var allMkts = Object.keys(COUNTRY_RULES);
   for (var mi = 0; mi < allMkts.length; mi++) {
@@ -516,104 +475,59 @@ function renderPPWRLabel() {
   }
   html += '</div></div>';
 
-  // ── Per-market specification ──────────────────────────────────────
-  html += '<div style="display:flex;flex-direction:column;gap:0.85rem;margin-bottom:1.25rem" id="ppwr-market-specs">';
+  // ── Single market requirements table ──────────────────────────────
+  html += '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.25rem">';
+  html += '<div style="overflow-x:auto">';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:0.8rem">';
+  html += '<thead><tr style="background:#f8fafc">';
+  html += '<th style="padding:0.6rem 0.85rem;text-align:left;font-weight:700;color:var(--text-light);border-bottom:1.5px solid var(--border)">Market</th>';
+  html += '<th style="padding:0.6rem 0.85rem;text-align:left;font-weight:700;color:var(--text-light);border-bottom:1.5px solid var(--border)">Labelling scheme</th>';
+  html += '<th style="padding:0.6rem 0.85rem;text-align:left;font-weight:700;color:var(--text-light);border-bottom:1.5px solid var(--border)">Status</th>';
+  html += '<th style="padding:0.6rem 0.85rem;text-align:left;font-weight:700;color:var(--text-light);border-bottom:1.5px solid var(--border)">Collection stream</th>';
+  html += '<th style="padding:0.6rem 0.85rem;text-align:left;font-weight:700;color:var(--text-light);border-bottom:1.5px solid var(--border)">Key requirement for this pack</th>';
+  html += '</tr></thead><tbody>';
 
   for (var mki = 0; mki < allMkts.length; mki++) {
     var mk2   = allMkts[mki];
     var rule2 = COUNTRY_RULES[mk2];
     var isOn2 = selMkts.indexOf(mk2) >= 0;
+    if (!isOn2) continue; // show only selected markets
     var sort2 = rule2.sorting ? (rule2.sorting[cls.dominantFamily] || rule2.sorting['composite'] || '—') : '—';
 
-    html += '<div id="ppwr-spec-' + mk2 + '" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;' +
-      (isOn2 ? '' : 'display:none') + '">';
-
-    // Country header
-    html += '<div style="padding:0.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;background:#f8fafc">';
-    html += '<div style="display:flex;align-items:center;gap:0.6rem">';
-    html += '<span style="font-size:1.3rem">' + rule2.flag + '</span>';
-    html += '<div>';
-    html += '<div style="font-size:0.88rem;font-weight:700;color:var(--text)">' + rule2.name + '</div>';
-    html += '<div style="font-size:0.7rem;color:var(--text-light)">' + rule2.system + '</div>';
-    html += '</div></div>';
+    // Build the key requirement for this structure
+    var keyReq = '';
     if (rule2.status === 'pending') {
-      html += '<span style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:6px;padding:0.2rem 0.55rem;font-size:0.68rem;font-weight:700">PENDING — Implementing Act</span>';
+      keyReq = 'Await harmonised EU pictograms; Decision 97/129/EC code <strong>' + cls.abbr + ' ' + cls.code + '</strong> remains valid until then.';
+    } else if (rule2.requiresTriman) {
+      keyReq = 'Triman logo + online sorting instructions on primary pack; mark code <strong>' + cls.abbr + ' ' + cls.code + '</strong>.';
+    } else if (rule2.requiresMaterialCode) {
+      keyReq = 'CONAI material code <strong>' + cls.abbr + ' ' + cls.code + '</strong> + collection stream, in Italian.';
+    } else if (rule2.requiresLUCID) {
+      keyReq = 'LUCID registration + dual-system contract required before placing on market.';
+    } else if (rule2.requiresMaterialInfo) {
+      keyReq = 'Punto Verde / EPR scheme; material code <strong>' + cls.abbr + ' ' + cls.code + '</strong> recommended.';
     } else {
-      html += '<span style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:6px;padding:0.2rem 0.55rem;font-size:0.68rem;font-weight:700">IN FORCE</span>';
-    }
-    html += '</div>';
-
-    // Spec body
-    html += '<div style="padding:1rem 1.1rem">';
-
-    if (rule2.status === 'pending') {
-      // EU 2028 — pending block
-      html += '<div style="display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:1rem">';
-      html += '<div style="flex:1">';
-      html += '<div style="font-size:0.8rem;color:var(--text);line-height:1.6;margin-bottom:0.75rem">' + rule2.note + '</div>';
-      html += '<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">Required actions now:</div>';
-      html += '<ul style="margin:0;padding-left:1.2rem;font-size:0.78rem;color:var(--text-light);line-height:1.8">';
-      for (var ai2 = 0; ai2 < rule2.additionalItems.length; ai2++)
-        html += '<li>' + rule2.additionalItems[ai2] + '</li>';
-      html += '</ul></div></div>';
-    } else {
-      // Spec table
-      html += '<table style="width:100%;border-collapse:collapse;font-size:0.8rem;margin-bottom:0.85rem">';
-      html += '<thead><tr style="background:#f8fafc">';
-      html += '<th style="padding:0.4rem 0.6rem;text-align:left;font-weight:600;color:var(--text-light);border-bottom:1px solid var(--border);width:38%">Requirement</th>';
-      html += '<th style="padding:0.4rem 0.6rem;text-align:left;font-weight:600;color:var(--text-light);border-bottom:1px solid var(--border)">Specification for this structure</th>';
-      html += '</tr></thead><tbody>';
-
-      function specRow(req, spec, highlight) {
-        return '<tr style="border-bottom:1px solid #f1f5f9' + (highlight ? ';background:#fffbeb' : '') + '">' +
-          '<td style="padding:0.45rem 0.6rem;font-weight:600;color:var(--text);vertical-align:top">' + req + '</td>' +
-          '<td style="padding:0.45rem 0.6rem;color:var(--text);font-family:inherit;line-height:1.5">' + spec + '</td>' +
-          '</tr>';
-      }
-
-      html += specRow('Decision 97/129/EC code',
-        '<code style="background:#eff6ff;color:#1e40af;padding:2px 7px;border-radius:4px;font-size:0.82rem;font-weight:700">' + cls.abbr + ' ' + cls.code + '</code>', false);
-      html += specRow('Material type', cls.isComposite ? 'Composite (' + cls.dominantFamily + '-based)' : cls.dominantFamily.charAt(0).toUpperCase() + cls.dominantFamily.slice(1), false);
-      html += specRow('Collection stream', sort2, false);
-
-      if (rule2.requiresTriman)        html += specRow('Triman logo', '✅ Mandatory on primary packaging', true);
-      if (rule2.requiresMaterialCode)  html += specRow('CONAI identification', '✅ Mandatory — use code ' + cls.abbr + ' ' + cls.code, true);
-      if (rule2.requiresLUCID)         html += specRow('LUCID registration', '✅ Mandatory before placing on market', true);
-      if (rule2.requiresMaterialInfo)  html += specRow('Material identification', 'Recommended — code ' + cls.abbr + ' ' + cls.code, false);
-
-      for (var ai = 0; ai < (rule2.additionalItems || []).length; ai++) {
-        html += specRow('Additional', rule2.additionalItems[ai], false);
-      }
-      html += '</tbody></table>';
-
-      // Regulatory note
-      html += '<div style="background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.85rem;font-size:0.75rem;color:var(--text-light);line-height:1.6">';
-      html += '<strong style="color:var(--text)">Regulatory context:</strong> ' + rule2.note;
-      html += '</div>';
+      keyReq = 'Mark code <strong>' + cls.abbr + ' ' + cls.code + '</strong>.';
     }
 
-    html += '</div></div>'; // spec body + card
+    var statusBadge = rule2.status === 'pending'
+      ? '<span style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:6px;padding:0.15rem 0.5rem;font-size:0.66rem;font-weight:700;white-space:nowrap">PENDING</span>'
+      : '<span style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:6px;padding:0.15rem 0.5rem;font-size:0.66rem;font-weight:700;white-space:nowrap">IN FORCE</span>';
+
+    html += '<tr style="border-bottom:1px solid #f1f5f9;vertical-align:top">';
+    html += '<td style="padding:0.6rem 0.85rem;white-space:nowrap"><span style="font-size:1rem;margin-right:0.3rem">' + rule2.flag + '</span><strong>' + rule2.name + '</strong></td>';
+    html += '<td style="padding:0.6rem 0.85rem;color:var(--text-light)">' + rule2.system + '</td>';
+    html += '<td style="padding:0.6rem 0.85rem">' + statusBadge + '</td>';
+    html += '<td style="padding:0.6rem 0.85rem;color:var(--text)">' + sort2 + '</td>';
+    html += '<td style="padding:0.6rem 0.85rem;color:var(--text);line-height:1.5">' + keyReq + '</td>';
+    html += '</tr>';
   }
-
-  html += '</div>'; // market specs
-
-  // ── Export / copy section ─────────────────────────────────────────
-  html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem">';
-  html += '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.5rem">Export Specification</div>';
-  html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrCopySpec()" class="btn btn-outline" style="font-size:0.8rem">📋 Copy text specification</button>';
-  html += '<button onclick="ppwrExportTxt()" class="btn btn-outline" style="font-size:0.8rem">📄 Download .txt file</button>';
-  html += '</div>';
-  html += '<pre id="ppwr-spec-text" style="display:none"></pre>';
-  html += '</div>';
+  html += '</tbody></table></div></div>';
 
   // ── Methodology / disclaimer ──────────────────────────────────────
   html += _ppwrMethodology();
   html += '</div>'; // max-width
   c.innerHTML = html;
-
-  // Pre-compute spec text
-  _ppwrBuildSpecText(cls, selMkts);
 }
 
 // ------------------------------------------------------------------
@@ -625,96 +539,10 @@ function ppwrToggleMkt(mk) {
   var idx = State.ppwrMkts.indexOf(mk);
   if (idx >= 0) State.ppwrMkts.splice(idx, 1);
   else          State.ppwrMkts.push(mk);
-
-  // Update button style
-  var btn = document.getElementById('ppwr-mkt-' + mk);
-  if (btn) {
-    var isOn = State.ppwrMkts.indexOf(mk) >= 0;
-    btn.style.background    = isOn ? 'var(--primary)' : '#fff';
-    btn.style.color         = isOn ? '#fff' : 'var(--text-light)';
-    btn.style.borderColor   = isOn ? 'var(--primary)' : 'var(--border)';
-  }
-  // Show/hide spec card
-  var spec = document.getElementById('ppwr-spec-' + mk);
-  if (spec) spec.style.display = State.ppwrMkts.indexOf(mk) >= 0 ? '' : 'none';
-
   if (typeof DB !== 'undefined' && typeof DB.saveState === 'function') DB.saveState(State);
-  _ppwrBuildSpecText(null, State.ppwrMkts);
+  renderPPWRLabel(); // rebuild page so the table reflects the new selection
 }
 
-// ------------------------------------------------------------------
-// Build plain-text specification (for copy / download)
-// ------------------------------------------------------------------
-function _ppwrBuildSpecText(cls, mkts) {
-  if (!cls) {
-    var layers2 = (typeof State !== 'undefined' && State.layers) ? State.layers : [];
-    var mats2   = (typeof DB !== 'undefined') ? DB.materials : [];
-    cls = layers2.length > 0 ? classifyLaminateForPPWR(layers2, mats2) : null;
-  }
-  if (!cls) return;
-
-  var lines = [];
-  lines.push('PPWR LABEL SPECIFICATION — Decision 97/129/EC');
-  lines.push('Generated: ' + new Date().toLocaleDateString('en-GB'));
-  lines.push('');
-  lines.push('LAMINATE STRUCTURE');
-  for (var i = 0; i < cls.layerData.length; i++) {
-    var ld = cls.layerData[i];
-    lines.push('  ' + ld.name + ' ' + ld.thick + ' µm  (' + ((ld.weight/cls.totalWeight)*100).toFixed(1) + '% by weight, ' + ld.family + ')');
-  }
-  lines.push('');
-  lines.push('CLASSIFICATION');
-  lines.push('  Code:    ' + cls.abbr + ' ' + cls.code);
-  lines.push('  Type:    ' + (cls.isComposite ? 'Composite' : 'Mono-material') + ' (' + cls.dominantFamily + ')');
-  lines.push('  Plastic: ' + cls.pct.plastic.toFixed(1) + '%');
-  lines.push('  Metal:   ' + cls.pct.metal.toFixed(1) + '%');
-  lines.push('  Paper:   ' + cls.pct.paper.toFixed(1) + '%');
-  if (cls.note) lines.push('  Note: ' + cls.note);
-  lines.push('');
-
-  for (var mi = 0; mi < mkts.length; mi++) {
-    var mk   = mkts[mi];
-    var rule = COUNTRY_RULES[mk];
-    if (!rule) continue;
-    lines.push(rule.flag + ' ' + rule.name.toUpperCase() + ' — ' + rule.system);
-    if (rule.status === 'pending') {
-      lines.push('  Status: Pending Commission implementing act (PPWR Art. 12)');
-    } else {
-      var sort = rule.sorting ? (rule.sorting[cls.dominantFamily] || rule.sorting['composite'] || '—') : '—';
-      lines.push('  Decision 97/129 code: ' + cls.abbr + ' ' + cls.code);
-      lines.push('  Collection stream: ' + sort);
-      for (var ai = 0; ai < (rule.additionalItems || []).length; ai++)
-        lines.push('  — ' + rule.additionalItems[ai]);
-    }
-    lines.push('');
-  }
-
-  lines.push('DISCLAIMER');
-  lines.push('This specification is generated automatically for guidance purposes only.');
-  lines.push('It does not constitute legal advice. Verify requirements with a qualified');
-  lines.push('packaging compliance specialist before placing products on any market.');
-
-  var txt = lines.join('\n');
-  var pre = document.getElementById('ppwr-spec-text');
-  if (pre) pre.textContent = txt;
-  window._ppwrSpecText = txt;
-}
-
-function ppwrCopySpec() {
-  if (!window._ppwrSpecText) return;
-  navigator.clipboard.writeText(window._ppwrSpecText)
-    .then(function(){ alert('Specification copied to clipboard.'); })
-    .catch(function(){ prompt('Copy the specification:', window._ppwrSpecText); });
-}
-
-function ppwrExportTxt() {
-  if (!window._ppwrSpecText) return;
-  var blob = new Blob([window._ppwrSpecText], { type:'text/plain' });
-  var a    = document.createElement('a');
-  a.href   = URL.createObjectURL(blob);
-  a.download = 'PPWR_Label_Specification_' + new Date().toISOString().slice(0,10) + '.txt';
-  a.click();
-}
 
 // ------------------------------------------------------------------
 // Methodology / disclaimer
@@ -729,7 +557,6 @@ function _ppwrMethodology() {
     '<p><strong>Weight calculation:</strong> Layer weights are computed from density × thickness, using stored material density values or EPD defaults (same methodology as the Carbon Footprint Estimator). The percentage composition is calculated on a per-unit-area basis (kg/m²).</p>' +
     '<p><strong>PPWR transition:</strong> Regulation (EU) 2025/40 (PPWR) entered into force on 11 February 2025 and applies from 12 August 2026, repealing Directive 94/62/EC. It mandates a future harmonised EU labelling system; under Article 8(2) the existing Decision 97/129/EC marking continues to apply until 30 months after the Commission adopts the relevant implementing act (expected around 2028). National schemes (Triman, CONAI codes, VerpackG) cannot coexist with the harmonised EU label once it takes effect.</p>' +
     '<p><strong>Recyclability (indicative):</strong> The recyclability verdict applies current RecyClass and CEFLEX design-for-recycling guidance: a structure that is ≥90% one material family and a single polymer type is treated as compatible with an existing recycling stream; multi-polymer plastic laminates (e.g. PET/EVOH/PE) and composites with >5% aluminium or paper are flagged as not separable in standard streams. This is a proxy — the binding PPWR criteria and A/B/C grades are pending.</p>' +
-    '<p><strong>PFAS / substances of concern:</strong> From 12 August 2026 the PPWR requires substances of concern to be minimised, with PFAS in food-contact packaging restricted above defined limits (aligned with the ESPR definition). The tool reads an optional per-material flag; absence of a declaration is shown as "to confirm with supplier", not as compliant.</p>' +
     '<div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:0.9rem 1.1rem;margin-top:0.85rem;font-family:sans-serif;font-size:0.82rem;color:#7f1d1d;line-height:1.6">' +
       '<div style="font-weight:800;font-size:0.9rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.4rem">⚠️ Disclaimer — read before use</div>' +
       'This tool produces <strong>indicative</strong> labelling and recyclability information for packaging-engineering and screening purposes only. It is <strong>not legal or regulatory compliance advice</strong>. The official PPWR Design-for-Recycling criteria and A/B/C recyclability grades are not yet finalised (delegated acts expected ~2028; grades apply from 2030), so recyclability here is based on current RecyClass / CEFLEX guidance as a proxy. Requirements vary by product category, market and pack type. Always verify final obligations — and the EU Declaration of Conformity — with a qualified packaging-compliance specialist or legal counsel before placing products on the market.' +
