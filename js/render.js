@@ -132,6 +132,14 @@ function renderCalc() {
             });
             if(displayMats.length === 0) displayMats = filteredMats;
         }
+        // CRITICAL: always keep THIS layer's own selected material in its
+        // dropdown, even if it's not condition-compatible with the other
+        // layers — otherwise the <select> has no matching option and the
+        // cell renders blank (the "disappearing first layer" bug).
+        if(l.mid !== null && !displayMats.some(function(m){ return String(m.id) === String(l.mid); })){
+            var ownMat = findMaterialById(l.mid);
+            if(ownMat) displayMats = [ownMat].concat(displayMats);
+        }
 
         var matOpts = '<option value="">Select...</option>';
         for(var j=0; j<displayMats.length; j++){
