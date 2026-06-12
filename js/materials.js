@@ -1313,16 +1313,17 @@ async function loadExternalMaterialsDB() {
     if(em.pfas !== undefined) ex.pfas = em.pfas;
     return;
 }
-            if(existingByName[nameLower]) {
-                var exN = existingByName[nameLower];
-                if(em.firebaseDocId) exN.firebaseDocId = em.firebaseDocId;
-                if(em.hygroscopicBetaWVTR !== undefined) {
-                    exN.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; exN.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
-                    exN.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   exN.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
-                    exN.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   exN.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
-                }
-                return;
-            }
+           if(existingByName[nameLower]) {
+    var exN = existingByName[nameLower];
+    if(em.firebaseDocId) exN.firebaseDocId = em.firebaseDocId;
+    if(em.hygroscopicBetaWVTR !== undefined) {
+        exN.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; exN.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
+        exN.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   exN.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
+        exN.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   exN.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
+    }
+    if(em.pfas !== undefined) exN.pfas = em.pfas;
+    return;
+}
             var newMat = Object.assign({}, em);
             if(em.firebaseDocId) {
                 var numericIds = DB.materials.map(function(m){ return typeof m.id==='number'?m.id:0; });
