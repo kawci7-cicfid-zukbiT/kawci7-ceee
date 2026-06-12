@@ -1,42 +1,61 @@
 // ====================================================================
-// PFAS.JS — PFAS verification status (admin-assigned badge)
-// Load order: AFTER engine.js, BEFORE materials.js and ppwr_label.js
+// PFAS.JS — PFAS-free verification (static list, admin-maintained)
+// Same model as VERIFIED_MATERIALS: a map keyed by EXACT material name.
+// Only the site admin can edit this file on the server, which is what
+// makes the badge trustworthy.
 //
-// Data model (on the material object, synced from Firestore):
-//   mat.pfas = {
-//     status:     'verified_free',          // only valid value for the badge
-//     verifiedBy: 'admin',                  // who checked the documents
-//     verifiedAt: '2026-06-12',             // ISO date of verification
-//     expiresAt:  '2027-06-12',             // declaration validity end
-//     docRef:     'PFAS-decl-supplier.pdf'  // internal reference
-//   }
+// Load order in index.html: AFTER engine.js, BEFORE materials.js
+// and ppwr_label.js.
 //
-// SECURITY: the badge is trustworthy ONLY because Firestore Security
-// Rules prevent anyone except the admin UID from writing the `pfas`
-// field. Client-side code is informational — never the enforcement.
+// HOW TO ADD A BADGE:
+// 1. Receive and check the supplier documentation (signed PFAS
+//    declaration for the specific grade, food-contact DoC, TOF report
+//    if available).
+// 2. Save the PDF in your records.
+// 3. Add ONE entry below, keyed by the material name EXACTLY as it
+//    appears in the database (same rule as VERIFIED_MATERIALS).
+// 4. Upload this file to the server. Done.
 // ====================================================================
+
+window.PFAS_VERIFIED = {
+
+    // ── EXAMPLES — replace with your real entries ──────────────────
+    // 'Ethy-Lyte HD200': {
+    //     by:         'Admin',
+    //     verifiedAt: '2026-06-12',                      // when you checked the docs
+    //     expiresAt:  '2027-06-12',                      // declaration validity end
+    //     docRef:     'PFAS-decl-SupplierX-HD200.pdf'    // your internal file reference
+    // },
+    // 'Bicor 25MB400': {
+    //     by:         'Admin',
+    //     verifiedAt: '2026-06-12',
+    //     expiresAt:  '2027-12-31',
+    //     docRef:     'PFAS-decl-SupplierY-Bicor.pdf'
+    // },
+
+};
 
 // Name patterns that suggest fluoropolymers / possible PFAS
 var PFAS_NAME_RE = /PVDF|PTFE|FEP|\bPFA\b|FLUORO|PERFLUOR/i;
 
 // ------------------------------------------------------------------
-// Core status resolver — cross-analysis of name heuristic + admin badge
+// Core status resolver — cross-analysis of name heuristic + admin list
 // Returns:
-//   verified  true  → admin-verified PFAS-free, declaration still valid
-//   expired   true  → was verified but the declaration has expired
+//   verified  true  → in PFAS_VERIFIED and the declaration is still valid
+//   expired   true  → in PFAS_VERIFIED but the declaration has expired
 //   flagged   true  → material NAME suggests a fluoropolymer
-//   conflict  true  → flagged AND verified at the same time → re-check!
-//   meta            → the raw pfas object (dates, docRef) or null
+//   conflict  true  → flagged AND in the verified list → re-check!
+//   meta            → the entry (dates, docRef) or null
 // ------------------------------------------------------------------
 function getPfasStatus(mat) {
-    var p = (mat && mat.pfas) ? mat.pfas : null;
-    var flagged = PFAS_NAME_RE.test((mat && mat.name) || '');
-    var verified = false, expired = false, meta = null;
+    var name = (mat && mat.name) ? mat.name : '';
+    var entry = (window.PFAS_VERIFIED && window.PFAS_VERIFIED[name]) || null;
+    var flagged = PFAS_NAME_RE.test(name);
+    var verified = false, expired = false;
 
-    if (p && p.status === 'verified_free') {
-        meta = p;
-        if (p.expiresAt) {
-            var exp = new Date(p.expiresAt);
+    if (entry) {
+        if (entry.expiresAt) {
+            var exp = new Date(entry.expiresAt);
             if (!isNaN(exp.getTime()) && exp < new Date()) expired = true;
             else verified = true;
         } else {
@@ -49,7 +68,7 @@ function getPfasStatus(mat) {
         expired:  expired,
         flagged:  flagged,
         conflict: (verified || expired) && flagged,
-        meta:     meta
+        meta:     entry
     };
 }
 
@@ -59,7 +78,7 @@ function getPfasStatus(mat) {
 function pfasBadgeHTML(mat) {
     var st = getPfasStatus(mat);
     if (st.conflict) {
-        return '<span class="badge" title="Name suggests a fluoropolymer but a PFAS-free badge is set — re-check the documentation" ' +
+        return '<span class="badge" title="Name suggests a fluoropolymer but the material is in the PFAS-free list — re-check the documentation" ' +
             'style="font-size:0.65rem;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5">PFAS conflict</span> ';
     }
     if (st.verified) {
@@ -77,37 +96,24 @@ function pfasBadgeHTML(mat) {
 }
 
 // ------------------------------------------------------------------
-// Admin helper — call from the browser console while logged in as
-// admin to set the badge (Firestore rules must allow YOUR uid only).
-// Usage: setPfasVerified('fb_DOC_ID', '2027-06-12', 'PFAS-decl-xyz.pdf')
+// Admin utility — list declarations expiring within N days.
+// Run pfasExpiryCheck(60) in the browser console to see what needs
+// renewing with the suppliers.
 // ------------------------------------------------------------------
-async function setPfasVerified(firebaseDocId, expiresAt, docRef) {
-    if (!window.communityDB || !window.fbDoc || !window.fbUpdateDoc) {
-        alert('Firestore not connected.'); return;
+function pfasExpiryCheck(withinDays) {
+    var days = withinDays || 60;
+    var now = new Date();
+    var limit = new Date(now.getTime() + days * 86400000);
+    var out = [];
+    for (var name in window.PFAS_VERIFIED) {
+        var e = window.PFAS_VERIFIED[name];
+        if (!e.expiresAt) continue;
+        var exp = new Date(e.expiresAt);
+        if (isNaN(exp.getTime())) continue;
+        if (exp < now)        out.push({ name:name, expiresAt:e.expiresAt, status:'EXPIRED',  docRef:e.docRef||'' });
+        else if (exp <= limit) out.push({ name:name, expiresAt:e.expiresAt, status:'EXPIRING', docRef:e.docRef||'' });
     }
-    try {
-        var ref = window.fbDoc(window.communityDB, 'materials', firebaseDocId);
-        await window.fbUpdateDoc(ref, {
-            pfas: {
-                status: 'verified_free',
-                verifiedBy: 'admin',
-                verifiedAt: new Date().toISOString().slice(0,10),
-                expiresAt: expiresAt || null,
-                docRef: docRef || null
-            }
-        });
-        console.log('PFAS badge set on', firebaseDocId);
-    } catch (e) {
-        // Firestore rules will reject non-admin writes here — by design
-        alert('Write rejected (admin only): ' + e.message);
-    }
-}
-
-async function clearPfasBadge(firebaseDocId) {
-    if (!window.communityDB || !window.fbDoc || !window.fbUpdateDoc) return;
-    try {
-        var ref = window.fbDoc(window.communityDB, 'materials', firebaseDocId);
-        await window.fbUpdateDoc(ref, { pfas: null });
-        console.log('PFAS badge cleared on', firebaseDocId);
-    } catch (e) { alert('Write rejected (admin only): ' + e.message); }
+    if (out.length) console.table(out);
+    else console.log('No PFAS declarations expired or expiring within ' + days + ' days.');
+    return out;
 }
