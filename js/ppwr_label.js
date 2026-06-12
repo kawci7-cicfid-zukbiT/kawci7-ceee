@@ -385,7 +385,7 @@ function assessSubstances(cls) {
 // ------------------------------------------------------------------
 var COUNTRY_RULES = {
   'FR': {
-    flag:'🇫🇷', name:'France', system:'Triman / AGEC',
+    flag:'', name:'France', system:'Triman / AGEC',
     requiresTriman: true,
     note:'The Triman logo is mandatory for products placed on the French market under AGEC (Loi Anti-Gaspillage). It must appear on the primary packaging alongside sorting instructions. This obligation remains in force until the PPWR harmonised pictograms are adopted (expected from August 2028).',
     sorting:{
@@ -397,7 +397,7 @@ var COUNTRY_RULES = {
     additionalItems:['Triman logo on pack', 'Online sorting instructions (consumer-facing URL or QR code)']
   },
   'IT': {
-    flag:'🇮🇹', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
+    flag:'', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
     requiresMaterialCode: true,
     note:'Italian law (D.Lgs. 116/2020, implementing EU Directive 2018/851) requires the material identification code and collection stream to appear on packaging. The code must be referenced against the CONAI material identification system. Labelling must be in Italian.',
     sorting:{
@@ -409,7 +409,7 @@ var COUNTRY_RULES = {
     additionalItems:['CONAI material code on pack', 'Collection stream indication in Italian']
   },
   'DE': {
-    flag:'🇩🇪', name:'Germany', system:'VerpackG / LUCID',
+    flag:'', name:'Germany', system:'VerpackG / LUCID',
     requiresLUCID: true,
     note:'The Verpackungsgesetz (VerpackG) requires all producers placing packaging on the German market to register in the LUCID Packaging Register and contract a dual-system operator (e.g. Der Grüne Punkt, Interseroh). The Grüner Punkt symbol is commercially widespread but not legally mandatory as a pack marking.',
     sorting:{
@@ -421,7 +421,7 @@ var COUNTRY_RULES = {
     additionalItems:['LUCID registration mandatory before placing on market', 'Dual-system contract required']
   },
   'ES': {
-    flag:'🇪🇸', name:'Spain', system:'Ley 7/2022 / Ecoembes',
+    flag:'', name:'Spain', system:'Ley 7/2022 / Ecoembes',
     requiresMaterialInfo: true,
     note:'Spain\'s Residuos y Suelos Contaminados (Ley 7/2022) requires material identification on packaging. The Punto Verde is managed by Ecoembes for light packaging. Marking must follow the Decision 97/129/EC codes currently in force.',
     sorting:{
@@ -433,7 +433,7 @@ var COUNTRY_RULES = {
     additionalItems:['Punto Verde or equivalent producer responsibility scheme', 'Material code on pack recommended']
   },
   'EU2028': {
-    flag:'🇪🇺', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
+    flag:'', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
     note:'PPWR (Regulation (EU) 2025/40) mandates a harmonised labelling system for all packaging placed on the EU single market. The Commission is expected to publish implementing acts specifying the final pictograms and format before the August 2028 transition date. National labels (Triman, CONAI codes, etc.) cannot coexist with the harmonised label after that date.',
     status:'pending',
     additionalItems:['Await Commission implementing act for final pictogram specifications', 'Until then, Decision 97/129/EC marking remains valid (Art. 8(2))']
@@ -688,9 +688,9 @@ function renderPPWRLabel() {
   html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light)">Classification Result — Decision 97/129/EC</div>';
   // Export buttons
   html += '<div style="display:flex;gap:0.45rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ Marking SVG</button>';
-  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ DoC draft</button>';
-  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer">🖨 Full report</button>';
+  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> Marking SVG</button>';
+  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> DoC draft</button>';
+  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer"> Full report</button>';
   html += '</div></div>';
 
   // Big code badge + marking preview + breakdown
@@ -813,9 +813,9 @@ function renderPPWRLabel() {
   // ── Substances of concern — cross-analysis per layer ──────────────
   if (soc) {
     var socCfg = {
-      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'🛡️' },
-      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'🧪' },
-      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'🚩' },
+      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'' },
+      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'⚠️' },
+      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'❗' },
       conflict: { bg:'#fef2f2', bord:'#fca5a5', title:'PFAS data conflict — re-check documentation', icon:'❗' }
     };
     var sc = socCfg[soc.summary] || socCfg.partial;
