@@ -19,19 +19,13 @@
 
 window.PFAS_VERIFIED = {
 
-    // ── EXAMPLES — replace with your real entries ──────────────────
-    // 'Ethy-Lyte HD200': {
-    //     by:         'Admin',
-    //     verifiedAt: '2026-06-12',                      // when you checked the docs
-    //     expiresAt:  '2027-06-12',                      // declaration validity end
-    //     docRef:     'PFAS-decl-SupplierX-HD200.pdf'    // your internal file reference
-    // },
-    // 'Bicor 25MB400': {
-    //     by:         'Admin',
-    //     verifiedAt: '2026-06-12',
-    //     expiresAt:  '2027-12-31',
-    //     docRef:     'PFAS-decl-SupplierY-Bicor.pdf'
-    // },
+   window.PFAS_VERIFIED = {
+    'PET': {
+        by:         'Admin',
+        verifiedAt: '2026-06-12',
+        expiresAt:  '2027-06-12',
+        docRef:     'PFAS-decl-SupplierX-HD200.pdf'
+    },
 
 };
 
