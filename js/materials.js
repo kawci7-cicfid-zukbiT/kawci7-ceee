@@ -1304,14 +1304,15 @@ async function loadExternalMaterialsDB() {
             if(typeof isDismissed === 'function' && isDismissed(em)) return;
             var nameLower = em.name.trim().toLowerCase();
             if(em.firebaseDocId && existingByFirebaseId[em.firebaseDocId]) {
-                var ex = existingByFirebaseId[em.firebaseDocId];
-                if(em.hygroscopicBetaWVTR !== undefined) {
-                    ex.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; ex.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
-                    ex.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   ex.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
-                    ex.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   ex.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
-                }
-                return;
-            }
+    var ex = existingByFirebaseId[em.firebaseDocId];
+    if(em.hygroscopicBetaWVTR !== undefined) {
+        ex.hygroscopicBetaWVTR=em.hygroscopicBetaWVTR; ex.hygroscopicRefRHWVTR=em.hygroscopicRefRHWVTR;
+        ex.hygroscopicBetaOTR=em.hygroscopicBetaOTR;   ex.hygroscopicRefRHOTR=em.hygroscopicRefRHOTR;
+        ex.hygroscopicBetaCO2=em.hygroscopicBetaCO2;   ex.hygroscopicRefRHCO2=em.hygroscopicRefRHCO2;
+    }
+    if(em.pfas !== undefined) ex.pfas = em.pfas;
+    return;
+}
             if(existingByName[nameLower]) {
                 var exN = existingByName[nameLower];
                 if(em.firebaseDocId) exN.firebaseDocId = em.firebaseDocId;
