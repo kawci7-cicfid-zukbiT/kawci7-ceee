@@ -147,7 +147,8 @@ function classifyLaminateForPPWR(layers, materials) {
       polymerW[code.polymer] = (polymerW[code.polymer] || 0) + w;
     }
     layerData.push({ name:mat.name, thick:l.thick, density:density, weight:w,
-                     family:family, code:code });
+                     family:family, code:code,
+                     pfas: (typeof getPfasStatus === 'function') ? getPfasStatus(mat) : null });
   }
 
   if (totalW === 0) return null;
@@ -309,24 +310,73 @@ function assessRecyclability(cls) {
 
 // ------------------------------------------------------------------
 // SUBSTANCES OF CONCERN screening (PPWR Art. 5 — applies 12 Aug 2026)
+// Cross-analysis: name heuristic × admin-verified PFAS-free badge.
+// Per layer, four possible PFAS states:
+//   verified  — admin checked supplier documentation (badge in Firestore)
+//   conflict  — name suggests fluoropolymer BUT badge says PFAS-free
+//   flagged   — name suggests fluoropolymer, no verification
+//   unverified— nothing known; supplier declaration still needed
+// Halogen findings (PVDC/PVC) are independent of the PFAS badge.
 // ------------------------------------------------------------------
 function assessSubstances(cls) {
   if (!cls) return null;
-  var findings = [];
-  var seen = {};
+  var rows = [], halogens = [], seenHal = {};
+  var nVerified = 0, nConflict = 0, nFlagged = 0, nExpired = 0;
+
   for (var i = 0; i < cls.layerData.length; i++) {
-    var name = cls.layerData[i].name || '';
+    var ld = cls.layerData[i];
+    var name = ld.name || '';
+
+    // PFAS state — use attached status if pfas.js is loaded, else name-only fallback
+    var pf = ld.pfas;
+    if (!pf) {
+      var fb = /PVDF|PTFE|FEP|\bPFA\b|FLUORO|PERFLUOR/i.test(name);
+      pf = { verified:false, expired:false, flagged:fb, conflict:false, meta:null };
+    }
+    var state, msg;
+    if (pf.conflict) {
+      state = 'conflict'; nConflict++;
+      msg = 'Layer name suggests a fluoropolymer but a PFAS-free badge is set — re-check the supplier documentation before relying on either.';
+    } else if (pf.flagged) {
+      state = 'flagged'; nFlagged++;
+      msg = 'Fluoropolymer / possible PFAS. PFAS in food-contact packaging are restricted under PPWR Art. 5(5) from 12 August 2026 — obtain a PFAS declaration or substitute the layer.';
+    } else if (pf.verified) {
+      state = 'verified'; nVerified++;
+      msg = 'PFAS-free verified by site admin against supplier documentation' +
+            (pf.meta && pf.meta.verifiedAt ? ' on ' + pf.meta.verifiedAt : '') +
+            (pf.meta && pf.meta.expiresAt  ? ' (valid until ' + pf.meta.expiresAt + ')' : '') + '.';
+    } else if (pf.expired) {
+      state = 'expired'; nExpired++;
+      msg = 'PFAS-free declaration has expired — request an updated declaration from the supplier.';
+    } else {
+      state = 'unverified';
+      msg = 'No verification on record. Request a PFAS declaration from the supplier (coatings and processing aids cannot be detected from the layer name).';
+    }
+    rows.push({ layer:name, state:state, msg:msg });
+
+    // Halogen findings (independent of badge)
     for (var s = 0; s < PPWR_SOC_PATTERNS.length; s++) {
       var pat = PPWR_SOC_PATTERNS[s];
-      if (pat.re.test(name) && !seen[pat.type + name]) {
-        seen[pat.type + name] = true;
-        findings.push({ layer:name, type:pat.type, label:pat.label, msg:pat.msg });
+      if (pat.type !== 'HALOGEN') continue;
+      if (pat.re.test(name) && !seenHal[name + pat.label]) {
+        seenHal[name + pat.label] = true;
+        halogens.push({ layer:name, label:pat.label, msg:pat.msg });
       }
     }
   }
+
+  var total = rows.length;
+  var summary;
+  if (nConflict > 0)                 summary = 'conflict';
+  else if (nFlagged > 0)             summary = 'flagged';
+  else if (nVerified === total)      summary = 'verified';
+  else                               summary = 'partial';
+
   return {
-    findings: findings,
-    clean: findings.length === 0
+    rows: rows, halogens: halogens, summary: summary,
+    nVerified: nVerified, total: total,
+    clean: summary === 'verified',
+    hasIssues: summary === 'flagged' || summary === 'conflict' || halogens.length > 0
   };
 }
 
@@ -538,13 +588,13 @@ function ppwrPrintReport() {
   }
 
   var socHtml = '<h2>3. Substances of concern (PPWR Art. 5 — from 12 Aug 2026)</h2>';
-  if (soc && soc.findings.length) {
-    socHtml += '<ul>';
-    for (var s = 0; s < soc.findings.length; s++)
-      socHtml += '<li><strong>' + soc.findings[s].label + '</strong> (layer: ' + soc.findings[s].layer + ') — ' + soc.findings[s].msg + '</li>';
-    socHtml += '</ul>';
-  } else {
-    socHtml += '<p>No fluoropolymer or halogenated-polymer indicators detected from layer names. Heavy-metals limit (Pb+Cd+Hg+Cr VI &lt; 100 ppm) and PFAS supplier declarations must still be evidenced in the technical file.</p>';
+  if (soc) {
+    socHtml += '<p><strong>PFAS verification: ' + soc.nVerified + ' of ' + soc.total + ' layers verified.</strong></p><ul>';
+    for (var s = 0; s < soc.rows.length; s++)
+      socHtml += '<li><strong>[' + soc.rows[s].state.toUpperCase() + ']</strong> ' + soc.rows[s].layer + ' — ' + soc.rows[s].msg + '</li>';
+    for (var hh = 0; hh < soc.halogens.length; hh++)
+      socHtml += '<li><strong>[HALOGEN]</strong> ' + soc.halogens[hh].layer + ' — ' + soc.halogens[hh].label + ': ' + soc.halogens[hh].msg + '</li>';
+    socHtml += '</ul><p style="font-size:.85rem"><em>VERIFIED status is assigned only by the site administrator after reviewing supplier documentation. Heavy-metals limit (Pb+Cd+Hg+Cr VI &lt; 100 ppm) must be evidenced separately in the technical file.</em></p>';
   }
 
   var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>PPWR Compliance Screening — ' + today + '</title>' +
@@ -760,23 +810,51 @@ function renderPPWRLabel() {
     html += '</div>';
   }
 
-  // ── Substances of concern (new) ───────────────────────────────────
+  // ── Substances of concern — cross-analysis per layer ──────────────
   if (soc) {
-    var socBg = soc.clean ? '#f0fdf4' : '#fef2f2';
-    var socBord = soc.clean ? '#86efac' : '#fca5a5';
-    html += '<div style="background:' + socBg + ';border:1.5px solid ' + socBord + ';border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+    var socCfg = {
+      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'🛡️' },
+      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'🧪' },
+      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'🚩' },
+      conflict: { bg:'#fef2f2', bord:'#fca5a5', title:'PFAS data conflict — re-check documentation', icon:'❗' }
+    };
+    var sc = socCfg[soc.summary] || socCfg.partial;
+    html += '<div style="background:' + sc.bg + ';border:1.5px solid ' + sc.bord + ';border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
     html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.6rem">Substances of Concern — PPWR Art. 5 (applies 12 Aug 2026)</div>';
-    if (soc.clean) {
-      html += '<div style="font-size:0.82rem;color:#166534;line-height:1.55"><strong>🧪 No red flags from layer names.</strong> No fluoropolymer (PFAS) or halogenated-polymer indicators detected. You still need supplier declarations for PFAS in food-contact packs and evidence that heavy metals (Pb+Cd+Hg+Cr&nbsp;VI) stay below 100&nbsp;ppm — keep them in the technical file.</div>';
-    } else {
-      for (var sf = 0; sf < soc.findings.length; sf++) {
-        var f = soc.findings[sf];
-        html += '<div style="margin-bottom:0.6rem">';
-        html += '<div style="font-size:0.82rem;font-weight:800;color:#991b1b">🧪 ' + f.label + ' <span style="font-weight:600;color:#7f1d1d">(layer: ' + f.layer + ')</span></div>';
-        html += '<div style="font-size:0.78rem;color:#7f1d1d;line-height:1.55">' + f.msg + '</div>';
-        html += '</div>';
-      }
+    html += '<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem">';
+    html += '<span style="font-size:1.2rem">' + sc.icon + '</span>';
+    html += '<span style="font-size:0.95rem;font-weight:800;color:var(--text)">' + sc.title + '</span>';
+    html += '<span style="margin-left:auto;font-size:0.7rem;font-weight:700;color:var(--text-light);background:#fff;border:1px solid var(--border);border-radius:20px;padding:0.2rem 0.7rem">' + soc.nVerified + '/' + soc.total + ' layers verified</span>';
+    html += '</div>';
+
+    // Per-layer status rows
+    var stChip = {
+      verified:   { txt:'VERIFIED',   bg:'#dcfce7', clr:'#166534' },
+      conflict:   { txt:'CONFLICT',   bg:'#fee2e2', clr:'#991b1b' },
+      flagged:    { txt:'FLAGGED',    bg:'#fee2e2', clr:'#991b1b' },
+      expired:    { txt:'EXPIRED',    bg:'#fef3c7', clr:'#92400e' },
+      unverified: { txt:'UNVERIFIED', bg:'#f1f5f9', clr:'#475569' }
+    };
+    for (var sr = 0; sr < soc.rows.length; sr++) {
+      var row = soc.rows[sr];
+      var ch  = stChip[row.state] || stChip.unverified;
+      html += '<div style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.45rem">';
+      html += '<span style="flex-shrink:0;font-size:0.6rem;font-weight:800;letter-spacing:0.05em;background:' + ch.bg + ';color:' + ch.clr + ';border-radius:5px;padding:2px 7px;margin-top:0.15rem;white-space:nowrap">' + ch.txt + '</span>';
+      html += '<div style="font-size:0.78rem;line-height:1.5;color:var(--text)"><strong>' + row.layer + '</strong> — <span style="color:var(--text-light)">' + row.msg + '</span></div>';
+      html += '</div>';
     }
+
+    // Halogen findings (independent of PFAS badge)
+    if (soc.halogens.length > 0) {
+      html += '<div style="border-top:1px solid ' + sc.bord + ';margin-top:0.7rem;padding-top:0.7rem">';
+      for (var hf = 0; hf < soc.halogens.length; hf++) {
+        var h = soc.halogens[hf];
+        html += '<div style="font-size:0.78rem;color:#92400e;line-height:1.5;margin-bottom:0.35rem">⚠️ <strong>' + h.label + '</strong> (layer: ' + h.layer + ') — ' + h.msg + '</div>';
+      }
+      html += '</div>';
+    }
+
+    html += '<div style="font-size:0.66rem;color:var(--text-light);margin-top:0.7rem;line-height:1.5;font-style:italic">The <strong>VERIFIED</strong> badge is assigned only by the site administrator after reviewing supplier documentation and certifications; it cannot be self-assigned. Name-based flags are a heuristic — coatings, inks, adhesives and processing aids cannot be detected from layer names. Heavy metals (Pb+Cd+Hg+Cr VI &lt; 100 ppm) must be evidenced separately in the technical file.</div>';
     html += '</div>';
   }
 
@@ -801,12 +879,15 @@ function renderPPWRLabel() {
   html += actionRow('action', 'EU Declaration of Conformity (mandatory from 12 Aug 2026)',
     'Draw up a DoC and technical documentation for this packaging per Art. 38–39 and Annex VII–VIII. Use the <strong>DoC draft</strong> button above as a starting skeleton. Without it the pack cannot be legally placed on the EU market.');
   // 2. Substances of concern
-  if (soc && !soc.clean)
+  if (soc && (soc.summary === 'flagged' || soc.summary === 'conflict'))
     html += actionRow('fail', 'Substances of concern: flags raised',
-      'Layer screening raised the flags shown above. Obtain supplier declarations and resolve before 12 Aug 2026.');
+      'The cross-analysis above raised PFAS flags or conflicts. Obtain supplier declarations and resolve before 12 Aug 2026.');
+  else if (soc && soc.summary === 'verified')
+    html += actionRow('ok', 'Substances of concern: all layers PFAS-verified',
+      'Every layer carries an admin-verified PFAS-free badge. Keep the supplier declarations in the technical file and watch the expiry dates.');
   else
-    html += actionRow('action', 'Substances of concern: evidence needed',
-      'No red flags from layer names, but PFAS supplier declarations (food contact) and heavy-metals evidence (<100 ppm Pb+Cd+Hg+Cr VI) must be in the technical file.');
+    html += actionRow('action', 'Substances of concern: verification incomplete',
+      'Some layers have no PFAS verification on record. Request supplier declarations; heavy-metals evidence (<100 ppm Pb+Cd+Hg+Cr VI) must also be in the technical file.');
   // 3. Material identification
   html += actionRow('ok', 'Material identification: ' + cls.abbr + ' (code ' + cls.code + ')',
     'Mark the pack with the Decision 97/129/EC code shown above — download the <strong>marking SVG</strong> for the artwork. Apply the national sorting rules for each target market below.');
