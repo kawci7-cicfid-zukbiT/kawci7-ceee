@@ -574,6 +574,7 @@ function matCardHTML(m, q) {
     badges += '<span class="badge" style="font-size:0.65rem;background:'+appMeta.bg+';color:'+appMeta.color+';border:1px solid '+appMeta.color+'33">'+appMeta.icon+' '+appMeta.label+'</span> ';
     if(isComm)         badges += '<span class="badge badge-purple" style="font-size:0.65rem">Community</span> ';
     if(verified)       badges += '<span class="badge-verified" title="Verified by ' + _escAttr(verified.by) + '">Verified</span> ';
+    if(typeof pfasBadgeHTML === 'function') badges += pfasBadgeHTML(m);
     if(m.isMetallized) badges += '<span class="badge badge-yellow" style="font-size:0.65rem">Metallized</span> ';
     if(arrOk)          badges += '<span class="badge badge-green" style="font-size:0.65rem">Arrhenius</span> ';
 
@@ -718,6 +719,7 @@ function matApplyFilters() {
         if(fapp && normalizeApplication(m.application) !== fapp) return false;
         if(ftype==='community' && !m.isCommunity) return false;
         if(ftype==='verified'  && !isVerifiedMaterial(m)) return false;
+        if(ftype==='pfasfree'  && !(typeof getPfasStatus==='function' && getPfasStatus(m).verified)) return false;
         if(ftype==='metallized'&& !m.isMetallized) return false;
         if(ftype==='arrhenius' && !Engine.validateArrhenius(m).valid) return false;
         if(q) {
@@ -817,9 +819,10 @@ function renderMaterials() {
                     '<select class="form-input" id="ft-type" onchange="matApplyFilters()" style="font-size:0.78rem">' +
                     '<option value="">All types</option>' +
                     '<option value="community">Community only</option>' +
-                    '<option value="verified">Verified only</option>' +
-                    '<option value="metallized">Metallized only</option>' +
-                    '<option value="arrhenius">Arrhenius ready</option></select></div>' +
+'<option value="verified">Verified only</option>' +
+'<option value="pfasfree">PFAS-free verified</option>' +
+'<option value="metallized">Metallized only</option>' +
+'<option value="arrhenius">Arrhenius ready</option></select></div>' +
             '</div>' +
             '<div id="ft-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>' +
         '</div>' +
