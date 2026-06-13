@@ -770,16 +770,17 @@ function _ppwrStructureBuilder(layers, allMats) {
   h += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.7rem">Packaging Structure</div>';
 
   // ── Mode selector (segmented control) ─────────────────────────────
-  function modeBtn(key, label) {
+  function modeBtn(key, label, onclick) {
     var on = mode === key;
-    return '<button onclick="ppwrSetMode(\'' + key + '\')" style="' +
+    return '<button onclick="' + onclick + '" style="' +
       'flex:1;font-size:0.78rem;font-weight:700;padding:0.5rem 0.6rem;border-radius:8px;cursor:pointer;border:1.5px solid;transition:all 0.15s;' +
       (on ? 'background:var(--primary,#2563eb);color:#fff;border-color:var(--primary,#2563eb)'
           : 'background:#fff;color:var(--text-light);border-color:var(--border)') + '">' + label + '</button>';
   }
   h += '<div style="display:flex;gap:0.5rem;margin-bottom:0.9rem">';
-  h += modeBtn('calculator', '📥 Load from Calculator');
-  h += modeBtn('manual', '✏️ Write structure');
+  // "Load from Calculator" loads immediately (no second click needed)
+  h += modeBtn('calculator', ' From Calculator', 'ppwrLoadFromCalculator()');
+  h += modeBtn('manual', ' Write structure', "ppwrSetMode('manual')");
   h += '</div>';
 
   // ── Current layers list (shared by both modes) ────────────────────
@@ -808,8 +809,8 @@ function _ppwrStructureBuilder(layers, allMats) {
   if (mode === 'calculator') {
     if (calcLayers.length > 0) {
       h += '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary,#2563eb);border-radius:9px;padding:0.8rem 0.9rem">';
-      h += '<div style="font-size:0.78rem;color:var(--text);line-height:1.5;margin-bottom:0.6rem">The Calculator currently has a <strong>' + calcLayers.length + '-layer</strong> structure. Load it here for PPWR classification (barrier values and test conditions are ignored — only family, density and thickness are used).</div>';
-      h += '<button onclick="ppwrLoadFromCalculator()" style="font-size:0.8rem;font-weight:700;padding:0.45rem 1rem;border-radius:8px;border:1.5px solid var(--primary,#2563eb);background:var(--primary,#2563eb);color:#fff;cursor:pointer">↧ Load Calculator structure</button>';
+      h += '<div style="font-size:0.78rem;color:var(--text);line-height:1.5;margin-bottom:0.6rem">Loaded from the Calculator (' + calcLayers.length + ' layers). Barrier values and test conditions are ignored — only family, density and thickness are used. If you change the structure in the Calculator, reload it here.</div>';
+      h += '<button onclick="ppwrLoadFromCalculator()" style="font-size:0.76rem;font-weight:700;padding:0.4rem 0.85rem;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">↻ Reload from Calculator</button>';
       h += '</div>';
     } else {
       h += '<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:9px;padding:0.8rem 0.9rem;font-size:0.8rem;color:#92400e;line-height:1.5">The Calculator has no layer structure yet. Build one in the <strong>Calculator</strong> tab, or switch to <strong>Write structure</strong> to enter the layers here directly.</div>';
@@ -901,12 +902,16 @@ function ppwrClearLayers() {
 }
 
 function ppwrLoadFromCalculator() {
-  if (typeof State === 'undefined' || !State.layers) return;
-  var copied = State.layers
+  if (typeof State === 'undefined') return;
+  State.ppwrMode = 'calculator';
+  var copied = (State.layers || [])
     .filter(function(l){ return l.mid != null && l.thick; })
     .map(function(l){ return { mid: l.mid, thick: l.thick }; });
-  if (copied.length === 0) { alert('The Calculator has no usable layers to load.'); return; }
-  State.ppwrLayers = copied;
+  if (copied.length > 0) {
+    State.ppwrLayers = copied;
+  }
+  // If the Calculator is empty, just switch to calculator mode and show the
+  // guidance panel — don't block with an alert.
   _ppwrSaveLayers();
   renderPPWRLabel();
 }
@@ -1098,9 +1103,9 @@ function renderPPWRLabel() {
   // ── Substances of concern — cross-analysis per layer ──────────────
   if (soc) {
     var socCfg = {
-      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'🛡️' },
-      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'🧪' },
-      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'🚩' },
+      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'' },
+      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'⚠️' },
+      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'❗' },
       conflict: { bg:'#fef2f2', bord:'#fca5a5', title:'PFAS data conflict — re-check documentation', icon:'❗' }
     };
     var sc = socCfg[soc.summary] || socCfg.partial;
