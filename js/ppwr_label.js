@@ -2,7 +2,6 @@
 // ppwr_label.js  —  PPWR / Decision 97/129/EC Label & Compliance Module
 // Tab: State.tab === 'ppwr-label'
 // Renders into #app-content
-//
 // v2 — CHANGELOG vs v1:
 //  FIX  Composite codes corrected per Decision 97/129/EC Annex VII:
 //       plastic+alu = 90 (was wrongly 84), paper+plastic = 81,
