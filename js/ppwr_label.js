@@ -404,7 +404,7 @@ var COUNTRY_RULES = {
     additionalItems:['Triman logo on pack', 'Online sorting instructions (consumer-facing URL or QR code)']
   },
   'IT': {
-    flag:'🇮🇹', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
+    flag:'', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
     requiresMaterialCode: true,
     note:'Italian law (D.Lgs. 116/2020, implementing EU Directive 2018/851) requires the material identification code and collection stream to appear on packaging. The code must be referenced against the CONAI material identification system. Labelling must be in Italian.',
     sorting:{
@@ -416,7 +416,7 @@ var COUNTRY_RULES = {
     additionalItems:['CONAI material code on pack', 'Collection stream indication in Italian']
   },
   'DE': {
-    flag:'🇩🇪', name:'Germany', system:'VerpackG / LUCID',
+    flag:'', name:'Germany', system:'VerpackG / LUCID',
     requiresLUCID: true,
     note:'The Verpackungsgesetz (VerpackG) requires all producers placing packaging on the German market to register in the LUCID Packaging Register and contract a dual-system operator (e.g. Der Grüne Punkt, Interseroh). The Grüner Punkt symbol is commercially widespread but not legally mandatory as a pack marking.',
     sorting:{
@@ -428,7 +428,7 @@ var COUNTRY_RULES = {
     additionalItems:['LUCID registration mandatory before placing on market', 'Dual-system contract required']
   },
   'ES': {
-    flag:'🇪🇸', name:'Spain', system:'Ley 7/2022 / Ecoembes',
+    flag:'', name:'Spain', system:'Ley 7/2022 / Ecoembes',
     requiresMaterialInfo: true,
     note:'Spain\'s Residuos y Suelos Contaminados (Ley 7/2022) requires material identification on packaging. The Punto Verde is managed by Ecoembes for light packaging. Marking must follow the Decision 97/129/EC codes currently in force.',
     sorting:{
@@ -440,7 +440,7 @@ var COUNTRY_RULES = {
     additionalItems:['Punto Verde or equivalent producer responsibility scheme', 'Material code on pack recommended']
   },
   'EU2028': {
-    flag:'🇪🇺', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
+    flag:'', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
     note:'PPWR (Regulation (EU) 2025/40) mandates a harmonised labelling system for all packaging placed on the EU single market. The Commission is expected to publish implementing acts specifying the final pictograms and format before the August 2028 transition date. National labels (Triman, CONAI codes, etc.) cannot coexist with the harmonised label after that date.',
     status:'pending',
     additionalItems:['Await Commission implementing act for final pictogram specifications', 'Until then, Decision 97/129/EC marking remains valid (Art. 8(2))']
@@ -1075,7 +1075,7 @@ function renderPPWRLabel() {
   }
 
   if (cls.note) {
-    html += '<div style="margin-top:0.75rem;background:#fef9ec;border:1px solid #fde68a;border-radius:6px;padding:0.55rem 0.75rem;font-size:0.75rem;color:#92400e;line-height:1.5">ℹ️ ' + cls.note + '</div>';
+    html += '<div style="margin-top:0.75rem;background:#fef9ec;border:1px solid #fde68a;border-radius:6px;padding:0.55rem 0.75rem;font-size:0.75rem;color:#92400e;line-height:1.5"> ' + cls.note + '</div>';
   }
   html += '</div>'; // weight breakdown
   html += '</div>'; // flex row
