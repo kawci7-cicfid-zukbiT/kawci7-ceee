@@ -2,6 +2,7 @@
 // ppwr_label.js  —  PPWR / Decision 97/129/EC Label & Compliance Module
 // Tab: State.tab === 'ppwr-label'
 // Renders into #app-content
+//
 // v2 — CHANGELOG vs v1:
 //  FIX  Composite codes corrected per Decision 97/129/EC Annex VII:
 //       plastic+alu = 90 (was wrongly 84), paper+plastic = 81,
@@ -756,20 +757,32 @@ var PPWR_FAMILY_OPTIONS = [
 ];
 
 // ------------------------------------------------------------------
-// Structure builder UI — add layers by family OR by existing material
+// Structure builder UI — two modes:
+//   'calculator' → load the structure from the Calculator tab
+//   'manual'     → Calculator-style add row (material + thickness + Add)
 // ------------------------------------------------------------------
 function _ppwrStructureBuilder(layers, allMats) {
+  var mode = (typeof State !== 'undefined' && State.ppwrMode) ? State.ppwrMode : 'manual';
+  var calcLayers = (typeof State !== 'undefined' && State.layers)
+    ? State.layers.filter(function(l){ return l.mid != null && l.thick; }) : [];
+
   var h = '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.7rem">';
-  h += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light)">Packaging Structure</div>';
-  // Load-from-Calculator (only if the Calculator has a structure)
-  var calcLayers = (typeof State !== 'undefined' && State.layers) ? State.layers.filter(function(l){ return l.mid != null; }) : [];
-  if (calcLayers.length > 0) {
-    h += '<button onclick="ppwrLoadFromCalculator()" style="font-size:0.7rem;font-weight:700;padding:0.3rem 0.7rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">↧ Load from Calculator</button>';
+  h += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.7rem">Packaging Structure</div>';
+
+  // ── Mode selector (segmented control) ─────────────────────────────
+  function modeBtn(key, label) {
+    var on = mode === key;
+    return '<button onclick="ppwrSetMode(\'' + key + '\')" style="' +
+      'flex:1;font-size:0.78rem;font-weight:700;padding:0.5rem 0.6rem;border-radius:8px;cursor:pointer;border:1.5px solid;transition:all 0.15s;' +
+      (on ? 'background:var(--primary,#2563eb);color:#fff;border-color:var(--primary,#2563eb)'
+          : 'background:#fff;color:var(--text-light);border-color:var(--border)') + '">' + label + '</button>';
   }
+  h += '<div style="display:flex;gap:0.5rem;margin-bottom:0.9rem">';
+  h += modeBtn('calculator', '📥 Load from Calculator');
+  h += modeBtn('manual', '✏️ Write structure');
   h += '</div>';
 
-  // Current layers list
+  // ── Current layers list (shared by both modes) ────────────────────
   if (layers.length > 0) {
     h += '<div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.8rem">';
     for (var i = 0; i < layers.length; i++) {
@@ -789,37 +802,49 @@ function _ppwrStructureBuilder(layers, allMats) {
     }
     h += '</div>';
     h += '<button onclick="ppwrClearLayers()" style="font-size:0.7rem;font-weight:600;color:var(--danger,#dc2626);background:none;border:none;cursor:pointer;padding:0;margin-bottom:0.7rem">Clear all layers</button>';
-  } else {
-    h += '<div style="font-size:0.8rem;color:var(--text-light);font-style:italic;margin-bottom:0.8rem">No layers yet. Add them below — pick a family (or a material from your database) and a thickness.</div>';
   }
 
-  // Add-layer row
-  var famOpts = PPWR_FAMILY_OPTIONS.map(function(f){ return '<option value="' + f.key + '">' + f.label + '</option>'; }).join('');
-  var matOpts = '<option value="">— or pick a material —</option>';
-  if (allMats && allMats.length) {
-    var sorted = allMats.slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
-    for (var m = 0; m < sorted.length; m++) {
-      matOpts += '<option value="' + String(sorted[m].id) + '">' + (sorted[m].name || '?') + (sorted[m].family ? ' [' + sorted[m].family + ']' : '') + '</option>';
+  // ── Mode-specific input area ───────────────────────────────────────
+  if (mode === 'calculator') {
+    if (calcLayers.length > 0) {
+      h += '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary,#2563eb);border-radius:9px;padding:0.8rem 0.9rem">';
+      h += '<div style="font-size:0.78rem;color:var(--text);line-height:1.5;margin-bottom:0.6rem">The Calculator currently has a <strong>' + calcLayers.length + '-layer</strong> structure. Load it here for PPWR classification (barrier values and test conditions are ignored — only family, density and thickness are used).</div>';
+      h += '<button onclick="ppwrLoadFromCalculator()" style="font-size:0.8rem;font-weight:700;padding:0.45rem 1rem;border-radius:8px;border:1.5px solid var(--primary,#2563eb);background:var(--primary,#2563eb);color:#fff;cursor:pointer">↧ Load Calculator structure</button>';
+      h += '</div>';
+    } else {
+      h += '<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:9px;padding:0.8rem 0.9rem;font-size:0.8rem;color:#92400e;line-height:1.5">The Calculator has no layer structure yet. Build one in the <strong>Calculator</strong> tab, or switch to <strong>Write structure</strong> to enter the layers here directly.</div>';
     }
+  } else {
+    // Manual — Calculator-style add row: material + thickness + Add layer
+    // One material dropdown with two groups: generic families + DB materials.
+    var famOpts = PPWR_FAMILY_OPTIONS.map(function(f){
+      return '<option value="fam:' + f.key + '">' + f.label + '</option>';
+    }).join('');
+    var matOpts = '';
+    if (allMats && allMats.length) {
+      var sorted = allMats.slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+      for (var m = 0; m < sorted.length; m++) {
+        matOpts += '<option value="mat:' + String(sorted[m].id) + '">' + (sorted[m].name || '?') + (sorted[m].family ? ' [' + sorted[m].family + ']' : '') + '</option>';
+      }
+    }
+    h += '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary,#2563eb);border-radius:9px;padding:0.7rem 0.85rem">';
+    h += '<div style="font-size:0.68rem;font-weight:700;color:var(--primary,#2563eb);margin-bottom:0.5rem">+ Add layer</div>';
+    h += '<div style="display:grid;grid-template-columns:2.4fr 0.9fr auto;gap:0.5rem;align-items:end">';
+    // Material select (with generic families + database materials)
+    h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Material</label>';
+    h += '<select id="ppwr-new-mat" class="form-input" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%">';
+    h += '<optgroup label="Generic families">' + famOpts + '</optgroup>';
+    if (matOpts) h += '<optgroup label="Database materials">' + matOpts + '</optgroup>';
+    h += '</select></div>';
+    // Thickness
+    h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Thickness (µm)</label>';
+    h += '<input id="ppwr-new-thick" type="number" step="any" min="0" class="form-input" placeholder="12" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%"></div>';
+    // Add button
+    h += '<button onclick="ppwrAddLayer()" style="font-size:0.78rem;font-weight:700;padding:0.4rem 0.9rem;border-radius:7px;border:1.5px solid var(--primary,#2563eb);background:var(--primary,#2563eb);color:#fff;cursor:pointer;white-space:nowrap">Add layer</button>';
+    h += '</div>';
+    h += '<div style="font-size:0.64rem;color:var(--text-light);margin-top:0.4rem">Pick a database material to reuse its exact name and density, or a generic family for materials you don\'t have stored. No barrier values or test conditions are needed for PPWR.</div>';
+    h += '</div>';
   }
-
-  h += '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary,#2563eb);border-radius:9px;padding:0.7rem 0.85rem">';
-  h += '<div style="font-size:0.68rem;font-weight:700;color:var(--primary,#2563eb);margin-bottom:0.5rem">+ Add layer</div>';
-  h += '<div style="display:grid;grid-template-columns:1.3fr 1.3fr 0.8fr auto;gap:0.5rem;align-items:end">';
-  // Family select
-  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Family</label>';
-  h += '<select id="ppwr-new-family" class="form-input" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%">' + famOpts + '</select></div>';
-  // Material select (overrides family if chosen)
-  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Material (optional)</label>';
-  h += '<select id="ppwr-new-mat" class="form-input" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%">' + matOpts + '</select></div>';
-  // Thickness
-  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">µm</label>';
-  h += '<input id="ppwr-new-thick" type="number" step="any" min="0" class="form-input" placeholder="12" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%"></div>';
-  // Add button
-  h += '<button onclick="ppwrAddLayer()" style="font-size:0.78rem;font-weight:700;padding:0.4rem 0.9rem;border-radius:7px;border:1.5px solid var(--primary,#2563eb);background:var(--primary,#2563eb);color:#fff;cursor:pointer;white-space:nowrap">Add</button>';
-  h += '</div>';
-  h += '<div style="font-size:0.64rem;color:var(--text-light);margin-top:0.4rem">Pick a material to reuse its exact name and density, or just choose a family for a quick classification. No barrier values or test conditions are needed for PPWR.</div>';
-  h += '</div>';
 
   h += '</div>';
   return h;
@@ -834,20 +859,26 @@ function _ppwrSaveLayers() {
   }
 }
 
+function ppwrSetMode(mode) {
+  if (typeof State === 'undefined') return;
+  State.ppwrMode = mode;
+  _ppwrSaveLayers();
+  renderPPWRLabel();
+}
+
 function ppwrAddLayer() {
   if (typeof State === 'undefined') return;
   if (!State.ppwrLayers) State.ppwrLayers = [];
   var matSel  = document.getElementById('ppwr-new-mat');
-  var famSel  = document.getElementById('ppwr-new-family');
   var thickEl = document.getElementById('ppwr-new-thick');
   var thick = parseFloat(thickEl ? thickEl.value : '');
   if (isNaN(thick) || thick <= 0) { alert('Enter a thickness in µm (greater than 0).'); return; }
 
-  var midVal = matSel ? matSel.value : '';
-  if (midVal) {
-    State.ppwrLayers.push({ mid: midVal, thick: thick });   // existing material
+  var val = matSel ? matSel.value : '';
+  if (val.indexOf('mat:') === 0) {
+    State.ppwrLayers.push({ mid: val.slice(4), thick: thick });          // database material
   } else {
-    var fam = famSel ? famSel.value : 'Other';
+    var fam = val.indexOf('fam:') === 0 ? val.slice(4) : 'Other';        // generic family
     var labelMap = {}; PPWR_FAMILY_OPTIONS.forEach(function(f){ labelMap[f.key] = f.label; });
     State.ppwrLayers.push({ mid: null, family: fam, name: (labelMap[fam] || fam), thick: thick });
   }
