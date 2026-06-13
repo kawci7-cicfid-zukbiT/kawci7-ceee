@@ -133,8 +133,15 @@ function classifyLaminateForPPWR(layers, materials) {
   for (var i = 0; i < layers.length; i++) {
     var l   = layers[i];
     var mat = null;
-    for (var j = 0; j < materials.length; j++) {
-      if (String(materials[j].id) === String(l.mid)) { mat = materials[j]; break; }
+    if (l.mid != null) {
+      for (var j = 0; j < materials.length; j++) {
+        if (String(materials[j].id) === String(l.mid)) { mat = materials[j]; break; }
+      }
+    }
+    // Synthetic material for a bare-family layer (PPWR needs only family/density/thickness)
+    if (!mat && (l.family || l.name)) {
+      mat = { name: l.name || l.family, family: l.family || l.name,
+              density: l.density || null, pfas: l.pfas || null };
     }
     if (!mat || !l.thick) continue;
     var density  = _ppwrDensity(mat);
@@ -385,7 +392,7 @@ function assessSubstances(cls) {
 // ------------------------------------------------------------------
 var COUNTRY_RULES = {
   'FR': {
-    flag:'', name:'France', system:'Triman / AGEC',
+    flag:'🇫🇷', name:'France', system:'Triman / AGEC',
     requiresTriman: true,
     note:'The Triman logo is mandatory for products placed on the French market under AGEC (Loi Anti-Gaspillage). It must appear on the primary packaging alongside sorting instructions. This obligation remains in force until the PPWR harmonised pictograms are adopted (expected from August 2028).',
     sorting:{
@@ -397,7 +404,7 @@ var COUNTRY_RULES = {
     additionalItems:['Triman logo on pack', 'Online sorting instructions (consumer-facing URL or QR code)']
   },
   'IT': {
-    flag:'', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
+    flag:'🇮🇹', name:'Italy', system:'D.Lgs. 116/2020 / CONAI',
     requiresMaterialCode: true,
     note:'Italian law (D.Lgs. 116/2020, implementing EU Directive 2018/851) requires the material identification code and collection stream to appear on packaging. The code must be referenced against the CONAI material identification system. Labelling must be in Italian.',
     sorting:{
@@ -409,7 +416,7 @@ var COUNTRY_RULES = {
     additionalItems:['CONAI material code on pack', 'Collection stream indication in Italian']
   },
   'DE': {
-    flag:'', name:'Germany', system:'VerpackG / LUCID',
+    flag:'🇩🇪', name:'Germany', system:'VerpackG / LUCID',
     requiresLUCID: true,
     note:'The Verpackungsgesetz (VerpackG) requires all producers placing packaging on the German market to register in the LUCID Packaging Register and contract a dual-system operator (e.g. Der Grüne Punkt, Interseroh). The Grüner Punkt symbol is commercially widespread but not legally mandatory as a pack marking.',
     sorting:{
@@ -421,7 +428,7 @@ var COUNTRY_RULES = {
     additionalItems:['LUCID registration mandatory before placing on market', 'Dual-system contract required']
   },
   'ES': {
-    flag:'', name:'Spain', system:'Ley 7/2022 / Ecoembes',
+    flag:'🇪🇸', name:'Spain', system:'Ley 7/2022 / Ecoembes',
     requiresMaterialInfo: true,
     note:'Spain\'s Residuos y Suelos Contaminados (Ley 7/2022) requires material identification on packaging. The Punto Verde is managed by Ecoembes for light packaging. Marking must follow the Decision 97/129/EC codes currently in force.',
     sorting:{
@@ -433,12 +440,112 @@ var COUNTRY_RULES = {
     additionalItems:['Punto Verde or equivalent producer responsibility scheme', 'Material code on pack recommended']
   },
   'EU2028': {
-    flag:'', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
+    flag:'🇪🇺', name:'All EU (from 12 August 2028)', system:'PPWR Harmonised',
     note:'PPWR (Regulation (EU) 2025/40) mandates a harmonised labelling system for all packaging placed on the EU single market. The Commission is expected to publish implementing acts specifying the final pictograms and format before the August 2028 transition date. National labels (Triman, CONAI codes, etc.) cannot coexist with the harmonised label after that date.',
     status:'pending',
     additionalItems:['Await Commission implementing act for final pictogram specifications', 'Until then, Decision 97/129/EC marking remains valid (Art. 8(2))']
   }
 };
+
+// ------------------------------------------------------------------
+// CUSTOM STRUCTURE for PPWR analysis (independent from the Calculator)
+// PPWR classification needs only family + thickness + density — barrier
+// data and test conditions are irrelevant. This lets users analyse any
+// structure even when materials lack compatible test conditions.
+// ------------------------------------------------------------------
+var PPWR_GENERIC_MATERIALS = [
+  { key:'PET',   label:'PET' },
+  { key:'HDPE',  label:'HDPE' },
+  { key:'LDPE',  label:'LDPE' },
+  { key:'LLDPE', label:'LLDPE' },
+  { key:'PP',    label:'PP (cast)' },
+  { key:'BOPP',  label:'BOPP' },
+  { key:'PS',    label:'PS' },
+  { key:'PA',    label:'PA (Nylon)' },
+  { key:'EVOH',  label:'EVOH' },
+  { key:'PLA',   label:'PLA' },
+  { key:'PVC',   label:'PVC' },
+  { key:'PVDC',  label:'PVDC' },
+  { key:'AL',    label:'Aluminium foil' },
+  { key:'Paper', label:'Paper / board' },
+  { key:'Other', label:'Other plastic' }
+];
+
+function _ppwrGenericMat(key, idx) {
+  var meta = null;
+  for (var i = 0; i < PPWR_GENERIC_MATERIALS.length; i++)
+    if (PPWR_GENERIC_MATERIALS[i].key === key) { meta = PPWR_GENERIC_MATERIALS[i]; break; }
+  if (!meta) meta = { key:'Other', label:'Other plastic' };
+  var dKey = meta.key === 'AL' ? 'ALU' : meta.key;
+  return {
+    id: 'gen_' + meta.key + '_' + idx,
+    name: meta.label + ' (generic)',
+    family: meta.key,
+    density: _PPWR_DENSITY[dKey] || 1000
+  };
+}
+
+function _ppwrGetSource() {
+  return (typeof State !== 'undefined' && State.ppwrSource) ? State.ppwrSource : 'calc';
+}
+function _ppwrCustomLayers() {
+  if (typeof State === 'undefined') return [];
+  if (!State.ppwrCustomLayers) State.ppwrCustomLayers = [];
+  return State.ppwrCustomLayers;
+}
+function _ppwrSaveState() {
+  if (typeof DB !== 'undefined' && typeof DB.saveState === 'function') DB.saveState(State);
+}
+function ppwrSetSource(src) {
+  if (typeof State === 'undefined') return;
+  State.ppwrSource = src;
+  _ppwrSaveState(); renderPPWRLabel();
+}
+function ppwrAddLayer() {
+  _ppwrCustomLayers().push({ sel:'gen:LDPE', thick:50 });
+  _ppwrSaveState(); renderPPWRLabel();
+}
+function ppwrRemoveLayer(i) {
+  _ppwrCustomLayers().splice(i, 1);
+  _ppwrSaveState(); renderPPWRLabel();
+}
+function ppwrLayerChanged(i) {
+  var arr = _ppwrCustomLayers(); if (!arr[i]) return;
+  var s = document.getElementById('ppwr-l-sel-' + i);
+  var t = document.getElementById('ppwr-l-thick-' + i);
+  if (s) arr[i].sel = s.value;
+  if (t) arr[i].thick = parseFloat(t.value) || 0;
+  _ppwrSaveState(); renderPPWRLabel();
+}
+
+// Resolve the active structure into (layers, materials) for classification
+function _ppwrResolveStructure() {
+  var src = _ppwrGetSource();
+  if (src === 'calc') {
+    return {
+      layers:    (typeof State !== 'undefined' && State.layers) ? State.layers : [],
+      materials: (typeof DB    !== 'undefined' && DB.materials) ? DB.materials : []
+    };
+  }
+  var layers = [], mats = [];
+  var custom = _ppwrCustomLayers();
+  var dbMats = (typeof DB !== 'undefined' && DB.materials) ? DB.materials : [];
+  for (var i = 0; i < custom.length; i++) {
+    var e = custom[i];
+    if (!e || !(e.thick > 0)) continue;
+    var sel = String(e.sel || '');
+    if (sel.indexOf('db:') === 0) {
+      var id = sel.slice(3), m = null;
+      for (var j = 0; j < dbMats.length; j++)
+        if (String(dbMats[j].id) === id) { m = dbMats[j]; break; }
+      if (m) { mats.push(m); layers.push({ mid:m.id, thick:e.thick }); }
+    } else if (sel.indexOf('gen:') === 0) {
+      var g = _ppwrGenericMat(sel.slice(4), i);
+      mats.push(g); layers.push({ mid:g.id, thick:e.thick });
+    }
+  }
+  return { layers:layers, materials:mats };
+}
 
 // ------------------------------------------------------------------
 // Deadline countdown
@@ -632,12 +739,157 @@ function ppwrPrintReport() {
 }
 
 // ------------------------------------------------------------------
+// Family options for the PPWR structure builder (map cleanly to codes)
+// ------------------------------------------------------------------
+var PPWR_FAMILY_OPTIONS = [
+  { key:'PET',   label:'PET / polyester' },
+  { key:'PE',    label:'PE (LDPE/LLDPE/HDPE)' },
+  { key:'PP',    label:'PP / BOPP / CPP' },
+  { key:'EVOH',  label:'EVOH (barrier)' },
+  { key:'PA',    label:'PA / nylon (barrier)' },
+  { key:'PVDC',  label:'PVDC (barrier)' },
+  { key:'PVC',   label:'PVC' },
+  { key:'PS',    label:'PS' },
+  { key:'PLA',   label:'PLA (compostable)' },
+  { key:'AL',    label:'Aluminium foil' },
+  { key:'Paper', label:'Paper / board' },
+  { key:'Other', label:'Other plastic' }
+];
+
+// ------------------------------------------------------------------
+// Structure builder UI — add layers by family OR by existing material
+// ------------------------------------------------------------------
+function _ppwrStructureBuilder(layers, allMats) {
+  var h = '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:1.1rem 1.4rem;margin-bottom:1.25rem">';
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.7rem">';
+  h += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light)">Packaging Structure</div>';
+  // Load-from-Calculator (only if the Calculator has a structure)
+  var calcLayers = (typeof State !== 'undefined' && State.layers) ? State.layers.filter(function(l){ return l.mid != null; }) : [];
+  if (calcLayers.length > 0) {
+    h += '<button onclick="ppwrLoadFromCalculator()" style="font-size:0.7rem;font-weight:700;padding:0.3rem 0.7rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">↧ Load from Calculator</button>';
+  }
+  h += '</div>';
+
+  // Current layers list
+  if (layers.length > 0) {
+    h += '<div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.8rem">';
+    for (var i = 0; i < layers.length; i++) {
+      var l = layers[i];
+      var label = l.name || l.family || '—';
+      if (l.mid != null && allMats) {
+        for (var j = 0; j < allMats.length; j++) {
+          if (String(allMats[j].id) === String(l.mid)) { label = allMats[j].name; break; }
+        }
+      }
+      h += '<div style="display:flex;align-items:center;gap:0.6rem;background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:0.4rem 0.7rem">';
+      h += '<span style="font-size:0.66rem;font-weight:700;color:var(--text-light);font-family:monospace;width:18px">' + (i+1) + '</span>';
+      h += '<span style="flex:1;font-size:0.82rem;font-weight:500;color:var(--text)">' + label + '</span>';
+      h += '<span style="font-size:0.78rem;color:var(--text-light);font-variant-numeric:tabular-nums">' + l.thick + ' µm</span>';
+      h += '<button onclick="ppwrRemoveLayer(' + i + ')" style="border:none;background:none;color:var(--danger,#dc2626);cursor:pointer;font-size:1rem;line-height:1;padding:0 0.2rem" title="Remove layer">×</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+    h += '<button onclick="ppwrClearLayers()" style="font-size:0.7rem;font-weight:600;color:var(--danger,#dc2626);background:none;border:none;cursor:pointer;padding:0;margin-bottom:0.7rem">Clear all layers</button>';
+  } else {
+    h += '<div style="font-size:0.8rem;color:var(--text-light);font-style:italic;margin-bottom:0.8rem">No layers yet. Add them below — pick a family (or a material from your database) and a thickness.</div>';
+  }
+
+  // Add-layer row
+  var famOpts = PPWR_FAMILY_OPTIONS.map(function(f){ return '<option value="' + f.key + '">' + f.label + '</option>'; }).join('');
+  var matOpts = '<option value="">— or pick a material —</option>';
+  if (allMats && allMats.length) {
+    var sorted = allMats.slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    for (var m = 0; m < sorted.length; m++) {
+      matOpts += '<option value="' + String(sorted[m].id) + '">' + (sorted[m].name || '?') + (sorted[m].family ? ' [' + sorted[m].family + ']' : '') + '</option>';
+    }
+  }
+
+  h += '<div style="background:var(--primary-light,#eff6ff);border:1px dashed var(--primary,#2563eb);border-radius:9px;padding:0.7rem 0.85rem">';
+  h += '<div style="font-size:0.68rem;font-weight:700;color:var(--primary,#2563eb);margin-bottom:0.5rem">+ Add layer</div>';
+  h += '<div style="display:grid;grid-template-columns:1.3fr 1.3fr 0.8fr auto;gap:0.5rem;align-items:end">';
+  // Family select
+  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Family</label>';
+  h += '<select id="ppwr-new-family" class="form-input" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%">' + famOpts + '</select></div>';
+  // Material select (overrides family if chosen)
+  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">Material (optional)</label>';
+  h += '<select id="ppwr-new-mat" class="form-input" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%">' + matOpts + '</select></div>';
+  // Thickness
+  h += '<div><label style="font-size:0.64rem;color:var(--text-light);display:block;margin-bottom:2px">µm</label>';
+  h += '<input id="ppwr-new-thick" type="number" step="any" min="0" class="form-input" placeholder="12" style="font-size:0.78rem;padding:0.35rem 0.5rem;width:100%"></div>';
+  // Add button
+  h += '<button onclick="ppwrAddLayer()" style="font-size:0.78rem;font-weight:700;padding:0.4rem 0.9rem;border-radius:7px;border:1.5px solid var(--primary,#2563eb);background:var(--primary,#2563eb);color:#fff;cursor:pointer;white-space:nowrap">Add</button>';
+  h += '</div>';
+  h += '<div style="font-size:0.64rem;color:var(--text-light);margin-top:0.4rem">Pick a material to reuse its exact name and density, or just choose a family for a quick classification. No barrier values or test conditions are needed for PPWR.</div>';
+  h += '</div>';
+
+  h += '</div>';
+  return h;
+}
+
+// ------------------------------------------------------------------
+// Structure builder handlers
+// ------------------------------------------------------------------
+function _ppwrSaveLayers() {
+  if (typeof DB !== 'undefined' && typeof DB.saveState === 'function' && typeof State !== 'undefined') {
+    DB.saveState(State);
+  }
+}
+
+function ppwrAddLayer() {
+  if (typeof State === 'undefined') return;
+  if (!State.ppwrLayers) State.ppwrLayers = [];
+  var matSel  = document.getElementById('ppwr-new-mat');
+  var famSel  = document.getElementById('ppwr-new-family');
+  var thickEl = document.getElementById('ppwr-new-thick');
+  var thick = parseFloat(thickEl ? thickEl.value : '');
+  if (isNaN(thick) || thick <= 0) { alert('Enter a thickness in µm (greater than 0).'); return; }
+
+  var midVal = matSel ? matSel.value : '';
+  if (midVal) {
+    State.ppwrLayers.push({ mid: midVal, thick: thick });   // existing material
+  } else {
+    var fam = famSel ? famSel.value : 'Other';
+    var labelMap = {}; PPWR_FAMILY_OPTIONS.forEach(function(f){ labelMap[f.key] = f.label; });
+    State.ppwrLayers.push({ mid: null, family: fam, name: (labelMap[fam] || fam), thick: thick });
+  }
+  _ppwrSaveLayers();
+  renderPPWRLabel();
+}
+
+function ppwrRemoveLayer(idx) {
+  if (typeof State === 'undefined' || !State.ppwrLayers) return;
+  State.ppwrLayers.splice(idx, 1);
+  _ppwrSaveLayers();
+  renderPPWRLabel();
+}
+
+function ppwrClearLayers() {
+  if (typeof State === 'undefined') return;
+  State.ppwrLayers = [];
+  _ppwrSaveLayers();
+  renderPPWRLabel();
+}
+
+function ppwrLoadFromCalculator() {
+  if (typeof State === 'undefined' || !State.layers) return;
+  var copied = State.layers
+    .filter(function(l){ return l.mid != null && l.thick; })
+    .map(function(l){ return { mid: l.mid, thick: l.thick }; });
+  if (copied.length === 0) { alert('The Calculator has no usable layers to load.'); return; }
+  State.ppwrLayers = copied;
+  _ppwrSaveLayers();
+  renderPPWRLabel();
+}
+
+// ------------------------------------------------------------------
 // Render
 // ------------------------------------------------------------------
 function renderPPWRLabel() {
   var c = document.getElementById('app-content'); if (!c) return;
 
-  var layers  = (typeof State !== 'undefined' && State.layers)   ? State.layers   : [];
+  // PPWR uses its OWN layer list (no barrier values / test conditions needed).
+  if (typeof State !== 'undefined' && !State.ppwrLayers) State.ppwrLayers = [];
+  var layers  = (typeof State !== 'undefined' && State.ppwrLayers) ? State.ppwrLayers : [];
   var allMats = (typeof DB    !== 'undefined' && DB.materials)    ? DB.materials   : [];
   var selMkts = (typeof State !== 'undefined' && State.ppwrMkts) ? State.ppwrMkts : ['FR','IT','DE','ES','EU2028'];
 
@@ -675,9 +927,12 @@ function renderPPWRLabel() {
   }
   html += '</div>';
 
-  // ── No laminate guard ─────────────────────────────────────────────
+  // ── Structure builder (PPWR-native — no test conditions needed) ───
+  html += _ppwrStructureBuilder(layers, allMats);
+
+  // ── No layers yet → builder + methodology only ────────────────────
   if (!cls) {
-    html += '<div class="card"><div class="alert alert-info" style="margin:0">No laminate configured. Go to the <strong>Calculator</strong> tab, define a layer structure, then return here for the classification.</div></div>';
+    html += '<div class="card"><div class="alert alert-info" style="margin:0">Add at least one layer above to get the PPWR classification. You only need the material family and thickness — no barrier values or test conditions.</div></div>';
     html += _ppwrMethodology();
     html += '</div>'; c.innerHTML = html; return;
   }
@@ -688,9 +943,9 @@ function renderPPWRLabel() {
   html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light)">Classification Result — Decision 97/129/EC</div>';
   // Export buttons
   html += '<div style="display:flex;gap:0.45rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> Marking SVG</button>';
-  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> DoC draft</button>';
-  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer"> Full report</button>';
+  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ Marking SVG</button>';
+  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ DoC draft</button>';
+  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer">🖨 Full report</button>';
   html += '</div></div>';
 
   // Big code badge + marking preview + breakdown
@@ -813,9 +1068,9 @@ function renderPPWRLabel() {
   // ── Substances of concern — cross-analysis per layer ──────────────
   if (soc) {
     var socCfg = {
-      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'' },
-      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'⚠️' },
-      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'❗' },
+      verified: { bg:'#f0fdf4', bord:'#86efac', title:'PFAS-free — all layers verified',           icon:'🛡️' },
+      partial:  { bg:'#fffbeb', bord:'#fcd34d', title:'PFAS status incomplete — verification needed', icon:'🧪' },
+      flagged:  { bg:'#fef2f2', bord:'#fca5a5', title:'Possible PFAS detected',                     icon:'🚩' },
       conflict: { bg:'#fef2f2', bord:'#fca5a5', title:'PFAS data conflict — re-check documentation', icon:'❗' }
     };
     var sc = socCfg[soc.summary] || socCfg.partial;
