@@ -392,7 +392,7 @@ function assessSubstances(cls) {
 // ------------------------------------------------------------------
 var COUNTRY_RULES = {
   'FR': {
-    flag:'🇫🇷', name:'France', system:'Triman / AGEC',
+    flag:'', name:'France', system:'Triman / AGEC',
     requiresTriman: true,
     note:'The Triman logo is mandatory for products placed on the French market under AGEC (Loi Anti-Gaspillage). It must appear on the primary packaging alongside sorting instructions. This obligation remains in force until the PPWR harmonised pictograms are adopted (expected from August 2028).',
     sorting:{
@@ -1288,18 +1288,36 @@ function ppwrToggleMkt(mk) {
 // ------------------------------------------------------------------
 function _ppwrMethodology() {
   return '<div class="card" style="margin-top:1rem;border-left:4px solid var(--primary);background:var(--card)">' +
-    '<div style="padding:1.1rem 1.4rem">' +
-    '<h2 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1.05rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.4rem;margin-bottom:0.8rem">Methodology &amp; Legal Basis</h2>' +
-    '<div style="font-size:0.85rem;line-height:1.7;color:#334155;font-family:Georgia,\'Times New Roman\',serif">' +
-    '<p><strong>Classification system:</strong> Commission Decision 97/129/EC establishes the identification system for packaging materials. Numeric codes (01–07 for plastics, 41 for aluminium, 22 for paper) and alphabetic abbreviations (PET, PP, ALU, PAP, etc.) appear on the packaging to identify the primary material or, for composites, the dominant material preceded by C/.</p>' +
-    '<p><strong>Composite codes (Annex VII):</strong> When a laminate contains more than one material family, the tool applies a 5% by weight threshold per family. Plastic/aluminium composites take code <strong>90</strong>; paper/plastic <strong>81</strong>; paper/aluminium <strong>82</strong>; paper/plastic/aluminium <strong>84</strong>. The on-pack abbreviation is C/ followed by the dominant material abbreviation (e.g. C/LDPE 90).</p>' +
-    '<p><strong>Weight calculation:</strong> Layer weights are computed from density × thickness, using stored material density values or EPD defaults (same methodology as the Carbon Footprint Estimator). The percentage composition is calculated on a per-unit-area basis (kg/m²).</p>' +
-    '<p><strong>PPWR transition:</strong> Regulation (EU) 2025/40 (PPWR) entered into force on 11 February 2025 and applies from 12 August 2026, repealing Directive 94/62/EC. It mandates a future harmonised EU labelling system; under Article 8(2) the existing Decision 97/129/EC marking continues to apply until 30 months after the Commission adopts the relevant implementing act (expected around 2028). National schemes (Triman, CONAI codes, VerpackG) cannot coexist with the harmonised EU label once it takes effect.</p>' +
-    '<p><strong>Recyclability (indicative):</strong> The verdict applies current RecyClass and CEFLEX design-for-recycling guidance with per-polymer resolution: ≥95% single polymer is treated as grade A; ≥90% dominant polymer with tolerated barrier layers (EVOH or PA, each ≤5% of structure weight) as grade B; composites with &gt;5% aluminium or genuinely mixed polymer structures are flagged as not separable in standard streams. This is a proxy — the binding PPWR criteria and A/B/C grades are pending.</p>' +
-    '<p><strong>Substances of concern:</strong> The screening flags layer names matching fluoropolymer (possible PFAS, restricted in food-contact packs from 12 Aug 2026 under Art. 5) and chlorinated polymers (PVDC/PVC — EPR eco-modulation penalties and recycling-stream disturbance). It is a name-based heuristic: coatings, inks and adhesives not described in layer names cannot be detected — supplier declarations remain necessary.</p>' +
-    '<div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:0.9rem 1.1rem;margin-top:0.85rem;font-family:sans-serif;font-size:0.82rem;color:#7f1d1d;line-height:1.6">' +
-      '<div style="font-weight:800;font-size:0.9rem;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.4rem">⚠️ Disclaimer — read before use</div>' +
+    '<div style="padding:1.2rem 1.5rem">' +
+ 
+    '<h2 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1.15rem;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:0.45rem;margin:0 0 1rem">How this tool works</h2>' +
+ 
+    '<div style="font-size:0.9rem;line-height:1.75;color:#334155;font-family:Georgia,\'Times New Roman\',serif">' +
+ 
+    '<p style="margin:0 0 1.1rem">This page explains, in plain terms, how each result is reached — so you can trust the numbers, check them, and explain them to someone else.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">1. What the material code means</h3>' +
+    '<p style="margin:0 0 1rem">Every piece of packaging sold in the EU carries a material code, defined by an old but still-valid rule called Decision 97/129/EC. The code simply tells recyclers and consumers what the packaging is made of. Plastics are numbered from 01 to 07, aluminium is 41, paper is 22. If a pack is made of one single material, it takes that material\'s code. If it combines two or more different families — say plastic bonded to a layer of aluminium foil — it becomes a <em>composite</em>, written with a \u201CC/\u201D in front of the main material, for example C/LDPE.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">2. How the tool decides the code</h3>' +
+    '<p style="margin:0 0 1rem">Most laminates contain more than one material, so the tool has to decide which ones really count. It does this by weight. A material family is counted only if it makes up more than 5% of the total weight; anything smaller is treated as a minor component and set aside. If more than one family passes that 5% line, the pack is a composite, and the code follows fixed rules: plastic + aluminium gives <strong>90</strong>, paper + plastic gives <strong>81</strong>, paper + aluminium <strong>82</strong>, and paper + plastic + aluminium <strong>84</strong>.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">3. How the weights are found</h3>' +
+    '<p style="margin:0 0 1rem">The weight of each layer comes from one simple rule of physics: weight equals density times thickness. You provide the thickness; the density comes from the material\'s stored value, or from a standard figure for its family when none is saved. The shares are then worked out for one square metre of packaging (kg/m\u00B2), which is the fair way to compare layers of different thickness.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">4. How recyclability is judged</h3>' +
+    '<p style="margin:0 0 1rem">A pack is easy to recycle when it is made of as few, and as compatible, materials as possible — because a recycling plant melts one type of plastic at a time and cannot separate materials that are fused together. Following current RecyClass and CEFLEX guidance, the tool gives a rough grade: a pack that is at least 95% one single polymer is treated as easily recyclable (grade A); one that is at least 90% a single polymer, with only thin barrier layers such as EVOH or PA below 5% each, is still recyclable (grade B); a pack with more than 5% aluminium, or a real mix of plastics that do not belong to the same stream, cannot be separated and is flagged as not recyclable. This is a guide to help you redesign, not an official score — the binding PPWR grades are not final yet.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">5. Substances of concern (including PFAS)</h3>' +
+    '<p style="margin:0 0 1rem">Some substances are restricted or carry penalties. The tool reads the names of your layers and warns you when it spots fluoropolymers (a possible sign of PFAS) or chlorinated plastics such as PVC and PVDC. It is important to understand the limit of this check: it can only read names. It cannot see a coating, ink, adhesive or processing aid that is not written into the layer name. To be certain a material is free of these substances, you still need a written declaration from the supplier — and that document is exactly what earns the verified \u201CPFAS-free\u201D badge on this tool.</p>' +
+ 
+    '<h3 style="font-family:Georgia,\'Times New Roman\',serif;font-size:1rem;color:var(--text);margin:1.2rem 0 0.4rem">6. The dates that matter</h3>' +
+    '<p style="margin:0 0 1rem">PPWR is Regulation (EU) 2025/40. It came into force on 11 February 2025 and applies from <strong>12 August 2026</strong>, replacing the old Packaging Directive 94/62/EC. From that date, packaging needs an EU Declaration of Conformity and must respect the rules on substances and on using no more material than necessary. The current material codes stay valid until the EU publishes its new single labelling system, expected around 2028. The recyclability grades and the targets for recycled content begin to apply from 2030.</p>' +
+ 
+    '<div style="background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:0.9rem 1.1rem;margin-top:1.1rem;font-family:sans-serif;font-size:0.82rem;color:#7f1d1d;line-height:1.6">' +
+      '<div style="font-weight:800;font-size:0.9rem;margin-bottom:0.3rem">⚠️ Disclaimer — read before use</div>' +
       'This tool produces <strong>indicative</strong> labelling, recyclability and substances screening for packaging-engineering purposes only. It is <strong>not legal or regulatory compliance advice</strong>. The official PPWR Design-for-Recycling criteria and A/B/C recyclability grades are not yet finalised (delegated acts expected ~2028; grades apply from 2030), so recyclability here is based on current RecyClass / CEFLEX guidance as a proxy. Requirements vary by product category, market and pack type. Always verify final obligations — and the EU Declaration of Conformity — with a qualified packaging-compliance specialist or legal counsel before placing products on the market.' +
     '</div>' +
     '</div></div></div>';
 }
+
