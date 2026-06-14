@@ -19,7 +19,6 @@
 
 window.PFAS_VERIFIED = {
 
-   window.PFAS_VERIFIED = {
     'PET (Standard BOPET, uncoated) — multi-temp / Arrhenius': {
         by:         'Admin',
         verifiedAt: '2026-06-12',
