@@ -978,9 +978,9 @@ function renderPPWRLabel() {
   html += '<div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light)">Classification Result — Decision 97/129/EC</div>';
   // Export buttons
   html += '<div style="display:flex;gap:0.45rem;flex-wrap:wrap">';
-  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ Marking SVG</button>';
-  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer">⬇ DoC draft</button>';
-  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer">🖨 Full report</button>';
+  html += '<button onclick="ppwrDownloadLabel()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> SVG</button>';
+  html += '<button onclick="ppwrDownloadDoC()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:#fff;color:var(--text);cursor:pointer"> Draft</button>';
+  html += '<button onclick="ppwrPrintReport()" style="font-size:0.72rem;font-weight:700;padding:0.35rem 0.75rem;border-radius:7px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer"> Report</button>';
   html += '</div></div>';
 
   // Big code badge + marking preview + breakdown
