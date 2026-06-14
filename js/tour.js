@@ -649,12 +649,11 @@
   };
 
   // ── Auto-start on first visit ───────────────────────────────────────
+ // ── Init: build the button only, never auto-start ───────────────────
   function _init() {
     _injectCSS();
     _buildDOM();
-    var seen = false;
-    try { seen = !!localStorage.getItem('wvtr_tour_seen'); } catch(e){}
-    if (!seen) setTimeout(function () { Tour.start(); }, 2000);
+    // Auto-start disabled — the tour only runs when the user clicks the button.
   }
 
   if (document.readyState === 'loading') {
