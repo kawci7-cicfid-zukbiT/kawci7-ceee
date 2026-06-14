@@ -21,8 +21,8 @@
 
 var ADS_CONFIG = {
   client:     'ca-pub-8643763701588437',  // your AdSense publisher ID
-  leftSlot:   'XXXXXXXXXX',               // slot ID of the LEFT ad unit
-  rightSlot:  'XXXXXXXXXX',               // slot ID of the RIGHT ad unit
+  leftSlot:   '7492385316',               // slot ID of the LEFT ad unit
+  rightSlot:  '7492385316',               // slot ID of the RIGHT ad unit
   minWidth:   1360,                        // hide rails below this viewport width (avoids overlap with the 960px content)
   railWidth:  160,
   railHeight: 600,
@@ -91,11 +91,13 @@ function ppwrAdsSync() {
 
 window.addEventListener('resize', _adsApply);
 
-// ── INTEGRATION ──────────────────────────────────────────────────────
-// Add ONE line inside your main render() function (app.js / render.js),
-// e.g. right after it sets State.tab / renders the content:
-//
-//     if (typeof ppwrAdsSync === 'function') ppwrAdsSync();
-//
-// That's it. The rails appear only on the PPWR page, only on screens
-// wide enough not to overlap the content, and survive every re-render.
+// ── AUTOMATIC — no integration line needed ───────────────────────────
+// This watcher checks the current tab a few times per second and shows
+// the rails only on the PPWR page. You do NOT need to edit render.js or
+// app.js — just load this file after the AdSense loader in index.html.
+if (typeof window !== 'undefined') {
+  setInterval(function () { try { ppwrAdsSync(); } catch (e) {} }, 750);
+}
+
+// (Optional) If you prefer to drive it from your own render() instead of
+// the watcher above, delete the setInterval and call ppwrAdsSync() there.
