@@ -1,3 +1,4 @@
+
 // ====================================================================
 // PFAS.JS — PFAS-free verification (static list, admin-maintained)
 // Same model as VERIFIED_MATERIALS: a map keyed by EXACT material name.
